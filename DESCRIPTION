@@ -3,11 +3,11 @@ Title: An implementation of the NetEMD alignment-free network distance measure
 Version: 0.1
 Authors@R: person("Martin", "O'Reilly",email = "developer@mtspace.net", 
                   role = c("aut", "cre"))
-Description: An implementation of the NetEMD alignment-free network 
+Description: An implementation of the NetEMD alignment-free network
     distance measure. The NetEMD measure is the minimal earth-mover's distance
     between the graph feature distribution for two networks.
-    The package includes methods to calculate graphlet degree feature 
-    distributions for graphlets of up to 5 nodes, or you can provide your own 
+    The package includes methods to calculate graphlet degree feature
+    distributions for graphlets of up to 5 nodes, or you can provide your own
     feature distributions. The package accepts graphs in igraph format.
 Depends:
     R (>= 3.1.0)
@@ -15,8 +15,8 @@ LazyData: true
 License: MIT + file LICENSE
 Imports:
     orca,
-    igraph
-Suggests:
-    testthat,
+    igraph,
     lpSolve
-RoxygenNote: 5.0.1.9000
+Suggests:
+    testthat
+RoxygenNote: 5.0.1

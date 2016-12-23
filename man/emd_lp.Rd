@@ -2,29 +2,22 @@
 % Please edit documentation in R/measures-net-emd.R
 \name{emd_lp}
 \alias{emd_lp}
-\title{Earth Mover's Distance (EMD) using linear programming (LP)
-Takes two sets of feature counts and locations and calculates the 
-Earth Mover's Distance between them. EMD is also known as the Wasserstein 
-distance or metric
-Required parameters are the counts of each feature for both networks}
+\title{Earth Mover's Distance (EMD) using linear programming (LP)}
 \usage{
-emd_lp(bin_counts1, bin_counts2, bin_locations1, bin_locations2)
+emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
 }
 \arguments{
-\item{bin_counts1}{Feature counts for network 1}
+\item{bin_masses1}{Bin masses for histogram 1}
 
-\item{bin_counts2}{Feature counts for network 2
-Optional parameters are the locations of each feature. If omitted, it is 
-assumed that features are separated by unit distance}
+\item{bin_masses2}{Bin masses for histogram 2}
 
-\item{bin_locations1}{Feature bin locations for network 1}
+\item{bin_centres1}{Bin centres for histogram 1}
 
-\item{bin_locations2}{Feature bin locations for network 2}
+\item{bin_centres2}{Bin centres for histogram 2}
 }
 \description{
-Earth Mover's Distance (EMD) using linear programming (LP)
-Takes two sets of feature counts and locations and calculates the 
-Earth Mover's Distance between them. EMD is also known as the Wasserstein 
-distance or metric
-Required parameters are the counts of each feature for both networks
+Takes two sets of histogram bin masses and bin centres and calculates the 
+Earth Mover's Distance between the two histograms by solving the Transport
+Problem using linear programming.
 }
+

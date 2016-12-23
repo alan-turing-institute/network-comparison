@@ -2,17 +2,17 @@
 % Please edit documentation in R/measures-net-emd.R
 \name{cost_matrix}
 \alias{cost_matrix}
-\title{Generates a matrix for the cost of moving a unit of mass between all pairs of
-features. The cost is the distance between the locations of each feature pair}
+\title{Inter-bin cost matrix from bin centres}
 \usage{
-cost_matrix(bin_locations1, bin_locations2)
+cost_matrix(bin_centres1, bin_centres2)
 }
 \arguments{
-\item{bin_locations1}{Feature bin locations for network 1}
+\item{bin_centres1}{Bin centres for histogram 1}
 
-\item{bin_locations2}{Feature bin locations for network 2}
+\item{bin_centres2}{Bin centres for histogram 2}
 }
 \description{
-Generates a matrix for the cost of moving a unit of mass between all pairs of
-features. The cost is the distance between the locations of each feature pair
+Generates a matrix for the cost of moving a unit of mass between each bin in 
+histogram 1 and each bin in histogram 2.
 }
+
