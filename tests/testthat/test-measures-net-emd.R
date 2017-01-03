@@ -187,3 +187,12 @@ test_that("EMD methods return same result when order of sparsely specified bins 
                emd_cs(permuted_bin_masses1, permuted_bin_masses2, 
                       permuted_bin_centres1, permuted_bin_centres2))
   })
+
+# EMD_LP and EMD_CS: Real data tests
+test_that("EMD methods return correct results for sample virus PPI data sets", {
+  file_names <- c("EBV-1.txt", "ECL-1.txt", "HSV-1-1.txt", "KSHV-1.txt", "VZV-1.txt")
+  dataset_names <- c("EBV", "ECL", "HSV", "KSHV", "VZV")
+  file_formats <- c("ncol", "ncol", "ncol", "ncol", "ncol")
+  data <- data.frame(dataset_names, file_names, file_formats)
+})
+

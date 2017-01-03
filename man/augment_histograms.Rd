@@ -20,4 +20,3 @@ Where a bin centre only exists in one histogram, add a zero mass bin with the
 same centre to the other histogram to ensure that all bins exist in both 
 histograms. This makes some hsitogram operations easier.
 }
-

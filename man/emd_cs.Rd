@@ -25,4 +25,3 @@ Calculation of the Wasserstein Distance Between Probability Distributions on the
 S. S. Vallender, Theory of Probability & Its Applications 1974 18:4, 784-786
 \url{http://dx.doi.org/10.1137/1118101}
 }
-

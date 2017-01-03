@@ -20,4 +20,3 @@ Takes two sets of histogram bin masses and bin centres and calculates the
 Earth Mover's Distance between the two histograms by solving the Transport
 Problem using linear programming.
 }
-
