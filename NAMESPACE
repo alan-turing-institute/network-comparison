@@ -3,5 +3,6 @@
 export(emd_cs)
 export(emd_lp)
 export(integer_index_edge_list)
+export(net_emd)
 export(orca_graph)
 export(read_orca_graph)

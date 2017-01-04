@@ -1,5 +1,34 @@
 library("lpSolve")
 
+#' Calculate NetEMD
+#' 
+#' Calculates the minimum Earth Mover's Distance (EMD) between two histograms.
+#' This is calculated as follows:
+#'   1. Normalise each histogram to have unit mass and unit variance
+#'   2. "Slide" histogram 1 over histogram 2 by varying the bin offset between 
+#'      the two histograms, calculating the EMD at each offset.
+#'   3. The NetEMD is the minimum EMD observed across all offsets
+#' @param bin_masses1 Bin masses for histogram 1
+#' @param bin_masses2 Bin masses for histogram 2
+#' @param bin_centres1 Bin centres for histogram 1
+#' @param bin_centres2 Bin centres for histogram 2
+#' @export
+net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
+  
+}
+
+#' Normalise histogram to unit mass
+#' 
+#' Normalises histogram to unit mass by dividing each bin mass by the total of 
+#' the non-normalised bin masses
+#' @param bin_masses Bin masses for histogram
+#' @return normalised_masses Bin masses normalised to sum to 1
+normalise_histogram_mass <- function(bin_masses) {
+  total_mass <- sum(bin_masses)
+  normalised_masses <- bin_masses / total_mass
+  return(normalised_masses)
+}
+
 #' Earth Mover's Distance (EMD) using linear programming (LP)
 #' 
 #' Takes two sets of histogram bin masses and bin centres and calculates the 

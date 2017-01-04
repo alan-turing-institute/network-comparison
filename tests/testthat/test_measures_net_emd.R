@@ -1,6 +1,21 @@
 library("netdist")
 context("NetEMD")
 
+
+# BIN NORMALISATION: Property based tests
+test_that("normalise_histogram_mass output sums to 1", {
+  # Generate random histograms with bin masses at various scales and check they
+  # sum to one after normalisation
+  base_params <- c(0, 1)
+  param_multipliers <- c(0.001, 0.01, 0.1, 1, 10, 100, 1000)
+  param_sets <- outer(param_multipliers, base_params)
+  histogram_length <- 10
+  histograms <- t(apply(param_sets, 1, function(p) {return(runif(histogram_length, p[1], p[2]))}))
+  
+  expected_sum <- 1
+  apply(histograms, 1, function(h) {expect_equal(sum(normalise_histogram_mass(h)), expected_sum)})
+})
+
 # COST_MATRIX: Property-based tests
 test_that("cost_matrix returns all zeros when all bin locations are identical", {
   bin_centres1 <- c(1, 1, 1, 1, 1, 1, 1)
@@ -35,7 +50,7 @@ test_that("cost_matrix is correct size when the two histograms are of different 
 })
 
 # AUGMENT_HISTOGRAMS
-test_that("augment_histograms works", {
+test_that("augment_histograms works A", {
   bin_masses1 <- c(1, 1, 1)
   bin_masses2 <- c(1, 1, 1)
   bin_centres1 <- c(1, 3, 5)
@@ -51,7 +66,7 @@ test_that("augment_histograms works", {
   expect_equal(actual, expected)
   
 })
-test_that("augment_histograms works", {
+test_that("augment_histograms works B", {
   bin_masses1 <- c(1, 1, 1)
   bin_masses2 <- c(1, 1, 1)
   bin_centres1 <- c(1, 3, 5)
