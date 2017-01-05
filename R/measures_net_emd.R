@@ -52,9 +52,9 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   num_bins1 <- length(bin_masses1)
   num_bins2 <- length(bin_masses2)
   
-  # Check inputs. Size of bin counts and locations must match for each histogram
-  # but the histograms for the two networks can have different numbers of bins
-  # as only non-zero bins are required
+  # Check inputs: All bins in each histogram must have a mass and centre, so
+  # the bin_mass and bin_centre vectors for each histogram must have the same
+  # length.
   if(length(bin_centres1) != num_bins1) {
     stop("Number of bin masses and bin centres provided for histogram 1 must be equal")
   }
@@ -88,6 +88,16 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
 #' @export
 emd_cs <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   
+  # Check inputs: All bins in each histogram must have a mass and centre, so
+  # the bin_mass and bin_centre vectors for each histogram must have the same
+  # length.
+  if(length(bin_centres1) != num_bins1) {
+    stop("Number of bin masses and bin centres provided for histogram 1 must be equal")
+  }
+  if(length(bin_centres2) != num_bins2) {
+    stop("Number of bin masses and bin centres provided for histogram 2 must be equal")
+  }
+  
   # Ensure both histograms have entries for all bins that appear in either histogram
   ah <- augment_histograms(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
   bin_masses1 <- ah$bin_masses1
@@ -104,7 +114,7 @@ emd_cs <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   sorted_centres2 <- bin_centres2[sorted_indexes2]
   
   # Generate cumulative histogram masses
-  cum_mass1 = cumsum(sorted_masses1)
+  cum_mass1 <- cumsum(sorted_masses1)
   cum_mass2 <- cumsum(sorted_masses2)
   
   # Determine spacing between bin centres

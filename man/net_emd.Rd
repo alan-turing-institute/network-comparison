@@ -26,3 +26,4 @@ This is calculated as follows:
      the two histograms, calculating the EMD at each offset.
   3. The NetEMD is the minimum EMD observed across all offsets
 }
+
