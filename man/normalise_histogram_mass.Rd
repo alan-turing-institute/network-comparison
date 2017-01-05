@@ -10,7 +10,7 @@ normalise_histogram_mass(bin_masses)
 \item{bin_masses}{Bin masses for histogram}
 }
 \value{
-normalised_masses Bin masses normalised to sum to 1
+Bin masses normalised to sum to 1
 }
 \description{
 Normalises histogram to unit mass by dividing each bin mass by the total of 

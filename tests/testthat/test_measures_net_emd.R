@@ -16,6 +16,10 @@ test_that("normalise_histogram_mass output sums to 1", {
   apply(histograms, 1, function(h) {expect_equal(sum(normalise_histogram_mass(h)), expected_sum)})
 })
 
+test_that("normalise_histogram_variance output has variance of 1", {
+  
+})
+
 # COST_MATRIX: Property-based tests
 test_that("cost_matrix returns all zeros when all bin locations are identical", {
   bin_centres1 <- c(1, 1, 1, 1, 1, 1, 1)
@@ -202,6 +206,20 @@ test_that("EMD methods return same result when order of sparsely specified bins 
                emd_cs(permuted_bin_masses1, permuted_bin_masses2, 
                       permuted_bin_centres1, permuted_bin_centres2))
   })
+
+# NetEMD: Property-based tests
+test_that("net_emd returns 0 when comparing any histogram offset against itself", {
+  # Generate random histograms with bin masses at various scales and check they
+  # sum to one after normalisation
+  base_params <- c(0, 1)
+  param_multipliers <- c(0.001, 0.01, 0.1, 1, 10, 100, 1000)
+  param_sets <- outer(param_multipliers, base_params)
+  histogram_length <- 10
+  histograms <- t(apply(param_sets, 1, function(p) {return(runif(histogram_length, p[1], p[2]))}))
+  
+  expected_sum <- 1
+  apply(histograms, 1, function(h) {expect_equal(sum(normalise_histogram_mass(h)), expected_sum)})
+})
 
 # EMD_LP and EMD_CS: Real data tests
 test_that("EMD methods return correct results for sample virus PPI data sets", {

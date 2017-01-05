@@ -15,6 +15,9 @@ augment_histograms(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
 
 \item{bin_centres2}{Bin centres for histogram 2}
 }
+\value{
+Augmented histograms
+}
 \description{
 Where a bin centre only exists in one histogram, add a zero mass bin with the
 same centre to the other histogram to ensure that all bins exist in both 

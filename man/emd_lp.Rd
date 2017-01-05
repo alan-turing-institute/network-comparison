@@ -15,6 +15,9 @@ emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
 
 \item{bin_centres2}{Bin centres for histogram 2}
 }
+\value{
+EMD
+}
 \description{
 Takes two sets of histogram bin masses and bin centres and calculates the 
 Earth Mover's Distance between the two histograms by solving the Transport

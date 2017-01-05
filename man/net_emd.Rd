@@ -2,7 +2,7 @@
 % Please edit documentation in R/measures_net_emd.R
 \name{net_emd}
 \alias{net_emd}
-\title{Calculate NetEMD}
+\title{NetEMD Network Earth Mover's Distance}
 \usage{
 net_emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
 }
@@ -14,6 +14,9 @@ net_emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
 \item{bin_centres1}{Bin centres for histogram 1}
 
 \item{bin_centres2}{Bin centres for histogram 2}
+}
+\value{
+NetEMD
 }
 \description{
 Calculates the minimum Earth Mover's Distance (EMD) between two histograms.

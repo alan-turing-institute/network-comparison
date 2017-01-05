@@ -1,6 +1,6 @@
 library("lpSolve")
 
-#' Calculate NetEMD
+#' NetEMD Network Earth Mover's Distance
 #' 
 #' Calculates the minimum Earth Mover's Distance (EMD) between two histograms.
 #' This is calculated as follows:
@@ -12,21 +12,28 @@ library("lpSolve")
 #' @param bin_masses2 Bin masses for histogram 2
 #' @param bin_centres1 Bin centres for histogram 1
 #' @param bin_centres2 Bin centres for histogram 2
+#' @return NetEMD
 #' @export
 net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
+  # Normalise histograms to unit variance
+  bin_centres1 <- normalise_histogram_variance(bin_masses1, bin_centres1)
+  bin_centres2 <- normalise_histogram_variance(bin_masses2, bin_centres2)
+  # Normalise histograms to unit mass
+  bin_masses1 <- normalise_histogram_mass(bin_masses1)
+  bin_masses2 <- normalise_histogram_mass(bin_masses2)
   
-}
-
-#' Normalise histogram to unit mass
-#' 
-#' Normalises histogram to unit mass by dividing each bin mass by the total of 
-#' the non-normalised bin masses
-#' @param bin_masses Bin masses for histogram
-#' @return normalised_masses Bin masses normalised to sum to 1
-normalise_histogram_mass <- function(bin_masses) {
-  total_mass <- sum(bin_masses)
-  normalised_masses <- bin_masses / total_mass
-  return(normalised_masses)
+  # Determine minimum and maximum offset of range in which histograms overlap
+  # if sliding histogram 1
+  min_offset <- min(bin_centres2) - max(bin_centres1)
+  max_offset <-max(bin_centres2) - min(bin_centres1)
+  
+  # Offset histogram 1 by all possible overlapping offsets and calculate EMD at
+  # each offset, keeping track of minimum EMD across all offsets. This is the 
+  # NetEMD
+  offsets <- min_offset:max_offset
+  emds <- vapply(offsets, function(offset) {return(emd_cs(bin_masses1, bin_centres1 + offset, bin_masses2, bin_centres2))}, numeric(1))
+  net_emd <- min(emds)
+  return(net_emd)
 }
 
 #' Earth Mover's Distance (EMD) using linear programming (LP)
@@ -38,6 +45,7 @@ normalise_histogram_mass <- function(bin_masses) {
 #' @param bin_masses2 Bin masses for histogram 2
 #' @param bin_centres1 Bin centres for histogram 1
 #' @param bin_centres2 Bin centres for histogram 2
+#' @return EMD
 #' @export
 emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   
@@ -76,6 +84,7 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
 #' @param bin_masses2 Bin masses for histogram 2
 #' @param bin_centres1 Bin centres for histogram 1
 #' @param bin_centres2 Bin centres for histogram 2
+#' @return EMD
 #' @export
 emd_cs <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   
@@ -124,6 +133,7 @@ emd_cs <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
 #' histogram 1 and each bin in histogram 2.
 #' @param bin_centres1 Bin centres for histogram 1
 #' @param bin_centres2 Bin centres for histogram 2
+#' @return Cost matrix
 cost_matrix <- function(bin_centres1, bin_centres2) {
   # Calculate distances between all bins in network 1 and all bins in network 2
   num_bins1 <- length(bin_centres1) 
@@ -143,6 +153,7 @@ cost_matrix <- function(bin_centres1, bin_centres2) {
 #' @param bin_masses2 Bin masses for histogram 2
 #' @param bin_centres1 Bin centres for histogram 1
 #' @param bin_centres2 Bin centres for histogram 2
+#' @return Augmented histograms
 augment_histograms <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   # Identify missing bin centres in each histogram
   missing_centres1 <- setdiff(bin_centres2, bin_centres1)
@@ -156,4 +167,59 @@ augment_histograms <- function(bin_masses1, bin_masses2, bin_centres1, bin_centr
   
   list(bin_masses1 = bin_masses1, bin_masses2 = bin_masses2, 
        bin_centres1 = bin_centres1, bin_centres2 = bin_centres2)
+}
+#' Normalise histogram to unit mass
+#' 
+#' Normalises histogram to unit mass by dividing each bin mass by the total of 
+#' the non-normalised bin masses
+#' @param bin_masses Bin masses for histogram
+#' @return Bin masses normalised to sum to 1
+normalise_histogram_mass <- function(bin_masses) {
+  total_mass <- sum(bin_masses)
+  normalised_masses <- bin_masses / total_mass
+  return(normalised_masses)
+}
+
+#' Normalise histogram to unit variance
+#' 
+#' Normalises histogram to unit variance by dividing each bin centre by the 
+#' standard deviation of the hsitogram
+#' @param bin_masses Bin masses for histogram
+#' @param bin_centres Bin centres for histogram
+#' @return Bin centres normalised to give a histogram of variance 1
+normalise_histogram_variance <- function(bin_masses, bin_centres) {
+  normalised_bin_centres = bin_centres / histogram_std(bin_masses, bin_centres)
+  return(normalised_bin_centres)
+}
+
+#' Calculate histogram variance
+#' 
+#' Calculates variance directly from the histogram by using bin centres weighted
+#' by bin masses. Where a histogram represents a quantised summary of an 
+#' underlying sample, it is more accurate to calculate variance directly from 
+#' the sample data if available.
+#' NOTE: Does not apply bias correction (i.e. N-1 denominator) as bin_masses 
+#' may not represent bin counts so N is not necessarily known
+#' @param bin_masses Bin masses for histogram
+#' @param bin_centres Bin centres for histogram
+#' @return Variance of histogram
+histogram_variance <- function(bin_masses, bin_centres) {
+  mean_centre <- sum(bin_masses * bin_centres) / sum(bin_masses)
+  variance <- sum(bin_masses * (bin_centres - mean_centre)^2) / sum(bin_masses)
+  return(variance)
+}
+
+#' Calculate histogram standard deviation
+#' 
+#' Calculates standard deviation directly from the histogram by using bin 
+#' centres weighted by bin masses. Where a histogram represents a quantised 
+#' summary of an underlying sample, it is more accurate to calculate standard
+#' deviation directly from the sample data if available. 
+#' NOTE: Does not apply bias correction (i.e. N-1 denominator) as bin_masses 
+#' may not represent bin counts so N is not necessarily known
+#' @param bin_masses Bin masses for histogram
+#' @param bin_centres Bin centres for histogram
+#' @return Standard deviation of histogram
+histogram_std <- function(bin_masses, bin_centres) {
+  return(sqrt(histogram_variance(bin_masses, bin_centres)))
 }
