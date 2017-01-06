@@ -91,6 +91,8 @@ emd_cs <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   # Check inputs: All bins in each histogram must have a mass and centre, so
   # the bin_mass and bin_centre vectors for each histogram must have the same
   # length.
+  num_bins1 <- length(bin_masses1)
+  num_bins2 <- length(bin_masses2)
   if(length(bin_centres1) != num_bins1) {
     stop("Number of bin masses and bin centres provided for histogram 1 must be equal")
   }

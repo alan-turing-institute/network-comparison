@@ -22,4 +22,3 @@ deviation directly from the sample data if available.
 NOTE: Does not apply bias correction (i.e. N-1 denominator) as bin_masses 
 may not represent bin counts so N is not necessarily known
 }
-

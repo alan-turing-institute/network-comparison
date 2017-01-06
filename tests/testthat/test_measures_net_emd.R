@@ -1,23 +1,26 @@
 library("netdist")
+library("purrr")
 context("NetEMD")
 
 
 # BIN NORMALISATION: Property based tests
 test_that("normalise_histogram_mass output sums to 1", {
-  # Generate random histograms with bin masses at various scales and check they
-  # sum to one after normalisation
-  base_params <- c(0, 1)
-  param_multipliers <- c(0.001, 0.01, 0.1, 1, 10, 100, 1000)
-  param_sets <- outer(param_multipliers, base_params)
-  histogram_length <- 10
-  histograms <- t(apply(param_sets, 1, function(p) {return(runif(histogram_length, p[1], p[2]))}))
+  # Generate histograms with random masses and random centres (uniformly random)
+  num_hists <- 10
+  num_bins <- 100
   
-  expected_sum <- 1
-  apply(histograms, 1, function(h) {expect_equal(sum(normalise_histogram_mass(h)), expected_sum)})
+  mass_min <- 0
+  mass_max <- 100
+  rand_bin_masses <- function() {return(runif(num_bins, mass_min, mass_max))}
+  bin_mass_lists <- replicate(num_hists, rand_bin_masses(), simplify = FALSE)
+  
+  actual_sums <- purrr::map_dbl(bin_mass_lists, function(bin_masses) {sum(normalise_histogram_mass(bin_masses))})
+  expected <- 1
+  purrr::map_dbl(actual_sums, function(actual) {expect_equal(actual, expected)})
 })
 
 test_that("normalise_histogram_variance output has variance of 1", {
-  
+  expect_true(FALSE)
 })
 
 # COST_MATRIX: Property-based tests
@@ -209,16 +212,7 @@ test_that("EMD methods return same result when order of sparsely specified bins 
 
 # NetEMD: Property-based tests
 test_that("net_emd returns 0 when comparing any histogram offset against itself", {
-  # Generate random histograms with bin masses at various scales and check they
-  # sum to one after normalisation
-  base_params <- c(0, 1)
-  param_multipliers <- c(0.001, 0.01, 0.1, 1, 10, 100, 1000)
-  param_sets <- outer(param_multipliers, base_params)
-  histogram_length <- 10
-  histograms <- t(apply(param_sets, 1, function(p) {return(runif(histogram_length, p[1], p[2]))}))
-  
-  expected_sum <- 1
-  apply(histograms, 1, function(h) {expect_equal(sum(normalise_histogram_mass(h)), expected_sum)})
+  expect_true(FALSE)
 })
 
 # EMD_LP and EMD_CS: Real data tests

@@ -18,4 +18,3 @@ Bin centres normalised to give a histogram of variance 1
 Normalises histogram to unit variance by dividing each bin centre by the 
 standard deviation of the hsitogram
 }
-
