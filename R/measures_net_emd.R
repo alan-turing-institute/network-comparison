@@ -200,7 +200,9 @@ normalise_histogram_mass <- function(bin_masses) {
 #' @param bin_centres Bin centres for histogram
 #' @return Bin centres normalised to give a histogram of variance 1
 normalise_histogram_variance <- function(bin_masses, bin_centres) {
-  normalised_bin_centres = bin_centres / histogram_std(bin_masses, bin_centres)
+  mean_centre <- sum(bin_masses * bin_centres) / sum(bin_masses)
+  centred_bin_centres <- bin_centres - mean_centre
+  normalised_bin_centres = mean_centre + (centred_bin_centres / histogram_std(bin_masses, bin_centres))
   return(normalised_bin_centres)
 }
 

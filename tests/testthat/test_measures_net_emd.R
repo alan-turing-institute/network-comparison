@@ -5,7 +5,7 @@ context("NetEMD")
 
 # BIN NORMALISATION: Property based tests
 test_that("normalise_histogram_mass output sums to 1", {
-  # Generate histograms with random masses and random centres (uniformly random)
+  # Generate histograms with random masses (no centres needed for this test)
   num_hists <- 10
   num_bins <- 100
   
@@ -14,13 +14,30 @@ test_that("normalise_histogram_mass output sums to 1", {
   rand_bin_masses <- function() {return(runif(num_bins, mass_min, mass_max))}
   bin_mass_lists <- replicate(num_hists, rand_bin_masses(), simplify = FALSE)
   
-  actual_sums <- purrr::map_dbl(bin_mass_lists, function(bin_masses) {sum(normalise_histogram_mass(bin_masses))})
+  actuals <- purrr::map_dbl(bin_mass_lists, function(bin_masses) {sum(normalise_histogram_mass(bin_masses))})
   expected <- 1
   purrr::map_dbl(actual_sums, function(actual) {expect_equal(actual, expected)})
 })
 
 test_that("normalise_histogram_variance output has variance of 1", {
-  expect_true(FALSE)
+  # Generate histograms with random masses and random centres
+  num_hists <- 10
+  num_bins <- 100
+  
+  mass_min <- 0
+  mass_max <- 100
+  rand_bin_masses <- function() {return(runif(num_bins, mass_min, mass_max))}
+  bin_mass_lists <- replicate(num_hists, rand_bin_masses(), simplify = FALSE)
+  
+  centre_min <- -30
+  centre_max <- 70
+  rand_bin_centres <- function() {return(runif(num_bins, centre_min, centre_max))}
+  bin_centre_lists <- replicate(num_hists, rand_bin_centres(), simplify = FALSE)
+  
+  actuals <- purrr::map2_dbl(bin_mass_lists, bin_centre_lists,
+                                 function(bin_masses, bin_centres) {sum(normalise_histogram_variance(bin_masses, bin_centres))})
+  expected <- 1
+  purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
 })
 
 # COST_MATRIX: Property-based tests
