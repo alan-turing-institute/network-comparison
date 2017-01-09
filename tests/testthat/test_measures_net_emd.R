@@ -19,29 +19,7 @@ test_that("normalise_histogram_mass output sums to 1", {
   purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
 })
 
-test_that("normalise_histogram_variance output has variance of 1", {
-  # Generate histograms with random masses and random centres
-  num_hists <- 10
-  num_bins <- 100
-  
-  mass_min <- 0
-  mass_max <- 100
-  rand_bin_masses <- function() {return(runif(num_bins, mass_min, mass_max))}
-  bin_mass_lists <- replicate(num_hists, rand_bin_masses(), simplify = FALSE)
-  
-  centre_min <- -30
-  centre_max <- 70
-  rand_bin_centres <- function() {return(runif(num_bins, centre_min, centre_max))}
-  bin_centre_lists <- replicate(num_hists, rand_bin_centres(), simplify = FALSE)
-  
-  actuals <- purrr::map2_dbl(bin_mass_lists, bin_centre_lists,
-                                 function(bin_masses, bin_centres) {sum(normalise_histogram_variance(bin_masses, bin_centres))})
-  expected <- 1
-  expect_true(FALSE)
-  #purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
-})
-
-test_that("histogram_variance returns sigma^2 for all normal histograms", {
+test_that("histogram_variance returns sigma^2 for normal histograms", {
   num_hists <- 5
   num_bins <- 100001
   
@@ -62,6 +40,51 @@ test_that("histogram_variance returns sigma^2 for all normal histograms", {
     return(expect_lte(scaled_diff, max_diff))
   }
   purrr::map2(actuals, expected, expect_equalish)
+})
+
+test_that("normalise_histogram_variance output has variance of 1 for normal histograms", {
+  num_hists <- 5
+  num_bins <- 100001
+  
+  mus <- runif(num_hists, -10, 10)
+  sigmas <- runif(num_hists, 0, 10)
+  
+  rand_bin_centres <- function(mu, sigma) {return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))}
+  
+  bin_centre_lists <- purrr::map2(mus, sigmas, rand_bin_centres)
+  bin_mass_lists <- purrr::pmap(list(bin_centre_lists, mus, sigmas), dnorm)
+  
+  normalised_histogram_variance <- function(bin_masses, bin_centres) {
+    histogram_variance(bin_masses, normalise_histogram_variance(bin_masses, bin_centres))
+  }
+  
+  actuals <- purrr::map2_dbl(bin_mass_lists, bin_centre_lists, normalised_histogram_variance)
+  expected <- 1
+  purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
+})
+
+test_that("normalise_histogram_variance output has variance of 1", {
+  # Generate histograms with random masses and random centres
+  num_hists <- 10
+  num_bins <- 100
+  
+  mass_min <- 0
+  mass_max <- 100
+  rand_bin_masses <- function() {return(runif(num_bins, mass_min, mass_max))}
+  bin_mass_lists <- replicate(num_hists, rand_bin_masses(), simplify = FALSE)
+  
+  centre_min <- -30
+  centre_max <- 70
+  rand_bin_centres <- function() {return(runif(num_bins, centre_min, centre_max))}
+  bin_centre_lists <- replicate(num_hists, rand_bin_centres(), simplify = FALSE)
+  
+  normalised_histogram_variance <- function(bin_masses, bin_centres) {
+    histogram_variance(bin_masses, normalise_histogram_variance(bin_masses, bin_centres))
+  }
+  
+  actuals <- purrr::map2_dbl(bin_mass_lists, bin_centre_lists, normalised_histogram_variance)
+  expected <- 1
+  purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
 })
 
 # COST_MATRIX: Property-based tests
