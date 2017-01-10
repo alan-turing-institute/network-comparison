@@ -16,7 +16,7 @@ emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
 \item{bin_centres2}{Bin centres for histogram 2}
 }
 \value{
-EMD
+Earth Mover's Distance between the two input histograms
 }
 \description{
 Takes two sets of histogram bin masses and bin centres and calculates the 

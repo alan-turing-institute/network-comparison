@@ -4,14 +4,14 @@ library(igraph)
 #' Integer index edge list from igraph
 #' 
 #' Takes a igraph graph object and generates an edgelist where each edge is
-#' represented by the integer IDs of its vertices. Note that, where a graph
-#' has isolated vertices, the IDs for these vertices will not be present
+#' represented by the integer indexes of its vertices. Note that, where a graph
+#' has isolated vertices, the indexes for these vertices will not be present
 #' in the edge list. Where a graph has no isolated vertices, the edge list will 
-#' include all vertex IDs from 1 to numVertices.
-#' @param graph igraph graph object
-#' @return edges A 2 x numEdges edgelist with integer vertex indices
+#' include all vertex indexes from 1 to numVertices.
+#' @param graph An igraph graph object
+#' @return A 2 x numEdges edgelist with vertices labelled with integer indices
 #' @export
-integer_index_edge_list <- function(graph) {
+graph_to_indexed_edge_list <- function(graph) {
   # Use igraph method to get edge list with edges specified using vertex ID 
   # (indexes) rather than names
   edges <- igraph::get.edgelist(graph, names = FALSE)
@@ -31,9 +31,9 @@ integer_index_edge_list <- function(graph) {
 #'   4. Removes isolated vertices (i.e. vertices with no edges after the 
 #'      previous alterations)
 #' @param graph Original igraph graph object
-#' @return graph Processed igraph graph object
+#' @return An ORCA compatible igraph graph object
 #' @export
-orca_graph <- function(graph) {
+graph_to_orca_graph <- function(graph) {
   # Ensure graph is undirected
   graph <- igraph::as.undirected(graph)
   # Remove loops (where both endpoints of an edge are the same vertex) and 
@@ -59,12 +59,32 @@ orca_graph <- function(graph) {
 #'      previous alterations)
 #' @param file Path to graph file
 #' @param format Format of graph file
-#' @return graph ORCA compatible igraph graph object
+#' @return An ORCA compatible igraph graph object
 #' @export
 read_orca_graph <- function(file, format = "ncol") {
   # Read graph from file
   graph <- igraph::read.graph(file = file, format = format)
   # Make graph compatibe with ORCA fast orbit calculation package
-  graph <- orca_graph(graph)
+  graph <- graph_to_orca_graph(graph)
   return(graph)
+}
+
+#' Load graph from file and convert to an ORCA compatible indexed edge list
+#' 
+#' Loads a graph from file and converts to an indexed edge list compatible with 
+#' the ORCA fast orbit calculation package by:
+#'   1. Making the graph undirected
+#'   2. Removing loops (where both endpoints of an edge are the same vertex)
+#'   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
+#'      pair of endpoints)
+#'   4. Removing isolated vertices (i.e. vertices with no edges after the 
+#'      previous alterations)
+#'   5. Relabelling vertices with an integer index from 1 to numVertices
+#'   6. Converting the graph to an edge list
+#' @param file Path to graph file
+#' @param format Format of graph file
+#' @return An ORCA compatible edge list
+#' @export
+read_orca_edge_list <- function(file, format = "ncol") {
+  graph_to_indexed_edge_list(read_orca_graph(file, format))
 }

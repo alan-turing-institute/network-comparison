@@ -12,7 +12,7 @@ read_orca_graph(file, format = "ncol")
 \item{format}{Format of graph file}
 }
 \value{
-graph ORCA compatible igraph graph object
+An ORCA compatible igraph graph object
 }
 \description{
 Loads a graph from file into an igraph graph object and does the following 
