@@ -172,15 +172,28 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
     return(move_dist * num_moves)
   }
   
+  # Triangle(4, even), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
   num_nonzero_bins <- sum(bin_masses1 > 0)
   expected <- cost_fn(num_nonzero_bins)
+  emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
+  # Triangle(4, even), shifting by changing centres
+  bin_masses1 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
+  bin_masses2 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
+  bin_centres1 <- 1:length(bin_masses1)
+  bin_centres2 <- 1:length(bin_masses2) + 1
+  num_nonzero_bins <- sum(bin_masses1 > 0)
+  expected <- cost_fn(num_nonzero_bins)
+  expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  
+  # Triangle(5, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
@@ -189,6 +202,16 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
+  # Triangle(5, odd), shifting by changing masses
+  bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
+  bin_masses2 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
+  bin_centres1 <- 1:length(bin_masses1)
+  bin_centres2 <- 1:length(bin_masses2) + 1
+  expected <- cost_fn(sum(bin_masses1 > 0))
+  expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  
+  # Triangle(5, even), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
@@ -197,10 +220,29 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
+  # Triangle(5, even), shifting by changing centres
+  bin_masses1 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
+  bin_masses2 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
+  bin_centres1 <- 1:length(bin_masses1)
+  bin_centres2 <- 1:length(bin_masses2) + 1
+  expected <- cost_fn(sum(bin_masses1 > 0))
+  expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  
+  # Triangle(6, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
+  expected <- cost_fn(sum(bin_masses1 > 0))
+  expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  
+  # Triangle(6, odd), shifting by changing centres
+  bin_masses1 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
+  bin_masses2 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
+  bin_centres1 <- 1:length(bin_masses1)
+  bin_centres2 <- 1:length(bin_masses2) + 1
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
@@ -275,8 +317,86 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   })
 
 # NetEMD: Property-based tests
-test_that("net_emd returns 0 when comparing any histogram offset against itself", {
-  expect_true(FALSE)
+
+test_that("net_emd returns 0 when comparing an integer centre histograms against itself with a net_emd offset step that will hit zero offset", {
+
+  self_net_emd <- function(bin_masses, bin_centres, step) {
+    net_emd(bin_masses, bin_masses, bin_centres, bin_centres, step)
+  }
+  expected <- 0
+  
+  bin_masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
+  bin_centres <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+
+  expect_equal(self_net_emd(bin_masses, bin_centres, step = 1), expected)
+  expect_equal(self_net_emd(bin_masses, bin_centres, step = 0.5), expected)
+  expect_equal(self_net_emd(bin_masses, bin_centres, step = 0.1), expected)
+  expect_equal(self_net_emd(bin_masses, bin_centres, step = 0.05), expected)
+  expect_equal(self_net_emd(bin_masses, bin_centres, step = 0.01), expected)
+})
+
+test_that("net_emd returns 0 when comparing any normal histogram against itself (no offset)", {
+  num_hists <- 10
+  num_bins <- 101
+  net_emd_step <- 0.1
+  
+  mus <- runif(num_hists, -10, 10)
+  sigmas <- runif(num_hists, 0, 10)
+
+  rand_bin_centres <- function(mu, sigma) {return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))}
+  
+  bin_centre_lists <- purrr::map2(mus, sigmas, rand_bin_centres)
+  bin_mass_lists <- purrr::pmap(list(bin_centre_lists, mus, sigmas), dnorm)
+  
+  self_net_emd <- function(bin_masses, bin_centres) {
+    net_emd(bin_masses, bin_masses, bin_centres, bin_centres, net_emd_step)
+  }
+  
+  expect_equalish <- function(actual, expected) {
+    diff <- abs(actual - expected)
+    max_diff <- 1e-04
+    return(diff <= max_diff)
+  }
+  
+  expected <- 0
+  actuals <- purrr::map2_dbl(bin_mass_lists, bin_centre_lists, self_net_emd)
+  purrr::map_dbl(actuals, function(actual) {expect_equalish(actual, expected)})
+
+
+})
+
+test_that("net_emd returns 0 when comparing any normal histogram randomly offset against itself", {
+  num_hists <- 10
+  num_bins <- 101
+  num_offsets <- 10
+  net_emd_step <- 0.1
+
+  mus <- runif(num_hists, -10, 10)
+  sigmas <- runif(num_hists, 0, 10)
+  offsets <- runif(num_offsets, -10, 10)
+
+  rand_bin_centres <- function(mu, sigma) {return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))}
+  
+  bin_centre_lists <- purrr::map2(mus, sigmas, rand_bin_centres)
+  bin_mass_lists <- purrr::pmap(list(bin_centre_lists, mus, sigmas), dnorm)
+  offset_lists <- replicate(num_hists, offsets, simplify = FALSE)
+  
+  expect_equalish <- function(actual, expected) {
+    diff <- abs(actual - expected)
+    max_diff <- 1e-04
+    return(diff <= max_diff)
+  }
+  
+  net_emd_offset_self <- function(bin_masses, bin_centres, offsets) {
+    net_emds <- purrr::map_dbl(offsets, function(offset) {net_emd(bin_masses, bin_masses, bin_centres, bin_centres + offset, net_emd_step)})
+    return(net_emds)
+  }
+
+  expected <- 0
+  actuals_list <- purrr::pmap(list(bin_mass_lists, bin_centre_lists, offset_lists), net_emd_offset_self)
+  purrr::map(actuals_list, function(actuals) {
+        purrr::map_dbl(actuals, function(actual) {expect_equalish(actual, expected)})
+  })
 })
 
 # EMD_LP and EMD_CS: Real data tests

@@ -1,4 +1,5 @@
 library("lpSolve")
+library("purrr")
 
 #' NetEMD Network Earth Mover's Distance
 #' 
@@ -14,7 +15,7 @@ library("lpSolve")
 #' @param bin_centres2 Bin centres for histogram 2
 #' @return NetEMD
 #' @export
-net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
+net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2, step = 1) {
   # Normalise histograms to unit variance
   bin_centres1 <- normalise_histogram_variance(bin_masses1, bin_centres1)
   bin_centres2 <- normalise_histogram_variance(bin_masses2, bin_centres2)
@@ -25,13 +26,14 @@ net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   # Determine minimum and maximum offset of range in which histograms overlap
   # if sliding histogram 1
   min_offset <- min(bin_centres2) - max(bin_centres1)
-  max_offset <-max(bin_centres2) - min(bin_centres1)
-  
+  max_offset <- max(bin_centres2) - min(bin_centres1)
+
   # Offset histogram 1 by all possible overlapping offsets and calculate EMD at
   # each offset, keeping track of minimum EMD across all offsets. This is the 
   # NetEMD
-  offsets <- min_offset:max_offset
-  emds <- vapply(offsets, function(offset) {return(emd_cs(bin_masses1, bin_centres1 + offset, bin_masses2, bin_centres2))}, numeric(1))
+  offsets <- seq(min_offset, max_offset, by = step)
+
+  emds <- purrr:::map_dbl(offsets, function(offset) {emd_cs(bin_masses1, bin_masses2, bin_centres1 + offset, bin_centres2)})
   net_emd <- min(emds)
   return(net_emd)
 }
@@ -41,14 +43,16 @@ net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
 #' Takes two sets of histogram bin masses and bin centres and calculates the 
 #' Earth Mover's Distance between the two histograms by solving the Transport
 #' Problem using linear programming.
+#' 
+#' WARNING: Linear Programming solution will only give a correct answer if all
+#' masses and distances between bin centres are integers.
 #' @param bin_masses1 Bin masses for histogram 1
 #' @param bin_masses2 Bin masses for histogram 2
 #' @param bin_centres1 Bin centres for histogram 1
 #' @param bin_centres2 Bin centres for histogram 2
-#' @return EMD
+#' @return Earth Mover's Distance between the two input histograms
 #' @export
 emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
-  
   num_bins1 <- length(bin_masses1)
   num_bins2 <- length(bin_masses2)
   
@@ -62,7 +66,20 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
     stop("Number of bin masses and bin centres provided for histogram 2 must be equal")
   }
   
+  # Generate cost matrix
   cost_mat <- cost_matrix(bin_centres1, bin_centres2)
+ 
+  # Linear Programming solv%er requires all bin masses and transportation costs 
+  # to be integers to generate correct answer
+  if(!isTRUE(all.equal(bin_masses1, floor(bin_masses1)))) {
+    stop("All bin masses for histogram 1 must be integers for accurate Linear Programming solution")
+  }
+  if(!isTRUE(all.equal(bin_masses2, floor(bin_masses2)))) {
+    stop("All bin masses for histogram 2 must be integers for accurate Linear Programming solution")
+  }
+  if(!isTRUE(all.equal(cost_mat, floor(cost_mat)))) {
+    stop("All costs must be integers for accurate Linear Programming solution")
+  } 
   row_signs <- rep("==", num_bins1)
   col_signs <- rep("<=", num_bins2)
   s <- lpSolve::lp.transport(cost.mat = cost_mat, row.signs = row_signs, 
@@ -84,7 +101,7 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
 #' @param bin_masses2 Bin masses for histogram 2
 #' @param bin_centres1 Bin centres for histogram 1
 #' @param bin_centres2 Bin centres for histogram 2
-#' @return EMD
+#' @return Earth Mover's Distance between the two input histograms
 #' @export
 emd_cs <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   
