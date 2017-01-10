@@ -1,6 +1,6 @@
 library("netdist")
 library("purrr")
-context("NetEMD")
+context("Measures NetEMD")
 
 
 # BIN NORMALISATION: Property based tests
@@ -336,7 +336,7 @@ test_that("net_emd returns 0 when comparing an integer centre histograms against
 })
 
 test_that("net_emd returns 0 when comparing any normal histogram against itself (no offset)", {
-  num_hists <- 10
+  num_hists <- 5
   num_bins <- 101
   net_emd_step <- 0.1
   
@@ -366,9 +366,9 @@ test_that("net_emd returns 0 when comparing any normal histogram against itself 
 })
 
 test_that("net_emd returns 0 when comparing any normal histogram randomly offset against itself", {
-  num_hists <- 10
+  num_hists <- 2
   num_bins <- 101
-  num_offsets <- 10
+  num_offsets <- 3
   net_emd_step <- 0.1
 
   mus <- runif(num_hists, -10, 10)

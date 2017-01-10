@@ -2,8 +2,9 @@
 
 export(emd_cs)
 export(emd_lp)
-export(graph_to_indexed_edge_list)
+export(graph_to_indexed_edges)
 export(graph_to_orca_graph)
+export(indexed_edges_to_graph)
 export(net_emd)
 export(read_orca_edge_list)
 export(read_orca_graph)

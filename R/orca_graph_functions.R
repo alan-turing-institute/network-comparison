@@ -10,14 +10,35 @@ library(igraph)
 #' include all vertex indexes from 1 to numVertices.
 #' @param graph An igraph graph object
 #' @return A 2 x numEdges edgelist with vertices labelled with integer indices
+#' and a 1 x numVertices node list where the Nth element of the vector contains
+#' the label for the vertice represented by index N in the edgelist
 #' @export
-graph_to_indexed_edge_list <- function(graph) {
+graph_to_indexed_edges <- function(graph) {
   # Use igraph method to get edge list with edges specified using vertex ID 
   # (indexes) rather than names
   edges <- igraph::get.edgelist(graph, names = FALSE)
   # Convert edge list from numeric to integer
   edges <- structure(vapply(edges, as.integer, integer(1)), dim = dim(edges))
+  colnames(edges) <- c("Node A index", "Node B index")
+  node_vertex_names <- igraph::get.vertex.attribute(graph, name = "name")
+  attr(edges, "vertex_names") <- node_vertex_names
   return(edges)
+}
+
+#' Graph from integer index edge list
+#' 
+#' Takes an integer indexed edgelist (where each edge is represented by the 
+#' integer indexes of its vertices) and converts it to an igraph format graph.
+#' If the edge list has a "vertex_names" attribute, this will be used to name
+#' the vertices in the resultant graph.
+#' @param indexed_edges A 2 x numEdges edgelist with vertices labelled with 
+#' integer indices, with an optional "vertex_names" attribute
+#' @return An igraph graph object
+#' @export
+indexed_edges_to_graph <- function(indexed_edges) {
+  graph <- igraph::graph_from_edgelist(indexed_edges)
+  graph <- igraph::set.vertex.attribute(graph, name = "name", value = attr(indexed_edges, "vertex_names"))
+  return(graph)
 }
 
 #' Make arbitrary igraph ORCA compatible
@@ -86,5 +107,5 @@ read_orca_graph <- function(file, format = "ncol") {
 #' @return An ORCA compatible edge list
 #' @export
 read_orca_edge_list <- function(file, format = "ncol") {
-  graph_to_indexed_edge_list(read_orca_graph(file, format))
+  graph_to_indexed_edges(read_orca_graph(file, format))
 }
