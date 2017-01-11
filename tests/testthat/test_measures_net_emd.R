@@ -398,12 +398,3 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
         purrr::map_dbl(actuals, function(actual) {expect_equalish(actual, expected)})
   })
 })
-
-# EMD_LP and EMD_CS: Real data tests
-test_that("EMD methods return correct results for sample virus PPI data sets", {
-  file_names <- c("EBV-1.txt", "ECL-1.txt", "HSV-1-1.txt", "KSHV-1.txt", "VZV-1.txt")
-  dataset_names <- c("EBV", "ECL", "HSV", "KSHV", "VZV")
-  file_formats <- c("ncol", "ncol", "ncol", "ncol", "ncol")
-  data <- data.frame(dataset_names, file_names, file_formats)
-})
-
