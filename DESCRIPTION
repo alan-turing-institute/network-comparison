@@ -5,17 +5,19 @@ Authors@R: person("Martin", "O'Reilly",email = "developer@mtspace.net",
                   role = c("aut", "cre"))
 Description: An implementation of the NetEMD alignment-free network
     distance measure. The NetEMD measure is the minimal earth-mover's distance
-    between the graph feature distribution for two networks. The package also 
+    between the graph feature distribution for two networks. The package also
     provides methods for calculating some common graph feature distributions.
 Depends:
     R (>= 3.1.0)
 LazyData: true
 License: MIT + file LICENSE
 Imports:
-    orca,
     igraph,
+    orca,
+    purrr,
     lpSolve
 Suggests:
-    purrr,
-    testthat
+    testthat,
+    knitr
 RoxygenNote: 5.0.1.9000
+VignetteBuilder: knitr

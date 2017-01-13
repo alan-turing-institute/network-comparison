@@ -32,7 +32,7 @@ discrete_hist <- function(observations) {
   }
   
   locations <- sort(unique(observations))
-  counts <- purrr::map_int(locations, function(location) {sum(observations == location)})
+  counts <- sapply(locations, function(location) {sum(observations == location)})
   
   hist <- list(locations = locations, counts = counts)
   return(hist)

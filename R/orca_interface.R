@@ -109,3 +109,18 @@ read_orca_graph <- function(file, format = "ncol") {
 read_orca_edge_list <- function(file, format = "ncol") {
   graph_to_indexed_edges(read_orca_graph(file, format))
 }
+
+#' ORCA vertex graphlet orbit counts to graphlet orbit histograms
+#' 
+#' Converts ORCA output (counts of each graphlet orbit at each graph vertex) to 
+#' a set of graphlet degree histograms (a histogram of counts across all graph 
+#' vertices for each graphlet orbit) 
+#' 
+#' @param orca_counts ORCA output: Counts of each graphlet orbit 
+#' (columns) at each graph vertex (rows)
+#' @return Graphlet degree histograms: List of degree histograms for each 
+#' graphlet orbit
+#' @export
+orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
+  apply(orca_counts, 2, discrete_hist)
+}
