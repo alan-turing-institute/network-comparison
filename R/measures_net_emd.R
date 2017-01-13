@@ -3,7 +3,8 @@ library("purrr")
 
 #' NetEMD Network Earth Mover's Distance
 #' 
-#' Calculates the minimum Earth Mover's Distance (EMD) between two histograms.
+#' Calculates the minimum Earth Mover's Distance (EMD) between two histograms
+#' after normalising to unit mass and variance.
 #' This is calculated as follows:
 #'   1. Normalise each histogram to have unit mass and unit variance
 #'   2. "Slide" histogram 1 over histogram 2 by varying the bin offset between 

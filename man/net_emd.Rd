@@ -19,7 +19,8 @@ net_emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2, step = 1)
 NetEMD
 }
 \description{
-Calculates the minimum Earth Mover's Distance (EMD) between two histograms.
+Calculates the minimum Earth Mover's Distance (EMD) between two histograms
+after normalising to unit mass and variance.
 This is calculated as follows:
   1. Normalise each histogram to have unit mass and unit variance
   2. "Slide" histogram 1 over histogram 2 by varying the bin offset between 
