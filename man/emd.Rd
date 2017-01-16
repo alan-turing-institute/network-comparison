@@ -4,16 +4,12 @@
 \alias{emd}
 \title{Earth Mover's Distance (EMD)}
 \usage{
-emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
+emd(histogram1, histogram2)
 }
 \arguments{
-\item{bin_masses1}{Bin masses for histogram 1}
+\item{histogram1}{Histogram 1 as list with names members `masses` and `locations`}
 
-\item{bin_masses2}{Bin masses for histogram 2}
-
-\item{bin_centres1}{Bin centres for histogram 1}
-
-\item{bin_centres2}{Bin centres for histogram 2}
+\item{histogram2}{Histogram 2 as list with names members `masses` and `locations`}
 }
 \value{
 Earth Mover's Distance between the two input histograms

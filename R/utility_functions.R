@@ -22,7 +22,7 @@ rotr_vec <- function(vec, rshift) {
 #' \itemize{
 #'   \item \code{$locations}: Integer-valued locations where one or more observations 
 #'   exist
-#'   \item \code{$counts}: Integer counts of observations at each location
+#'   \item \code{$masses}: Integer counts of observations at each location
 #' }
 #' @export
 discrete_hist <- function(observations) {
@@ -34,6 +34,20 @@ discrete_hist <- function(observations) {
   locations <- sort(unique(observations))
   counts <- sapply(locations, function(location) {sum(observations == location)})
   
-  hist <- list(locations = locations, counts = counts)
+  hist <- list(locations = locations, masses = counts)
   return(hist)
-} 
+}
+
+#' Shift histogram
+#' 
+#' Shift the bin locations of a histogram rightwards on the x-axis by the 
+#' specificed shift
+#' @param histogram A histogram as a list with named members `masses` and `locations`
+#' @param shift The distance to add to all bin locations
+#' @return A  shifted histogram as a list with named members `masses` and `locations`
+#' @export
+shift_histogram <- function(histogram, shift) {
+  histogram$locations <- histogram$locations + shift
+  return(histogram)
+}
+

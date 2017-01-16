@@ -159,11 +159,13 @@ test_that("EMD methods return 0 when comparing a 1D feature distribution to itse
   bin_masses2 <- bin_masses1
   bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
   bin_centres2 <- bin_centres1
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   
   expected <- 0
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(histogram1, histogram2), expected)
 })
 
 test_that("EMD methods return numBins/2 when offsetting a symmetric discrete triangle distribution by 1", {
@@ -178,83 +180,99 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   num_nonzero_bins <- sum(bin_masses1 > 0)
   expected <- cost_fn(num_nonzero_bins)
   emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(histogram1, histogram2), expected)
   
   # Triangle(4, even), shifting by changing centres
   bin_masses1 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2) + 1
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   num_nonzero_bins <- sum(bin_masses1 > 0)
   expected <- cost_fn(num_nonzero_bins)
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(histogram1, histogram2), expected)
   
   # Triangle(5, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(histogram1, histogram2), expected)
   
   # Triangle(5, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2) + 1
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(histogram1, histogram2), expected)
   
   # Triangle(5, even), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(histogram1, histogram2), expected)
   
   # Triangle(5, even), shifting by changing centres
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2) + 1
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(histogram1, histogram2), expected)
   
   # Triangle(6, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(histogram1, histogram2), expected)
   
   # Triangle(6, odd), shifting by changing centres
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2) + 1
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(histogram1, histogram2), expected)
   
 })
 
@@ -263,6 +281,8 @@ test_that("EMD methods return same result for densely and sparsely specified bin
   sparse_bin_masses2 <- c(1, 1, 1, 1, 1, 1)
   sparse_bin_centres1 <- c(1, 2, 4, 7, 11, 16)
   sparse_bin_centres2 <- c(21, 22, 24, 27, 31, 36)
+  sparse_histogram1 <- list(masses = sparse_bin_masses1, locations = sparse_bin_centres1)
+  sparse_histogram2 <- list(masses = sparse_bin_masses2, locations = sparse_bin_centres2)
   
   dense_bin_centres1 <- 1:36
   dense_bin_centres2 <- dense_bin_centres1
@@ -270,6 +290,8 @@ test_that("EMD methods return same result for densely and sparsely specified bin
   bin_mass_padding <- rep(0, length(dense_bin_centres1) - length(bin_mass_sequence))
   dense_bin_masses1 <- c(bin_mass_sequence, bin_mass_padding)
   dense_bin_masses2 <- c(bin_mass_padding, bin_mass_sequence)
+  dense_histogram1 <- list(masses = dense_bin_masses1, locations = dense_bin_centres1)
+  dense_histogram2 <- list(masses = dense_bin_masses2, locations = dense_bin_centres2)
   
   expect_equal(emd_lp(dense_bin_masses1, dense_bin_masses2, 
                     dense_bin_centres1, dense_bin_centres2),
@@ -279,10 +301,8 @@ test_that("EMD methods return same result for densely and sparsely specified bin
                     dense_bin_centres1, dense_bin_centres2),
               emd_cs(sparse_bin_masses1, sparse_bin_masses2, 
                     sparse_bin_centres1, sparse_bin_centres2))
-  expect_equal(emd(dense_bin_masses1, dense_bin_masses2, 
-                      dense_bin_centres1, dense_bin_centres2),
-               emd(sparse_bin_masses1, sparse_bin_masses2, 
-                      sparse_bin_centres1, sparse_bin_centres2))
+  expect_equal(emd(dense_histogram1, dense_histogram2), 
+               emd(sparse_histogram1, sparse_histogram2))
 })
 
 test_that("EMD methods return same result when order of densely specified bins is changed", {
@@ -290,6 +310,8 @@ test_that("EMD methods return same result when order of densely specified bins i
   bin_masses2 <- c(0, 0, 0, 0, 0, 1, 1, 1, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   
   permuted_indexes1 <- sample(1:length(bin_masses1), replace = FALSE)
   permuted_indexes2 <- sample(1:length(bin_masses2), replace = FALSE)
@@ -298,6 +320,8 @@ test_that("EMD methods return same result when order of densely specified bins i
   permuted_bin_centres1 <- bin_centres1[permuted_indexes1]
   permuted_bin_masses2 <- bin_masses2[permuted_indexes2]
   permuted_bin_centres2 <- bin_centres2[permuted_indexes2]
+  permuted_histogram1 <- list(masses = permuted_bin_masses1, locations = permuted_bin_centres1)
+  permuted_histogram2 <- list(masses = permuted_bin_masses2, locations = permuted_bin_centres2)
   
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
               emd_lp(permuted_bin_masses1, permuted_bin_masses2, 
@@ -305,9 +329,7 @@ test_that("EMD methods return same result when order of densely specified bins i
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
               emd_cs(permuted_bin_masses1, permuted_bin_masses2, 
                     permuted_bin_centres1, permuted_bin_centres2))
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
-               emd(permuted_bin_masses1, permuted_bin_masses2, 
-                      permuted_bin_centres1, permuted_bin_centres2))
+  expect_equal(emd(histogram1, histogram2), emd(permuted_histogram1, permuted_histogram2))
 })
 
 test_that("EMD methods return same result when order of sparsely specified bins is changed", {
@@ -315,6 +337,8 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   bin_masses2 <- c(1, 1, 1, 1, 1, 1)
   bin_centres1 <- c(1, 2, 4, 8, 16, 32)
   bin_centres2 <- c(-32, -16, -8, -4, -2, -1)
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   
   permuted_indexes1 <- sample(1:length(bin_masses1), replace = FALSE)
   permuted_indexes2 <- sample(1:length(bin_masses2), replace = FALSE)
@@ -323,6 +347,8 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   permuted_bin_centres1 <- bin_centres1[permuted_indexes1]
   permuted_bin_masses2 <- bin_masses2[permuted_indexes2]
   permuted_bin_centres2 <- bin_centres2[permuted_indexes2]
+  permuted_histogram1 <- list(masses = permuted_bin_masses1, locations = permuted_bin_centres1)
+  permuted_histogram2 <- list(masses = permuted_bin_masses2, locations = permuted_bin_centres2)
   
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
                emd_lp(permuted_bin_masses1, permuted_bin_masses2, 
@@ -330,27 +356,26 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
                emd_cs(permuted_bin_masses1, permuted_bin_masses2, 
                       permuted_bin_centres1, permuted_bin_centres2))
-  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
-               emd(permuted_bin_masses1, permuted_bin_masses2, 
-                      permuted_bin_centres1, permuted_bin_centres2))
+  expect_equal(emd(histogram1, histogram2), emd(permuted_histogram1, permuted_histogram2))
   })
 
 # NetEMD: Property-based tests
 test_that("net_emd returns 0 when comparing an integer centre histograms against itself with a net_emd offset step that will hit zero offset", {
-
-  self_net_emd <- function(bin_masses, bin_centres, step) {
-    net_emd(bin_masses, bin_masses, bin_centres, bin_centres, step)
+  
+  self_net_emd <- function(histogram, step) {
+    net_emd(histogram, shift_histogram(histogram, step))
   }
   expected <- 0
   
   bin_masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_centres <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+  histogram <- list(masses = bin_masses, locations = bin_centres)
 
-  expect_equal(self_net_emd(bin_masses, bin_centres, step = 1), expected)
-  expect_equal(self_net_emd(bin_masses, bin_centres, step = 0.5), expected)
-  expect_equal(self_net_emd(bin_masses, bin_centres, step = 0.1), expected)
-  expect_equal(self_net_emd(bin_masses, bin_centres, step = 0.05), expected)
-  expect_equal(self_net_emd(bin_masses, bin_centres, step = 0.01), expected)
+  expect_equal(self_net_emd(histogram, step = 1), expected)
+  expect_equal(self_net_emd(histogram, step = 0.5), expected)
+  expect_equal(self_net_emd(histogram, step = 0.1), expected)
+  expect_equal(self_net_emd(histogram, step = 0.05), expected)
+  expect_equal(self_net_emd(histogram, step = 0.01), expected)
 })
 
 test_that("net_emd returns 0 when comparing any normal histogram against itself (no offset)", {
@@ -367,7 +392,8 @@ test_that("net_emd returns 0 when comparing any normal histogram against itself 
   bin_mass_lists <- purrr::pmap(list(bin_centre_lists, mus, sigmas), dnorm)
   
   self_net_emd <- function(bin_masses, bin_centres) {
-    net_emd(bin_masses, bin_masses, bin_centres, bin_centres, net_emd_step)
+    histogram <- list(masses = bin_masses, locations = bin_centres)
+    net_emd(histogram, histogram, net_emd_step)
   }
   
   expect_equalish <- function(actual, expected) {
@@ -384,6 +410,7 @@ test_that("net_emd returns 0 when comparing any normal histogram against itself 
 })
 
 test_that("net_emd returns 0 when comparing any normal histogram randomly offset against itself", {
+  
   num_hists <- 2
   num_bins <- 101
   num_offsets <- 3
@@ -406,7 +433,8 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   }
   
   net_emd_offset_self <- function(bin_masses, bin_centres, offsets) {
-    net_emds <- purrr::map_dbl(offsets, function(offset) {net_emd(bin_masses, bin_masses, bin_centres, bin_centres + offset, net_emd_step)})
+    histogram <- list(masses = bin_masses, locations = bin_centres)
+    net_emds <- purrr::map_dbl(offsets, function(offset) {net_emd(histogram, shift_histogram(histogram, offset), net_emd_step)})
     return(net_emds)
   }
 

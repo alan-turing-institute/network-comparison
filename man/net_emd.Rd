@@ -4,7 +4,7 @@
 \alias{net_emd}
 \title{NetEMD Network Earth Mover's Distance}
 \usage{
-net_emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2, step = 1)
+net_emd(histogram1, histogram2, step = 1)
 }
 \arguments{
 \item{bin_masses1}{Bin masses for histogram 1}

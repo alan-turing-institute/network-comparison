@@ -113,8 +113,8 @@ test_that("discrete_hist generates correct discrete histograms for random intege
     
     # Check that histogram locations and counts match those used to generate the 
     # observations
-    expect_true(all.equal(hist$locations, expected_locations));
-    expect_true(all.equal(hist$counts, expected_counts))
+    expect_true(all.equal(hist$locations, expected_locations))
+    expect_true(all.equal(hist$masses, expected_counts))
   }
   
   for(i in 1:num_tests) {

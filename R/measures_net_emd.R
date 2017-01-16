@@ -16,13 +16,13 @@ library("purrr")
 #' @param bin_centres2 Bin centres for histogram 2
 #' @return NetEMD
 #' @export
-net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2, step = 1) {
+net_emd <- function(histogram1, histogram2, step = 1) {
   # Normalise histograms to unit variance
-  bin_centres1 <- normalise_histogram_variance(bin_masses1, bin_centres1)
-  bin_centres2 <- normalise_histogram_variance(bin_masses2, bin_centres2)
+  bin_centres1 <- normalise_histogram_variance(histogram1$masses, histogram1$locations)
+  bin_centres2 <- normalise_histogram_variance(histogram2$masses, histogram2$locations)
   # Normalise histograms to unit mass
-  bin_masses1 <- normalise_histogram_mass(bin_masses1)
-  bin_masses2 <- normalise_histogram_mass(bin_masses2)
+  bin_masses1 <- normalise_histogram_mass(histogram1$masses)
+  bin_masses2 <- normalise_histogram_mass(histogram2$masses)
   
   # Determine minimum and maximum offset of range in which histograms overlap
   # if sliding histogram 1
@@ -33,8 +33,11 @@ net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2, step =
   # each offset, keeping track of minimum EMD across all offsets. This is the 
   # NetEMD
   offsets <- seq(min_offset, max_offset, by = step)
+  
+  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
 
-  emds <- purrr:::map_dbl(offsets, function(offset) {emd(bin_masses1, bin_masses2, bin_centres1 + offset, bin_centres2)})
+  emds <- purrr:::map_dbl(offsets, function(offset) {emd(shift_histogram(histogram1, offset), histogram2)})
   net_emd <- min(emds)
   return(net_emd)
 }
@@ -43,16 +46,14 @@ net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2, step =
 #' 
 #' Takes two sets of histogram bin masses and bin centres and calculates the 
 #' Earth Mover's Distance between the two histograms
-#' @param bin_masses1 Bin masses for histogram 1
-#' @param bin_masses2 Bin masses for histogram 2
-#' @param bin_centres1 Bin centres for histogram 1
-#' @param bin_centres2 Bin centres for histogram 2
+#' @param histogram1 Histogram 1 as list with names members `masses` and `locations`
+#' @param histogram2 Histogram 2 as list with names members `masses` and `locations`
 #' @return Earth Mover's Distance between the two input histograms
 #' @export
-emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
+emd <- function(histogram1, histogram2) {
   # Use efficient difference of cumulative histogram method that can also 
   # handle non-integer bin masses and location differences
-  emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
+  emd_cs(histogram1$masses, histogram2$masses, histogram1$locations, histogram2$locations)
 }
 
 #' Earth Mover's Distance (EMD) using linear programming (LP)

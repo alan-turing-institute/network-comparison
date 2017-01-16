@@ -15,7 +15,7 @@ named elements:
 \itemize{
   \item \code{$locations}: Integer-valued locations where one or more observations 
   exist
-  \item \code{$counts}: Integer counts of observations at each location
+  \item \code{$masses}: Integer counts of observations at each location
 }
 }
 \description{
