@@ -5,14 +5,14 @@
 #' @return M
 #' @export
 graph_cross_comparison_spec <- function(graph_edges) {
-  names <- expand.grid(attr(graph_edges, "name"), attr(graph_edges, "name"))
-  indexes <- expand.grid(1:length(graph_edges), 1:length(graph_edges))
+  indexes <- as.data.frame(t(utils::combn(1:length(graph_edges),2)))
+  names <- as.data.frame(cbind(attr(graph_edges, "name")[indexes[,1]], attr(graph_edges, "name")[indexes[,2]]))
   spec <- cbind(names, indexes)
-  colnames(spec) <- c("Name A", "Name B", "Index A", "Index B")
+  colnames(spec) <- c("name_a", "name_b", "index_a", "index_b")
   return(spec)
 }
 
-# WIP function to cross-compare a set of edge lists
+# WIP function to cross-comexpand.grid(i = 1:3, j = 4:6) pare a set of edge lists
 # cross_compare_graphs <- function(graph_edges, feature_spec = "orbits1") {
 #   spec <- graph_cross_comparison_spec(graph_edges)
 # }
