@@ -39,6 +39,22 @@ net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2, step =
   return(net_emd)
 }
 
+#' Earth Mover's Distance (EMD) 
+#' 
+#' Takes two sets of histogram bin masses and bin centres and calculates the 
+#' Earth Mover's Distance between the two histograms
+#' @param bin_masses1 Bin masses for histogram 1
+#' @param bin_masses2 Bin masses for histogram 2
+#' @param bin_centres1 Bin centres for histogram 1
+#' @param bin_centres2 Bin centres for histogram 2
+#' @return Earth Mover's Distance between the two input histograms
+#' @export
+emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
+  # Use efficient difference of cumulative histogram method that can also 
+  # handle non-integer bin masses and location differences
+  emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
+}
+
 #' Earth Mover's Distance (EMD) using linear programming (LP)
 #' 
 #' Takes two sets of histogram bin masses and bin centres and calculates the 
