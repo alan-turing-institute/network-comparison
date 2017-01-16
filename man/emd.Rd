@@ -19,6 +19,6 @@ emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
 Earth Mover's Distance between the two input histograms
 }
 \description{
-#' Takes two sets of histogram bin masses and bin centres and calculates the 
+Takes two sets of histogram bin masses and bin centres and calculates the 
 Earth Mover's Distance between the two histograms
 }

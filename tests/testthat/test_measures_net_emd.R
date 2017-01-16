@@ -153,7 +153,7 @@ test_that("augment_histograms works B", {
   expect_equal(actual, expected)
 })
 
-# EMD_LP and EMD_CS: Property-based tests
+# EMD: Property-based tests
 test_that("EMD methods return 0 when comparing a 1D feature distribution to itself",{
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- bin_masses1
@@ -163,6 +163,7 @@ test_that("EMD methods return 0 when comparing a 1D feature distribution to itse
   expected <- 0
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
 })
 
 test_that("EMD methods return numBins/2 when offsetting a symmetric discrete triangle distribution by 1", {
@@ -182,6 +183,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
   # Triangle(4, even), shifting by changing centres
   bin_masses1 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
@@ -192,6 +194,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   expected <- cost_fn(num_nonzero_bins)
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
   # Triangle(5, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
@@ -201,6 +204,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
   # Triangle(5, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
@@ -210,6 +214,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
   # Triangle(5, even), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
@@ -219,6 +224,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
   # Triangle(5, even), shifting by changing centres
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
@@ -228,6 +234,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
   # Triangle(6, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
@@ -237,6 +244,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
   # Triangle(6, odd), shifting by changing centres
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
@@ -246,6 +254,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   
 })
 
@@ -270,6 +279,10 @@ test_that("EMD methods return same result for densely and sparsely specified bin
                     dense_bin_centres1, dense_bin_centres2),
               emd_cs(sparse_bin_masses1, sparse_bin_masses2, 
                     sparse_bin_centres1, sparse_bin_centres2))
+  expect_equal(emd(dense_bin_masses1, dense_bin_masses2, 
+                      dense_bin_centres1, dense_bin_centres2),
+               emd(sparse_bin_masses1, sparse_bin_masses2, 
+                      sparse_bin_centres1, sparse_bin_centres2))
 })
 
 test_that("EMD methods return same result when order of densely specified bins is changed", {
@@ -292,6 +305,9 @@ test_that("EMD methods return same result when order of densely specified bins i
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
               emd_cs(permuted_bin_masses1, permuted_bin_masses2, 
                     permuted_bin_centres1, permuted_bin_centres2))
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
+               emd(permuted_bin_masses1, permuted_bin_masses2, 
+                      permuted_bin_centres1, permuted_bin_centres2))
 })
 
 test_that("EMD methods return same result when order of sparsely specified bins is changed", {
@@ -314,10 +330,12 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
                emd_cs(permuted_bin_masses1, permuted_bin_masses2, 
                       permuted_bin_centres1, permuted_bin_centres2))
+  expect_equal(emd(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
+               emd(permuted_bin_masses1, permuted_bin_masses2, 
+                      permuted_bin_centres1, permuted_bin_centres2))
   })
 
 # NetEMD: Property-based tests
-
 test_that("net_emd returns 0 when comparing an integer centre histograms against itself with a net_emd offset step that will hit zero offset", {
 
   self_net_emd <- function(bin_masses, bin_centres, step) {

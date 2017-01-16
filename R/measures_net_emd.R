@@ -34,7 +34,7 @@ net_emd <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2, step =
   # NetEMD
   offsets <- seq(min_offset, max_offset, by = step)
 
-  emds <- purrr:::map_dbl(offsets, function(offset) {emd_cs(bin_masses1, bin_masses2, bin_centres1 + offset, bin_centres2)})
+  emds <- purrr:::map_dbl(offsets, function(offset) {emd(bin_masses1, bin_masses2, bin_centres1 + offset, bin_centres2)})
   net_emd <- min(emds)
   return(net_emd)
 }
