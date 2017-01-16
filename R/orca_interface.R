@@ -115,7 +115,6 @@ read_orca_edge_list <- function(file, format = "ncol") {
 #' Converts ORCA output (counts of each graphlet orbit at each graph vertex) to 
 #' a set of graphlet degree histograms (a histogram of counts across all graph 
 #' vertices for each graphlet orbit) 
-#' 
 #' @param orca_counts ORCA output: Counts of each graphlet orbit 
 #' (columns) at each graph vertex (rows)
 #' @return Graphlet degree histograms: List of degree histograms for each 
@@ -123,4 +122,17 @@ read_orca_edge_list <- function(file, format = "ncol") {
 #' @export
 orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
   apply(orca_counts, 2, discrete_hist)
+}
+
+#' Graphlet Orbit Degree Distributions
+#' 
+#' Calculates the set of graphlet orbit degree distributions for graphlets of
+#' up to 4 nodes. 
+#' @param indexed_edges A 2 x numEdges edgelist with vertices labelled with 
+#' integer indices, with an optional "vertex_names" attribute
+#' @return Graphlet degree histograms: List of degree histograms for each 
+#' graphlet orbit
+#' @export
+godd<- function(indexed_edges) {
+  orca_counts_to_graphlet_orbit_degree_distribution(orca::count4(indexed_edges))
 }
