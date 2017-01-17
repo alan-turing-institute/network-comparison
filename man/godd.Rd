@@ -12,7 +12,8 @@ integer indices, with an optional "vertex_names" attribute}
 }
 \value{
 Graphlet degree histograms: List of degree histograms for each 
-graphlet orbit
+graphlet orbit, with each histogram represented as a \code{dhist} discrete
+histogram object
 }
 \description{
 Calculates the set of graphlet orbit degree distributions for graphlets of

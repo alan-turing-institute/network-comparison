@@ -131,7 +131,8 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 #' @param indexed_edges A 2 x numEdges edgelist with vertices labelled with 
 #' integer indices, with an optional "vertex_names" attribute
 #' @return Graphlet degree histograms: List of degree histograms for each 
-#' graphlet orbit
+#' graphlet orbit, with each histogram represented as a \code{dhist} discrete
+#' histogram object
 #' @export
 godd<- function(indexed_edges) {
   orca_counts_to_graphlet_orbit_degree_distribution(orca::count4(indexed_edges))
