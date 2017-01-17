@@ -31,9 +31,43 @@ dhist <- function(locations, masses) {
   if(length(locations) != length(masses)) {
     stop("The number of bin locations and masses provided must be equals")
   }
-  dhist <- list(locations = locations, masses = masses, class = "hist")
+  dhist <- list(locations = locations, masses = masses)
+  class(dhist) <- "dhist"
+  return(dhist)
 }
 
+#' Check if an object is a \code{dhist} discrete histogram
+#' 
+#' Checks if the input object is of class \code{dhist}. If \code{fast_check} is 
+#' \code{TRUE} then the only check is whether the object has a class attribute of 
+#' \code{dhist}. If \code{fast_check} is \code{FALSE} (default), then checks
+#' are also made to ensure that the object has the structure required of a
+#' \code{dhist} object. 
+#' @param \code{x} An arbitrary object
+#' @param \code{fast_check} Boolean flag inficating whether to perform only a 
+#' superficial fast check limited to checking the object's class attribute 
+#' is set to \code{dhist} (default = \code{FALSE})
+#' @export
+is_dhist <- function(x, fast_check = FALSE) {
+  # Quick check that relies on user not to construct variables with "dhist" class
+  # that do not have the required elements
+  has_class_attr <-(class(x) == "dhist")
+  if(fast_check) {
+    # Early return is fadt check requested
+    return(has_class_attr)
+  }
+  # Otherwise check structure
+  has_locations <- contains(attr(x, "name"), "locations")
+  has_masses <- contains(attr(x, "name"), "masses")
+  # Require list with correct class and presence of 1D numeric vector named 
+  # elements "locations" and "masses"
+  return(has_class_attr
+         && is_list(x)
+         && has_locations
+         && has_masses
+         && is_numeric_vector_1d(x$locations)
+         && is_numeric_vector_1d(x$masses))
+}
 
 #' Discrete histogram from observations
 #' 
