@@ -83,11 +83,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co"># This contains PPI graphs for 5 viruses</span>
 <span class="kw">attr</span>(virusppi, <span class="st">&quot;names&quot;</span>)</code></pre></div>
 <pre><code>## [1] &quot;EBV&quot;  &quot;ECL&quot;  &quot;HSV&quot;  &quot;KSHV&quot; &quot;VZV&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculate graphlet degree orbit distributions up to 4 nodes for all graphsvir </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculate graphlet degree orbit distributions up to 4 nodes for all graphs </span>
 <span class="co"># This only needs to be done once per graph</span>
 virus_godd &lt;-<span class="st"> </span>purrr::<span class="kw">map</span>(virusppi, godd)
 
-<span class="co"># Generate a cross-comparison matrix listing all permutations of </span>
+<span class="co"># Generate a cross-comparison matrix listing all combinations of graphs</span>
 comp_spec &lt;-<span class="st"> </span><span class="kw">graph_cross_comparison_spec</span>(virusppi)
 comp_spec[<span class="dv">1</span>:<span class="dv">5</span>,]</code></pre></div>
 <pre><code>##   name_a name_b index_a index_b
@@ -118,7 +118,7 @@ comp_spec$net_emd =<span class="st"> </span>net_emds
 ## 8     HSV   KSHV       3       4 0.1512162
 ## 9     HSV    VZV       3       5 0.1738157
 ## 10   KSHV    VZV       4       5 0.2028256</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Check NetEMD of a graph with itself is zero</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Confirm NetEMD of a graph with itself is zero</span>
 <span class="kw">net_emd</span>(virus_godd[[<span class="dv">1</span>]]$O0, virus_godd[[<span class="dv">1</span>]]$O0)</code></pre></div>
 <pre><code>## [1] 0</code></pre>
 </div>
