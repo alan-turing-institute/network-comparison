@@ -32,7 +32,7 @@ net_emd <- function(histogram1, histogram2) {
   histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
   
   emd_offset <- function(offset, hist1, hist2) {
-    emd(shift_histogram(histogram1, offset), histogram2)
+    emd(shift_dhist(histogram1, offset), histogram2)
   }
   # Determine minimum EMD across all offsets
   opt_soln <- optimise(emd_offset, lower = min_offset, upper = max_offset)

@@ -360,22 +360,22 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   })
 
 # NetEMD: Property-based tests
-test_that("net_emd returns 0 when comparing an integer centre histograms against itself with a net_emd offset step that will hit zero offset", {
+test_that("net_emd returns 0 when comparing an integer location histogram against itself", {
   
-  self_net_emd <- function(histogram, step) {
-    net_emd(histogram, shift_histogram(histogram, step))
+  self_net_emd <- function(histogram, shift) {
+    net_emd(histogram, shift_dhist(histogram, shift))
   }
   expected <- 0
   
-  bin_masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
-  bin_centres <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
-  histogram <- list(masses = bin_masses, locations = bin_centres)
+  locations <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+  masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
+  histogram <- dhist(locations = locations, masses = masses)
 
-  expect_equal(self_net_emd(histogram, step = 1), expected)
-  expect_equal(self_net_emd(histogram, step = 0.5), expected)
-  expect_equal(self_net_emd(histogram, step = 0.1), expected)
-  expect_equal(self_net_emd(histogram, step = 0.05), expected)
-  expect_equal(self_net_emd(histogram, step = 0.01), expected)
+  expect_equal(self_net_emd(histogram, shift = 1), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.5), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.1), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.05), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.01), expected)
 })
 
 test_that("net_emd returns 0 when comparing any normal histogram against itself (no offset)", {
@@ -385,13 +385,13 @@ test_that("net_emd returns 0 when comparing any normal histogram against itself 
   mus <- runif(num_hists, -10, 10)
   sigmas <- runif(num_hists, 0, 10)
 
-  rand_bin_centres <- function(mu, sigma) {return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))}
+  rand_locations <- function(mu, sigma) {return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))}
   
-  bin_centre_lists <- purrr::map2(mus, sigmas, rand_bin_centres)
-  bin_mass_lists <- purrr::pmap(list(bin_centre_lists, mus, sigmas), dnorm)
+  location_lists <- purrr::map2(mus, sigmas, rand_locations)
+  mass_lists <- purrr::pmap(list(location_lists, mus, sigmas), dnorm)
   
-  self_net_emd <- function(bin_masses, bin_centres) {
-    histogram <- list(masses = bin_masses, locations = bin_centres)
+  self_net_emd <- function(locations, masses) {
+    histogram <- dhist(locations = locations, masses = masses)
     net_emd(histogram, histogram)
   }
   
@@ -402,9 +402,8 @@ test_that("net_emd returns 0 when comparing any normal histogram against itself 
   }
   
   expected <- 0
-  actuals <- purrr::map2_dbl(bin_mass_lists, bin_centre_lists, self_net_emd)
+  actuals <- purrr::map2_dbl(location_lists, mass_lists, self_net_emd)
   purrr::map_dbl(actuals, function(actual) {expect_equalish(actual, expected)})
-
 
 })
 
@@ -418,10 +417,10 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   sigmas <- runif(num_hists, 0, 10)
   offsets <- runif(num_offsets, -10, 10)
 
-  rand_bin_centres <- function(mu, sigma) {return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))}
+  rand_locations <- function(mu, sigma) {return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))}
   
-  bin_centre_lists <- purrr::map2(mus, sigmas, rand_bin_centres)
-  bin_mass_lists <- purrr::pmap(list(bin_centre_lists, mus, sigmas), dnorm)
+  location_lists <- purrr::map2(mus, sigmas, rand_locations)
+  mass_lists <- purrr::pmap(list(location_lists, mus, sigmas), dnorm)
   offset_lists <- replicate(num_hists, offsets, simplify = FALSE)
   
   expect_equalish <- function(actual, expected) {
@@ -430,14 +429,14 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
     return(diff <= max_diff)
   }
   
-  net_emd_offset_self <- function(bin_masses, bin_centres, offsets) {
-    histogram <- list(masses = bin_masses, locations = bin_centres)
-    net_emds <- purrr::map_dbl(offsets, function(offset) {net_emd(histogram, shift_histogram(histogram, offset))})
+  net_emd_offset_self <- function(locations, masses, offsets) {
+    histogram <- list(locations = locations, masses = masses)
+    net_emds <- purrr::map_dbl(offsets, function(offset) {net_emd(histogram, shift_dhist(histogram, offset))})
     return(net_emds)
   }
 
   expected <- 0
-  actuals_list <- purrr::pmap(list(bin_mass_lists, bin_centre_lists, offset_lists), net_emd_offset_self)
+  actuals_list <- purrr::pmap(list(location_lists, mass_lists, offset_lists), net_emd_offset_self)
   purrr::map(actuals_list, function(actuals) {
         purrr::map_dbl(actuals, function(actual) {expect_equalish(actual, expected)})
   })

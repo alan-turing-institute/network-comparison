@@ -121,7 +121,7 @@ read_orca_edge_list <- function(file, format = "ncol") {
 #' graphlet orbit
 #' @export
 orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
-  apply(orca_counts, 2, discrete_hist)
+  apply(orca_counts, 2, dhist_from_obs)
 }
 
 #' Graphlet Orbit Degree Distributions
