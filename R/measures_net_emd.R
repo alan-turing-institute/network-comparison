@@ -7,16 +7,15 @@ library("purrr")
 #' after normalising to unit mass and variance.
 #' This is calculated as follows:
 #'   1. Normalise each histogram to have unit mass and unit variance
-#'   2. "Slide" histogram 1 over histogram 2 by varying the bin offset between 
-#'      the two histograms, calculating the EMD at each offset.
-#'   3. The NetEMD is the minimum EMD observed across all offsets
+#'   2. Use the R stats `optimise` method to minimise the EMD between the two
+#'      histograms over all overlapping offsets of histogram 1
 #' @param bin_masses1 Bin masses for histogram 1
 #' @param bin_masses2 Bin masses for histogram 2
 #' @param bin_centres1 Bin centres for histogram 1
 #' @param bin_centres2 Bin centres for histogram 2
 #' @return NetEMD
 #' @export
-net_emd <- function(histogram1, histogram2, step = 1) {
+net_emd <- function(histogram1, histogram2) {
   # Normalise histograms to unit variance
   bin_centres1 <- normalise_histogram_variance(histogram1$masses, histogram1$locations)
   bin_centres2 <- normalise_histogram_variance(histogram2$masses, histogram2$locations)
@@ -29,17 +28,17 @@ net_emd <- function(histogram1, histogram2, step = 1) {
   min_offset <- min(bin_centres2) - max(bin_centres1)
   max_offset <- max(bin_centres2) - min(bin_centres1)
 
-  # Offset histogram 1 by all possible overlapping offsets and calculate EMD at
-  # each offset, keeping track of minimum EMD across all offsets. This is the 
-  # NetEMD
-  offsets <- seq(min_offset, max_offset, by = step)
-  
   histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  
+  emd_offset <- function(offset, hist1, hist2) {
+    emd(shift_histogram(histogram1, offset), histogram2)
+  }
+  # Determine minimum EMD across all offsets
+  opt_soln <- optimise(emd_offset, lower = min_offset, upper = max_offset)
+  min_emd <- opt_soln$objective
 
-  emds <- purrr:::map_dbl(offsets, function(offset) {emd(shift_histogram(histogram1, offset), histogram2)})
-  net_emd <- min(emds)
-  return(net_emd)
+  return(min_emd)
 }
 
 #' Earth Mover's Distance (EMD) 

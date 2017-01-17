@@ -4,7 +4,7 @@
 \alias{net_emd}
 \title{NetEMD Network Earth Mover's Distance}
 \usage{
-net_emd(histogram1, histogram2, step = 1)
+net_emd(histogram1, histogram2)
 }
 \arguments{
 \item{bin_masses1}{Bin masses for histogram 1}
@@ -23,7 +23,6 @@ Calculates the minimum Earth Mover's Distance (EMD) between two histograms
 after normalising to unit mass and variance.
 This is calculated as follows:
   1. Normalise each histogram to have unit mass and unit variance
-  2. "Slide" histogram 1 over histogram 2 by varying the bin offset between 
-     the two histograms, calculating the EMD at each offset.
-  3. The NetEMD is the minimum EMD observed across all offsets
+  2. Use the R stats `optimise` method to minimise the EMD between the two
+     histograms over all overlapping offsets of histogram 1
 }

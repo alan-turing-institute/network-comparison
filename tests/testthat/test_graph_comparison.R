@@ -29,26 +29,3 @@ test_that("Correct cross-comparison specification is generated for virus PPI dat
   # cell
   expect_true(matched_output(actual, expected))
 })
-
-
-# # EMD_LP and EMD_CS: Real data tests
-# test_that("emd_cs and emd_lp give same output when comapring virus PPI graphs", {
-#   # Load viurs PPI network data in ORCA-compatible edge list format
-#   data("virusppi")
-#   data_indexes <- 1:length(virusppi)
-#   data_names <- attr(virusppi, "name")
-#   
-#   # Calculate ORCA graphlet orbit degree distributions up to graphlet order 4
-#   orb_counts <- purrr::map(virusppi, orca::count4)
-#   
-#   # Set up cross comparison
-#   
-#   
-#   net_emd_for_pair <- function(index_pair, graph_edges) {
-#     net_emd()
-#   }
-#   graph_combinations <- expand.grid(data_indexes)
-#   
-#   net_emds_lp <- purrr::map(data_indexes)
-#   expect_true(FALSE)
-# })

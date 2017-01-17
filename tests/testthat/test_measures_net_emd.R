@@ -381,7 +381,6 @@ test_that("net_emd returns 0 when comparing an integer centre histograms against
 test_that("net_emd returns 0 when comparing any normal histogram against itself (no offset)", {
   num_hists <- 5
   num_bins <- 101
-  net_emd_step <- 0.1
   
   mus <- runif(num_hists, -10, 10)
   sigmas <- runif(num_hists, 0, 10)
@@ -393,12 +392,12 @@ test_that("net_emd returns 0 when comparing any normal histogram against itself 
   
   self_net_emd <- function(bin_masses, bin_centres) {
     histogram <- list(masses = bin_masses, locations = bin_centres)
-    net_emd(histogram, histogram, net_emd_step)
+    net_emd(histogram, histogram)
   }
   
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
-    max_diff <- 1e-04
+    max_diff <- 1e-12
     return(diff <= max_diff)
   }
   
@@ -414,7 +413,6 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   num_hists <- 2
   num_bins <- 101
   num_offsets <- 3
-  net_emd_step <- 0.1
 
   mus <- runif(num_hists, -10, 10)
   sigmas <- runif(num_hists, 0, 10)
@@ -428,13 +426,13 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
-    max_diff <- 1e-04
+    max_diff <- 1e-12
     return(diff <= max_diff)
   }
   
   net_emd_offset_self <- function(bin_masses, bin_centres, offsets) {
     histogram <- list(masses = bin_masses, locations = bin_centres)
-    net_emds <- purrr::map_dbl(offsets, function(offset) {net_emd(histogram, shift_histogram(histogram, offset), net_emd_step)})
+    net_emds <- purrr::map_dbl(offsets, function(offset) {net_emd(histogram, shift_histogram(histogram, offset))})
     return(net_emds)
   }
 
@@ -442,5 +440,40 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   actuals_list <- purrr::pmap(list(bin_mass_lists, bin_centre_lists, offset_lists), net_emd_offset_self)
   purrr::map(actuals_list, function(actuals) {
         purrr::map_dbl(actuals, function(actual) {expect_equalish(actual, expected)})
+  })
+})
+
+# EMD and NET_EMD: Virus PPI datasets
+test_that("emd return 0 when comparing graphlet orbit degree distributions of virus PPI graphs to themselves", {
+  # Load viurs PPI network data in ORCA-compatible edge list format
+  data("virusppi")
+  data_indexes <- 1:length(virusppi)
+  data_names <- attr(virusppi, "name")
+
+  # Calculate graphlet orbit degree distributions up to graphlet order 4
+  virus_godd <- purrr::map(virusppi, godd)
+
+  # Map over virus PPI networks
+  purrr::walk(virus_godd, function(godd) {
+    purrr::walk(godd, function(godd_Ox) {
+      expect_equal(emd(godd_Ox, godd_Ox), 0)
+    })
+  })
+})
+
+test_that("net_emd return 0 when comparing graphlet orbit degree distributions of virus PPI graphs to themselves", {
+  # Load viurs PPI network data in ORCA-compatible edge list format
+  data("virusppi")
+  data_indexes <- 1:length(virusppi)
+  data_names <- attr(virusppi, "name")
+  
+  # Calculate graphlet orbit degree distributions up to graphlet order 4
+  virus_godd <- purrr::map(virusppi, godd)
+  
+  # Map over virus PPI networks
+  purrr::walk(virus_godd, function(godd) {
+    purrr::walk(godd, function(godd_Ox) {
+      expect_equal(net_emd(godd_Ox, godd_Ox), 0)
+    })
   })
 })
