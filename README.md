@@ -1,5 +1,5 @@
 # netdist
-An R package implementing the NetEMD and NetDis network comparison measures
+An R package implementing the NetEMD network comparison measure
 
 ## Installing package from source
 When published to the CRAN package repository, the library and all documentation
@@ -34,3 +34,12 @@ Example optional libraries are:
 documentation using `devtools::document()`
 - `knitr` for building the package long-form documentation vignettes using
 `devtools::build_vignettes()`
+
+## Documentation
+You can browse a list of long form examples illustrating how to use the package
+using `browseVignettes(package = "netdist")`.
+
+You can list the functions available in the package with `library(help = "netdist")`
+and get more detailed help on individual functions using `?function_name` (e.g.
+`?net_emd`). In RStudio, typing `?netdist::` should also provide a drop down list
+of functions you can select to load the more detailed help.
