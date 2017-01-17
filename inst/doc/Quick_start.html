@@ -83,7 +83,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co"># This contains PPI graphs for 5 viruses</span>
 <span class="kw">attr</span>(virusppi, <span class="st">&quot;names&quot;</span>)</code></pre></div>
 <pre><code>## [1] &quot;EBV&quot;  &quot;ECL&quot;  &quot;HSV&quot;  &quot;KSHV&quot; &quot;VZV&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculate graphlet degree orbit distributions up to 4 nodes for all graphs </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculate graphlet orbit degree distributions up to 4 nodes for all graphs </span>
 <span class="co"># This only needs to be done once per graph</span>
 virus_godd &lt;-<span class="st"> </span>purrr::<span class="kw">map</span>(virusppi, godd)
 
@@ -96,31 +96,46 @@ comp_spec[<span class="dv">1</span>:<span class="dv">5</span>,]</code></pre></di
 ## 3    EBV   KSHV       1       4
 ## 4    EBV    VZV       1       5
 ## 5    ECL    HSV       2       3</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># For this example we will only use graphlet orbit 0, which is simply the </span>
-<span class="co"># distribution of the number of edges at each node (also known as</span>
-<span class="co"># &quot;degree distribution&quot;)</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Compute NetEMD between all virus PPI graphs based on all graphlet orbir</span>
+<span class="co"># degree distributions up to 4 nodes</span>
 net_emds &lt;-<span class="st"> </span>purrr::<span class="kw">simplify</span>(
   purrr::<span class="kw">map2</span>(comp_spec$index_a, comp_spec$index_b, function(index_a, index_b) {
-  <span class="kw">net_emd</span>(virus_godd[[index_a]]$O0, virus_godd[[index_b]]$O0)
+  <span class="kw">net_emd</span>(virus_godd[[index_a]], virus_godd[[index_b]])
 }))
 
 <span class="co"># Link NetEMDs with their respective comp_specs</span>
 comp_spec$net_emd =<span class="st"> </span>net_emds
 <span class="kw">print</span>(comp_spec)</code></pre></div>
 <pre><code>##    name_a name_b index_a index_b   net_emd
-## 1     EBV    ECL       1       2 0.2490040
-## 2     EBV    HSV       1       3 0.1826187
-## 3     EBV   KSHV       1       4 0.1519164
-## 4     EBV    VZV       1       5 0.2136853
-## 5     ECL    HSV       2       3 0.1764670
-## 6     ECL   KSHV       2       4 0.1720991
-## 7     ECL    VZV       2       5 0.1515133
-## 8     HSV   KSHV       3       4 0.1512162
-## 9     HSV    VZV       3       5 0.1738157
-## 10   KSHV    VZV       4       5 0.2028256</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Confirm NetEMD of a graph with itself is zero</span>
-<span class="kw">net_emd</span>(virus_godd[[<span class="dv">1</span>]]$O0, virus_godd[[<span class="dv">1</span>]]$O0)</code></pre></div>
-<pre><code>## [1] 0</code></pre>
+## 1     EBV    ECL       1       2 0.4876042
+## 2     EBV    HSV       1       3 0.1662899
+## 3     EBV   KSHV       1       4 0.1607306
+## 4     EBV    VZV       1       5 0.1994613
+## 5     ECL    HSV       2       3 0.3986293
+## 6     ECL   KSHV       2       4 0.4024197
+## 7     ECL    VZV       2       5 0.4029355
+## 8     HSV   KSHV       3       4 0.1581551
+## 9     HSV    VZV       3       5 0.2164011
+## 10   KSHV    VZV       4       5 0.2323951</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Confirm NetEMD of a graph with itself is zero within (or at least close to)</span>
+<span class="co"># the limits of machine precision</span>
+purrr::<span class="kw">map2</span>(virus_godd, virus_godd, net_emd)</code></pre></div>
+<pre><code>## $EBV
+## [1] 9.977204e-16
+## 
+## $ECL
+## [1] 8.639873e-16
+## 
+## $HSV
+## [1] 8.132187e-16
+## 
+## $KSHV
+## [1] 1.44477e-16
+## 
+## $VZV
+## [1] 2.674923e-16</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">.Machine$double.eps</code></pre></div>
+<pre><code>## [1] 2.220446e-16</code></pre>
 </div>
 
 

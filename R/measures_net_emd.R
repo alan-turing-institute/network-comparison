@@ -16,6 +16,23 @@ library("purrr")
 #' @return NetEMD
 #' @export
 net_emd <- function(histogram1, histogram2) {
+  # Require either a pair of "dhist" discrete histograms or two lists of "dhist"
+  # discrete histograms
+  pair_of_dhist_lists <- all(purrr::map_lgl(histogram1, is_dhist)) && all(purrr::map_lgl(histogram2, is_dhist))
+  # If input is two lists of "dhist" discrete histograms, compute net_emd for 
+  # pairs of histograms taken from the same position in each list and return
+  # the avaerage net_emd
+  if(pair_of_dhist_lists) {
+    net_emds <- purrr::map2_dbl(histogram1, histogram2, net_emd)
+    arithmetic_mean <- sum(net_emds) / length(net_emds)
+    return(arithmetic_mean)
+  }
+  
+  # Otherwise, require input to be a pair of "dhist" discrete histograms 
+  if(!(is_dhist(histogram1) && is_dhist(histogram1))) {
+    stop("All inputs must be 'dhist' discrete histogram objects")
+  }
+  
   # Normalise histograms to unit variance
   bin_centres1 <- normalise_histogram_variance(histogram1$masses, histogram1$locations)
   bin_centres2 <- normalise_histogram_variance(histogram2$masses, histogram2$locations)

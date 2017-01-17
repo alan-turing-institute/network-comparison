@@ -17,7 +17,7 @@ data("virusppi", package = "netdist")
 # This contains PPI graphs for 5 viruses
 attr(virusppi, "names")
 
-# Calculate graphlet degree orbit distributions up to 4 nodes for all graphs 
+# Calculate graphlet orbit degree distributions up to 4 nodes for all graphs 
 # This only needs to be done once per graph
 virus_godd <- purrr::map(virusppi, godd)
 
@@ -25,19 +25,20 @@ virus_godd <- purrr::map(virusppi, godd)
 comp_spec <- graph_cross_comparison_spec(virusppi)
 comp_spec[1:5,]
 
-# For this example we will only use graphlet orbit 0, which is simply the 
-# distribution of the number of edges at each node (also known as
-# "degree distribution")
+# Compute NetEMD between all virus PPI graphs based on all graphlet orbir
+# degree distributions up to 4 nodes
 net_emds <- purrr::simplify(
   purrr::map2(comp_spec$index_a, comp_spec$index_b, function(index_a, index_b) {
-  net_emd(virus_godd[[index_a]]$O0, virus_godd[[index_b]]$O0)
+  net_emd(virus_godd[[index_a]], virus_godd[[index_b]])
 }))
 
 # Link NetEMDs with their respective comp_specs
 comp_spec$net_emd = net_emds
 print(comp_spec)
 
-# Confirm NetEMD of a graph with itself is zero
-net_emd(virus_godd[[1]]$O0, virus_godd[[1]]$O0)
+# Confirm NetEMD of a graph with itself is zero within (or at least close to)
+# the limits of machine precision
+purrr::map2(virus_godd, virus_godd, net_emd)
+.Machine$double.eps
 ```
 

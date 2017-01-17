@@ -430,7 +430,7 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   }
   
   net_emd_offset_self <- function(locations, masses, offsets) {
-    histogram <- list(locations = locations, masses = masses)
+    histogram <- dhist(locations = locations, masses = masses)
     net_emds <- purrr::map_dbl(offsets, function(offset) {net_emd(histogram, shift_dhist(histogram, offset))})
     return(net_emds)
   }

@@ -1,4 +1,4 @@
-
+library("purrr")
 
 # HISTOGRAM FUNCTIONS
 #' Discrete histogram consructor
@@ -57,12 +57,12 @@ is_dhist <- function(x, fast_check = FALSE) {
     return(has_class_attr)
   }
   # Otherwise check structure
-  has_locations <- contains(attr(x, "name"), "locations")
-  has_masses <- contains(attr(x, "name"), "masses")
+  has_locations <- purrr::contains(attr(x, "name"), "locations")
+  has_masses <- purrr::contains(attr(x, "name"), "masses")
   # Require list with correct class and presence of 1D numeric vector named 
   # elements "locations" and "masses"
   return(has_class_attr
-         && is_list(x)
+         && purrr::is_list(x)
          && has_locations
          && has_masses
          && is_numeric_vector_1d(x$locations)
@@ -118,5 +118,5 @@ shift_dhist <- function(dhist, shift) {
 #' @return TRUE if input is a 1D numeric vector. FALSE otherwise.
 #' @export
 is_numeric_vector_1d <- function(input) {
-  return(is_numeric(input) && is_null(dim(input)))
+  return(purrr::is_numeric(input) && purrr::is_null(dim(input)))
 }
