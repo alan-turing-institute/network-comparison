@@ -4,25 +4,34 @@
 \alias{net_emd}
 \title{NetEMD Network Earth Mover's Distance}
 \usage{
-net_emd(histogram1, histogram2)
+net_emd(dhists1, dhists2, method = "optimise", method_args)
 }
 \arguments{
-\item{bin_masses1}{Bin masses for histogram 1}
+\item{dhists1}{A \code{dhist} discrete histogram object or a list of such objects}
 
-\item{bin_masses2}{Bin masses for histogram 2}
+\item{dhists2}{A \code{dhist} discrete histogram object or a list of such objects}
 
-\item{bin_centres1}{Bin centres for histogram 1}
+\item{method}{The method to use to find the minimum EMD across all potential 
+offsets for each pair of histograms. Default is "optimise" to use
+R's built-in \code{optimise} method to efficiently find the offset with the 
+minimal EMD. However, this is not guaranteed to find the global minimum if 
+multiple local minima EMDs exist. You can alternatively specify the 
+"fixed_step" method, which will exhaustively evaluate the EMD between the 
+histograms at overlapping offsets separated by a fixed step. The size of the 
+fixed step is 1/2 the the minimum spacing between locations in either
+histogram}
 
-\item{bin_centres2}{Bin centres for histogram 2}
+\item{add_args}{Additional arguments required by the method used to find the 
+minimum EMD offset}
 }
 \value{
-NetEMD
+NetEMD measure for the two sets of discrete histograms
 }
 \description{
-Calculates the minimum Earth Mover's Distance (EMD) between two histograms
-after normalising to unit mass and variance.
+Calculates the mean minimum Earth Mover's Distance (EMD) between two sets of
+discrete histograms after normalising each histogram to unit mass and variance.
 This is calculated as follows:
   1. Normalise each histogram to have unit mass and unit variance
-  2. Use the R stats `optimise` method to minimise the EMD between the two
-     histograms over all overlapping offsets of histogram 1
+  2. Find the minimum EMD between each pair of histograms
+  3. Take the average minimum EMD across all histogram pairs
 }

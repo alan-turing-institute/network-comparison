@@ -4,17 +4,16 @@
 \alias{emd}
 \title{Earth Mover's Distance (EMD)}
 \usage{
-emd(histogram1, histogram2)
+emd(dhist1, dhist2)
 }
 \arguments{
-\item{histogram1}{Histogram 1 as list with names members `masses` and `locations`}
+\item{dhist1}{A \code{dhist} discrete histogram object}
 
-\item{histogram2}{Histogram 2 as list with names members `masses` and `locations`}
+\item{dhist2}{A \code{dhist} discrete histogram object}
 }
 \value{
-Earth Mover's Distance between the two input histograms
+Earth Mover's Distance between the two discrete histograms
 }
 \description{
-Takes two sets of histogram bin masses and bin centres and calculates the 
-Earth Mover's Distance between the two histograms
+Calculates the Earth Mover's Distance (EMD) between two discrete histograms
 }

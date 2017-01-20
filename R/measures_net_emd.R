@@ -3,73 +3,122 @@ library("purrr")
 
 #' NetEMD Network Earth Mover's Distance
 #' 
-#' Calculates the minimum Earth Mover's Distance (EMD) between two histograms
-#' after normalising to unit mass and variance.
+#' Calculates the mean minimum Earth Mover's Distance (EMD) between two sets of
+#' discrete histograms after normalising each histogram to unit mass and variance.
 #' This is calculated as follows:
 #'   1. Normalise each histogram to have unit mass and unit variance
-#'   2. Use the R stats `optimise` method to minimise the EMD between the two
-#'      histograms over all overlapping offsets of histogram 1
-#' @param bin_masses1 Bin masses for histogram 1
-#' @param bin_masses2 Bin masses for histogram 2
-#' @param bin_centres1 Bin centres for histogram 1
-#' @param bin_centres2 Bin centres for histogram 2
-#' @return NetEMD
+#'   2. Find the minimum EMD between each pair of histograms
+#'   3. Take the average minimum EMD across all histogram pairs
+#' @param dhists1 A \code{dhist} discrete histogram object or a list of such objects
+#' @param dhists2 A \code{dhist} discrete histogram object or a list of such objects
+#' @param method The method to use to find the minimum EMD across all potential 
+#' offsets for each pair of histograms. Default is "optimise" to use
+#' R's built-in \code{optimise} method to efficiently find the offset with the 
+#' minimal EMD. However, this is not guaranteed to find the global minimum if 
+#' multiple local minima EMDs exist. You can alternatively specify the 
+#' "fixed_step" method, which will exhaustively evaluate the EMD between the 
+#' histograms at overlapping offsets separated by a fixed step. The size of the 
+#' fixed step is 1/2 the the minimum spacing between locations in either
+#' histogram
+#' @param add_args Additional arguments required by the method used to find the 
+#' minimum EMD offset
+#' @return NetEMD measure for the two sets of discrete histograms
 #' @export
-net_emd <- function(histogram1, histogram2) {
+net_emd <- function(dhists1, dhists2, method = "optimise", method_args) {
   # Require either a pair of "dhist" discrete histograms or two lists of "dhist"
   # discrete histograms
-  pair_of_dhist_lists <- all(purrr::map_lgl(histogram1, is_dhist)) && all(purrr::map_lgl(histogram2, is_dhist))
+  pair_of_dhist_lists <- all(purrr::map_lgl(dhists1, is_dhist)) && all(purrr::map_lgl(dhists2, is_dhist))
   # If input is two lists of "dhist" discrete histograms, compute net_emd for 
   # pairs of histograms taken from the same position in each list and return
   # the avaerage net_emd
   if(pair_of_dhist_lists) {
-    net_emds <- purrr::map2_dbl(histogram1, histogram2, net_emd)
+    net_emds <- purrr::map2_dbl(dhists1, dhists2, ~ net_emd_single_pair(.x, .y, method))
     arithmetic_mean <- sum(net_emds) / length(net_emds)
     return(arithmetic_mean)
   }
-  
-  # Otherwise, require input to be a pair of "dhist" discrete histograms 
-  if(!(is_dhist(histogram1) && is_dhist(histogram1))) {
+  else {
+    r <- net_emd_single_pair(dhists1, dhists2, method, method_args)
+    return(r)
+  }
+}
+
+net_emd_single_pair <- function(dhist1, dhist2, method, method_args) {
+  # Require input to be a pair of "dhist" discrete histograms 
+  if(!(is_dhist(dhist1) && is_dhist(dhist2))) {
     stop("All inputs must be 'dhist' discrete histogram objects")
+  }
+  # Set default method if not supplied
+  if(missing(method)) {
+    method = "optimise"
   }
   
   # Normalise histograms to unit variance
-  bin_centres1 <- normalise_histogram_variance(histogram1$masses, histogram1$locations)
-  bin_centres2 <- normalise_histogram_variance(histogram2$masses, histogram2$locations)
+  bin_centres1 <- normalise_histogram_variance(dhist1$masses, dhist1$locations)
+  bin_centres2 <- normalise_histogram_variance(dhist2$masses, dhist2$locations)
   # Normalise histograms to unit mass
-  bin_masses1 <- normalise_histogram_mass(histogram1$masses)
-  bin_masses2 <- normalise_histogram_mass(histogram2$masses)
+  bin_masses1 <- normalise_histogram_mass(dhist1$masses)
+  bin_masses2 <- normalise_histogram_mass(dhist2$masses)
   
   # Determine minimum and maximum offset of range in which histograms overlap
   # if sliding histogram 1
   min_offset <- min(bin_centres2) - max(bin_centres1)
   max_offset <- max(bin_centres2) - min(bin_centres1)
 
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   
-  emd_offset <- function(offset, hist1, hist2) {
-    emd(shift_dhist(histogram1, offset), histogram2)
+  emd_offset <- function(offset) {
+    emd(shift_dhist(dhist1, offset), dhist2)
   }
+  
+  # Define optimise method for picking minimal EMD offset
+  # 1. "optimise" method
+  min_emd_opt <- function() {
+    soln <- optimise(emd_offset, lower = min_offset, upper = max_offset)
+    min_emd <- soln$objective
+    return(min_emd)
+  }
+  # 2. "fixed_step" method
+  min_emd_step <- function() {
+    # Set default step size for "fixed_step" method
+    location_spacing <- function(l) {
+      l <- sort(l)
+      tail(l, length(l)-1) - head(l, length(l)-1)
+    }
+    min_location_sep1 <- min(location_spacing(dhist1$locations))
+    min_location_sep2 <- min(location_spacing(dhist2$locations))
+    default_step_size = min(min_location_sep1, min_location_sep2)/2
+    step_size <- default_step_size
+    offsets <- seq(min_offset, max_offset, by = step_size)
+    emds <- purrr::map_dbl(offsets, emd_offset)
+    min_emd <- min(emds)
+    return(min_emd)
+  }
+   
   # Determine minimum EMD across all offsets
-  opt_soln <- optimise(emd_offset, lower = min_offset, upper = max_offset)
-  min_emd <- opt_soln$objective
-
+  min_emd = switch(EXPR = method, 
+         optimise = min_emd_opt(),
+         fixed_step = min_emd_step(),
+         stop("Supplied 'method' not recognised")
+  )
   return(min_emd)
 }
 
 #' Earth Mover's Distance (EMD) 
 #' 
-#' Takes two sets of histogram bin masses and bin centres and calculates the 
-#' Earth Mover's Distance between the two histograms
-#' @param histogram1 Histogram 1 as list with names members `masses` and `locations`
-#' @param histogram2 Histogram 2 as list with names members `masses` and `locations`
-#' @return Earth Mover's Distance between the two input histograms
+#' Calculates the Earth Mover's Distance (EMD) between two discrete histograms
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
+#' @return Earth Mover's Distance between the two discrete histograms
 #' @export
-emd <- function(histogram1, histogram2) {
+emd <- function(dhist1, dhist2) {
+  # Require the inputs to be "dhist" objects
+  if(!(is_dhist(dhist1) && is_dhist(dhist2))) {
+    stop("All inputs must be 'dhist' discrete histogram objects")
+  }
   # Use efficient difference of cumulative histogram method that can also 
   # handle non-integer bin masses and location differences
-  emd_cs(histogram1$masses, histogram2$masses, histogram1$locations, histogram2$locations)
+  emd_cs(dhist1$masses, dhist2$masses, dhist1$locations, dhist2$locations)
 }
 
 #' Earth Mover's Distance (EMD) using linear programming (LP)

@@ -159,8 +159,8 @@ test_that("EMD methods return 0 when comparing a 1D feature distribution to itse
   bin_masses2 <- bin_masses1
   bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
   bin_centres2 <- bin_centres1
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   
   expected <- 0
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
@@ -180,8 +180,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   num_nonzero_bins <- sum(bin_masses1 > 0)
   expected <- cost_fn(num_nonzero_bins)
   emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
@@ -194,8 +194,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   bin_masses2 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2) + 1
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   num_nonzero_bins <- sum(bin_masses1 > 0)
   expected <- cost_fn(num_nonzero_bins)
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
@@ -207,8 +207,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
@@ -219,8 +219,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   bin_masses2 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2) + 1
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
@@ -231,8 +231,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
@@ -243,8 +243,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   bin_masses2 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2) + 1
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
@@ -255,8 +255,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
@@ -267,8 +267,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete tri
   bin_masses2 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2) + 1
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
   expect_equal(emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2), expected)
@@ -281,8 +281,8 @@ test_that("EMD methods return same result for densely and sparsely specified bin
   sparse_bin_masses2 <- c(1, 1, 1, 1, 1, 1)
   sparse_bin_centres1 <- c(1, 2, 4, 7, 11, 16)
   sparse_bin_centres2 <- c(21, 22, 24, 27, 31, 36)
-  sparse_histogram1 <- list(masses = sparse_bin_masses1, locations = sparse_bin_centres1)
-  sparse_histogram2 <- list(masses = sparse_bin_masses2, locations = sparse_bin_centres2)
+  sparse_histogram1 <- dhist(masses = sparse_bin_masses1, locations = sparse_bin_centres1)
+  sparse_histogram2 <- dhist(masses = sparse_bin_masses2, locations = sparse_bin_centres2)
   
   dense_bin_centres1 <- 1:36
   dense_bin_centres2 <- dense_bin_centres1
@@ -290,8 +290,8 @@ test_that("EMD methods return same result for densely and sparsely specified bin
   bin_mass_padding <- rep(0, length(dense_bin_centres1) - length(bin_mass_sequence))
   dense_bin_masses1 <- c(bin_mass_sequence, bin_mass_padding)
   dense_bin_masses2 <- c(bin_mass_padding, bin_mass_sequence)
-  dense_histogram1 <- list(masses = dense_bin_masses1, locations = dense_bin_centres1)
-  dense_histogram2 <- list(masses = dense_bin_masses2, locations = dense_bin_centres2)
+  dense_histogram1 <- dhist(masses = dense_bin_masses1, locations = dense_bin_centres1)
+  dense_histogram2 <- dhist(masses = dense_bin_masses2, locations = dense_bin_centres2)
   
   expect_equal(emd_lp(dense_bin_masses1, dense_bin_masses2, 
                     dense_bin_centres1, dense_bin_centres2),
@@ -310,8 +310,8 @@ test_that("EMD methods return same result when order of densely specified bins i
   bin_masses2 <- c(0, 0, 0, 0, 0, 1, 1, 1, 1)
   bin_centres1 <- 1:length(bin_masses1)
   bin_centres2 <- 1:length(bin_masses2)
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   
   permuted_indexes1 <- sample(1:length(bin_masses1), replace = FALSE)
   permuted_indexes2 <- sample(1:length(bin_masses2), replace = FALSE)
@@ -320,8 +320,8 @@ test_that("EMD methods return same result when order of densely specified bins i
   permuted_bin_centres1 <- bin_centres1[permuted_indexes1]
   permuted_bin_masses2 <- bin_masses2[permuted_indexes2]
   permuted_bin_centres2 <- bin_centres2[permuted_indexes2]
-  permuted_histogram1 <- list(masses = permuted_bin_masses1, locations = permuted_bin_centres1)
-  permuted_histogram2 <- list(masses = permuted_bin_masses2, locations = permuted_bin_centres2)
+  permuted_histogram1 <- dhist(masses = permuted_bin_masses1, locations = permuted_bin_centres1)
+  permuted_histogram2 <- dhist(masses = permuted_bin_masses2, locations = permuted_bin_centres2)
   
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
               emd_lp(permuted_bin_masses1, permuted_bin_masses2, 
@@ -337,8 +337,8 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   bin_masses2 <- c(1, 1, 1, 1, 1, 1)
   bin_centres1 <- c(1, 2, 4, 8, 16, 32)
   bin_centres2 <- c(-32, -16, -8, -4, -2, -1)
-  histogram1 <- list(masses = bin_masses1, locations = bin_centres1)
-  histogram2 <- list(masses = bin_masses2, locations = bin_centres2)
+  histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   
   permuted_indexes1 <- sample(1:length(bin_masses1), replace = FALSE)
   permuted_indexes2 <- sample(1:length(bin_masses2), replace = FALSE)
@@ -347,8 +347,8 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   permuted_bin_centres1 <- bin_centres1[permuted_indexes1]
   permuted_bin_masses2 <- bin_masses2[permuted_indexes2]
   permuted_bin_centres2 <- bin_centres2[permuted_indexes2]
-  permuted_histogram1 <- list(masses = permuted_bin_masses1, locations = permuted_bin_centres1)
-  permuted_histogram2 <- list(masses = permuted_bin_masses2, locations = permuted_bin_centres2)
+  permuted_histogram1 <- dhist(masses = permuted_bin_masses1, locations = permuted_bin_centres1)
+  permuted_histogram2 <- dhist(masses = permuted_bin_masses2, locations = permuted_bin_centres2)
   
   expect_equal(emd_lp(bin_masses1, bin_masses2, bin_centres1, bin_centres2),
                emd_lp(permuted_bin_masses1, permuted_bin_masses2, 
@@ -360,22 +360,29 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   })
 
 # NetEMD: Property-based tests
-test_that("net_emd returns 0 when comparing an integer location histogram against itself", {
+test_that("net_emd returns 0 when comparing an integer location histogram offset against itself", {
   
-  self_net_emd <- function(histogram, shift) {
-    net_emd(histogram, shift_dhist(histogram, shift))
+  self_net_emd <- function(histogram, shift, method) {
+    net_emd(histogram, shift_dhist(histogram, shift), method)
   }
   expected <- 0
   
   locations <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
   masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   histogram <- dhist(locations = locations, masses = masses)
-
-  expect_equal(self_net_emd(histogram, shift = 1), expected)
-  expect_equal(self_net_emd(histogram, shift = 0.5), expected)
-  expect_equal(self_net_emd(histogram, shift = 0.1), expected)
-  expect_equal(self_net_emd(histogram, shift = 0.05), expected)
-  expect_equal(self_net_emd(histogram, shift = 0.01), expected)
+  
+  expect_equal(self_net_emd(histogram, shift = 1, "optimise"), expected)
+  expect_equal(self_net_emd(histogram, shift = 1, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.5, "optimise"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.5, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.1, "optimise"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.1, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.05, "optimise"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.05, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.01, "optimise"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0.01, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0, "optimise"), expected)
+  expect_equal(self_net_emd(histogram, shift = 0, "fixed_step"), expected)
 })
 
 test_that("net_emd returns 0 when comparing any normal histogram against itself (no offset)", {
@@ -390,9 +397,9 @@ test_that("net_emd returns 0 when comparing any normal histogram against itself 
   location_lists <- purrr::map2(mus, sigmas, rand_locations)
   mass_lists <- purrr::pmap(list(location_lists, mus, sigmas), dnorm)
   
-  self_net_emd <- function(locations, masses) {
+  self_net_emd <- function(locations, masses, method) {
     histogram <- dhist(locations = locations, masses = masses)
-    net_emd(histogram, histogram)
+    net_emd(histogram, histogram, method)
   }
   
   expect_equalish <- function(actual, expected) {
@@ -402,8 +409,12 @@ test_that("net_emd returns 0 when comparing any normal histogram against itself 
   }
   
   expected <- 0
-  actuals <- purrr::map2_dbl(location_lists, mass_lists, self_net_emd)
-  purrr::map_dbl(actuals, function(actual) {expect_equalish(actual, expected)})
+  actuals_opt <- purrr::map2_dbl(location_lists, mass_lists, function(locations, masses) {
+    self_net_emd(locations, masses, method = "optimise")})
+  purrr::map_dbl(actuals_opt, function(actual) {expect_equalish(actual, expected)})
+  actuals_step <- purrr::map2_dbl(location_lists, mass_lists, function(locations, masses) {
+    self_net_emd(locations, masses, method = "fixed_step")})
+  purrr::map_dbl(actuals_step, function(actual) {expect_equalish(actual, expected)})
 
 })
 
@@ -429,16 +440,25 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
     return(diff <= max_diff)
   }
   
-  net_emd_offset_self <- function(locations, masses, offsets) {
+  net_emd_offset_self <- function(locations, masses, offsets, method) {
     histogram <- dhist(locations = locations, masses = masses)
-    net_emds <- purrr::map_dbl(offsets, function(offset) {net_emd(histogram, shift_dhist(histogram, offset))})
+    net_emds <- purrr::map_dbl(offsets, function(offset) {
+      net_emd(histogram, shift_dhist(histogram, offset), method = method)})
     return(net_emds)
   }
 
   expected <- 0
-  actuals_list <- purrr::pmap(list(location_lists, mass_lists, offset_lists), net_emd_offset_self)
-  purrr::map(actuals_list, function(actuals) {
+  actuals_list_opt <- purrr::pmap(list(location_lists, mass_lists, offset_lists), 
+                              function(locations, masses, offsets) {
+                                net_emd_offset_self(locations, masses, offsets, method = "optimise")})
+  purrr::map(actuals_list_opt, function(actuals) {
         purrr::map_dbl(actuals, function(actual) {expect_equalish(actual, expected)})
+  })
+  actuals_list_step <- purrr::pmap(list(location_lists, mass_lists, offset_lists), 
+                                  function(locations, masses, offsets) {
+                                    net_emd_offset_self(locations, masses, offsets, method = "fixed_step")})
+  purrr::map(actuals_list_step, function(actuals) {
+    purrr::map_dbl(actuals, function(actual) {expect_equalish(actual, expected)})
   })
 })
 
@@ -469,10 +489,21 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
   # Calculate graphlet orbit degree distributions up to graphlet order 4
   virus_godd <- purrr::map(virusppi, godd)
   
+  expect_equalish <- function(actual, expected) {
+    diff <- abs(actual - expected)
+    max_diff <- 1e-12
+    return(diff <= max_diff)
+  }
+  
   # Map over virus PPI networks
   purrr::walk(virus_godd, function(godd) {
     purrr::walk(godd, function(godd_Ox) {
-      expect_equal(net_emd(godd_Ox, godd_Ox), 0)
+      expect_equalish(net_emd(godd_Ox, godd_Ox, method = "optimise"), 0)
+    })
+  })
+  purrr::walk(virus_godd, function(godd) {
+    purrr::walk(godd, function(godd_Ox) {
+      expect_equal(net_emd(godd_Ox, godd_Ox, method = "fixed_step"), 0)
     })
   })
 })
