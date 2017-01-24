@@ -1,8 +1,7 @@
 library("netdist")
 library("purrr")
-context("Measures NetEMD")
 
-
+context("Measures NetEMD: Bin normalisation")
 # BIN NORMALISATION: Property based tests
 test_that("normalise_histogram_mass output sums to 1", {
   # Generate histograms with random masses (no centres needed for this test)
@@ -87,6 +86,7 @@ test_that("normalise_histogram_variance output has variance of 1", {
   purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
 })
 
+context("Measures NetEMD: Cost matrix")
 # COST_MATRIX: Property-based tests
 test_that("cost_matrix returns all zeros when all bin locations are identical", {
   bin_centres1 <- c(1, 1, 1, 1, 1, 1, 1)
@@ -120,6 +120,8 @@ test_that("cost_matrix is correct size when the two histograms are of different 
   expect_equal(ncol(cm), length(bin_centres2))
 })
 
+
+context("Measures NetEMD: Augment histograms")
 # AUGMENT_HISTOGRAMS
 test_that("augment_histograms works A", {
   bin_masses1 <- c(1, 1, 1)
@@ -153,6 +155,8 @@ test_that("augment_histograms works B", {
   expect_equal(actual, expected)
 })
 
+
+context("Measures NetEMD: EMD")
 # EMD: Property-based tests
 test_that("EMD methods return 0 when comparing a 1D feature distribution to itself",{
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
@@ -359,11 +363,13 @@ test_that("EMD methods return same result when order of sparsely specified bins 
   expect_equal(emd(histogram1, histogram2), emd(permuted_histogram1, permuted_histogram2))
   })
 
+
+context("Measures NetEMD: NetEMD")
 # NetEMD: Property-based tests
 test_that("net_emd returns 0 when comparing an integer location histogram offset against itself", {
   
-  self_net_emd <- function(histogram, shift, method) {
-    net_emd(histogram, shift_dhist(histogram, shift), method)
+  self_net_emd <- function(histogram, shift, method, step_size) {
+    net_emd(histogram, shift_dhist(histogram, shift), method, step_size)
   }
   expected <- 0
   
@@ -373,16 +379,22 @@ test_that("net_emd returns 0 when comparing an integer location histogram offset
   
   expect_equal(self_net_emd(histogram, shift = 1, "optimise"), expected)
   expect_equal(self_net_emd(histogram, shift = 1, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 1, "fixed_step", step_size = 1), expected)
   expect_equal(self_net_emd(histogram, shift = 0.5, "optimise"), expected)
   expect_equal(self_net_emd(histogram, shift = 0.5, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 1, "fixed_step", step_size = 1), expected)
   expect_equal(self_net_emd(histogram, shift = 0.1, "optimise"), expected)
   expect_equal(self_net_emd(histogram, shift = 0.1, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 1, "fixed_step", step_size = 1), expected)
   expect_equal(self_net_emd(histogram, shift = 0.05, "optimise"), expected)
   expect_equal(self_net_emd(histogram, shift = 0.05, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 1, "fixed_step", step_size = 1), expected)
   expect_equal(self_net_emd(histogram, shift = 0.01, "optimise"), expected)
   expect_equal(self_net_emd(histogram, shift = 0.01, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 1, "fixed_step", step_size = 1), expected)
   expect_equal(self_net_emd(histogram, shift = 0, "optimise"), expected)
   expect_equal(self_net_emd(histogram, shift = 0, "fixed_step"), expected)
+  expect_equal(self_net_emd(histogram, shift = 1, "fixed_step", step_size = 1), expected)
 })
 
 test_that("net_emd returns 0 when comparing any normal histogram against itself (no offset)", {
@@ -397,25 +409,25 @@ test_that("net_emd returns 0 when comparing any normal histogram against itself 
   location_lists <- purrr::map2(mus, sigmas, rand_locations)
   mass_lists <- purrr::pmap(list(location_lists, mus, sigmas), dnorm)
   
-  self_net_emd <- function(locations, masses, method) {
+  self_net_emd <- function(locations, masses, method, step_size) {
     histogram <- dhist(locations = locations, masses = masses)
-    net_emd(histogram, histogram, method)
+    net_emd(histogram, histogram, method, step_size)
   }
   
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
     max_diff <- 1e-12
-    return(diff <= max_diff)
+    return(expect_lte(diff, max_diff))
   }
   
   expected <- 0
   actuals_opt <- purrr::map2_dbl(location_lists, mass_lists, function(locations, masses) {
     self_net_emd(locations, masses, method = "optimise")})
   purrr::map_dbl(actuals_opt, function(actual) {expect_equalish(actual, expected)})
-  actuals_step <- purrr::map2_dbl(location_lists, mass_lists, function(locations, masses) {
+  
+  actuals_step_default <- purrr::map2_dbl(location_lists, mass_lists, function(locations, masses) {
     self_net_emd(locations, masses, method = "fixed_step")})
-  purrr::map_dbl(actuals_step, function(actual) {expect_equalish(actual, expected)})
-
+  purrr::map_dbl(actuals_step_default, function(actual) {expect_equalish(actual, expected)})
 })
 
 test_that("net_emd returns 0 when comparing any normal histogram randomly offset against itself", {
@@ -437,7 +449,7 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
     max_diff <- 1e-12
-    return(diff <= max_diff)
+    return(expect_lte(diff, max_diff))
   }
   
   net_emd_offset_self <- function(locations, masses, offsets, method) {
@@ -485,16 +497,16 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
   data("virusppi")
   data_indexes <- 1:length(virusppi)
   data_names <- attr(virusppi, "name")
-  
+
   # Calculate graphlet orbit degree distributions up to graphlet order 4
   virus_godd <- purrr::map(virusppi, godd)
-  
+
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
     max_diff <- 1e-12
-    return(diff <= max_diff)
+    return(expect_lte(diff, max_diff))
   }
-  
+
   # Map over virus PPI networks
   purrr::walk(virus_godd, function(godd) {
     purrr::walk(godd, function(godd_Ox) {

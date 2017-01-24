@@ -24,7 +24,7 @@ library("purrr")
 #' minimum EMD offset
 #' @return NetEMD measure for the two sets of discrete histograms
 #' @export
-net_emd <- function(dhists1, dhists2, method = "optimise", method_args) {
+net_emd <- function(dhists1, dhists2, method = "optimise", step_size) {
   # Require either a pair of "dhist" discrete histograms or two lists of "dhist"
   # discrete histograms
   pair_of_dhist_lists <- all(purrr::map_lgl(dhists1, is_dhist)) && all(purrr::map_lgl(dhists2, is_dhist))
@@ -37,12 +37,12 @@ net_emd <- function(dhists1, dhists2, method = "optimise", method_args) {
     return(arithmetic_mean)
   }
   else {
-    r <- net_emd_single_pair(dhists1, dhists2, method, method_args)
+    r <- net_emd_single_pair(dhists1, dhists2, method, step_size)
     return(r)
   }
 }
 
-net_emd_single_pair <- function(dhist1, dhist2, method, method_args) {
+net_emd_single_pair <- function(dhist1, dhist2, method, step_size) {
   # Require input to be a pair of "dhist" discrete histograms 
   if(!(is_dhist(dhist1) && is_dhist(dhist2))) {
     stop("All inputs must be 'dhist' discrete histogram objects")
@@ -67,6 +67,19 @@ net_emd_single_pair <- function(dhist1, dhist2, method, method_args) {
   dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   
+  if(method == "fixed_step") {
+    # Set default step_size for "fixed_step" method if step_size not provided
+    if(missing("step_size")) {
+      location_spacing <- function(l) {
+        l <- sort(l)
+        tail(l, length(l)-1) - head(l, length(l)-1)
+      }
+      min_location_sep1 <- min(location_spacing(dhist1$locations))
+      min_location_sep2 <- min(location_spacing(dhist2$locations))
+      step_size <- min(min_location_sep1, min_location_sep2)/2
+    }
+  }
+  
   emd_offset <- function(offset) {
     emd(shift_dhist(dhist1, offset), dhist2)
   }
@@ -80,15 +93,6 @@ net_emd_single_pair <- function(dhist1, dhist2, method, method_args) {
   }
   # 2. "fixed_step" method
   min_emd_step <- function() {
-    # Set default step size for "fixed_step" method
-    location_spacing <- function(l) {
-      l <- sort(l)
-      tail(l, length(l)-1) - head(l, length(l)-1)
-    }
-    min_location_sep1 <- min(location_spacing(dhist1$locations))
-    min_location_sep2 <- min(location_spacing(dhist2$locations))
-    default_step_size = min(min_location_sep1, min_location_sep2)/2
-    step_size <- default_step_size
     offsets <- seq(min_offset, max_offset, by = step_size)
     emds <- purrr::map_dbl(offsets, emd_offset)
     min_emd <- min(emds)
