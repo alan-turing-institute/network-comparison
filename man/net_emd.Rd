@@ -19,10 +19,11 @@ multiple local minima EMDs exist. You can alternatively specify the
 "fixed_step" method, which will exhaustively evaluate the EMD between the 
 histograms at overlapping offsets separated by a fixed step. The size of the 
 fixed step is 1/2 the the minimum spacing between locations in either
-histogram}
+histogram after normalising to unit variance}
 
-\item{add_args}{Additional arguments required by the method used to find the 
-minimum EMD offset}
+\item{step_size}{Additional optional argument for "fixed_step" method allowing
+user to specify their own minumum step size. Note that this step size is 
+applied to the histograms after they have been normalised to unit variance}
 }
 \value{
 NetEMD measure for the two sets of discrete histograms

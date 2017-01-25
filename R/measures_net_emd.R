@@ -19,9 +19,10 @@ library("purrr")
 #' "fixed_step" method, which will exhaustively evaluate the EMD between the 
 #' histograms at overlapping offsets separated by a fixed step. The size of the 
 #' fixed step is 1/2 the the minimum spacing between locations in either
-#' histogram
-#' @param add_args Additional arguments required by the method used to find the 
-#' minimum EMD offset
+#' histogram after normalising to unit variance
+#' @param step_size Additional optional argument for "fixed_step" method allowing
+#' user to specify their own minumum step size. Note that this step size is 
+#' applied to the histograms after they have been normalised to unit variance
 #' @return NetEMD measure for the two sets of discrete histograms
 #' @export
 net_emd <- function(dhists1, dhists2, method = "optimise", step_size) {
@@ -100,7 +101,7 @@ net_emd_single_pair <- function(dhist1, dhist2, method, step_size) {
   }
    
   # Determine minimum EMD across all offsets
-  min_emd = switch(EXPR = method, 
+  min_emd <- switch(EXPR = method, 
          optimise = min_emd_opt(),
          fixed_step = min_emd_step(),
          stop("Supplied 'method' not recognised")
