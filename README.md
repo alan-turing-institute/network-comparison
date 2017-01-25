@@ -1,6 +1,9 @@
 # netdist
 An R package implementing the NetEMD network comparison measure
 
+## Usage
+See "Quick start" vignette in documentation for example usage.
+
 ## Installing package from source
 When published to the CRAN package repository, the library and all documentation
 will be installed in the standard manner using `install.packages("netdist")`,

@@ -27,12 +27,24 @@ virus_godd <- purrr::map(virus_edges, godd, type = "node4")
 comp_spec <- graph_cross_comparison_spec(virus_edges)
 comp_spec[1:5,]
 
-# Compute NetEMD between all virus PPI graphs based on all graphlet orbir
-# degree distributions up to 4 nodes
+# Compute NetEMD between all virus PPI graphs based on the computed graphlet 
+# orbit degree distributions, using the fast "optimise" method (default). This
+# method uses the built-in R optimise method to efficiently find the offset
+# with the minimum EMD, but is not guaranteed to find the global minimum if
+# EMD as a function of offset is multimodal.
 net_emds <- purrr::simplify(
   purrr::map2(comp_spec$index_a, comp_spec$index_b, function(index_a, index_b) {
-  net_emd(virus_godd[[index_a]], virus_godd[[index_b]])
+  net_emd(virus_godd[[index_a]], virus_godd[[index_b]], method = "optimise")
 }))
+print(net_emds)
+
+# You can also specify method = "fixed_step" to use the much slower method of 
+# exhaustively evaluating the EMD at all offsets separated by a fixed step. 
+# The default step size is 1/2 the the minimum spacing between locations in 
+# either histogram after normalising to unit variance. However, you can 
+# specifiy your own fixed step using the optional "step_size" parameter.
+# Note that this step size is applied to the histograms after they have been 
+# normalised to unit variance
 
 # Link NetEMDs with their respective comp_specs
 comp_spec$net_emd = net_emds
