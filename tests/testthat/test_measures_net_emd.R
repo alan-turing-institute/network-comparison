@@ -474,6 +474,7 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   })
 })
 
+context("Measures NetEMD: Virus PPI")
 # EMD and NET_EMD: Virus PPI datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of virus PPI graphs to themselves", {
   # Load viurs PPI network data in ORCA-compatible edge list format
@@ -493,7 +494,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of vi
 })
 
 test_that("net_emd return 0 when comparing graphlet orbit degree distributions of virus PPI graphs to themselves", {
-  # Load viurs PPI network data in ORCA-compatible edge list format
+  # Load virus PPI network data in ORCA-compatible edge list format
   data("virusppi")
   data_indexes <- 1:length(virusppi)
   data_names <- attr(virusppi, "name")
@@ -513,9 +514,50 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
       expect_equalish(net_emd(godd_Ox, godd_Ox, method = "optimise"), 0)
     })
   })
-  purrr::walk(virus_godd, function(godd) {
+})
+
+context("Measures NetEMD: Random graphs")
+# EMD and NET_EMD: Random graph datasets
+test_that("emd return 0 when comparing graphlet orbit degree distributions of random graphs to themselves", {
+  # Load random graph data in ORCA-compatible edge list format
+  random_edges <- read_all_graphs_as_orca_edge_lists(
+    system.file(package = "netdist", "extdata", "random"),
+    format = "ncol", pattern = "*")
+  data_indexes <- 1:length(random_edges)
+  data_names <- attr(random_edges, "name")
+  
+  # Calculate graphlet orbit degree distributions up to graphlet order 4
+  random_godd <- purrr::map(random_edges, godd)
+  
+  # Map over virus PPI networks
+  purrr::walk(random_godd, function(godd) {
     purrr::walk(godd, function(godd_Ox) {
-      expect_equal(net_emd(godd_Ox, godd_Ox, method = "fixed_step"), 0)
+      expect_equal(emd(godd_Ox, godd_Ox), 0)
+    })
+  })
+})
+
+test_that("net_emd return 0 when comparing graphlet orbit degree distributions of random graphs to themselves", {
+  # Load random graph data in ORCA-compatible edge list format
+  random_edges <- read_all_graphs_as_orca_edge_lists(
+    system.file(package = "netdist", "extdata", "random"),
+    format = "ncol", pattern = "*")
+  data_indexes <- 1:length(random_edges)
+  data_names <- attr(random_edges, "name")
+  
+  # Calculate graphlet orbit degree distributions up to graphlet order 4
+  random_godd <- purrr::map(random_edges, godd)
+  
+  expect_equalish <- function(actual, expected) {
+    diff <- abs(actual - expected)
+    max_diff <- 1e-12
+    return(expect_lte(diff, max_diff))
+  }
+  
+  # Map over random graphs
+  purrr::walk(random_godd, function(godd) {
+    purrr::walk(godd, function(godd_Ox) {
+      expect_equalish(net_emd(godd_Ox, godd_Ox, method = "optimise"), 0)
     })
   })
 })
