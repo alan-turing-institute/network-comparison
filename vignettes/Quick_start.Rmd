@@ -17,9 +17,11 @@ virus_edges <- read_all_graphs_as_orca_edge_lists(
   format = "ncol", pattern = ".txt")
 attr(virus_edges, "names")
 
-# Calculate graphlet orbit degree distributions up to 4 nodes for all graphs 
-# This only needs to be done once per graph
-virus_godd <- purrr::map(virus_edges, godd)
+# Calculate graphlet orbit degree distributions for graphlets comprising up to 
+# 4 nodes for all graphs This only needs to be done once per graph. 
+# If type is set to "node5", graphlet orbit degree distributions will be 
+# calculated for graphlets comprising up to 5 nodes
+virus_godd <- purrr::map(virus_edges, godd, type = "node4")
 
 # Generate a cross-comparison matrix listing all combinations of graphs
 comp_spec <- graph_cross_comparison_spec(virus_edges)

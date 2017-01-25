@@ -4,11 +4,15 @@
 \alias{godd}
 \title{Graphlet Orbit Degree Distributions}
 \usage{
-godd(indexed_edges)
+godd(indexed_edges, type = "node4")
 }
 \arguments{
 \item{indexed_edges}{A 2 x numEdges edgelist with vertices labelled with 
 integer indices, with an optional "vertex_names" attribute}
+
+\item{type}{Type of graphlet orbits to calculate degree distributions
+for: "node4" counts all graphlets comprising up to 4 nodes; "node5" counts
+all graphlets comprising up to 5 nodes}
 }
 \value{
 Graphlet degree histograms: List of degree histograms for each 
