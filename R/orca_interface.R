@@ -131,7 +131,7 @@ read_orca_edge_list <- function(file, format = "ncol") {
 #' @export
 read_all_graphs_as_orca_edge_lists <- function (source_dir, format = "ncol", pattern = ".txt") {
   # Get list of all filenames in firectory that match the pattern
-  file_names <- dir(source_dir, pattern = ".txt")
+  file_names <- dir(source_dir, pattern = pattern)
   # Read graph data from each ".txt" file as an ORCA-compatible indexed edge list
   edges <- purrr::map(file_names, function(file_name) {
     read_orca_edge_list(file = file.path(source_dir, file_name), format = "ncol")
