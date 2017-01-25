@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martin O’Reilly" />
 
-<meta name="date" content="2017-01-17" />
+<meta name="date" content="2017-01-25" />
 
 <title>Quick start</title>
 
@@ -70,32 +70,32 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Quick start</h1>
 <h4 class="author"><em>Martin O’Reilly</em></h4>
-<h4 class="date"><em>2017-01-17</em></h4>
+<h4 class="date"><em>2017-01-25</em></h4>
 
 
 
-<div id="end-to-end-netemd-example" class="section level2">
-<h2>End to end NetEMD example</h2>
+<div id="virus-ppi-example-from-sample-data" class="section level2">
+<h2>Virus PPI example (from sample data)</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;netdist&quot;</span>)
-<span class="co"># Load example virus PPI graphs in indexed edge list form</span>
-<span class="kw">data</span>(<span class="st">&quot;virusppi&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;netdist&quot;</span>)
-
-<span class="co"># This contains PPI graphs for 5 viruses</span>
-<span class="kw">attr</span>(virusppi, <span class="st">&quot;names&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;EBV&quot;  &quot;ECL&quot;  &quot;HSV&quot;  &quot;KSHV&quot; &quot;VZV&quot;</code></pre>
+<span class="co"># Load example virus PPI graphs from files</span>
+virus_edges &lt;-<span class="st"> </span><span class="kw">read_all_graphs_as_orca_edge_lists</span>(
+  <span class="kw">system.file</span>(<span class="dt">package =</span> <span class="st">&quot;netdist&quot;</span>, <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;VRPINS&quot;</span>),
+  <span class="dt">format =</span> <span class="st">&quot;ncol&quot;</span>, <span class="dt">pattern =</span> <span class="st">&quot;.txt&quot;</span>)
+<span class="kw">attr</span>(virus_edges, <span class="st">&quot;names&quot;</span>)</code></pre></div>
+<pre><code>## [1] &quot;EBV-1.txt&quot;   &quot;ECL-1.txt&quot;   &quot;HSV-1-1.txt&quot; &quot;KSHV-1.txt&quot;  &quot;VZV-1.txt&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculate graphlet orbit degree distributions up to 4 nodes for all graphs </span>
 <span class="co"># This only needs to be done once per graph</span>
-virus_godd &lt;-<span class="st"> </span>purrr::<span class="kw">map</span>(virusppi, godd)
+virus_godd &lt;-<span class="st"> </span>purrr::<span class="kw">map</span>(virus_edges, godd)
 
 <span class="co"># Generate a cross-comparison matrix listing all combinations of graphs</span>
-comp_spec &lt;-<span class="st"> </span><span class="kw">graph_cross_comparison_spec</span>(virusppi)
+comp_spec &lt;-<span class="st"> </span><span class="kw">graph_cross_comparison_spec</span>(virus_edges)
 comp_spec[<span class="dv">1</span>:<span class="dv">5</span>,]</code></pre></div>
-<pre><code>##   name_a name_b index_a index_b
-## 1    EBV    ECL       1       2
-## 2    EBV    HSV       1       3
-## 3    EBV   KSHV       1       4
-## 4    EBV    VZV       1       5
-## 5    ECL    HSV       2       3</code></pre>
+<pre><code>##      name_a      name_b index_a index_b
+## 1 EBV-1.txt   ECL-1.txt       1       2
+## 2 EBV-1.txt HSV-1-1.txt       1       3
+## 3 EBV-1.txt  KSHV-1.txt       1       4
+## 4 EBV-1.txt   VZV-1.txt       1       5
+## 5 ECL-1.txt HSV-1-1.txt       2       3</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Compute NetEMD between all virus PPI graphs based on all graphlet orbir</span>
 <span class="co"># degree distributions up to 4 nodes</span>
 net_emds &lt;-<span class="st"> </span>purrr::<span class="kw">simplify</span>(
@@ -106,33 +106,33 @@ net_emds &lt;-<span class="st"> </span>purrr::<span class="kw">simplify</span>(
 <span class="co"># Link NetEMDs with their respective comp_specs</span>
 comp_spec$net_emd =<span class="st"> </span>net_emds
 <span class="kw">print</span>(comp_spec)</code></pre></div>
-<pre><code>##    name_a name_b index_a index_b   net_emd
-## 1     EBV    ECL       1       2 0.4876042
-## 2     EBV    HSV       1       3 0.1662899
-## 3     EBV   KSHV       1       4 0.1607306
-## 4     EBV    VZV       1       5 0.1994613
-## 5     ECL    HSV       2       3 0.3986293
-## 6     ECL   KSHV       2       4 0.4024197
-## 7     ECL    VZV       2       5 0.4029355
-## 8     HSV   KSHV       3       4 0.1581551
-## 9     HSV    VZV       3       5 0.2164011
-## 10   KSHV    VZV       4       5 0.2323951</code></pre>
+<pre><code>##         name_a      name_b index_a index_b   net_emd
+## 1    EBV-1.txt   ECL-1.txt       1       2 0.4876042
+## 2    EBV-1.txt HSV-1-1.txt       1       3 0.1662899
+## 3    EBV-1.txt  KSHV-1.txt       1       4 0.1607306
+## 4    EBV-1.txt   VZV-1.txt       1       5 0.1994613
+## 5    ECL-1.txt HSV-1-1.txt       2       3 0.3986293
+## 6    ECL-1.txt  KSHV-1.txt       2       4 0.4024197
+## 7    ECL-1.txt   VZV-1.txt       2       5 0.4029355
+## 8  HSV-1-1.txt  KSHV-1.txt       3       4 0.1581551
+## 9  HSV-1-1.txt   VZV-1.txt       3       5 0.2164011
+## 10  KSHV-1.txt   VZV-1.txt       4       5 0.2323951</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Confirm NetEMD of a graph with itself is zero within (or at least close to)</span>
 <span class="co"># the limits of machine precision</span>
 purrr::<span class="kw">map2</span>(virus_godd, virus_godd, net_emd)</code></pre></div>
-<pre><code>## $EBV
+<pre><code>## $`EBV-1.txt`
 ## [1] 9.977204e-16
 ## 
-## $ECL
+## $`ECL-1.txt`
 ## [1] 8.639873e-16
 ## 
-## $HSV
+## $`HSV-1-1.txt`
 ## [1] 8.132187e-16
 ## 
-## $KSHV
+## $`KSHV-1.txt`
 ## [1] 1.44477e-16
 ## 
-## $VZV
+## $`VZV-1.txt`
 ## [1] 2.674923e-16</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">.Machine$double.eps</code></pre></div>
 <pre><code>## [1] 2.220446e-16</code></pre>

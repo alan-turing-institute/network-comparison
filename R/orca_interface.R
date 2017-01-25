@@ -110,6 +110,37 @@ read_orca_edge_list <- function(file, format = "ncol") {
   graph_to_indexed_edges(read_orca_graph(file, format))
 }
 
+#' Load all graphs in a directory, converting to ORCA compatible indexed edge lists
+#' 
+#' Loads graphs from all files matching the given pattern in the given directory
+#' and converts them to indexed edge list compatible with the ORCA fast orbit c
+#' alculation package by:
+#'   1. Making the graph undirected
+#'   2. Removing loops (where both endpoints of an edge are the same vertex)
+#'   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
+#'      pair of endpoints)
+#'   4. Removing isolated vertices (i.e. vertices with no edges after the 
+#'      previous alterations)
+#'   5. Relabelling vertices with an integer index from 1 to numVertices
+#'   6. Converting the graph to an edge list
+#' @param dir Path to graph directory
+#' @param format Format of graph files
+#' @param pattern Filename pattern to match graph files
+#' @return A named list of ORCA compatible edge lists, with names corresponding 
+#' to the names of the files each graph was loaded from
+#' @export
+read_all_graphs_as_orca_edge_lists <- function (source_dir, format = "ncol", pattern = ".txt") {
+  # Get list of all filenames in firectory that match the pattern
+  file_names <- dir(source_dir, pattern = ".txt")
+  # Read graph data from each ".txt" file as an ORCA-compatible indexed edge list
+  edges <- purrr::map(file_names, function(file_name) {
+    read_orca_edge_list(file = file.path(source_dir, file_name), format = "ncol")
+  })
+  # Name each edge list with the name of the file it was read from
+  attr(edges, "names") <- file_names
+  return(edges)
+}
+
 #' ORCA vertex graphlet orbit counts to graphlet orbit histograms
 #' 
 #' Converts ORCA output (counts of each graphlet orbit at each graph vertex) to 
