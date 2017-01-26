@@ -1,7 +1,7 @@
 library("purrr")
 
 # HISTOGRAM FUNCTIONS
-#' Discrete histogram consructor
+#' Discrete histogram constructor
 #' 
 #' Creates a discrete histogram object of class \code{dhist}, with bin 
 #' \code{locations} and \code{masses} set to the 1D numeric vectors provided.
