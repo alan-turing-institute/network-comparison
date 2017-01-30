@@ -516,7 +516,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
   })
 })
 
-context("Measures NetEMD: Random graphs")
+context("Measures NetEMD: Random graphs (EMD)")
 # EMD and NET_EMD: Random graph datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
@@ -537,6 +537,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of ra
   })
 })
 
+context("Measures NetEMD: Random graphs (NetEMD)")
 test_that("net_emd return 0 when comparing graphlet orbit degree distributions of random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
   random_edges <- read_all_graphs_as_orca_edge_lists(

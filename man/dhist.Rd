@@ -2,7 +2,7 @@
 % Please edit documentation in R/dhist.R
 \name{dhist}
 \alias{dhist}
-\title{Discrete histogram consructor}
+\title{Discrete histogram constructor}
 \usage{
 dhist(locations, masses)
 }
