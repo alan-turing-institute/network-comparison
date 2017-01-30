@@ -88,7 +88,16 @@ net_emd_single_pair <- function(dhist1, dhist2, method, step_size) {
   # Define optimise method for picking minimal EMD offset
   # 1. "optimise" method
   min_emd_opt <- function() {
-    soln <- optimise(emd_offset, lower = min_offset, upper = max_offset)
+    # Set lower and upper range for optimise algorithm to be somewhat wider than
+    # range defined by the minimum and maximum offset. This guards against a
+    # couple of issues that arise if the optimise range is exactly min_offset 
+    # to max_offset
+    # 1) If lower and upper are equal, the optimise method will throw and error
+    # 2) It seems that optimise is not guaranteed to explore its lower and upper
+    #    bounds, even in the case where one of them is the offset with minimum
+    #    EMD
+    buffer <- 0.1
+    soln <- optimise(emd_offset, lower = (min_offset -buffer), upper = (max_offset + buffer))
     min_emd <- soln$objective
     return(min_emd)
   }
