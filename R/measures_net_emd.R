@@ -25,7 +25,7 @@ library("purrr")
 #' applied to the histograms after they have been normalised to unit variance
 #' @return NetEMD measure for the two sets of discrete histograms
 #' @export
-net_emd <- function(dhists1, dhists2, method = "optimise", step_size) {
+net_emd <- function(dhists1, dhists2, method = "optimise", step_size, return_details = FALSE) {
   # Require either a pair of "dhist" discrete histograms or two lists of "dhist"
   # discrete histograms
   pair_of_dhist_lists <- all(purrr::map_lgl(dhists1, is_dhist)) && all(purrr::map_lgl(dhists2, is_dhist))
@@ -33,17 +33,24 @@ net_emd <- function(dhists1, dhists2, method = "optimise", step_size) {
   # pairs of histograms taken from the same position in each list and return
   # the avaerage net_emd
   if(pair_of_dhist_lists) {
-    net_emds <- purrr::map2_dbl(dhists1, dhists2, ~ net_emd_single_pair(.x, .y, method))
-    arithmetic_mean <- sum(net_emds) / length(net_emds)
-    return(arithmetic_mean)
+    details <- purrr::map2(dhists1, dhists2, ~ min_emd_single_pair(.x, .y, method, step_size))
+    min_emds <- purrr::simplify(purrr::transpose(details)$min_emd)
+    min_offsets <- purrr::simplify(purrr::transpose(details)$min_offset)
+    arithmetic_mean <- sum(min_emds) / length(min_emds)
+    net_emd <- arithmetic_mean
+    if(return_details) {
+      return(list(net_emd = net_emd, min_emds = min_emds, min_offsets = min_offsets))
+    } else {
+      return(arithmetic_mean)
+    }
   }
   else {
-    r <- net_emd_single_pair(dhists1, dhists2, method, step_size)
-    return(r)
+    result <- min_emd_single_pair(dhists1, dhists2, method, step_size)
+    return(result)
   }
 }
 
-net_emd_single_pair <- function(dhist1, dhist2, method, step_size) {
+min_emd_single_pair <- function(dhist1, dhist2, method, step_size) {
   # Require input to be a pair of "dhist" discrete histograms 
   if(!(is_dhist(dhist1) && is_dhist(dhist2))) {
     stop("All inputs must be 'dhist' discrete histogram objects")
@@ -99,23 +106,26 @@ net_emd_single_pair <- function(dhist1, dhist2, method, step_size) {
     buffer <- 0.1
     soln <- optimise(emd_offset, lower = (min_offset -buffer), upper = (max_offset + buffer))
     min_emd <- soln$objective
-    return(min_emd)
+    min_offset <- soln$minimum
+    return(list(min_emd = min_emd, min_offset = min_offset))
   }
   # 2. "fixed_step" method
   min_emd_step <- function() {
     offsets <- seq(min_offset, max_offset, by = step_size)
     emds <- purrr::map_dbl(offsets, emd_offset)
-    min_emd <- min(emds)
-    return(min_emd)
+    min_idx <- which.min(emds)
+    min_emd <- emds[min_idx]
+    min_offset <- offsets[min_idx]
+    return(list(min_emd = min_emd, min_offset = min_offset))
   }
    
   # Determine minimum EMD across all offsets
-  min_emd <- switch(EXPR = method, 
+  min_emd_details <- switch(EXPR = method, 
          optimise = min_emd_opt(),
          fixed_step = min_emd_step(),
          stop("Supplied 'method' not recognised")
   )
-  return(min_emd)
+  return(min_emd_details)
 }
 
 #' Earth Mover's Distance (EMD) 
