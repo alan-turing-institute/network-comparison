@@ -319,7 +319,7 @@ normalise_histogram_mass <- function(bin_masses) {
 #' Normalise histogram to unit variance
 #' 
 #' Normalises histogram to unit variance by dividing each bin centre by the 
-#' standard deviation of the hsitogram
+#' standard deviation of the histogram
 #' @param bin_masses Bin masses for histogram
 #' @param bin_centres Bin centres for histogram
 #' @return Bin centres normalised to give a histogram of variance 1
