@@ -1,5 +1,5 @@
 library("purrr")
-context("dhist:Discrete histogram")
+context("dhist: Discrete histogram from observations")
 
 test_that("discrete_hist generates correct discrete histograms for random integer observations", {
   # Method for generating random observations containing specific locations a 
@@ -57,4 +57,120 @@ test_that("discrete_hist generates correct discrete histograms for random intege
   for(i in 1:num_tests) {
     run_test()
   }
+})
+
+context("dhist: Discrete histogram variance")
+test_that("dhist_variance returns sigma^2 for normal histograms", {
+  num_hists <- 5
+  num_bins <- 100001
+  
+  mus <- runif(num_hists, -10, 10)
+  sigmas <- runif(num_hists, 0, 10)
+  
+  rand_locations <- function(mu, sigma) {return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))}
+  
+  rand_dhists <- purrr::map2(mus, sigmas, function(mu, sigma) {
+    locations <- rand_locations(mu, sigma)
+    masses <- dnorm(locations, mean = mu, sd = sigma)
+    return(dhist(masses = masses, locations = locations))
+  })
+  
+  actuals <- purrr::map_dbl(rand_dhists, dhist_variance)
+  expected <- purrr::map_dbl(sigmas, function(sigma) {return(sigma^2)})
+  
+  expect_equalish <- function(actual, expected) {
+    scaled_diff <- abs(actual - expected)/min(actual, expected)
+    max_diff <- 1e-4
+    return(expect_lte(scaled_diff, max_diff))
+  }
+  purrr::map2(actuals, expected, expect_equalish)
+})
+
+context("dhist: Discrete histogram mass normalisation")
+test_that("normalise_dhist_mass output sums to 1", {
+  # Generate histograms with random masses (no centres needed for this test)
+  num_hists <- 10
+  num_bins <- 100
+  
+  mass_min <- 0
+  mass_max <- 100
+  rand_bin_masses <- function() {return(runif(num_bins, mass_min, mass_max))}
+  bin_mass_lists <- replicate(num_hists, rand_bin_masses(), simplify = FALSE)
+
+  actuals <- purrr::map(bin_mass_lists, function(masses) {
+    # Locations are unimportant as they do not affect mass normalisation
+    locations <- 1:length(masses)
+    mass_normalised_dhist = normalise_dhist_mass(dhist(masses = masses, locations = locations))
+    return(sum(mass_normalised_dhist$masses))
+  })
+  expected <- 1
+  purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
+})
+
+context("dhist: Discrete histogram variance normalisation")
+test_that("normalise_histogram_variance output has variance of 1 for random histograms", {
+  # Generate histograms with random masses and random centres
+  num_hists <- 10
+  num_bins <- 100
+  
+  mass_min <- 0
+  mass_max <- 100
+  rand_masses <- function() {return(runif(num_bins, mass_min, mass_max))}
+  
+  centre_min <- -30
+  centre_max <- 70
+  rand_locations <- function() {return(runif(num_bins, centre_min, centre_max))}
+  
+  rand_dhists <- replicate(num_hists, dhist(masses = rand_masses(), locations = rand_locations()), simplify = FALSE)
+  
+  actuals <- purrr::map(rand_dhists, function(dhist) {dhist_variance(normalise_dhist_variance(dhist))})
+  expected <- 1
+  purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
+})
+
+test_that("normalise_histogram_variance output has variance of 1 for normal histograms", {
+  num_hists <- 5
+  num_bins <- 100001
+  
+  mus <- runif(num_hists, -10, 10)
+  sigmas <- runif(num_hists, 0, 10)
+  
+  rand_locations <- function(mu, sigma) {return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))}
+  
+  rand_dhists <- purrr::map2(mus, sigmas, function(mu, sigma) {
+    locations <- rand_locations(mu, sigma)
+    masses <- dnorm(locations, mean = mu, sd = sigma)
+    return(dhist(masses = masses, locations = locations))
+  })
+
+  actuals <- purrr::map(rand_dhists, function(dhist) {dhist_variance(normalise_dhist_variance(dhist))})
+  expected <- 1
+  purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
+})
+
+context("dhist: Harmonise dhist locations")
+test_that("harmonise_dhist_locations works A", {
+  dhist1 <- dhist(masses = c(1, 1, 1), locations = c(1, 3, 5))
+  dhist2 <- dhist(masses = c(1, 1, 1), locations = c(2, 4, 6))
+  
+  expected <- list(
+    dhist1 = dhist(masses = c(1, 1, 1, 0, 0, 0), locations = c(1, 3, 5, 2, 4, 6)),
+    dhist2 = dhist(masses = c(1, 1, 1, 0, 0, 0), locations = c(2, 4, 6, 1, 3, 5))
+  )
+  actual <- harmonise_dhist_locations(dhist1, dhist2)
+  expect_equal(actual, expected)
+  
+})
+
+test_that("harmonise_dhist_locations works B", {
+  dhist1 <- dhist(masses = c(1, 1, 1), locations = c(1, 3, 5))
+  dhist2 <- dhist(masses = c(1, 1, 1), locations = c(4, 5, 6))
+  
+  expected <- list(
+    dhist1 = dhist(masses = c(1, 1, 1, 0, 0), locations = c(1, 3, 5, 4, 6)),
+    dhist2 = dhist(masses = c(1, 1, 1, 0, 0), locations = c(4, 5, 6, 1, 3))
+  )
+
+  actual <- harmonise_dhist_locations(dhist1, dhist2)
+  expect_equal(actual, expected)
 })

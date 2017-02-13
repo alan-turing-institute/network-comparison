@@ -108,6 +108,109 @@ shift_dhist <- function(dhist, shift) {
   return(dhist)
 }
 
+#' Calculate mean location for a discrete histogram
+#' 
+#' Calculates mean location for a discrete histogram by taking a weighted sum
+#' of each location weighted by the fraction of the total histogram mass at that
+#' location.
+#' @param dhist A discrete histogram as a \code{dhist} object
+#' @return The mass-weighted mean location
+#' @export
+dhist_mean_location <- function(dhist) {
+  sum((dhist$masses/ sum(dhist$masses)) * dhist$locations) 
+}
+
+#' Calculate variance of a discrete histogram
+#' 
+#' Calculates variance directly from the discrete histogram by using locations
+#' weighted by  masses. 
+#' NOTE: Does not apply bias correction (i.e. N-1 denominator) as bin_masses 
+#' may not represent bin counts so N is not necessarily known
+#' @param dhist A discrete histogram as a \code{dhist} object
+#' @return Variance of histogram
+#' @export
+dhist_variance <- function(dhist) {
+  variance <- sum(dhist$masses * (dhist$locations - dhist_mean_location(dhist))^2) / sum(dhist$masses)
+  return(variance)
+}
+
+#' Calculate standard deviation of a discrete histogram
+#' 
+#' Calculates standard deviation directly from the discrete histogram by using 
+#' locations weighted by masses.
+#' NOTE: Does not apply bias correction (i.e. N-1 denominator) as bin_masses 
+#' may not represent bin counts so N is not necessarily known
+#' @param dhist A discrete histogram as a \code{dhist} object
+#' @return Standard deviation of histogram
+#' @export
+dhist_std <- function(dhist) {
+  return(sqrt(dhist_variance(dhist)))
+}
+
+#' Centre a discrete histogram around its mean location
+#' 
+#' Centres a discrete histogram around its mass-weighted mean location by 
+#' subtracting the mass-weighted mean from each location.
+#' @param dhist A discrete histogram as a \code{dhist} object
+#' @return The mass-weighted mean location
+#' @export
+mean_centre_dhist <- function(dhist) {
+  centred_locations <- dhist$locations - dhist_mean_location(dhist)
+  return(dhist(masses = dhist$masses, locations = centred_locations))
+}
+
+#' Normalise a discrete histogram to unit mass
+#' 
+#' Normalises a discrete histogram to unit mass by dividing each mass by the 
+#' total of the non-normalised masses
+#' @param dhist A discrete histogram as a \code{dhist} object
+#' @return A discrete histogram normalised to have mass 1
+normalise_dhist_mass <- function(dhist) {
+  total_mass <- sum(dhist$masses)
+  normalised_masses <- dhist$masses / total_mass
+  return(dhist(masses = normalised_masses, locations = dhist$locations))
+}
+
+#' Normalise a discrete histogram to unit variance
+#' 
+#' Normalises a discrete histogram to unit variance by dividing each location by
+#' the standard deviation of the discrete histogram
+#' @param dhist A discrete histogram as a \code{dhist} object
+#' @return A discrete histogram normalised to have variance 1
+normalise_dhist_variance <- function(dhist) {
+  # Special case for histograms with only one bin. Variance is zero / undefined
+  # so normalisation fails. Just return bin centres unchanged
+  if(length(dhist$locations) == 1) {
+    return(dhist)
+  }
+  centred_locations <- (dhist$locations - dhist_mean_location(dhist))
+  normalised_centred_locations <- centred_locations / dhist_std(dhist)
+  normalised_locations <- normalised_centred_locations + dhist_mean_location(dhist)
+  return(dhist(masses = dhist$masses, locations = normalised_locations))
+}
+
+#' Homogonise a pair of discrete histograms to share a common set of locations
+#' 
+#' Where a location only exists in one histogram, add this location to the other
+#' histogram with zero mass. This ensures that all location exist in both 
+#' histograms.
+#' @param dhist1 A discrete histogram as a \code{dhist} object
+#' @param dhist2 A discrete histogram as a \code{dhist} object
+#' @return Augmented histograms
+harmonise_dhist_locations <- function(dhist1, dhist2) {
+  # Identify missing locations in each histogram
+  missing_locations1 <- setdiff(dhist2$locations, dhist1$locations)
+  missing_locations2 <- setdiff(dhist1$locations, dhist2$locations)
+  # Add missing locations to end of each histogram
+  dhist1$locations <- c(dhist1$locations, missing_locations1)
+  dhist2$locations <- c(dhist2$locations, missing_locations2)
+  # Assign these extra locations zero mass
+  dhist1$masses <- c(dhist1$masses, rep(0, length(missing_locations1)))
+  dhist2$masses <- c(dhist2$masses, rep(0, length(missing_locations2)))
+  
+  return(list(dhist1 = dhist1, dhist2 = dhist2))
+}
+
 #' Check if 1D numeric vector
 #' 
 #' Check if a variable is a 1D numeric vector by checking that:
@@ -116,7 +219,6 @@ shift_dhist <- function(dhist, shift) {
 #'   \item \code{is_null(dim(input))}: Input is not a matrix or array
 #' }
 #' @return TRUE if input is a 1D numeric vector. FALSE otherwise.
-#' @export
 is_numeric_vector_1d <- function(input) {
   return(purrr::is_numeric(input) && purrr::is_null(dim(input)))
 }
