@@ -45,8 +45,9 @@ net_emd <- function(dhists1, dhists2, method = "optimise", step_size, return_det
     }
   }
   else {
-    result <- min_emd_single_pair(dhists1, dhists2, method, step_size)
-    return(result)
+    # Wrap single discrete histograms as lists of one element and call self. This
+    # ensures same treatment for lists of histograms and single histograms
+    return(net_emd(list(dhists1), list(dhists2), method, step_size, return_details))
   }
 }
 
