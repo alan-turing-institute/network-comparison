@@ -29,7 +29,7 @@ dhist <- function(locations, masses) {
     stop("Bin masses must be provided as a 1D numeric vector")
   }
   if(length(locations) != length(masses)) {
-    stop("The number of bin locations and masses provided must be equals")
+    stop("The number of bin locations and masses provided must be equal")
   }
   dhist <- list(locations = locations, masses = masses)
   class(dhist) <- "dhist"
@@ -53,7 +53,7 @@ is_dhist <- function(x, fast_check = FALSE) {
   # that do not have the required elements
   has_class_attr <-(class(x) == "dhist")
   if(fast_check) {
-    # Early return is fadt check requested
+    # Early return is fast check requested
     return(has_class_attr)
   }
   # Otherwise check structure
