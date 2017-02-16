@@ -124,8 +124,8 @@ dhist_mean_location <- function(dhist) {
 #' 
 #' Calculates variance directly from the discrete histogram by using locations
 #' weighted by  masses. 
-#' NOTE: Does not apply bias correction (i.e. N-1 denominator) as bin_masses 
-#' may not represent bin counts so N is not necessarily known
+#' NOTE: Does not apply bias correction (i.e. N-1 denominator) as masses 
+#' may not represent counts so N is not necessarily known
 #' @param dhist A discrete histogram as a \code{dhist} object
 #' @return Variance of histogram
 #' @export
@@ -138,8 +138,8 @@ dhist_variance <- function(dhist) {
 #' 
 #' Calculates standard deviation directly from the discrete histogram by using 
 #' locations weighted by masses.
-#' NOTE: Does not apply bias correction (i.e. N-1 denominator) as bin_masses 
-#' may not represent bin counts so N is not necessarily known
+#' NOTE: Does not apply bias correction (i.e. N-1 denominator) as masses 
+#' may not represent counts so N is not necessarily known
 #' @param dhist A discrete histogram as a \code{dhist} object
 #' @return Standard deviation of histogram
 #' @export
@@ -173,12 +173,13 @@ normalise_dhist_mass <- function(dhist) {
 
 #' Normalise a discrete histogram to unit variance
 #' 
-#' Normalises a discrete histogram to unit variance by dividing each location by
-#' the standard deviation of the discrete histogram
+#' Normalises a discrete histogram to unit variance by dividing each centred
+#' location by the standard deviation of the discrete histogram before 
+#' decentering
 #' @param dhist A discrete histogram as a \code{dhist} object
 #' @return A discrete histogram normalised to have variance 1
 normalise_dhist_variance <- function(dhist) {
-  # Special case for histograms with only one bin. Variance is zero / undefined
+  # Special case for histograms with only one location. Variance is zero / undefined
   # so normalisation fails. Just return bin centres unchanged
   if(length(dhist$locations) == 1) {
     return(dhist)
