@@ -41,7 +41,7 @@ test_that("discrete_hist generates correct discrete histograms for random intege
     non_zero_count_indexes <- counts != 0
     expected_locations <- locations[non_zero_count_indexes]
     expected_counts <- counts[non_zero_count_indexes]
-    # discrete_hist will return results with bins ordered by ascending location, 
+    # dhist_from_obs will return results with bins ordered by ascending location, 
     # so sort expected data to match
     sorted_locations <- sort(expected_locations, index.return = TRUE)
     sorted_location_indexes <- sorted_locations$ix
