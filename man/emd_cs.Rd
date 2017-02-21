@@ -4,24 +4,20 @@
 \alias{emd_cs}
 \title{Earth Mover's Distance (EMD) using the difference of cumulative sums method}
 \usage{
-emd_cs(bin_masses1, bin_masses2, bin_centres1, bin_centres2)
+emd_cs(dhist1, dhist2)
 }
 \arguments{
-\item{bin_masses1}{Bin masses for histogram 1}
+\item{dhist1}{A discrete histogram as a \code{dhist} object}
 
-\item{bin_masses2}{Bin masses for histogram 2}
-
-\item{bin_centres1}{Bin centres for histogram 1}
-
-\item{bin_centres2}{Bin centres for histogram 2}
+\item{dhist2}{A discrete histogram as a \code{dhist} object}
 }
 \value{
 Earth Mover's Distance between the two input histograms
 }
 \description{
-Takes two sets of histogram bin masses and bin centres and calculates the 
-Earth Mover's Distance between the two histograms by summing the absolute 
-difference between the two cumulative histograms.
+Takes two discrete histograms and calculates the Wasserstein / Earth Mover's
+Distance between the two histograms by summing the absolute difference 
+between the two cumulative histograms.
 }
 \references{
 Calculation of the Wasserstein Distance Between Probability Distributions on the Line

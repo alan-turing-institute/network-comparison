@@ -4,7 +4,8 @@
 \alias{net_emd}
 \title{NetEMD Network Earth Mover's Distance}
 \usage{
-net_emd(dhists1, dhists2, method = "optimise", step_size)
+net_emd(dhists1, dhists2, method = "optimise", step_size = NULL,
+  return_details = FALSE)
 }
 \arguments{
 \item{dhists1}{A \code{dhist} discrete histogram object or a list of such objects}

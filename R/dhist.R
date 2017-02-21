@@ -165,6 +165,7 @@ mean_centre_dhist <- function(dhist) {
 #' total of the non-normalised masses
 #' @param dhist A discrete histogram as a \code{dhist} object
 #' @return A discrete histogram normalised to have mass 1
+#' @export
 normalise_dhist_mass <- function(dhist) {
   total_mass <- sum(dhist$masses)
   normalised_masses <- dhist$masses / total_mass
@@ -178,6 +179,7 @@ normalise_dhist_mass <- function(dhist) {
 #' decentering
 #' @param dhist A discrete histogram as a \code{dhist} object
 #' @return A discrete histogram normalised to have variance 1
+#' @export
 normalise_dhist_variance <- function(dhist) {
   # Special case for histograms with only one location. Variance is zero / undefined
   # so normalisation fails. Just return bin centres unchanged
@@ -190,14 +192,15 @@ normalise_dhist_variance <- function(dhist) {
   return(dhist(masses = dhist$masses, locations = normalised_locations))
 }
 
-#' Homogonise a pair of discrete histograms to share a common set of locations
+#' Harmonise a pair of discrete histograms to share a common set of locations
 #' 
 #' Where a location only exists in one histogram, add this location to the other
 #' histogram with zero mass. This ensures that all location exist in both 
 #' histograms.
 #' @param dhist1 A discrete histogram as a \code{dhist} object
 #' @param dhist2 A discrete histogram as a \code{dhist} object
-#' @return Augmented histograms
+#' @return Harmonised histograms
+#' @export
 harmonise_dhist_locations <- function(dhist1, dhist2) {
   # Identify missing locations in each histogram
   missing_locations1 <- setdiff(dhist2$locations, dhist1$locations)
