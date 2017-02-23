@@ -202,47 +202,19 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
 #' \url{http://dx.doi.org/10.1137/1118101}
 #' @param dhist1 A discrete histogram as a \code{dhist} object
 #' @param dhist2 A discrete histogram as a \code{dhist} object
+#' @param normalise_mass Logical determining whether histograms are normalised 
+#' to  unit mass prior to calculating the EMD (default = FALSE)
+#' @param normalise_variance Logical determining whether histograms are normalised 
+#' to  unit variance prior to calculating the EMD (default = FALSE)
 #' @return Earth Mover's Distance between the two input histograms
 #' @export
-emd_cs <- function(dhist1, dhist2) {
+emd_cs <- function(dhist1, dhist2, smoothing_window_width = 0, normalise_mass = FALSE, normalise_variance = FALSE) {
   
-  # Ensure both histograms have entries for all bins that appear in either histogram
-  hh <- harmonise_dhist_locations(dhist1, dhist2)
-  dhist1 <- hh$dhist1
-  dhist2 <- hh$dhist2
+  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width, normalise_mass, normalise_variance)
+  ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width, normalise_mass, normalise_variance)
   
-  # Sort histogram locations and associated masses so locations are in ascending order
-  sorted_indexes1 <- sort(dhist1$locations, decreasing = FALSE, index.return = TRUE)$ix
-  dhist1$masses <- dhist1$masses[sorted_indexes1]
-  dhist1$locations <- dhist1$locations[sorted_indexes1]
-  sorted_indexes2 <- sort(dhist2$locations, decreasing = FALSE, index.return = TRUE)$ix
-  dhist2$masses <- dhist2$masses[sorted_indexes2]
-  dhist2$locations <- dhist2$locations[sorted_indexes2]
-  
-  # Generate cumulative histogram masses
-  cum_mass1 <- cumsum(dhist1$masses)
-  cum_mass2 <- cumsum(dhist2$masses)
-  
-  # Helper function to determine spacing between bin centres
-  vector_spacing <- function(v) {
-    tail(v, length(v)-1) - head(v, length(v)-1)
-  }
-  # Both histograms have been augmented to have the same locations so can use
-  # either locations as a common basis
-  sorted_location_spacing <- vector_spacing(dhist1$locations)
-  
-  # Discrete integration of absolute difference between cumulative histograms
-  # - Get difference between cumulative histograms at each bin with data
-  cum_mass_diff_at_locations <- apply(rbind(cum_mass1, cum_mass2), 2, function(x) abs(x[1] - x[2]))
-  # - Multiply the difference at each bin by the distance to the next bin to get
-  # - the area under the difference curve between consecutive bins (bins are 
-  # - not guaranteed to be equally sized or equally spaced and bins with no 
-  # - mass in either histogram may not be present at all)
-  cum_mass_diff_area_between_locations <- 
-    head(cum_mass_diff_at_locations, length(cum_mass_diff_at_locations) - 1) * 
-    sorted_location_spacing
-  
-  return(sum(cum_mass_diff_area_between_locations))
+  area <- area_between_dhist_ecmfs(ecmf1, ecmf2)
+  return(area)
 }
 
 #' Inter-bin cost matrix from bin centres

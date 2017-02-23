@@ -4,12 +4,19 @@
 \alias{emd_cs}
 \title{Earth Mover's Distance (EMD) using the difference of cumulative sums method}
 \usage{
-emd_cs(dhist1, dhist2)
+emd_cs(dhist1, dhist2, smoothing_window_width = 0, normalise_mass = FALSE,
+  normalise_variance = FALSE)
 }
 \arguments{
 \item{dhist1}{A discrete histogram as a \code{dhist} object}
 
 \item{dhist2}{A discrete histogram as a \code{dhist} object}
+
+\item{normalise_mass}{Logical determining whether histograms are normalised 
+to  unit mass prior to calculating the EMD (default = FALSE)}
+
+\item{normalise_variance}{Logical determining whether histograms are normalised 
+to  unit variance prior to calculating the EMD (default = FALSE)}
 }
 \value{
 Earth Mover's Distance between the two input histograms
