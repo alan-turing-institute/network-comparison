@@ -33,6 +33,7 @@ dhist <- function(locations, masses) {
   }
   dhist <- list(locations = locations, masses = masses)
   class(dhist) <- "dhist"
+  dhist <- sort_dhist(dhist)
   return(dhist)
 }
 
@@ -53,7 +54,7 @@ is_dhist <- function(x, fast_check = FALSE) {
   # that do not have the required elements
   has_class_attr <-(class(x) == "dhist")
   if(fast_check) {
-    # Early return is fast check requested
+    # Early return if fast check requested
     return(has_class_attr)
   }
   # Otherwise check structure
@@ -93,6 +94,21 @@ dhist_from_obs <- function(observations) {
   # Construct histogram object
   hist <- dhist(locations = locations, masses = counts)
   return(hist)
+}
+
+#' Sort discrete histogram
+#' 
+#' Sort a discrete histogram so that locations are in increasing (default) or 
+#' decreasing order
+#' @param dhist A discrete histogram as a \code{dhist} object
+#' @param decreasing Logical indicating whether histograms should be sorted in 
+#' increasing (default) or decreasing order of location
+#' @export
+sort_dhist <- function(dhist, decreasing = FALSE) {
+  sorted_indexes <- sort(dhist$locations, decreasing = decreasing, index.return = TRUE)$ix
+  dhist$masses <- dhist$masses[sorted_indexes]
+  dhist$locations <- dhist$locations[sorted_indexes]
+  return(dhist)
 }
 
 #' Shift discrete histogram
@@ -206,12 +222,17 @@ harmonise_dhist_locations <- function(dhist1, dhist2) {
   missing_locations1 <- setdiff(dhist2$locations, dhist1$locations)
   missing_locations2 <- setdiff(dhist1$locations, dhist2$locations)
   # Add missing locations to end of each histogram
-  dhist1$locations <- c(dhist1$locations, missing_locations1)
-  dhist2$locations <- c(dhist2$locations, missing_locations2)
+  locations1 <- c(dhist1$locations, missing_locations1)
+  locations2 <- c(dhist2$locations, missing_locations2)
   # Assign these extra locations zero mass
-  dhist1$masses <- c(dhist1$masses, rep(0, length(missing_locations1)))
-  dhist2$masses <- c(dhist2$masses, rep(0, length(missing_locations2)))
-  
+  masses1 <- c(dhist1$masses, rep(0, length(missing_locations1)))
+  masses2 <- c(dhist2$masses, rep(0, length(missing_locations2)))
+  # Construct a new histogram using the dhist constructor to ensure that the
+  # harmonised histograms have the same properties as if they had been 
+  # constructed with the additional bins in the first place
+  # (e.g. sorted by location)
+  dhist1 <- dhist(locations = locations1, masses = masses1)
+  dhist2 <- dhist(locations = locations2, masses = masses2)
   return(list(dhist1 = dhist1, dhist2 = dhist2))
 }
 

@@ -148,18 +148,37 @@ test_that("normalise_histogram_variance output has variance of 1 for normal hist
   purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
 })
 
+context("dhist: Sort dhist")
+test_that("sort_dhist works", {
+  # NOTE: Need to construct dhist objects explicitly as the dhist constructor
+  # now returns a sorted dhist and we want to be independent of this
+  dhist1 <- list(locations = c(7, 42, 1, 21, 101, 9), masses = c(15, 12, 16, 13, 11, 14))
+  class(dhist1) <- "dhist"
+  dhist2 <- list(locations = c(3, 0, -62, 7, 16, -58), masses = c(23, 24, 26, 22, 21, 25))
+  class(dhist2) <- "dhist"
+  
+  expected1 = list(locations = c(1, 7, 9, 21, 42, 101), masses = c(16, 15, 14, 13 ,12, 11))
+  class(expected1) <- "dhist"
+  expected2 = list(locations = c(-62, -58, 0, 3, 7, 16), masses = c(26, 25, 24, 23, 22, 21))
+  class(expected2) <- "dhist"
+  
+  actual1 <- sort_dhist(dhist1)
+  actual2 <- sort_dhist(dhist2)
+
+  expect_equal(actual1, expected1)
+  expect_equal(actual2, expected2)
+})
 context("dhist: Harmonise dhist locations")
 test_that("harmonise_dhist_locations works A", {
-  dhist1 <- dhist(masses = c(1, 1, 1), locations = c(1, 3, 5))
-  dhist2 <- dhist(masses = c(1, 1, 1), locations = c(2, 4, 6))
+  dhist1 <- dhist(masses = c(11, 12, 13), locations = c(1, 3, 5))
+  dhist2 <- dhist(masses = c(21, 22, 23), locations = c(2, 4, 6))
   
   expected <- list(
-    dhist1 = dhist(masses = c(1, 1, 1, 0, 0, 0), locations = c(1, 3, 5, 2, 4, 6)),
-    dhist2 = dhist(masses = c(1, 1, 1, 0, 0, 0), locations = c(2, 4, 6, 1, 3, 5))
+    dhist1 = dhist(masses = c(11, 0, 12, 0, 13, 0), locations = c(1, 2, 3, 4, 5, 6)),
+    dhist2 = dhist(masses = c(0, 21, 0, 22, 0, 23), locations = c(1, 2, 3, 4, 5, 6))
   )
   actual <- harmonise_dhist_locations(dhist1, dhist2)
   expect_equal(actual, expected)
-  
 })
 
 test_that("harmonise_dhist_locations works B", {
