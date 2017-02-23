@@ -19,6 +19,12 @@ results in no smoothing and a stepwise constant ECMF. Care should be taken
 to select a \code{smoothing_window_width} that is appropriate for the 
 discrete domain (e.g.for the integer domain a width of 1 is the natural
 choice)}
+
+\item{normalise_mass}{Logical determining whether histograms are normalised 
+to  unit mass prior to constructing the ECMF (default = FALSE)}
+
+\item{normalise_variance}{Logical determining whether histograms are normalised 
+to  unit variance prior to constructing the ECMF  (default = FALSE)}
 }
 \value{
 An interpolating ECMF as an \code{approxfun} object. This function

@@ -108,6 +108,10 @@ dhist_from_obs <- function(observations) {
 #' to select a \code{smoothing_window_width} that is appropriate for the 
 #' discrete domain (e.g.for the integer domain a width of 1 is the natural
 #' choice)
+#' @param normalise_mass Logical determining whether histograms are normalised 
+#' to  unit mass prior to constructing the ECMF (default = FALSE)
+#' @param normalise_variance Logical determining whether histograms are normalised 
+#' to  unit variance prior to constructing the ECMF  (default = FALSE)
 #' @return An interpolating ECMF as an \code{approxfun} object. This function
 #' will return the interpolated cumulative mass for a vector of arbitrary locations.
 #' @export
