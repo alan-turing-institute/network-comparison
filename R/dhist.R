@@ -96,6 +96,105 @@ dhist_from_obs <- function(observations) {
   return(hist)
 }
 
+#' Generate interpolating empirical cumulative mass function (ECMF) for 
+#' a discrete histogram
+#' 
+#' @param dhist A discrete histogram as a \code{dhist} object
+#' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
+#' "smear" point masses across a finite width in the real domain prior to 
+#' calculating the ECMF. This will result in a piecewise linear ECMF rather than
+#' the stepwise constant ECMF obtained with no smoothing. Default is 0, which 
+#' results in no smoothing and a stepwise constant ECMF. Care should be taken 
+#' to select a \code{smoothing_window_width} that is appropriate for the 
+#' discrete domain (e.g.for the integer domain a width of 1 is the natural
+#' choice)
+#' @return An interpolating ECMF as an \code{approxfun} object. This function
+#' will return the interpolated cumulative mass for a vector of arbitrary locations.
+#' @export
+dhist_ecmf <- function(dhist, smoothing_window_width = 0, normalise_mass = FALSE, normalise_variance = FALSE) {
+  # Normalise histogram to unit mass if requested
+  if(normalise_mass) {
+    dhist <- normalise_dhist_mass(dhist)
+  }
+  # Normalise histogram to unit variance if requested
+  if(normalise_variance) {
+    dhist <- normalise_dhist_variance(dhist)
+  }
+  # Ensure histogram is sorted in order of increasing location
+  dhist <- sort_dhist(dhist, decreasing = FALSE)
+  # Determine cumulative mass at each location
+  cum_mass <- cumsum(dhist$masses)
+  # Generate ECDM
+  if(smoothing_window_width == 0) {
+    # Avoid any issues with floating point equality comparison completely when
+    # no smoothing is occurring
+    x_knots <- dhist$locations
+    interpolation_method <- "constant"
+  } else {
+    hw <- smoothing_window_width / 2
+    # Determine set of "knots" that define the ECMF and the value of the ECMF
+    # at each knot
+    # 1. Initial knot candidates are at +/- half the smoothing window width
+    # from the discrete locations
+    num_locs <- length(dhist$locations)
+    lower_limits <- dhist$locations - hw
+    upper_limits <- dhist$locations + hw
+    cum_mass_lower <- cum_mass
+    cum_mass_upper <- cum_mass
+    # 2. Set lower limit cumulative masses to have the same value as the 
+    # upper limit of the previous location. This ensures constant interpolation
+    # between the upper limit of one location and the lower limit of the next
+    cum_mass_lower <- c(0, head(cum_mass_upper, num_locs -1))
+    # 3. Identify upper limits within machine precision of the lower limit of 
+    # the next location
+    diff <- abs(head(upper_limits, num_locs -1) - tail(lower_limits, num_locs -1))
+    tolerance <- .Machine$double.eps
+    drop_indexes <- which(diff <= tolerance)
+    # 4. Drop upper limits and associated cumulative masses where a lower 
+    # limit exists at the same location (to within machine precision).
+    # NOTE: We need to skip this step entirely if there are no upper limits to
+    # drop as vector[-0] returns an empty vector rather than all entries in the
+    # vector.
+    if(length(drop_indexes) > 0) {
+      upper_limits <- upper_limits[-drop_indexes]
+      cum_mass_upper <- cum_mass_upper[-drop_indexes]
+    }
+    # 5. Combine location limits and cumulative masses to define all points
+    # where gradient of ECDM may change (i.e. the "knots" of the ECMF)
+    x_knots <- c(lower_limits, upper_limits)
+    cum_mass <- c(cum_mass_lower, cum_mass_upper)
+    # 6. Sort knots and cumulative mass by increasing order of location
+    sorted_indexes <- sort(x_knots, decreasing = FALSE, index.return = TRUE)$ix
+    x_knots <- x_knots[sorted_indexes]
+    cum_mass <- cum_mass[sorted_indexes]
+    # 7. Set interpolation method
+    interpolation_method <- "linear"
+  }
+  # Construct ECMF
+  max_mass <- cum_mass[length(cum_mass)]
+  dhist_ecmf <- approxfun(x = x_knots, y = cum_mass, 
+                          method = interpolation_method, yleft = 0, 
+                          yright = max_mass, f = 0, ties = min)
+  class(dhist_ecmf) <- c("dhist_ecmf", class(dhist_ecmf))
+  attr(dhist_ecmf, "type") <- interpolation_method
+  return(dhist_ecmf)
+}
+
+#' Get "knots" for discrete histogram empirical cumulative mass function
+#' (ECMF). The "knots" are the x-values at which the y-value of the ECDM changes
+#' gradient (i.e. the x-values between which the ECMF does its constant or 
+#' linear interpolates)
+#' 
+#' @param dhist_ecmf An object of class \code{dhist_ecmf}, returned from a call 
+#' to the \code{dhist_ecmf} function
+#' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
+#' @return x_knots A list of "knots" for the ECMF, containing all x-values at 
+#' which the y-value changes gradient (i.e. the x-values between which the ECMF
+#' does its constant or linear interpolation)
+#' @export
+knots.dhist_ecmf <- function(dhist_ecmf, ...) {
+  eval(expression(x), envir=environment(dhist_ecmf))
+}
 #' Sort discrete histogram
 #' 
 #' Sort a discrete histogram so that locations are in increasing (default) or 
