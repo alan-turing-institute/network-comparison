@@ -263,6 +263,68 @@ test_that("dhist_ecdf returns correct step function when smoothing_window_width 
   expect_equal(actual_inter_knots_ecds1, expected_inter_knots_ecds1)
   expect_equal(actual_extra_knots_ecds1, expected_extra_knots_ecds1)
 })
+
+context("dhist: Area between ECDFs")
+test_that("area_between_dhist_ecdfs returns correct value when smoothing_window_width is zero", {
+  # Compare dhist to itself
+  dhist1 <- dhist(locations = c(1, 2, 4, 7, 11, 16, 22), masses = c(21, 22, 23, 27, 31, 36, 42))
+  dhist2 <- dhist1
+  # ... when normalise_mass = FALSE and normalise_variance = FALSE
+  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0, normalise_mass = FALSE, normalise_variance = FALSE)
+  ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width = 0, normalise_mass = FALSE, normalise_variance = FALSE)
+  actual_area <-  area_between_dhist_ecmfs(ecmf1, ecmf2)
+  expected_area <- 0
+  expect_equal(actual_area, expected_area)
+  # ... when  normalise_mass = FALSE and normalise_variance = TRUE
+  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0, normalise_mass = FALSE, normalise_variance = TRUE)
+  ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width = 0, normalise_mass = FALSE, normalise_variance = TRUE)
+  actual_area <-  area_between_dhist_ecmfs(ecmf1, ecmf2)
+  expected_area <- 0
+  expect_equal(actual_area, expected_area)
+  # ... when normalise_mass = TRUE and normalise_variance = FALSE
+  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0, normalise_mass = TRUE, normalise_variance = FALSE)
+  ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width = 0, normalise_mass = TRUE, normalise_variance = FALSE)
+  actual_area <-  area_between_dhist_ecmfs(ecmf1, ecmf2)
+  expected_area <- 0
+  expect_equal(actual_area, expected_area)
+  # ... when  normalise_mass = TRUE and normalise_variance = TRUE
+  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0, normalise_mass = TRUE, normalise_variance = TRUE)
+  ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width = 0, normalise_mass = TRUE, normalise_variance = TRUE)
+  actual_area <-  area_between_dhist_ecmfs(ecmf1, ecmf2)
+  expected_area <- 0
+  expect_equal(actual_area, expected_area)
+  
+  # Compare dhist to itself shifted by a fixed amount
+  check_shifted_ecmf_area <- function(dhist, shift, normalise_mass, normalise_variance) {
+    dhist1 <- dhist
+    dhist2 <- shift_dhist(dhist1, shift)
+    ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0, normalise_mass = 
+                          normalise_mass, normalise_variance = normalise_variance)
+    ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width = 0, normalise_mass = 
+                          normalise_mass, normalise_variance = normalise_variance)
+    actual_area <-  area_between_dhist_ecmfs(ecmf1, ecmf2)
+    
+    if(normalise_mass) {
+      expected_area <- shift
+    } else {
+      expected_area <- shift * sum(dhist$masses)
+    }
+    expect_equal(actual_area, expected_area)
+  }
+  # Set up histogram and shifts to test
+  dhist1 <- dhist(locations = c(1, 2, 4, 7, 11, 16, 22), masses = c(21, 22, 23, 27, 31, 36, 42))
+  shifts <- c(1, 1.5, 2, 3.7, 11, 16.02, 22, 101)
+  # Test for all shifts
+  # ... when normalise_mass = FALSE and normalise_varieance = FALSE
+  purrr::walk(shifts, ~check_shifted_ecmf_area(.x, dhist = dhist1, normalise_mass = FALSE, normalise_variance = FALSE))
+  # ... when normalise_mass = FALSE and normalise_varieance = TRUE
+  purrr::walk(shifts, ~check_shifted_ecmf_area(.x, dhist = dhist1,normalise_mass = FALSE,  normalise_variance = TRUE))
+  # ... when normalise_mass = TRUE and normalise_varieance = FALSE
+  purrr::walk(shifts, ~check_shifted_ecmf_area(.x, dhist = dhist1, normalise_mass = TRUE, normalise_variance = FALSE))
+  # ... when normalise_mass = TRUE and normalise_varieance = TRUE
+  purrr::walk(shifts, ~check_shifted_ecmf_area(.x, dhist = dhist1,normalise_mass = TRUE,  normalise_variance = TRUE))
+})
+
 context("dhist: Harmonise dhist locations")
 test_that("harmonise_dhist_locations works A", {
   dhist1 <- dhist(masses = c(11, 12, 13), locations = c(1, 3, 5))

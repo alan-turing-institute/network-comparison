@@ -195,6 +195,122 @@ dhist_ecmf <- function(dhist, smoothing_window_width = 0, normalise_mass = FALSE
 knots.dhist_ecmf <- function(dhist_ecmf, ...) {
   eval(expression(x), envir=environment(dhist_ecmf))
 }
+
+#' Calculate area between two discrete histogram empirical cumulative 
+#' mass functions (ECMFs)
+#' 
+#' @param dhist_ecmf1 An object of class \code{dhist_ecmf}, returned from a call 
+#' to the \code{dhist_ecmf} function
+#' @param dhist_ecdf2 An object of class \code{dhist_ecmf}, returned from a call 
+#' to the \code{dhist_ecmf} function
+#' @return area The area between the two discrete histogram ECMFs, calculated as
+#' the integral of the absolute difference between the two ECMFs
+#' @export
+area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
+  # Ensure ECMFs have compatible types
+  ecmf_type1 <- attr(dhist_ecmf1, "type")
+  ecmf_type2 <- attr(dhist_ecmf2, "type")
+  if(ecmf_type1 != ecmf_type2) {
+    stop("ECMFs must have the same type")
+  }
+  ecmf_type <- ecmf_type1
+  # Determine all possible locations where either ECMF changes gradient ("knots")
+  x1 <- knots(dhist_ecmf1)
+  x2 <- knots(dhist_ecmf2)
+  x <- sort(union(x1, x2))
+  # Calculate the cumulative density at each of these locations for both ECDFs
+  ecm1 <- dhist_ecmf1(x)
+  ecm2 <- dhist_ecmf2(x)
+  # Calculate the spacing between x-values and the difference between EDCFs at
+  # each x-value (used in all cases)
+  ecm_diff <- ecm2 - ecm1
+  # Depending on the ECDF type, we calculate the area between ECDFs differently
+  if(ecmf_type == "constant") {
+    # Area of each rectangular segment between ECDFs is the absolute difference
+    # between the ECDFs at the lower limit of the segment * the width of the
+    # segement
+    abs_diff_lower <- abs(head(ecm_diff, length(ecm_diff) - 1))
+    segment_width <- tail(x, length(x) - 1) - head(x, length(x) - 1)
+    area = sum(abs_diff_lower * segment_width)
+  } else if(ecdf_type == "linear") {
+    # ---------------------------------
+    # Identify the type of each segment
+    # ---------------------------------
+    # Segments between knots for linearly interpolated functions can be either
+    # trapeziums, triangles or "bow tie" pairs of triangles.
+    # We can identify each of these cases  by examining the signs of the 
+    # differences between the ECDFs at both limits of the segment
+    signs <- sign(ecm_diff)
+    # 1. A segment is a "bow tie" comprised of two triangles if the ecd_diffs at
+    # each limit have different non-zero signs
+    lower_signs <- head(diff_signs, length(diff_signs))
+    upper_signs <- tail(diff_signs, length(diff_signs))
+    is_bowtie <- (lower_signs != 0) & (upper_signs != 0) & (lower_signs != upper_signs)
+    # 2. Non-bowtie segments are one of:
+    # 1a. A trapezium if the ecm_diff at both limits have the same non-zero sign
+    # 1b. A triangle if the ecm_diff at one limit is zero
+    # 1c. A zero-area trapezium if the ecm_diff at both limits is zero
+    # In all three cases, the formula for the area of a trapezium will give the 
+    # correct area, so we can treat them the same
+    
+    # -------------------------------------------
+    # Calcualte the elements of the area formulae
+    # -------------------------------------------
+    # We will need the location x-coordinates and absolute ECD difference at  
+    # the limits of each segment for all types of segments
+    x_l <- head(locations, length(locations) - 1)
+    x_u <- tail(locations, length(locations) - 1)
+    h_l <-head(h, length(h) - 1)
+    h_u <-tail(h, length(h) - 1)
+    # For "bow tie" segments we'll also need the actual ECD value at each limit
+    # for both distributions, which we use to determine the x-coordinate of the
+    # point at which both ECDFs intersect within the segment
+    y1_l <- head(ecm1, length(ecm1))
+    y1_u <- tail(ecm1, length(ecm1))
+    y2_l <- head(ecd2, length(ecd2))
+    y2_u <- tail(ecd2, length(ecd2))
+    # Calculate gradient (m) and x=0 intersection (c) for both lines
+    m1 <- (y1_u - y1_l) / (x_u - x_l)
+    c1 <- y1u / (m1 * x_u)
+    m2 <- (y2_u - y2_l) / (x_u - x_l)
+    c2 <- y2_u / (m * x_u)
+    # Calculate x-coordinate at which the two lines intersect
+    x_ip <- (c2 - c1) / (m1 - m2)
+    
+    # -----------------------------------------------------
+    # Calculate the area between the EDCFs for each segment
+    # -----------------------------------------------------
+    segment_areas <- rep(0, length(ecm_diff))
+    # For "bow tie" segments, the area is the sum of the areas of the two 
+    # triangles sharing an apex at the interscetion point of the two ECDF lines
+    # 1. Calculate heights of the two triangles
+    h_l <- xip - x_l
+    h_u <- x_u - x_ip
+    # 2. Calculate bases of the two triangles
+    b_l <- abs(y1_l - y2_l)
+    b_u <- abs(y1_u - y2_u)
+    # 3. Calculate area using triangle formula for each triangle in bowtie
+    bowtie_area <- (0.5 * h_l * b_l) + (0.5 * h_u * b_u)
+    # For other segment types, we can use the trapezium formula
+    # 1. Calculate the lengths of the parallel sides ("a" and "b")
+    a <- abs(y1_l - y2_l)
+    b <- abs(y1_u - y2_u)
+    # 2. Calculate the height (h) of the trapezium. In our case, this is the 
+    # width of the segment in the x-coordinate
+    h <- abs(x_u - x_l)
+    # 3. Calculate area using trapezium formula
+    other_area <- 0.5 * (a + b) / h
+    # Set areas for each segment bases on the segment type
+    segment_areas[is_bowtie] <- bowtie_area[is_bowtie]
+    segment_areas[!is_bowtie] <- other_area[!is_bowtie]
+    # Return total area across all segments
+    return(sum(segment_areas))
+  } else {
+    stop("ECDM type not recognised")
+  }
+  return(area)
+}
+
 #' Sort discrete histogram
 #' 
 #' Sort a discrete histogram so that locations are in increasing (default) or 
