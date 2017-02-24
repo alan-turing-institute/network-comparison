@@ -12,6 +12,12 @@ emd_cs(dhist1, dhist2, smoothing_window_width = 0, normalise_mass = FALSE,
 
 \item{dhist2}{A discrete histogram as a \code{dhist} object}
 
+\item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
+"smear" point masses across a finite width in the real domain. Default is 0, 
+which  results in no smoothing. Care should be taken to select a 
+\code{smoothing_window_width} that is appropriate for the discrete domain 
+(e.g.for the integer domain a width of 1 is the natural choice)}
+
 \item{normalise_mass}{Logical determining whether histograms are normalised 
 to  unit mass prior to calculating the EMD (default = FALSE)}
 

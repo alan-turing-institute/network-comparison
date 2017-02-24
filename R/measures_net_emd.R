@@ -202,6 +202,11 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
 #' \url{http://dx.doi.org/10.1137/1118101}
 #' @param dhist1 A discrete histogram as a \code{dhist} object
 #' @param dhist2 A discrete histogram as a \code{dhist} object
+#' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
+#' "smear" point masses across a finite width in the real domain. Default is 0, 
+#' which  results in no smoothing. Care should be taken to select a 
+#' \code{smoothing_window_width} that is appropriate for the discrete domain 
+#' (e.g.for the integer domain a width of 1 is the natural choice)
 #' @param normalise_mass Logical determining whether histograms are normalised 
 #' to  unit mass prior to calculating the EMD (default = FALSE)
 #' @param normalise_variance Logical determining whether histograms are normalised 
