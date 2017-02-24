@@ -5,7 +5,7 @@
 \title{NetEMD Network Earth Mover's Distance}
 \usage{
 net_emd(dhists1, dhists2, method = "optimise", step_size = NULL,
-  return_details = FALSE)
+  return_details = FALSE, smoothing_window_width = 0)
 }
 \arguments{
 \item{dhists1}{A \code{dhist} discrete histogram object or a list of such objects}
@@ -25,9 +25,22 @@ histogram after normalising to unit variance}
 \item{step_size}{Additional optional argument for "fixed_step" method allowing
 user to specify their own minumum step size. Note that this step size is 
 applied to the histograms after they have been normalised to unit variance}
+
+\item{return_details}{Logical indicating whether to return the individual
+minimal EMDs and associated offsets for all pairs of histograms}
+
+\item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
+"smear" point masses across a finite width in the real domain. Default is 0, 
+which  results in no smoothing. Care should be taken to select a 
+\code{smoothing_window_width} that is appropriate for the discrete domain 
+(e.g.for the integer domain a width of 1 is the natural choice)}
 }
 \value{
-NetEMD measure for the two sets of discrete histograms
+NetEMD measure for the two sets of discrete histograms 
+(\code{return_details = FALSE}) or a list with the following named elements
+\code{net_emd}: the NetEMD for the set of histogram pairs, \code{min_emds}:  
+the minimal EMD for each pair of histograms, \code{min_offsets}: the associated
+offsets giving the minimal EMD for each pair of histograms
 }
 \description{
 Calculates the mean minimum Earth Mover's Distance (EMD) between two sets of
