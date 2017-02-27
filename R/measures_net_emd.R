@@ -63,7 +63,9 @@ net_emd <- function(dhists1, dhists2, method = "optimise", step_size = NULL,
   else {
     # Wrap single discrete histograms as lists of one element and call self. This
     # ensures same treatment for lists of histograms and single histograms
-    return(net_emd(list(dhists1), list(dhists2), method, step_size, return_details))
+    return(net_emd(list(dhists1), list(dhists2), method = method, 
+                   step_size = step_size, return_details = return_details,
+                   smoothing_window_width = smoothing_window_width))
   }
 }
 
@@ -78,13 +80,6 @@ min_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
   if(missing(method)) {
     method = "optimise"
   }
-  
-  # Normalise histograms to unit variance
-  dhist1 <- normalise_dhist_variance(dhist1)
-  dhist2 <- normalise_dhist_variance(dhist2)
-  # Normalise histograms to unit mass
-  dhist1 <- normalise_dhist_mass(dhist1)
-  dhist2 <- normalise_dhist_mass(dhist2)
   
   # Determine minimum and maximum offset of range in which histograms overlap
   # if sliding histogram 1
