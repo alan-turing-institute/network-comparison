@@ -405,7 +405,7 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any nor
   })
 })
 
-context("Measures NetEMD: Virus PPI")
+context("Measures NetEMD: Virus PPI (EMD)")
 # EMD and NET_EMD: Virus PPI datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of virus PPI graphs to themselves", {
   # Load viurs PPI network data in ORCA-compatible edge list format
@@ -424,6 +424,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of vi
   })
 })
 
+context("Measures NetEMD: Virus PPI (NetEMD)")
 test_that("net_emd return 0 when comparing graphlet orbit degree distributions of virus PPI graphs to themselves", {
   # Load virus PPI network data in ORCA-compatible edge list format
   data("virusppi")
@@ -435,14 +436,14 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
 
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
-    max_diff <- 1e-12
+    max_diff <- 1e-11
     return(expect_lte(diff, max_diff))
   }
 
   # Map over virus PPI networks
   purrr::walk(virus_godd, function(godd) {
     purrr::walk(godd, function(godd_Ox) {
-      expect_equalish(net_emd(godd_Ox, godd_Ox, method = "optimise"), 0)
+      expect_equalish(net_emd(godd_Ox, godd_Ox, method = "optimise", smoothing_window_width = 0), 0)
     })
   })
 })
@@ -460,10 +461,10 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of ra
   # Calculate graphlet orbit degree distributions up to graphlet order 4
   random_godd <- purrr::map(random_edges, godd)
 
-  # Map over virus PPI networks
+  # Map over random graphs
   purrr::walk(random_godd, function(godd) {
     purrr::walk(godd, function(godd_Ox) {
-      expect_equal(emd(godd_Ox, godd_Ox), 0)
+      expect_equal(emd(godd_Ox, godd_Ox, smoothing_window_width = 0, normalise_mass = TRUE, normalise_variance = TRUE), 0)
     })
   })
 })
@@ -482,14 +483,14 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
 
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
-    max_diff <- 1e-12
+    max_diff <- 1e-11
     return(expect_lte(diff, max_diff))
   }
 
   # Map over random graphs
   purrr::walk(random_godd, function(godd) {
     purrr::walk(godd, function(godd_Ox) {
-      expect_equalish(net_emd(godd_Ox, godd_Ox, method = "optimise"), 0)
+      expect_equalish(net_emd(godd_Ox, godd_Ox, method = "optimise", smoothing_window_width = 0), 0)
     })
   })
 })

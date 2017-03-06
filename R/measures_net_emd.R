@@ -115,7 +115,7 @@ min_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     #    bounds, even in the case where one of them is the offset with minimum
     #    EMD
     buffer <- 0.1
-    soln <- optimise(emd_offset, lower = (min_offset -buffer), upper = (max_offset + buffer))
+    soln <- optimise(emd_offset, lower = (min_offset -buffer), upper = (max_offset + buffer), tol = .Machine$double.eps)
     min_emd <- soln$objective
     min_offset <- soln$minimum
     return(list(min_emd = min_emd, min_offset = min_offset))
