@@ -120,15 +120,21 @@ dhist_ecmf <- function(dhist, smoothing_window_width = 0, normalise_mass = FALSE
   if(normalise_mass) {
     dhist <- normalise_dhist_mass(dhist)
   }
-  # Normalise histogram to unit variance if requested
+  # Normalise histogram to unit variance if requested, adjusting smoothing 
+  # window width to match
+  std_dev <- dhist_std(dhist) # Make sure to measure prior to normalisation
   if(normalise_variance) {
     dhist <- normalise_dhist_variance(dhist)
+    # Histogram is unaltered if variance is zero as normalisation is undefined
+    if(std_dev != 0) {
+      smoothing_window_width = smoothing_window_width / std_dev
+    }
   }
   # Ensure histogram is sorted in order of increasing location
   dhist <- sort_dhist(dhist, decreasing = FALSE)
   # Determine cumulative mass at each location
   cum_mass <- cumsum(dhist$masses)
-  # Generate ECDM
+  # Generate ECMF
   if(smoothing_window_width == 0) {
     # Avoid any issues with floating point equality comparison completely when
     # no smoothing is occurring
@@ -164,7 +170,7 @@ dhist_ecmf <- function(dhist, smoothing_window_width = 0, normalise_mass = FALSE
       cum_mass_upper <- cum_mass_upper[-drop_indexes]
     }
     # 5. Combine location limits and cumulative masses to define all points
-    # where gradient of ECDM may change (i.e. the "knots" of the ECMF)
+    # where gradient of ECMF may change (i.e. the "knots" of the ECMF)
     x_knots <- c(lower_limits, upper_limits)
     cum_mass <- c(cum_mass_lower, cum_mass_upper)
     # 6. Sort knots and cumulative mass by increasing order of location
