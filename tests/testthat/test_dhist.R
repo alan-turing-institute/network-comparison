@@ -268,8 +268,10 @@ context("dhist: Area between ECMFs")
 test_that("area_between_dhist_ecmfs returns correct value", {
   # Example dhists constructed by hand to result in lots of "bowtie" segments   
   # for smoothed ECMFs and to allow expected areas to be calculated by hand
-  dhistA <- dhist(locations = c(1, 3, 5, 7, 9, 11), masses = c(1, 1, 1, 1, 1, 1))
-  dhistB <- dhist(locations = c(0, 2, 4, 6, 8, 10, 12), masses = c(0.5, 1, 1, 1, 1, 1, 0.5))
+  dhistA <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
+  dhistB <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
+  expected_area_unsmoothed <- 4
+  expected_area_smoothed <- 3
   
   # Generate ecmfs
   ecmfA_unsmoothed <- dhist_ecmf(dhistA, smoothing_window_width = 0)
@@ -282,9 +284,6 @@ test_that("area_between_dhist_ecmfs returns correct value", {
   actual_area_smoothed <- area_between_dhist_ecmfs(ecmfA_smoothed, ecmfB_smoothed)
   
   # Compare caculated areas with expected areas
-  expected_area_unsmoothed <- 6
-  expected_area_smoothed <- 3.75
-  
   expect_equal(actual_area_unsmoothed, expected_area_unsmoothed)
   expect_equal(actual_area_smoothed, expected_area_smoothed)
 })

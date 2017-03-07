@@ -246,21 +246,111 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
     ecm_diff_lower <- head(ecm_diff, num_segs)
     segment_areas <- ecm_diff_lower * segment_width
   } else if(ecmf_type == "linear") {
-    # Area between the ECMFs is the area under the function abs(ecmf1 - ecmf2)
-    # We can calculate this using the trapezium rule for each segment between 
-    # the combined set of knots fo rthe two ECMFs (i.e. everywhere either ECMF
-    # can possibly change gradient)
-    y_lower <- head(ecm_diff, num_segs)
-    y_upper <- tail(ecm_diff, num_segs)
-    trapezium_top <- y_upper
-    trapezium_base <- y_lower
-    trapezium_height <- segment_width
-    segment_areas <- 0.5 * (trapezium_top + trapezium_base) * trapezium_height
+    # --------------------------------------------------------------
+    # Determine area between pairs of linear segments from each ECMF
+    # --------------------------------------------------------------
+    x_lowers <- head(x, length(x) - 1)
+    x_uppers <- tail(x, length(x) - 1)
+    #    segment_areas <- purrr::map2_dbl(x_lowers, x_uppers, function(x_l, x_u) {
+    num_segs <- length(x_lowers)
+    segment_areas <- rep(NaN, num_segs)
+    for(i in 1:num_segs) {
+      x_l <- x_lowers[i]
+      x_u <- x_uppers[i]
+      y1_l <- dhist_ecmf1(x_l)
+      y1_u <- dhist_ecmf1(x_u)
+      line1 <- line(point(x_l, y1_l), point(x_u, y1_u))
+      y2_l <- dhist_ecmf2(x_l)
+      y2_u <- dhist_ecmf2(x_u)
+      line2 <- line(point(x_l, y2_l), point(x_u, y2_u))
+      intersection <- segment_intersection(line1, line2)
+      if(intersection$type == "intersecting") {
+        # Segments form two triangles in a "bow-tie" (or potentially a single
+        # triangle if segments are just touching, but this can be covered with 
+        # the same area formula)
+        height_lower_triangle <- intersection$point$x - x_l
+        height_upper_triangle <- x_u - intersection$point$x
+        base_lower_triangle <- abs(y2_l - y1_l)
+        base_upper_triangle <- abs(y2_u - y1_u)
+        area_lower_triangle <- 0.5 * base_lower_triangle * height_lower_triangle
+        area_upper_triangle <- 0.5 * base_upper_triangle * height_upper_triangle
+        segment_area <- area_lower_triangle + area_upper_triangle
+      } else if(intersection$type == "parallel" 
+                || intersection$type == "non-intersecting") {
+        # Segments 
+        top_trapezium <- abs(y2_l - y1_l)
+        base_trapezium <- abs(y2_u - y1_u)
+        height_trapezium <- abs(x_u - x_l)
+        area_trapezium <- 0.5 * (top_trapezium + base_trapezium) * height_trapezium
+        segment_area <- area_trapezium
+      } else {
+        stop("Invalid intersection type")
+      }
+      segment_areas[i] <- segment_area
+    }
   } else {
     stop("ECMF type not recognised")
   }
   area <- sum(segment_areas)
   return(area)
+}
+
+point <- function(x, y) {
+  list(x = x, y = y)
+}
+
+line <- function(point1, point2) {
+  list(point1 = point1, point2 = point2)
+}
+
+segment_intersection <- function(line1, line2) {
+  # Implementation of line segment intersection algorithm adaptedfrom 
+  # "Computational Geometry in C", J. O'Rourke, 1994, pp 220-226
+  # http://crtl-i.com/PDF/comp_c.pdf
+  
+  # Translate our line segment endpoints into the representation used by O'Rourke
+  a <- line1$point1; a0 <- a$x; a1 <- a$y
+  b <- line1$point2; b0 <- b$x; b1 <- b$y
+  c <- line2$point1; c0 <- c$x; c1 <- c$y
+  d <- line2$point2; d0 <- d$x; d1 <- d$y
+  
+  # Generate s, t and D
+  # Generate s*D and t*D, so we can do our within segment check prior to division
+  # NOTE: There is a missing '-' sign on p 221 that should multiply the definition
+  # of 't' in equation 7.2 by -1 (as is seen in the sample code). This has been 
+  # added here
+  sD <- (a0 * (d1 - c1) + c0 * (a1 - d1) + d0 * (c1 - a1))
+  tD <- -(a0 * (c1 - b1) + b0 * (a1 - c1) + c0 * (b1 - a1))
+  D <- a0 * (d1 - c1) + b0 * (c1 - d1) + d0 * (b1 - a1) + c0 * (a1 - b1)
+  s <- sD / D
+  t <- tD / D
+  
+  if(D == 0) {
+    # Lines are parallel
+    type <- "parallel"
+    point <- point(NaN, NaN)
+  }  else {
+    # We make comparisons between sD, tD and D, rather than between s, t and 1
+    # as in O'Rourke. This is to avoid dividing by potentially small numbers 
+    # prior to these comparisons. However, this means we need to consider the
+    # cases when sD, tD are both positive and negative.
+    sD_positive_between_0_and_D <- ((0 <= sD) && (sD <= D))
+    sD_negative_between_0_and_D <- ((0 >= sD) && (sD >= D))
+    tD_positive_between_0_and_D <- ((0 <= tD) && (tD <= D))
+    tD_negative_between_0_and_D <- ((0 >= tD) && (tD >= D))
+    if((sD_positive_between_0_and_D || sD_negative_between_0_and_D ) &&
+       (tD_positive_between_0_and_D || tD_negative_between_0_and_D)) {
+      # The values of sD and tD will lie within the segment, so the lines
+      # will intersect within the segment
+      type <- "intersecting"
+    } else {
+      type <- "non-intersecting"
+    }
+    x <- a0 + s * (b0 - a0)
+    y <- a1 + s * (b1 - a1)
+    point <- point(x, y)
+  }
+  return(list(type = type, point = point))
 }
 
 #' Sort discrete histogram
