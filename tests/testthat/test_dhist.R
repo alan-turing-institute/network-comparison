@@ -264,10 +264,14 @@ test_that("dhist_ecdf returns correct step function when smoothing_window_width 
   expect_equal(actual_extra_knots_ecds1, expected_extra_knots_ecds1)
 })
 
-context("dhist: Area between ECMFs")
-test_that("area_between_dhist_ecmfs returns correct value", {
+context("dhist: Area between ECMFs (simple integer dhists)")
+test_that("area_between_dhist_ecmfs returns correct value for simple integer dhists", {
   # Example dhists constructed by hand to result in lots of "bowtie" segments   
   # for smoothed ECMFs and to allow expected areas to be calculated by hand
+  # Unsmoothed locations are on an integer grid, smoothed bin edges are on a
+  # half-integer grid
+  # Smoothed and unsmoothed ECMF cumulative masses are on integer grid
+  # Smoothed ECMF crossing points are on a quarter-integer grid
   dhistA <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
   dhistB <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
   expected_area_unsmoothed <- 4
@@ -286,6 +290,81 @@ test_that("area_between_dhist_ecmfs returns correct value", {
   # Compare caculated areas with expected areas
   expect_equal(actual_area_unsmoothed, expected_area_unsmoothed)
   expect_equal(actual_area_smoothed, expected_area_smoothed)
+})
+
+context("dhist: Area between ECMFs (non-integer normalised dhists)")
+test_that("area_between_dhist_ecmfs returns correct value for non-integer normalised dhists", {
+  
+  # Previous simple integer grid where both histograms have been separately 
+  # normalised to unit mass and variance. Has locations and masses at a range 
+  # of floating point locations. Has bowties, triangles and trapeziums.
+  dhistA <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
+  dhistB <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
+  # Define some functions to make calculation of manually measured areas easier
+  rectangle_area <- function(width, height) {
+    return(width * height)
+  }
+  triangle_area <- function(base, height) {
+    return(0.5 * base * height)
+  }
+  trapezium_area <- function(side_a, side_b, height) {
+    return(0.5 * (side_a + side_b) * height)
+  }
+  # Measurements of expected area between ECMFs done by hand by printing
+  # normalised ECMFs on a grid with x-spacing of 0.02 and y-spacing of 0.01)
+  # Actual grid counts preserved in data to facilitate less tedious manual
+  # checking if required
+  # --- Unsmoothed ---
+  area_A_unsmoothed <- rectangle_area(width = 10*0.02, height = 12.5*0.01)
+  area_B_unsmoothed <- rectangle_area(width = 50.5*0.02, height = 37.5*0.01)
+  area_C_unsmoothed <- rectangle_area(width = 26*0.02, height = 12.5*0.01)
+  area_D_unsmoothed <- rectangle_area(width = 34.5*0.02, height = 12.5*0.01)
+  area_E_unsmoothed <- rectangle_area(width = 26.5*0.02, height = 25*0.01)
+  expected_area_unsmoothed <- 
+    sum(area_A_unsmoothed, area_B_unsmoothed, area_C_unsmoothed, 
+        area_D_unsmoothed, area_E_unsmoothed)
+  # --- Smoothed ---
+  area_A_smoothed <- triangle_area(base = 2.75*0.01, height = 6.5*0.02)
+  area_B_smoothed <- triangle_area(base = 2.75*0.01, height = 3*0.02)
+  area_C_smoothed <- triangle_area(base = 18.5*0.01, height = 21*0.02)
+  area_D_smoothed <- trapezium_area(side_a = 18.5*0.01, side_b = 37.5*0.01, height = 14.5*0.02)
+  area_E_smoothed <- trapezium_area(side_a = 37.5*0.01, side_b = 37.5*0.01, height = 16*0.02)
+  area_F_smoothed <- triangle_area(base = 37.5*0.01, height = 22.5*0.02)
+  area_G_smoothed <- triangle_area(base = 7.5*0.01, height = 8*0.02)
+  area_H_smoothed <- triangle_area(base = 7.5*0.01, height = 11*0.02)
+  area_I_smoothed <- triangle_area(base = 12.5*0.01, height = 19.5*0.02)
+  area_J_smoothed <- trapezium_area(side_a = 12.5*0.01, side_b = 20*0.01, height = 30.5*0.02)
+  area_K_smoothed <- trapezium_area(side_a = 20*0.01, side_b = 18*0.01, height = 8*0.02)
+  area_L_smoothed <- triangle_area(base = 18*0.01, height = 22*0.02)
+  expected_area_smoothed <- 
+    sum(area_A_smoothed, area_B_smoothed, area_C_smoothed, area_D_smoothed, 
+        area_E_smoothed, area_F_smoothed, area_G_smoothed, area_H_smoothed,
+        area_I_smoothed, area_J_smoothed, area_K_smoothed, area_L_smoothed)
+  
+  # Generate ecmfs
+  ecmfA_unsmoothed <- dhist_ecmf(dhistA, smoothing_window_width = 0, 
+                                 normalise_mass = TRUE, normalise_variance = TRUE)
+  ecmfB_unsmoothed <- dhist_ecmf(dhistB, smoothing_window_width = 0,
+                                 normalise_mass = TRUE, normalise_variance = TRUE)
+  ecmfA_smoothed <- dhist_ecmf(dhistA, smoothing_window_width = 1,
+                               normalise_mass = TRUE, normalise_variance = TRUE)
+  ecmfB_smoothed <- dhist_ecmf(dhistB, smoothing_window_width = 1,
+                               normalise_mass = TRUE, normalise_variance = TRUE)
+  
+  # Calculate area between ECMFs
+  actual_area_unsmoothed <- area_between_dhist_ecmfs(ecmfA_unsmoothed, ecmfB_unsmoothed)
+  actual_area_smoothed <- area_between_dhist_ecmfs(ecmfA_smoothed, ecmfB_smoothed)
+  
+  # Compare caculated areas with expected areas
+  expect_equalish_manual <- function(actual, expected, relative_tolerance) {
+    relative_diff <- abs(actual - expected) / expected
+    expect_lte(relative_diff, relative_tolerance)
+  }
+  
+  # Given manual measurement of areas between curves, consider area correct
+  # if actual and expected areas are within 1% of each other
+  expect_equalish_manual(actual_area_unsmoothed, expected_area_unsmoothed, 0.01)
+  expect_equalish_manual(actual_area_smoothed, expected_area_smoothed, 0.01)
 })
 
 context("dhist: Harmonise dhist locations")
