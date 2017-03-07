@@ -264,8 +264,8 @@ test_that("dhist_ecdf returns correct step function when smoothing_window_width 
   expect_equal(actual_extra_knots_ecds1, expected_extra_knots_ecds1)
 })
 
-context("dhist: Area between ECDFs")
-test_that("area_between_dhist_ecdfs returns correct value", {
+context("dhist: Area between ECMFs")
+test_that("area_between_dhist_ecmfs returns correct value", {
   # Example dhists constructed by hand to result in lots of "bowtie" segments   
   # for smoothed ECMFs and to allow expected areas to be calculated by hand
   dhistA <- dhist(locations = c(1, 3, 5, 7, 9, 11), masses = c(1, 1, 1, 1, 1, 1))
@@ -277,7 +277,7 @@ test_that("area_between_dhist_ecdfs returns correct value", {
   ecmfA_smoothed <- dhist_ecmf(dhistA, smoothing_window_width = 1)
   ecmfB_smoothed <- dhist_ecmf(dhistB, smoothing_window_width = 1)
 
-  # Calculate area between EDMFs
+  # Calculate area between ECMFs
   actual_area_unsmoothed <- area_between_dhist_ecmfs(ecmfA_unsmoothed, ecmfB_unsmoothed)
   actual_area_smoothed <- area_between_dhist_ecmfs(ecmfA_smoothed, ecmfB_smoothed)
   
