@@ -1,0 +1,149 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+# Mass and variance normalised histogram example (initial integer histogram becomes real-valued locations and masses on non-aligned grids)
+dhistA_pre_norm <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
+dhistB_pre_norm <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
+dhistA_norm_mass <- normalise_dhist_mass(dhistA_pre_norm)
+dhistB_norm_mass <- normalise_dhist_mass(dhistB_pre_norm)
+sigmaA <- dhist_std(dhistA_norm_mass)
+sigmaB <- dhist_std(dhistB_norm_mass)
+dhistA <- normalise_dhist_variance(dhistA_norm_mass)
+dhistB <- normalise_dhist_variance(dhistB_norm_mass)
+fcA <- dhist_ecmf(dhistA, smoothing_window_width = 0)
+fcB <- dhist_ecmf(dhistB, smoothing_window_width = 0)
+flA <- dhist_ecmf(dhistA, smoothing_window_width = 1/sigmaA)
+flB <- dhist_ecmf(dhistB, smoothing_window_width = 1/sigmaB)
+xA <- seq(min(dhistA_pre_norm$locations)-1,max(dhistA_pre_norm$locations)+1, by = 0.01)
+xB <- seq(min(dhistB_pre_norm$locations)-1,max(dhistB_pre_norm$locations)+1, by = 0.01)
+x <- sort(union(xA, xB))
+xMin <- min(x)
+xMax <- max(x)
+yMax <- max(sum(dhistA$masses), sum(dhistB$masses))
+
+# Plot unsmoothed ECMFs with knots (piece-wise constant ECMFs)
+xcA <- knots(fcA)
+plot(xcA, fcA(xcA), type = "p", col = "blue", xlim= c(xMin, xMax), ylim = c(0, yMax), panel.first = c(abline(v = seq(xMin,xMax, by=0.02), col = "gray"),abline(h = seq(0,yMax, by=0.01), col = "gray")))
+lines(x, fcA(x), type = "l", col = "blue")
+xcB <- knots(fcB)
+points(xcB, fcB(xcB), type = "p", col = "red", ylim = c(0, yMax), panel.first = c(abline(v = xMin:xMax, col = "gray"),abline(h = 0:yMax, col = "gray")))
+lines(x, fcB(x), type = "l", col = "red")
+
+# Plot smoothed ECMFs with knots (piece-wise linear ECMFs)
+xlA <- knots(flA)
+plot(xlA, flA(xlA), type = "p", col = "blue", xlim= c(xMin, xMax), ylim = c(0, yMax), panel.first = c(abline(v = seq(xMin,xMax, by=0.02), col = "gray"),abline(h = seq(0,yMax, by=0.01), col = "gray")))
+lines(xlA, flA(xlA), type = "l", col = "blue")
+xlB <- knots(flB)
+points(xlB, flB(xlB), type = "p", col = "red", ylim = c(0, yMax), panel.first = c(abline(v = xMin:xMax, col = "gray"),abline(h = 0:yMax, col = "gray")))
+lines(xlB, flB(xlB), type = "l", col = "red")
+
+# Calculate area between EDMFs
+actual_area_unsmoothed <- area_between_dhist_ecmfs(fcA, fcB)
+actual_area_smoothed <- area_between_dhist_ecmfs(flA, flB)
+
+rectangle_area <- function(width, height) {
+  return(width * height)
+}
+area_A_unsmoothed <- rectangle_area(width = 10*0.02, height = 12.5*0.01)
+area_B_unsmoothed <- rectangle_area(width = 50.5*0.02, height = 37.5*0.01)
+area_C_unsmoothed <- rectangle_area(width = 26*0.02, height = 12.5*0.01)
+area_D_unsmoothed <- rectangle_area(width = 34.5*0.02, height = 12.5*0.01)
+area_E_unsmoothed <- rectangle_area(width = 26.5*0.02, height = 25*0.01)
+expected_area_unsmoothed <- sum(area_A_unsmoothed, area_B_unsmoothed, area_C_unsmoothed,
+                                area_D_unsmoothed, area_E_unsmoothed)
+triangle_area <- function(base, height) {
+  return(0.5 * base * height)
+}
+trapezium_area <- function(side_a, side_b, height) {
+  return(0.5 * (side_a + side_b) * height)
+}
+
+# Expected area calculation from hand-measurements of triangle and trapezium sub-segments between
+# ECMFs printed out with x-grid spacing of 0.02 and y-grid spacing of 0.01
+# Hand measurements were estimated by eye to nearest 1/2 to 1/4 grid square and number of counted grid
+# squares is preserved in the calculations below to aid checking a reproduced manual measurement
+area_A_min_smoothed <- triangle_area(base = 2.5*0.01, height = 6.25*0.02)
+area_A_smoothed <- triangle_area(base = 2.75*0.01, height = 6.5*0.02)
+area_A_max_smoothed <- triangle_area(base = 3.0*0.01, height = 6.75*0.02)
+
+area_B_min_smoothed <- triangle_area(base = 2.5*0.01, height = 2.75*0.02)
+area_B_smoothed <- triangle_area(base = 2.75*0.01, height = 3.0*0.02)
+area_B_max_smoothed <- triangle_area(base = 3.0*0.01, height = 3.25*0.02)
+
+area_C_min_smoothed <- triangle_area(base = 18.25*0.01, height = 20.75*0.02)
+area_C_smoothed <- triangle_area(base = 18.5*0.01, height = 21*0.02)
+area_C_max_smoothed <- triangle_area(base = 18.75*0.01, height = 21.25*0.02)
+
+area_D_min_smoothed <- trapezium_area(side_a = 18.25*0.01, side_b = 37.25*0.01, height = 14.25*0.02)
+area_D_smoothed <- trapezium_area(side_a = 18.5*0.01, side_b = 37.5*0.01, height = 14.5*0.02)
+area_D_max_smoothed <- trapezium_area(side_a = 18.75*0.01, side_b = 37.75*0.01, height = 14.75*0.02)
+
+area_E_min_smoothed <- trapezium_area(side_a = 37.25*0.01, side_b = 37.25*0.01, height = 15.75*0.02)
+area_E_smoothed <- trapezium_area(side_a = 37.5*0.01, side_b = 37.5*0.01, height = 16*0.02)
+area_E_max_smoothed <- trapezium_area(side_a = 37.75*0.01, side_b = 37.75*0.01, height = 16.25*0.02)
+
+area_F_min_smoothed <- triangle_area(base = 37.25*0.01, height = 22.25*0.02)
+area_F_smoothed <- triangle_area(base = 37.5*0.01, height = 22.5*0.02)
+area_F_max_smoothed <- triangle_area(base = 37.75*0.01, height = 22.75*0.02)
+
+area_G_min_smoothed <- triangle_area(base = 7.25*0.01, height = 7.75*0.02)
+area_G_smoothed <- triangle_area(base = 7.5*0.01, height = 8*0.02)
+area_G_max_smoothed <- triangle_area(base = 7.75*0.01, height = 8.25*0.02)
+
+area_H_min_smoothed <- triangle_area(base = 7.25*0.01, height = 10.75*0.02)
+area_H_smoothed <- triangle_area(base = 7.5*0.01, height = 11*0.02)
+area_H_max_smoothed <- triangle_area(base = 7.75*0.01, height = 11.25*0.02)
+
+area_I_min_smoothed <- triangle_area(base = 12.25*0.01, height = 19.25*0.02)
+area_I_smoothed <- triangle_area(base = 12.5*0.01, height = 19.5*0.02)
+area_I_max_smoothed <- triangle_area(base = 12.75*0.01, height = 19.75*0.02)
+
+area_J_min_smoothed <- trapezium_area(side_a = 12.25*0.01, side_b = 19.75*0.01, height = 30.25*0.02)
+area_J_smoothed <- trapezium_area(side_a = 12.5*0.01, side_b = 20*0.01, height = 30.5*0.02)
+area_J_max_smoothed <- trapezium_area(side_a = 12.75*0.01, side_b = 20.25*0.01, height = 30.75*0.02)
+
+area_K_min_smoothed <- trapezium_area(side_a = 19.75*0.01, side_b = 17.75*0.01, height = 7.75*0.02)
+area_K_smoothed <- trapezium_area(side_a = 20*0.01, side_b = 18*0.01, height = 8*0.02)
+area_K_max_smoothed <- trapezium_area(side_a = 20.25*0.01, side_b = 18.25*0.01, height = 8.25*0.02)
+
+area_L_min_smoothed <- triangle_area(base = 17.75*0.01, height = 21.75*0.02)
+area_L_smoothed <- triangle_area(base = 18*0.01, height = 22*0.02)
+area_L_max_smoothed <- triangle_area(base = 18.25*0.01, height = 22.25*0.02)
+
+expected_area_min_smoothed <- 
+  sum(area_A_min_smoothed, area_B_min_smoothed, area_C_min_smoothed, area_D_min_smoothed, area_E_min_smoothed,
+      area_F_min_smoothed, area_G_min_smoothed, area_H_min_smoothed, area_I_min_smoothed, area_J_min_smoothed, 
+      area_K_min_smoothed, area_L_min_smoothed)
+expected_area_smoothed <- 
+  sum(area_A_smoothed, area_B_smoothed, area_C_smoothed, area_D_smoothed, area_E_smoothed,
+      area_F_smoothed, area_G_smoothed, area_H_smoothed, area_I_smoothed, area_J_smoothed, 
+      area_K_smoothed, area_L_smoothed)
+expected_area_max_smoothed <- 
+  sum(area_A_max_smoothed, area_B_max_smoothed, area_C_max_smoothed, area_D_max_smoothed, area_E_max_smoothed,
+      area_F_max_smoothed, area_G_max_smoothed, area_H_max_smoothed, area_I_max_smoothed, area_J_max_smoothed, 
+      area_K_max_smoothed, area_L_max_smoothed)
+
+# Print summary
+abs_diff_unsmoothed <- abs(expected_area_unsmoothed - actual_area_unsmoothed)
+rel_diff_unsmoothed <- abs_diff_unsmoothed / expected_area_unsmoothed
+abs_diff_smoothed <- abs(expected_area_smoothed - actual_area_smoothed)
+rel_diff_smoothed <- abs_diff_smoothed / expected_area_smoothed
+comparison <- rbind(cbind(expected_area_unsmoothed, actual_area_unsmoothed, abs_diff_unsmoothed, rel_diff_unsmoothed), 
+             cbind(expected_area_smoothed, actual_area_smoothed, abs_diff_smoothed, rel_diff_smoothed))
+colnames(comparison) <- c("expected_area", "actual_area", "abs_diff", "rel_diff")
+rownames(comparison) <- c("unsmoothed", "smoothed")
+comparison
+
+res_unsmoothed <- net_emd(dhistA, dhistB, smoothing_window_width = 0, return_details = TRUE)
+res_smoothed <- net_emd(dhistA, dhistB, smoothing_window_width = 1, return_details = TRUE)
+
+expected_measurement_error <- cbind(expected_area_min_smoothed, expected_area_smoothed, expected_area_max_smoothed)
+colnames(expected_measurement_error) <- c("expected_area_min", "expected_area", "expected_area_max")
+rownames(expected_measurement_error) <- c("smoothed")
+expected_measurement_error
+res_unsmoothed
+res_smoothed
+```
