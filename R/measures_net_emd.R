@@ -41,19 +41,27 @@ net_emd <- function(dhists1, dhists2, method = "optimise", step_size = NULL,
   # Require either a pair of "dhist" discrete histograms or two lists of "dhist"
   # discrete histograms
   pair_of_dhist_lists <- all(purrr::map_lgl(dhists1, is_dhist)) && all(purrr::map_lgl(dhists2, is_dhist))
-  # If input is two lists of "dhist" discrete histograms, compute net_emd for 
-  # pairs of histograms taken from the same position in each list and return
-  # the avaerage net_emd
+  
+  # If input is two lists of "dhist" discrete histograms, determine the minimum
+  # EMD and associated offset for pairs of histograms taken from the same 
+  # position in each list
   if(pair_of_dhist_lists) {
     details <- purrr::map2(dhists1, dhists2, function(dhist1, dhist2) {
-      min_emd_single_pair(dhist1, dhist2, method = method, step_size = step_size,
+      net_emd_single_pair(dhist1, dhist2, method = method, step_size = step_size,
                           smoothing_window_width = smoothing_window_width,
                           normalise_mass = TRUE, normalise_variance = TRUE)
       })
+    # Collect the minimum EMDs and associated offsets for all histogram pairs
     min_emds <- purrr::simplify(purrr::transpose(details)$min_emd)
     min_offsets <- purrr::simplify(purrr::transpose(details)$min_offset)
+    # The NetEMD is the arithmetic mean of the minimum EMDs for each pair of 
+    # histograms
     arithmetic_mean <- sum(min_emds) / length(min_emds)
     net_emd <- arithmetic_mean
+    # Return just the NetEMD or a list including the NetEMD plus the details of
+    # the minumum EMD and associated offsets for the individual histograms
+    # Note that the offsets represent shifts after the histograms have been
+    # scaled to unit variance
     if(return_details) {
       return(list(net_emd = net_emd, min_emds = min_emds, min_offsets = min_offsets))
     } else {
@@ -61,15 +69,15 @@ net_emd <- function(dhists1, dhists2, method = "optimise", step_size = NULL,
     }
   }
   else {
-    # Wrap single discrete histograms as lists of one element and call self. This
-    # ensures same treatment for lists of histograms and single histograms
+    # Wrap each member of a single pair of histograms is a list and recursively
+    # call this net_emd function. This ensures they are treated the same.
     return(net_emd(list(dhists1), list(dhists2), method = method, 
                    step_size = step_size, return_details = return_details,
                    smoothing_window_width = smoothing_window_width))
   }
 }
 
-min_emd_single_pair <- function(dhist1, dhist2, method = "optimise", 
+net_emd_single_pair <- function(dhist1, dhist2, method = "optimise", 
                                 step_size = NULL, smoothing_window_width = 0, 
                                 normalise_mass = FALSE, normalise_variance = FALSE) {
   # Require input to be a pair of "dhist" discrete histograms 
