@@ -5,8 +5,7 @@
 \title{Generate interpolating empirical cumulative mass function (ECMF) for 
 a discrete histogram}
 \usage{
-dhist_ecmf(dhist, smoothing_window_width = 0, normalise_mass = FALSE,
-  normalise_variance = FALSE)
+dhist_ecmf(dhist, smoothing_window_width = 0)
 }
 \arguments{
 \item{dhist}{A discrete histogram as a \code{dhist} object}
@@ -19,12 +18,6 @@ results in no smoothing and a stepwise constant ECMF. Care should be taken
 to select a \code{smoothing_window_width} that is appropriate for the 
 discrete domain (e.g.for the integer domain a width of 1 is the natural
 choice)}
-
-\item{normalise_mass}{Logical determining whether histograms are normalised 
-to  unit mass prior to constructing the ECMF (default = FALSE)}
-
-\item{normalise_variance}{Logical determining whether histograms are normalised 
-to  unit variance prior to constructing the ECMF  (default = FALSE)}
 }
 \value{
 An interpolating ECMF as an \code{approxfun} object. This function

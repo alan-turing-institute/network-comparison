@@ -169,11 +169,11 @@ test_that("sort_dhist works", {
   expect_equal(actual2, expected2)
 })
 
-context("dhist: ECMF (norm_mass = F, norm_var = F)")
-test_that("dhist_ecmf returns correct step function when smoothing_window_width is zero, normalise_mass is FALSE and normalise_variance is FALSE", {
+context("dhist: ECMF")
+test_that("dhist_ecmf returns correct step function when smoothing_window_width is zero", {
   dhist1 <- dhist(locations = c(1, 2, 4, 7, 11, 16, 22), masses = c(21, 22, 23, 27, 31, 36, 42))
   
-  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0, normalise_mass = FALSE, normalise_variance = FALSE)
+  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0)
   actual_knots1 <- knots(ecmf1)
   actual_knots_ecds1 <- ecmf1(actual_knots1)
   inter_knots_x <- head(actual_knots1, length(actual_knots1) - 1)
@@ -187,76 +187,6 @@ test_that("dhist_ecmf returns correct step function when smoothing_window_width 
   expected_inter_knots_ecds1 <- head(expected_knots_ecds1, length(expected_knots_ecds1) -1)
   expected_extra_knots_ecds1 <- c(0, max_cum_mass)
   expected_knots1 <- dhist1$locations
-  
-  expect_equal(actual_knots1, expected_knots1)
-  expect_equal(actual_knots_ecds1, expected_knots_ecds1)
-  expect_equal(actual_inter_knots_ecds1, expected_inter_knots_ecds1)
-  expect_equal(actual_extra_knots_ecds1, expected_extra_knots_ecds1)
-})
-context("dhist: ECMF (norm_mass = T, norm_var = F)")
-test_that("dhist_ecmf returns correct step function when smoothing_window_width is zero, normalise_mass is FALSE and normalise_variance is TRUE", {
-  dhist1 <- dhist(locations = c(1, 2, 4, 7, 11, 16, 22), masses = c(21, 22, 23, 27, 31, 36, 42))
-  
-  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0, normalise_mass = TRUE, normalise_variance = FALSE)
-  actual_knots1 <- knots(ecmf1)
-  actual_knots_ecds1 <- ecmf1(actual_knots1)
-  inter_knots_x <- head(actual_knots1, length(actual_knots1) - 1)
-  actual_inter_knots_ecds1 <- ecmf1(inter_knots_x)
-  extra_knots <- c(actual_knots1[1] - 1, actual_knots1[length(actual_knots1)] + 1)
-  actual_extra_knots_ecds1 <- ecmf1(extra_knots)
-  
-  normalised_cum_masses1 <- cumsum(dhist1$masses / sum(dhist1$masses))
-  expected_knots_ecds1 <- normalised_cum_masses1
-  expected_inter_knots_ecds1 <- head(expected_knots_ecds1, length(expected_knots_ecds1) -1)
-  expected_extra_knots_ecds1 <- c(0,1)
-  expected_knots1 <- dhist1$locations
-  
-  expect_equal(actual_knots1, expected_knots1)
-  expect_equal(actual_knots_ecds1, expected_knots_ecds1)
-  expect_equal(actual_inter_knots_ecds1, expected_inter_knots_ecds1)
-  expect_equal(actual_extra_knots_ecds1, expected_extra_knots_ecds1)
-})
-context("dhist: ECMF (norm_mass = F, norm_var = T)")
-test_that("dhist_ecdf returns correct step function when smoothing_window_width is zero, normalise_mass is FALSE and normalise_variance is TRUE", {
-  dhist1 <- dhist(locations = c(1, 2, 4, 7, 11, 16, 22), masses = c(21, 22, 23, 27, 31, 36, 42))
-  
-  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0, normalise_mass = FALSE, normalise_variance = TRUE)
-  actual_knots1 <- knots(ecmf1)
-  actual_knots_ecds1 <- ecmf1(actual_knots1)
-  inter_knots_x <- head(actual_knots1, length(actual_knots1) - 1)
-  actual_inter_knots_ecds1 <- ecmf1(inter_knots_x)
-  extra_knots <- c(actual_knots1[1] - 1, actual_knots1[length(actual_knots1)] + 1)
-  actual_extra_knots_ecds1 <- ecmf1(extra_knots)
-  
-  cum_masses1 <- cumsum(dhist1$masses)
-  max_cum_mass <- cum_masses1[length(cum_masses1)]
-  expected_knots_ecds1 <- cum_masses1
-  expected_inter_knots_ecds1 <- head(expected_knots_ecds1, length(expected_knots_ecds1) -1)
-  expected_extra_knots_ecds1 <- c(0, max_cum_mass)
-  expected_knots1 <- normalise_dhist_variance(dhist1)$locations
-  
-  expect_equal(actual_knots1, expected_knots1)
-  expect_equal(actual_knots_ecds1, expected_knots_ecds1)
-  expect_equal(actual_inter_knots_ecds1, expected_inter_knots_ecds1)
-  expect_equal(actual_extra_knots_ecds1, expected_extra_knots_ecds1)
-})
-context("dhist: ECMF (norm_mass = F, norm_var = T)")
-test_that("dhist_ecdf returns correct step function when smoothing_window_width is zero and normalise_variance is true", {
-  dhist1 <- dhist(locations = c(1, 2, 4, 7, 11, 16, 22), masses = c(21, 22, 23, 27, 31, 36, 42))
-  
-  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0, normalise_mass = TRUE, normalise_variance = TRUE)
-  actual_knots1 <- knots(ecmf1)
-  actual_knots_ecds1 <- ecmf1(actual_knots1)
-  inter_knots_x <- head(actual_knots1, length(actual_knots1) - 1)
-  actual_inter_knots_ecds1 <- ecmf1(inter_knots_x)
-  extra_knots <- c(actual_knots1[1] - 1, actual_knots1[length(actual_knots1)] + 1)
-  actual_extra_knots_ecds1 <- ecmf1(extra_knots)
-  
-  normalised_cum_masses1 <- cumsum(dhist1$masses / sum(dhist1$masses))
-  expected_knots_ecds1 <- normalised_cum_masses1
-  expected_inter_knots_ecds1 <- head(expected_knots_ecds1, length(expected_knots_ecds1) -1)
-  expected_extra_knots_ecds1 <- c(0,1)
-  expected_knots1 <- normalise_dhist_variance(dhist1)$locations
   
   expect_equal(actual_knots1, expected_knots1)
   expect_equal(actual_knots_ecds1, expected_knots_ecds1)
@@ -300,6 +230,8 @@ test_that("area_between_dhist_ecmfs returns correct value for non-integer normal
   # of floating point locations. Has bowties, triangles and trapeziums.
   dhistA <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
   dhistB <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
+  dhistA <- normalise_dhist_mass(normalise_dhist_variance(dhistA))
+  dhistB <- normalise_dhist_mass(normalise_dhist_variance(dhistB))
   # Define some functions to make calculation of manually measured areas easier
   rectangle_area <- function(width, height) {
     return(width * height)
@@ -342,14 +274,10 @@ test_that("area_between_dhist_ecmfs returns correct value for non-integer normal
         area_I_smoothed, area_J_smoothed, area_K_smoothed, area_L_smoothed)
   
   # Generate ecmfs
-  ecmfA_unsmoothed <- dhist_ecmf(dhistA, smoothing_window_width = 0, 
-                                 normalise_mass = TRUE, normalise_variance = TRUE)
-  ecmfB_unsmoothed <- dhist_ecmf(dhistB, smoothing_window_width = 0,
-                                 normalise_mass = TRUE, normalise_variance = TRUE)
-  ecmfA_smoothed <- dhist_ecmf(dhistA, smoothing_window_width = 1,
-                               normalise_mass = TRUE, normalise_variance = TRUE)
-  ecmfB_smoothed <- dhist_ecmf(dhistB, smoothing_window_width = 1,
-                               normalise_mass = TRUE, normalise_variance = TRUE)
+  ecmfA_unsmoothed <- dhist_ecmf(dhistA, smoothing_window_width = 0)
+  ecmfB_unsmoothed <- dhist_ecmf(dhistB, smoothing_window_width = 0)
+  ecmfA_smoothed <- dhist_ecmf(dhistA, smoothing_window_width = 1)
+  ecmfB_smoothed <- dhist_ecmf(dhistB, smoothing_window_width = 1)
   
   # Calculate area between ECMFs
   actual_area_unsmoothed <- area_between_dhist_ecmfs(ecmfA_unsmoothed, ecmfB_unsmoothed)

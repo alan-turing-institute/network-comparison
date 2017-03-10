@@ -48,8 +48,7 @@ net_emd <- function(dhists1, dhists2, method = "optimise", step_size = NULL,
   if(pair_of_dhist_lists) {
     details <- purrr::map2(dhists1, dhists2, function(dhist1, dhist2) {
       net_emd_single_pair(dhist1, dhist2, method = method, step_size = step_size,
-                          smoothing_window_width = smoothing_window_width,
-                          normalise_mass = TRUE, normalise_variance = TRUE)
+                          smoothing_window_width = smoothing_window_width)
       })
     # Collect the minimum EMDs and associated offsets for all histogram pairs
     min_emds <- purrr::simplify(purrr::transpose(details)$min_emd)
@@ -78,8 +77,7 @@ net_emd <- function(dhists1, dhists2, method = "optimise", step_size = NULL,
 }
 
 net_emd_single_pair <- function(dhist1, dhist2, method = "optimise", 
-                                step_size = NULL, smoothing_window_width = 0, 
-                                normalise_mass = FALSE, normalise_variance = FALSE) {
+                                step_size = NULL, smoothing_window_width = 0) {
   # Require input to be a pair of "dhist" discrete histograms 
   if(!(is_dhist(dhist1) && is_dhist(dhist2))) {
     stop("All inputs must be 'dhist' discrete histogram objects")
@@ -89,8 +87,28 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     method = "optimise"
   }
   
+  # Normalise histogram to unit mass
+  dhist1 <- normalise_dhist_mass(dhist1)
+  dhist2 <- normalise_dhist_mass(dhist2)
+  # Measure dhist standard deviations prior to variance normalisation
+  std_dev1 <- dhist_std(dhist1)
+  std_dev2 <- dhist_std(dhist2)
+  # Normalise histogram to unit variance
+  dhist1 <- normalise_dhist_variance(dhist1)
+  dhist2 <- normalise_dhist_variance(dhist2)
+  # Adjust smoothing_windows for each histogram based on their pre-normalised variance
+  adjust_smoothing_window <- function(std_dev, smoothing_window_width) {
+    if(std_dev != 0) {
+      # Histogram is unaltered if variance is zero as normalisation is undefined
+      smoothing_window_width = smoothing_window_width / std_dev
+    }
+    return(smoothing_window_width)      
+  }
+  smoothing_window_width1 <- adjust_smoothing_window(std_dev1, smoothing_window_width)
+  smoothing_window_width2 <- adjust_smoothing_window(std_dev2, smoothing_window_width)
+  
   # Determine minimum and maximum offset of range in which histograms overlap
-  # if sliding histogram 1
+  # (based on sliding histogram 1)
   min_offset <- min(dhist2$locations) - max(dhist1$locations)
   max_offset <- max(dhist2$locations) - min(dhist1$locations)
 
@@ -106,9 +124,10 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
   }
   
   emd_offset <- function(offset) {
-    emd(shift_dhist(dhist1, offset), dhist2, 
-        smoothing_window_width = smoothing_window_width, 
-        normalise_mass = normalise_mass, normalise_variance = normalise_variance)
+    # Construct ECMFs for each normalised histogram
+    ecmf1 <- dhist_ecmf(shift_dhist(dhist1, offset), smoothing_window_width1)
+    ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width2)
+    area_between_dhist_ecmfs(ecmf1, ecmf2)
   }
   
   # Define optimise method for picking minimal EMD offset
@@ -123,7 +142,7 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     #    bounds, even in the case where one of them is the offset with minimum
     #    EMD
     buffer <- 0.1
-    soln <- optimise(emd_offset, lower = (min_offset -buffer), upper = (max_offset + buffer), tol = .Machine$double.eps)
+    soln <- optimise(emd_offset, lower = (min_offset -buffer), upper = (max_offset + buffer))
     min_emd <- soln$objective
     min_offset <- soln$minimum
     return(list(min_emd = min_emd, min_offset = min_offset))
@@ -152,27 +171,16 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
 #' Calculates the Earth Mover's Distance (EMD) between two discrete histograms
 #' @param dhist1 A \code{dhist} discrete histogram object
 #' @param dhist2 A \code{dhist} discrete histogram object
-#' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
-#' "smear" point masses across a finite width in the real domain. Default is 0, 
-#' which  results in no smoothing. Care should be taken to select a 
-#' \code{smoothing_window_width} that is appropriate for the discrete domain 
-#' (e.g.for the integer domain a width of 1 is the natural choice)
-#' @param normalise_mass Logical determining whether histograms are normalised 
-#' to  unit mass prior to calculating the EMD (default = FALSE)
-#' @param normalise_variance Logical determining whether histograms are normalised 
-#' to  unit variance prior to calculating the EMD (default = FALSE)
 #' @return Earth Mover's Distance between the two discrete histograms
 #' @export
-emd <- function(dhist1, dhist2, smoothing_window_width = 0, 
-                normalise_mass = FALSE, normalise_variance = FALSE) {
+emd <- function(dhist1, dhist2) {
   # Require the inputs to be "dhist" objects
   if(!(is_dhist(dhist1) && is_dhist(dhist2))) {
     stop("All inputs must be 'dhist' discrete histogram objects")
   }
   # Use efficient difference of cumulative histogram method that can also 
   # handle non-integer bin masses and location differences
-  emd_cs(dhist1, dhist2, smoothing_window_width = smoothing_window_width, 
-         normalise_mass = normalise_mass, normalise_variance = normalise_variance)
+  emd_cs(dhist1, dhist2)
 }
 
 #' Earth Mover's Distance (EMD) using linear programming (LP)
@@ -236,23 +244,13 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
 #' \url{http://dx.doi.org/10.1137/1118101}
 #' @param dhist1 A discrete histogram as a \code{dhist} object
 #' @param dhist2 A discrete histogram as a \code{dhist} object
-#' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
-#' "smear" point masses across a finite width in the real domain. Default is 0, 
-#' which  results in no smoothing. Care should be taken to select a 
-#' \code{smoothing_window_width} that is appropriate for the discrete domain 
-#' (e.g.for the integer domain a width of 1 is the natural choice)
-#' @param normalise_mass Logical determining whether histograms are normalised 
-#' to  unit mass prior to calculating the EMD (default = FALSE)
-#' @param normalise_variance Logical determining whether histograms are normalised 
-#' to  unit variance prior to calculating the EMD (default = FALSE)
 #' @return Earth Mover's Distance between the two input histograms
 #' @export
-emd_cs <- function(dhist1, dhist2, smoothing_window_width = 0, 
-                   normalise_mass = FALSE, normalise_variance = FALSE) {
-  
-  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width, normalise_mass, normalise_variance)
-  ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width, normalise_mass, normalise_variance)
-  
+emd_cs <- function(dhist1, dhist2) {
+  # Generate Empirical Cumulative Mass Functions (ECMFs) for each discrete histogram
+  ecmf1 <- dhist_ecmf(dhist1)
+  ecmf2 <- dhist_ecmf(dhist2)
+  # Calculate the area between the two ECMFs
   area <- area_between_dhist_ecmfs(ecmf1, ecmf2)
   return(area)
 }

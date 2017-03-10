@@ -108,28 +108,10 @@ dhist_from_obs <- function(observations) {
 #' to select a \code{smoothing_window_width} that is appropriate for the 
 #' discrete domain (e.g.for the integer domain a width of 1 is the natural
 #' choice)
-#' @param normalise_mass Logical determining whether histograms are normalised 
-#' to  unit mass prior to constructing the ECMF (default = FALSE)
-#' @param normalise_variance Logical determining whether histograms are normalised 
-#' to  unit variance prior to constructing the ECMF  (default = FALSE)
 #' @return An interpolating ECMF as an \code{approxfun} object. This function
 #' will return the interpolated cumulative mass for a vector of arbitrary locations.
 #' @export
-dhist_ecmf <- function(dhist, smoothing_window_width = 0, normalise_mass = FALSE, normalise_variance = FALSE) {
-  # Normalise histogram to unit mass if requested
-  if(normalise_mass) {
-    dhist <- normalise_dhist_mass(dhist)
-  }
-  # Normalise histogram to unit variance if requested, adjusting smoothing 
-  # window width to match
-  std_dev <- dhist_std(dhist) # Make sure to measure prior to normalisation
-  if(normalise_variance) {
-    dhist <- normalise_dhist_variance(dhist)
-    # Histogram is unaltered if variance is zero as normalisation is undefined
-    if(std_dev != 0) {
-      smoothing_window_width = smoothing_window_width / std_dev
-    }
-  }
+dhist_ecmf <- function(dhist, smoothing_window_width = 0) {
   # Ensure histogram is sorted in order of increasing location
   dhist <- sort_dhist(dhist, decreasing = FALSE)
   # Determine cumulative mass at each location
@@ -211,7 +193,7 @@ knots.dhist_ecmf <- function(dhist_ecmf, ...) {
 #' 
 #' @param dhist_ecmf1 An object of class \code{dhist_ecmf}, returned from a call 
 #' to the \code{dhist_ecmf} function
-#' @param dhist_ecdf2 An object of class \code{dhist_ecmf}, returned from a call 
+#' @param dhist_ecmf2 An object of class \code{dhist_ecmf}, returned from a call 
 #' to the \code{dhist_ecmf} function
 #' @return area The area between the two discrete histogram ECMFs, calculated as
 #' the integral of the absolute difference between the two ECMFs

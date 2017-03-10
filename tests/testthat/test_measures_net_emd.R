@@ -436,7 +436,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
 
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
-    max_diff <- 1e-11
+    max_diff <- 1e-12
     return(expect_lte(diff, max_diff))
   }
 
@@ -464,7 +464,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of ra
   # Map over random graphs
   purrr::walk(random_godd, function(godd) {
     purrr::walk(godd, function(godd_Ox) {
-      expect_equal(emd(godd_Ox, godd_Ox, smoothing_window_width = 0, normalise_mass = TRUE, normalise_variance = TRUE), 0)
+      expect_equal(emd(godd_Ox, godd_Ox), 0)
     })
   })
 })
@@ -483,7 +483,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
 
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
-    max_diff <- 1e-11
+    max_diff <- 1e-12
     return(expect_lte(diff, max_diff))
   }
 
