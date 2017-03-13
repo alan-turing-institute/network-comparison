@@ -233,48 +233,47 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
     # --------------------------------------------------------------
     x_lowers <- head(x, length(x) - 1)
     x_uppers <- tail(x, length(x) - 1)
-    #    segment_areas <- purrr::map2_dbl(x_lowers, x_uppers, function(x_l, x_u) {
-    num_segs <- length(x_lowers)
-    segment_areas <- rep(NaN, num_segs)
-    for(i in 1:num_segs) {
-      x_l <- x_lowers[i]
-      x_u <- x_uppers[i]
-      y1_l <- dhist_ecmf1(x_l)
-      y1_u <- dhist_ecmf1(x_u)
-      line1 <- line(point(x_l, y1_l), point(x_u, y1_u))
-      y2_l <- dhist_ecmf2(x_l)
-      y2_u <- dhist_ecmf2(x_u)
-      line2 <- line(point(x_l, y2_l), point(x_u, y2_u))
-      intersection <- segment_intersection(line1, line2)
-      if(intersection$type == "intersecting") {
-        # Segments form two triangles in a "bow-tie" (or potentially a single
-        # triangle if segments are just touching, but this can be covered with 
-        # the same area formula)
-        height_lower_triangle <- intersection$point$x - x_l
-        height_upper_triangle <- x_u - intersection$point$x
-        base_lower_triangle <- abs(y2_l - y1_l)
-        base_upper_triangle <- abs(y2_u - y1_u)
-        area_lower_triangle <- 0.5 * base_lower_triangle * height_lower_triangle
-        area_upper_triangle <- 0.5 * base_upper_triangle * height_upper_triangle
-        segment_area <- area_lower_triangle + area_upper_triangle
-      } else if(intersection$type == "parallel" 
-                || intersection$type == "non-intersecting") {
-        # Segments 
-        top_trapezium <- abs(y2_l - y1_l)
-        base_trapezium <- abs(y2_u - y1_u)
-        height_trapezium <- abs(x_u - x_l)
-        area_trapezium <- 0.5 * (top_trapezium + base_trapezium) * height_trapezium
-        segment_area <- area_trapezium
-      } else {
-        stop("Invalid intersection type")
-      }
-      segment_areas[i] <- segment_area
-    }
+    segment_areas <- purrr::map2_dbl(x_lowers, x_uppers, function(x_l, x_u) {
+      segment_area_piecewise_linear(x_l = x_l, x_u = x_u, f1 = dhist_ecmf1, f2 = dhist_ecmf2)
+    })
   } else {
     stop("ECMF type not recognised")
   }
   area <- sum(segment_areas)
   return(area)
+}
+
+segment_area_piecewise_linear <- function(f1, f2, x_l, x_u) {
+  y1_l <- f1(x_l)
+  y1_u <- f1(x_u)
+  line1 <- line(point(x_l, y1_l), point(x_u, y1_u))
+  y2_l <- f2(x_l)
+  y2_u <- f2(x_u)
+  line2 <- line(point(x_l, y2_l), point(x_u, y2_u))
+  intersection <- segment_intersection(line1, line2)
+  if(intersection$type == "intersecting") {
+    # Segments form two triangles in a "bow-tie" (or potentially a single
+    # triangle if segments are just touching, but this can be covered with 
+    # the same area formula)
+    height_lower_triangle <- intersection$point$x - x_l
+    height_upper_triangle <- x_u - intersection$point$x
+    base_lower_triangle <- abs(y2_l - y1_l)
+    base_upper_triangle <- abs(y2_u - y1_u)
+    area_lower_triangle <- 0.5 * base_lower_triangle * height_lower_triangle
+    area_upper_triangle <- 0.5 * base_upper_triangle * height_upper_triangle
+    segment_area <- area_lower_triangle + area_upper_triangle
+  } else if(intersection$type == "parallel" 
+            || intersection$type == "non-intersecting") {
+    # Segments 
+    top_trapezium <- abs(y2_l - y1_l)
+    base_trapezium <- abs(y2_u - y1_u)
+    height_trapezium <- abs(x_u - x_l)
+    area_trapezium <- 0.5 * (top_trapezium + base_trapezium) * height_trapezium
+    segment_area <- area_trapezium
+  } else {
+    stop("Invalid intersection type")
+  }
+  return(segment_area)
 }
 
 point <- function(x, y) {
