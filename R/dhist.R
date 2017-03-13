@@ -225,16 +225,22 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
     # Area of each rectangular segment between ECMFs is the absolute difference
     # between the ECMFs at the lower limit of the segment * the width of the
     # segement
-    ecm_diff_lower <- head(ecm_diff, num_segs)
     segment_areas <- ecm_diff_lower * segment_width
   } else if(ecmf_type == "linear") {
     # --------------------------------------------------------------
     # Determine area between pairs of linear segments from each ECMF
     # --------------------------------------------------------------
-    x_lowers <- head(x, length(x) - 1)
-    x_uppers <- tail(x, length(x) - 1)
-    segment_areas <- purrr::map2_dbl(x_lowers, x_uppers, function(x_l, x_u) {
-      segment_area_piecewise_linear(x_l = x_l, x_u = x_u, f1 = dhist_ecmf1, f2 = dhist_ecmf2)
+    ecm_lower1 <- head(ecm1, num_segs)
+    ecm_upper1 <- tail(ecm1, num_segs)
+    ecm_lower2 <- head(ecm2, num_segs)
+    ecm_upper2 <- tail(ecm2, num_segs)
+    segment_areas <- purrr::pmap_dbl(list(x_lower, x_upper, 
+                                          ecm_lower1, ecm_upper1,
+                                          ecm_lower2, ecm_upper2), 
+                                     function(x_l, x_u, y1_l, y1_u, y2_l, y2_u) {
+      segment_area_piecewise_linear(x_l = x_l, x_u = x_u, 
+                                    y1_l = y1_l, y1_u = y1_u,
+                                    y2_l = y2_l, y2_u = y2_u)
     })
   } else {
     stop("ECMF type not recognised")
@@ -243,12 +249,8 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
   return(area)
 }
 
-segment_area_piecewise_linear <- function(f1, f2, x_l, x_u) {
-  y1_l <- f1(x_l)
-  y1_u <- f1(x_u)
+segment_area_piecewise_linear <- function(x_l, x_u, y1_l, y1_u, y2_l, y2_u) {
   line1 <- line(point(x_l, y1_l), point(x_u, y1_u))
-  y2_l <- f2(x_l)
-  y2_u <- f2(x_u)
   line2 <- line(point(x_l, y2_l), point(x_u, y2_u))
   intersection <- segment_intersection(line1, line2)
   if(intersection$type == "intersecting") {
