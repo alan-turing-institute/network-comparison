@@ -127,7 +127,7 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     # Construct ECMFs for each normalised histogram
     ecmf1 <- dhist_ecmf(shift_dhist(dhist1, offset), smoothing_window_width1)
     ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width2)
-    area_between_dhist_ecmfs(ecmf1, ecmf2)
+    area_between_dhist_ecmfs_compiled(ecmf1, ecmf2)
   }
   
   # Define optimise method for picking minimal EMD offset
@@ -165,6 +165,8 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
   )
   return(min_emd_details)
 }
+
+area_between_dhist_ecmfs_compiled <- compiler::cmpfun(area_between_dhist_ecmfs)
 
 #' Earth Mover's Distance (EMD) 
 #' 
