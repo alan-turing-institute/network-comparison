@@ -213,35 +213,50 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
   # Calculate the cumulative density at each of these locations for both ECMFs
   ecm1 <- dhist_ecmf1(x)
   ecm2 <- dhist_ecmf2(x)
-  # Calculate the spacing between x-values and the difference between ECMFs at
-  # each x-value (used in all cases)
-  ecm_diff <- abs(ecm2 - ecm1)
-  num_segs <- length(ecm_diff) - 1
+  # Set some other values used in either case
+  num_segs <- length(x) - 1
   x_lower <- head(x, num_segs)
   x_upper <- tail(x, num_segs)
-  segment_width <- abs(x_upper - x_lower)
   # Depending on the ECDF type, we calculate the area between ECMFs differently
   if(ecmf_type == "constant") {
     # Area of each rectangular segment between ECMFs is the absolute difference
     # between the ECMFs at the lower limit of the segment * the width of the
     # segement
+    ecm_diff <- abs(ecm2 - ecm1)
+    ecm_diff_lower <- head(ecm_diff, num_segs)
+    segment_width <- abs(x_upper - x_lower)
     segment_areas <- ecm_diff_lower * segment_width
   } else if(ecmf_type == "linear") {
     # --------------------------------------------------------------
     # Determine area between pairs of linear segments from each ECMF
     # --------------------------------------------------------------
-    ecm_lower1 <- head(ecm1, num_segs)
-    ecm_upper1 <- tail(ecm1, num_segs)
-    ecm_lower2 <- head(ecm2, num_segs)
-    ecm_upper2 <- tail(ecm2, num_segs)
-    segment_areas <- purrr::pmap_dbl(list(x_lower, x_upper, 
-                                          ecm_lower1, ecm_upper1,
-                                          ecm_lower2, ecm_upper2), 
-                                     function(x_l, x_u, y1_l, y1_u, y2_l, y2_u) {
-      segment_area_piecewise_linear(x_l = x_l, x_u = x_u, 
-                                    y1_l = y1_l, y1_u = y1_u,
-                                    y2_l = y2_l, y2_u = y2_u)
-    })
+    y1_lower <- head(ecm1, num_segs)
+    y1_upper <- tail(ecm1, num_segs)
+    y2_lower <- head(ecm2, num_segs)
+    y2_upper <- tail(ecm2, num_segs)
+    # Determine if ECMFs intersect within each segment
+    segment_intersections <- 
+      segment_intersection(x_lower = x_lower, x_upper = x_upper,
+                           y1_lower = y1_lower, y1_upper = y1_upper, 
+                           y2_lower = y2_lower, y2_upper = y2_upper)
+    intersect_in_segment <- segment_intersections$intersect_in_segment
+    intersection_x <- segment_intersections$intersection_x
+    intersection_y <- segment_intersections$intersection_y
+    # Set segment areas using bowtie area for intersecting segments and trapezium
+    # area for non-intersecting segments
+    segment_areas <- rep(NaN, num_segs)
+    bowtie <- intersect_in_segment
+    trapezium <- !(intersect_in_segment)
+    segment_areas[bowtie] <- 
+      segment_area_bowtie(x_lower = x_lower[bowtie], x_upper = x_upper[bowtie],
+                          y1_lower = y1_lower[bowtie], y1_upper = y1_upper[bowtie], 
+                          y2_lower = y2_lower[bowtie], y2_upper = y2_upper[bowtie],
+                          intersection_x = intersection_x[bowtie],
+                          intersection_y = intersection_y[bowtie])
+    segment_areas[trapezium] <- 
+      segment_area_trapezium(x_lower = x_lower[trapezium], x_upper = x_upper[trapezium],
+                             y1_lower = y1_lower[trapezium], y1_upper = y1_upper[trapezium], 
+                             y2_lower = y2_lower[trapezium], y2_upper = y2_upper[trapezium])
   } else {
     stop("ECMF type not recognised")
   }
@@ -249,21 +264,32 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
   return(area)
 }
 
+segment_area_trapezium <- function(x_lower, x_upper, y1_lower, y1_upper, y2_lower, y2_upper) {
+  top_trapezium <- abs(y2_lower - y1_lower)
+  base_trapezium <- abs(y2_upper - y1_upper)
+  height_trapezium <- abs(x_upper - x_lower)
+  segment_area <- 0.5 * (top_trapezium + base_trapezium) * height_trapezium
+}
+
+segment_area_bowtie <- function(x_lower, x_upper, y1_lower, y1_upper, y2_lower, 
+                                y2_upper, intersection_x, intersection_y) {
+  # Segments form two triangles in a "bow-tie" (or potentially a single
+  # triangle if segments are just touching, but this can be covered with 
+  # the same area formula)
+  height_lower_triangle <- intersection_x - x_lower
+  height_upper_triangle <- x_upper - intersection_x
+  base_lower_triangle <- abs(y2_lower - y1_lower)
+  base_upper_triangle <- abs(y2_upper - y1_upper)
+  area_lower_triangle <- 0.5 * base_lower_triangle * height_lower_triangle
+  area_upper_triangle <- 0.5 * base_upper_triangle * height_upper_triangle
+  segment_area <- area_lower_triangle + area_upper_triangle
+}
+
 segment_area_piecewise_linear <- function(x_l, x_u, y1_l, y1_u, y2_l, y2_u) {
   line1 <- line(point(x_l, y1_l), point(x_u, y1_u))
   line2 <- line(point(x_l, y2_l), point(x_u, y2_u))
   intersection <- segment_intersection(line1, line2)
   if(intersection$type == "intersecting") {
-    # Segments form two triangles in a "bow-tie" (or potentially a single
-    # triangle if segments are just touching, but this can be covered with 
-    # the same area formula)
-    height_lower_triangle <- intersection$point$x - x_l
-    height_upper_triangle <- x_u - intersection$point$x
-    base_lower_triangle <- abs(y2_l - y1_l)
-    base_upper_triangle <- abs(y2_u - y1_u)
-    area_lower_triangle <- 0.5 * base_lower_triangle * height_lower_triangle
-    area_upper_triangle <- 0.5 * base_upper_triangle * height_upper_triangle
-    segment_area <- area_lower_triangle + area_upper_triangle
   } else if(intersection$type == "parallel" 
             || intersection$type == "non-intersecting") {
     # Segments 
@@ -286,7 +312,60 @@ line <- function(point1, point2) {
   list(point1 = point1, point2 = point2)
 }
 
-segment_intersection <- function(line1, line2) {
+segment_intersection <- function(x_lower, x_upper, y1_lower, y1_upper, y2_lower, y2_upper) {
+  # Implementation of line segment intersection algorithm adaptedfrom 
+  # "Computational Geometry in C", J. O'Rourke, 1994, pp 220-226
+  # http://crtl-i.com/PDF/comp_c.pdf
+  
+  # Translate our line segment endpoints into the representation used by O'Rourke
+  a0 <- x_lower; a1 <-y1_lower
+  b0 <- x_upper; b1 <- y1_upper
+  c0 <- x_lower; c1 <- y2_lower
+  d0 <- x_upper; d1 <- y2_upper
+  
+  # Generate s, t and D
+  # Generate s*D and t*D, so we can do our within segment check prior to division
+  # NOTE: There is a missing '-' sign on p 221 that should multiply the definition
+  # of 't' in equation 7.2 by -1 (as is seen in the sample code). This has been 
+  # added here
+  sD <- (a0 * (d1 - c1) + c0 * (a1 - d1) + d0 * (c1 - a1))
+  tD <- -(a0 * (c1 - b1) + b0 * (a1 - c1) + c0 * (b1 - a1))
+  D <- a0 * (d1 - c1) + b0 * (c1 - d1) + d0 * (b1 - a1) + c0 * (a1 - b1)
+  s <- sD / D
+  t <- tD / D
+  
+  # Set output vectors indicating whether lines are parallel and initialise 
+  # intersection point co-ordinates to NaN so this will remain the value for 
+  # parallel lines
+  lines_are_parallel <- (D == 0)
+  num_segs <- length(D)
+  intersection_x <- rep(NaN, num_segs)
+  intersection_y <- rep(NaN, num_segs)
+  
+  # Calculate the intersection point for all non-parallel line pairs
+  is_np <- !(lines_are_parallel)
+  intersection_x[is_np]<- a0[is_np] + s[is_np] * (b0[is_np] - a0[is_np])
+  intersection_y[is_np] <- a1[is_np] + s[is_np] * (b1[is_np] - a1[is_np])
+  
+  # Determine if intersection point is within segment for non-parallel line
+  # pairs
+  sD_positive_between_0_and_D <- ((0 <= sD) & (sD <= D))
+  sD_negative_between_0_and_D <- ((0 >= sD) & (sD >= D))
+  tD_positive_between_0_and_D <- ((0 <= tD) & (tD <= D))
+  tD_negative_between_0_and_D <- ((0 >= tD) & (tD >= D))
+  lines_intersect_in_segment <- 
+    (sD_positive_between_0_and_D | sD_negative_between_0_and_D) & 
+    (tD_positive_between_0_and_D | tD_negative_between_0_and_D)
+  # Make sure that we do not claim parallel lines intersect in segment
+  lines_intersect_in_segment[lines_are_parallel] = FALSE
+  
+  return(list(parallel = lines_are_parallel, 
+              intersect_in_segment = lines_intersect_in_segment,
+              intersection_x = intersection_x,
+              intersection_y = intersection_y))
+}
+
+segment_intersection_line_pair <- function(line1, line2) {
   # Implementation of line segment intersection algorithm adaptedfrom 
   # "Computational Geometry in C", J. O'Rourke, 1994, pp 220-226
   # http://crtl-i.com/PDF/comp_c.pdf
