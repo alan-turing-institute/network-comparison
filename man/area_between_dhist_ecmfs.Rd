@@ -11,7 +11,7 @@ area_between_dhist_ecmfs(dhist_ecmf1, dhist_ecmf2)
 \item{dhist_ecmf1}{An object of class \code{dhist_ecmf}, returned from a call 
 to the \code{dhist_ecmf} function}
 
-\item{dhist_ecdf2}{An object of class \code{dhist_ecmf}, returned from a call 
+\item{dhist_ecmf2}{An object of class \code{dhist_ecmf}, returned from a call 
 to the \code{dhist_ecmf} function}
 }
 \value{
