@@ -137,8 +137,8 @@ colnames(comparison) <- c("expected_area", "actual_area", "abs_diff", "rel_diff"
 rownames(comparison) <- c("unsmoothed", "smoothed")
 comparison
 
-res_unsmoothed <- net_emd(dhistA, dhistB, smoothing_window_width = 0, return_details = TRUE)
-res_smoothed <- net_emd(dhistA, dhistB, smoothing_window_width = 1, return_details = TRUE)
+res_unsmoothed <- net_emd(dhistA_pre_norm, dhistB_pre_norm, smoothing_window_width = 0, return_details = TRUE)
+res_smoothed <- net_emd(dhistA_pre_norm, dhistB_pre_norm, smoothing_window_width = 1, return_details = TRUE)
 
 expected_measurement_error <- cbind(expected_area_min_smoothed, expected_area_smoothed, expected_area_max_smoothed)
 colnames(expected_measurement_error) <- c("expected_area_min", "expected_area", "expected_area_max")
