@@ -4,7 +4,7 @@
 \alias{gdd}
 \title{Graphlet-based Degree Distributions (GDDs)}
 \usage{
-gdd(indexed_edges, type = "node4")
+gdd(indexed_edges, type = "orb4")
 }
 \arguments{
 \item{indexed_edges}{A 2 x numEdges edgelist with vertices labelled with 

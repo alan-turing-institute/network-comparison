@@ -41,8 +41,8 @@ NetEMD measures between all pairs of graphs for which GDDs
 were provided. Format of returned data depends on the \code{return_details}
 parameter. If set to FALSE, a list is returned with the following named
 elements:\code{net_emd}: a vector of NetEMDs for each pair of graphs, 
-\code{comparison_specification}: a table containing the graph names and
-indices within the input GDD list for each pair of graphs compared.
+\code{comp_spec}: a comaprison specification table containing the graph names 
+and indices within the input GDD list for each pair of graphs compared.
 If \code{return_details} is set to FALSE, the list also contains the following
 matrices for each graph pair: \code{min_emds}: the minimal EMD for each GDD 
 used to compute the NetEMD, \code{min_offsets}: the associated offsets giving
