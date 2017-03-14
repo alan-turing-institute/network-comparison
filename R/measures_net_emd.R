@@ -87,30 +87,29 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     method = "optimise"
   }
   
-  # Normalise histogram to unit mass
-  dhist1 <- normalise_dhist_mass(dhist1)
-  dhist2 <- normalise_dhist_mass(dhist2)
   # Measure dhist standard deviations prior to variance normalisation
   std_dev1 <- dhist_std(dhist1)
   std_dev2 <- dhist_std(dhist2)
-  # Normalise histogram to unit variance
-  dhist1 <- normalise_dhist_variance(dhist1)
-  dhist2 <- normalise_dhist_variance(dhist2)
-  # Adjust smoothing_windows for each histogram based on their pre-normalised variance
+  # Adjust smoothing_windows for each histogram based on their pre-normalised 
+  # variance (must be done prior to variance normalisation)
   adjust_smoothing_window <- function(std_dev, smoothing_window_width) {
     if(std_dev != 0) {
       # Histogram is unaltered if variance is zero as normalisation is undefined
-      smoothing_window_width = smoothing_window_width / std_dev
+      smoothing_window_width <- smoothing_window_width / std_dev
     }
     return(smoothing_window_width)      
   }
   smoothing_window_width1 <- adjust_smoothing_window(std_dev1, smoothing_window_width)
   smoothing_window_width2 <- adjust_smoothing_window(std_dev2, smoothing_window_width)
   
+  # Normalise histogram to unit mass and unit variance
+  dhist1_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
+  dhist2_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
+  
   # Determine minimum and maximum offset of range in which histograms overlap
   # (based on sliding histogram 1)
-  min_offset <- min(dhist2$locations) - max(dhist1$locations)
-  max_offset <- max(dhist2$locations) - min(dhist1$locations)
+  min_offset <- min(dhist2_norm$locations) - max(dhist1_norm$locations)
+  max_offset <- max(dhist2_norm$locations) - min(dhist1_norm$locations)
 
   if(method == "fixed_step" && is.null(step_size)) {
     # Set default step_size for "fixed_step" method if step_size not provided
@@ -118,15 +117,18 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
       l <- sort(l)
       tail(l, length(l)-1) - head(l, length(l)-1)
     }
-    min_location_sep1 <- min(location_spacing(dhist1$locations))
-    min_location_sep2 <- min(location_spacing(dhist2$locations))
+    min_location_sep1 <- min(location_spacing(dhist1_norm$locations))
+    min_location_sep2 <- min(location_spacing(dhist2_norm$locations))
     step_size <- min(min_location_sep1, min_location_sep2)/2
   }
-  
+  if(smoothing_window_width != 0) {
+    a <- 2
+    # PAuse here
+  }
   emd_offset <- function(offset) {
     # Construct ECMFs for each normalised histogram
-    ecmf1 <- dhist_ecmf(shift_dhist(dhist1, offset), smoothing_window_width1)
-    ecmf2 <- dhist_ecmf(dhist2, smoothing_window_width2)
+    ecmf1 <- dhist_ecmf(shift_dhist(dhist1_norm, offset), smoothing_window_width1)
+    ecmf2 <- dhist_ecmf(dhist2_norm, smoothing_window_width2)
     area_between_dhist_ecmfs(ecmf1, ecmf2)
   }
   
