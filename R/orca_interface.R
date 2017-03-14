@@ -113,8 +113,8 @@ read_orca_edge_list <- function(file, format = "ncol") {
 #' Load all graphs in a directory, converting to ORCA compatible indexed edge lists
 #' 
 #' Loads graphs from all files matching the given pattern in the given directory
-#' and converts them to indexed edge list compatible with the ORCA fast orbit c
-#' alculation package by:
+#' and converts them to indexed edge lists compatible with the ORCA fast orbit 
+#' counting package by:
 #'   1. Making the graph undirected
 #'   2. Removing loops (where both endpoints of an edge are the same vertex)
 #'   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
@@ -123,7 +123,7 @@ read_orca_edge_list <- function(file, format = "ncol") {
 #'      previous alterations)
 #'   5. Relabelling vertices with an integer index from 1 to numVertices
 #'   6. Converting the graph to an edge list
-#' @param dir Path to graph directory
+#' @param source_dir Path to graph directory
 #' @param format Format of graph files
 #' @param pattern Filename pattern to match graph files
 #' @return A named list of ORCA compatible edge lists, with names corresponding 
@@ -155,22 +155,49 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
   apply(orca_counts, 2, dhist_from_obs)
 }
 
-#' Graphlet Orbit Degree Distributions
+#' Graphlet-based Degree Distributions (GDDs)
 #' 
-#' Calculates the set of graphlet orbit degree distributions for graphlets of
-#' up to 4 nodes. 
+#' Calculates the specified set of graphlet-based degree distributions from an 
+#' indexed edge list using the ORCA fast graphlet orbit counting package.
 #' @param indexed_edges A 2 x numEdges edgelist with vertices labelled with 
 #' integer indices, with an optional "vertex_names" attribute
-#' @param type Type of graphlet orbits to calculate degree distributions
-#' for: "node4" counts all graphlets comprising up to 4 nodes; "node5" counts
-#' all graphlets comprising up to 5 nodes
-#' @return Graphlet degree histograms: List of degree histograms for each 
-#' graphlet orbit, with each histogram represented as a \code{dhist} discrete
-#' histogram object
+#' @param type Type of graphlet-based degree distributions: "orb4" counts all 
+#' orbits for graphlets comprising up to 4 nodes; "orb5" counts all orbits for
+#' graphlets comprising up to 5 nodes.
+#' @return List of graphlet-based degree distributions, with each distribution
+#' represented as a \code{dhist} discrete histogram object.
 #' @export
-godd <- function(indexed_edges, type = "node4") {
+gdd <- function(indexed_edges, type = "orb4") {
   orca_fn <- switch(type,
-         node4 = orca::count4,
-         node5 = orca::count5)
+         orb4 = orca::count4,
+         orb5 = orca::count5)
   orca_counts_to_graphlet_orbit_degree_distribution(orca_fn(indexed_edges))
+}
+
+#' Load all graphs in a directory and calculates their Graphlet-based Degree
+#' Distributions (GDDs)
+#' 
+#' Loads graphs from all files matching the given pattern in the given directory,
+#' converts them to indexed edge lists compatible with the ORCA fast orbit 
+#' counting package and calculates the specified set of graphlet-based degree 
+#' distributions usingthe ORCA package.
+#' @param source_dir Path to graph directory
+#' @param format Format of graph files
+#' @param pattern Filename pattern to match graph files
+#' @param type Type of graphlet-based degree distributions: "orb4" counts all 
+#' orbits for graphlets comprising up to 4 nodes; "orb5" counts all orbits for
+#' graphlets comprising up to 5 nodes.
+#' @return A named list where each element contains a set of GDDs for a single 
+#' graph from the source directory. Each set of GDDs is itself a named list,  
+#' where each GDD element is a \code{dhist} discrete histogram object.
+#' @export
+gdd_for_all_graphs <- function(
+  source_dir, format = "ncol", pattern = ".txt", type = "node4", 
+  mc.cores = getOption("mc.cores", 2L)) {
+  # Read graphs from source directory as ORCA-compatible edge lists
+  edges <- read_all_graphs_as_orca_edge_lists(
+    source_dir = source_dir, format = format, pattern = pattern)
+  # Calculate specified GDDs for each graph
+  parallel::mcmapply(gdd, edges, MoreArgs = list(type = type), 
+                     SIMPLIFY = FALSE, mc.cores = mc.cores)
 }

@@ -413,13 +413,13 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of vi
   data_indexes <- 1:length(virusppi)
   data_names <- attr(virusppi, "name")
 
-  # Calculate graphlet orbit degree distributions up to graphlet order 4
-  virus_godd <- purrr::map(virusppi, godd)
+  # Calculate graphlet-based degree distributions up to graphlet order 4
+  virus_gdd <- purrr::map(virusppi, gdd)
 
   # Map over virus PPI networks
-  purrr::walk(virus_godd, function(godd) {
-    purrr::walk(godd, function(godd_Ox) {
-      expect_equal(emd(godd_Ox, godd_Ox), 0)
+  purrr::walk(virus_gdd, function(gdd) {
+    purrr::walk(gdd, function(gdd_Ox) {
+      expect_equal(emd(gdd_Ox, gdd_Ox), 0)
     })
   })
 })
@@ -431,8 +431,8 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
   data_indexes <- 1:length(virusppi)
   data_names <- attr(virusppi, "name")
 
-  # Calculate graphlet orbit degree distributions up to graphlet order 4
-  virus_godd <- purrr::map(virusppi, godd)
+  # Calculate graphlet-based degree distributions up to graphlet order 4
+  virus_gdd <- purrr::map(virusppi, gdd)
 
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
@@ -441,9 +441,9 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
   }
 
   # Map over virus PPI networks
-  purrr::walk(virus_godd, function(godd) {
-    purrr::walk(godd, function(godd_Ox) {
-      expect_equalish(net_emd(godd_Ox, godd_Ox, method = "optimise", smoothing_window_width = 0), 0)
+  purrr::walk(virus_gdd, function(gdd) {
+    purrr::walk(gdd, function(gdd_Ox) {
+      expect_equalish(net_emd(gdd_Ox, gdd_Ox, method = "optimise", smoothing_window_width = 0), 0)
     })
   })
 })
@@ -458,13 +458,13 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of ra
   data_indexes <- 1:length(random_edges)
   data_names <- attr(random_edges, "name")
 
-  # Calculate graphlet orbit degree distributions up to graphlet order 4
-  random_godd <- purrr::map(random_edges, godd)
+  # Calculate graphlet-based degree distributions up to graphlet order 4
+  random_gdd <- purrr::map(random_edges, gdd)
 
   # Map over random graphs
-  purrr::walk(random_godd, function(godd) {
-    purrr::walk(godd, function(godd_Ox) {
-      expect_equal(emd(godd_Ox, godd_Ox), 0)
+  purrr::walk(random_gdd, function(gdd) {
+    purrr::walk(gdd, function(gdd_Ox) {
+      expect_equal(emd(gdd_Ox, gdd_Ox), 0)
     })
   })
 })
@@ -478,8 +478,8 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
   data_indexes <- 1:length(random_edges)
   data_names <- attr(random_edges, "name")
 
-  # Calculate graphlet orbit degree distributions up to graphlet order 4
-  random_godd <- purrr::map(random_edges, godd)
+  # Calculate graphlet-based degree distributions up to graphlet order 4
+  random_gdd <- purrr::map(random_edges, gdd)
 
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
@@ -488,9 +488,9 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
   }
 
   # Map over random graphs
-  purrr::walk(random_godd, function(godd) {
-    purrr::walk(godd, function(godd_Ox) {
-      expect_equalish(net_emd(godd_Ox, godd_Ox, method = "optimise", smoothing_window_width = 0), 0)
+  purrr::walk(random_gdd, function(gdd) {
+    purrr::walk(gdd, function(gdd_Ox) {
+      expect_equalish(net_emd(gdd_Ox, gdd_Ox, method = "optimise", smoothing_window_width = 0), 0)
     })
   })
 })

@@ -8,11 +8,11 @@ read_all_graphs_as_orca_edge_lists(source_dir, format = "ncol",
   pattern = ".txt")
 }
 \arguments{
+\item{source_dir}{Path to graph directory}
+
 \item{format}{Format of graph files}
 
 \item{pattern}{Filename pattern to match graph files}
-
-\item{dir}{Path to graph directory}
 }
 \value{
 A named list of ORCA compatible edge lists, with names corresponding 
@@ -20,8 +20,8 @@ to the names of the files each graph was loaded from
 }
 \description{
 Loads graphs from all files matching the given pattern in the given directory
-and converts them to indexed edge list compatible with the ORCA fast orbit c
-alculation package by:
+and converts them to indexed edge lists compatible with the ORCA fast orbit 
+counting package by:
   1. Making the graph undirected
   2. Removing loops (where both endpoints of an edge are the same vertex)
   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
