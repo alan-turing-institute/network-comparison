@@ -2,23 +2,23 @@
 % Please edit documentation in R/orca_interface.R
 \name{gdd}
 \alias{gdd}
-\title{Graphlet-based Degree Distributions (GDDs)}
+\title{Graphlet-based degree distribution (GDD)}
 \usage{
-gdd(indexed_edges, type = "orb4")
+gdd(indexed_edges, feature_type = "orbit", max_graphlet_size = 4)
 }
 \arguments{
 \item{indexed_edges}{A 2 x numEdges edgelist with vertices labelled with 
 integer indices, with an optional "vertex_names" attribute}
 
-\item{type}{Type of graphlet-based degree distributions: "orb4" counts all 
-orbits for graphlets comprising up to 4 nodes; "orb5" counts all orbits for
-graphlets comprising up to 5 nodes.}
-}
-\value{
-List of graphlet-based degree distributions, with each distribution
-represented as a \code{dhist} discrete histogram object.
+\item{feature_type}{Type of graphlet-based feature to count: "graphlet"
+counts the number of graphlets each node participates in; "orbit" calculates
+the number of graphlet orbits each node participates in.}
+
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
+Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+represented as a \code{dhist} discrete histogram object.}
 }
 \description{
-Calculates the specified set of graphlet-based degree distributions from an 
-indexed edge list using the ORCA fast graphlet orbit counting package.
+Generates pgrahlet-based degree distributions from indexed ege lists,
+using the ORCA fast graphlet orbit counting package.
 }

@@ -155,23 +155,67 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
   apply(orca_counts, 2, dhist_from_obs)
 }
 
-#' Graphlet-based Degree Distributions (GDDs)
+#' Graphlet-based degree distribution (GDD)
 #' 
-#' Calculates the specified set of graphlet-based degree distributions from an 
-#' indexed edge list using the ORCA fast graphlet orbit counting package.
+#' Generates pgrahlet-based degree distributions from indexed ege lists,
+#' using the ORCA fast graphlet orbit counting package.
 #' @param indexed_edges A 2 x numEdges edgelist with vertices labelled with 
 #' integer indices, with an optional "vertex_names" attribute
-#' @param type Type of graphlet-based degree distributions: "orb4" counts all 
-#' orbits for graphlets comprising up to 4 nodes; "orb5" counts all orbits for
-#' graphlets comprising up to 5 nodes.
-#' @return List of graphlet-based degree distributions, with each distribution
+#' @param feature_type Type of graphlet-based feature to count: "graphlet"
+#' counts the number of graphlets each node participates in; "orbit" calculates
+#' the number of graphlet orbits each node participates in.
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
 #' represented as a \code{dhist} discrete histogram object.
 #' @export
-gdd <- function(indexed_edges, type = "orb4") {
-  orca_fn <- switch(type,
-         orb4 = orca::count4,
-         orb5 = orca::count5)
-  orca_counts_to_graphlet_orbit_degree_distribution(orca_fn(indexed_edges))
+gdd <- function(indexed_edges, feature_type = 'orbit', max_graphlet_size = 4) {
+  if(max_graphlet_size == 4) {
+    orca_fn <- orca::count4
+  } else if(max_graphlet_size == 5) {
+    orca_fn <- orca::count5
+  } else {
+    stop("Unsupported maximum graphlet size")
+  }
+  orbit_counts <- orca_fn(indexed_edges)
+  if(feature_type == "orbit") {
+    out <- orbit_counts
+  } else if(feature_type == "graphlet") {
+    out <- orbit_to_graphlet_counts(orbit_counts)
+  }
+  orca_counts_to_graphlet_orbit_degree_distribution(out)
+}
+
+orbit_to_graphlet_counts <- function(orbit_counts) {
+  num_orbits <- dim(orbit_counts)[2]
+  # Indexes to select the orbit(s) that comprise each graphlet. Note that we 
+  # define these in the zero-based indexing used in journal papers, but 
+  # need to add 1 to convert to the 1-based indexing used by R
+  if(num_orbits == 15) {
+    # Orbits for graphlets comprising up to 4 nodes
+    orbit_to_graphlet_map <- 
+      purrr::map(list(0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14), 
+                 function(indexes){ indexes + 1})
+    graphlet_names <- purrr::simplify(purrr::map(0:8, function(index) {
+      paste('G', index, sep = "")}))
+  } else if(num_orbits == 73) {
+    # Orbits for graphlets comprising up to 4 nodes
+    orbit_to_graphlet_map <- 
+      purrr::map(list(0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14, 15:17, 18:21, 
+                      22:23, 24:26, 27:30, 31:33, 34, 35:38, 39:42, 43:44, 
+                      45:48, 49:50, 51:53, 54:55, 56:58, 59:61, 62:64, 
+                      65:67, 68:69, 70:71, 72), 
+                 function(indexes){ indexes + 1})
+    graphlet_names <- purrr::simplify(purrr::map(0:29, function(index) {
+      paste('G', index, sep = "")}))
+  } else {
+    stop(("Unsupported number of orbits"))
+  }
+  # Sum counts across orbits in graphlets
+  graphlet_counts <- sapply(orbit_to_graphlet_map, function(indexes){
+    rowSums(orbit_counts[,indexes, drop = FALSE])})
+  # Add graphlet names
+  colnames(graphlet_counts) <- graphlet_names
+  return(graphlet_counts)
 }
 
 #' Load all graphs in a directory and calculates their Graphlet-based Degree
@@ -192,12 +236,14 @@ gdd <- function(indexed_edges, type = "orb4") {
 #' where each GDD element is a \code{dhist} discrete histogram object.
 #' @export
 gdd_for_all_graphs <- function(
-  source_dir, format = "ncol", pattern = ".txt", type = "node4", 
-  mc.cores = getOption("mc.cores", 2L)) {
+  source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit", 
+  max_graphlet_size = 4,mc.cores = getOption("mc.cores", 2L)) {
   # Read graphs from source directory as ORCA-compatible edge lists
   edges <- read_all_graphs_as_orca_edge_lists(
     source_dir = source_dir, format = format, pattern = pattern)
   # Calculate specified GDDs for each graph
-  parallel::mcmapply(gdd, edges, MoreArgs = list(type = type), 
+  parallel::mcmapply(gdd, edges, MoreArgs = 
+                       list(feature_type = feature_type, 
+                            max_graphlet_size = max_graphlet_size), 
                      SIMPLIFY = FALSE, mc.cores = mc.cores)
 }

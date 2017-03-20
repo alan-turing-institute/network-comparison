@@ -6,7 +6,8 @@
 Distributions (GDDs)}
 \usage{
 gdd_for_all_graphs(source_dir, format = "ncol", pattern = ".txt",
-  type = "node4", mc.cores = getOption("mc.cores", 2L))
+  feature_type = "orbit", max_graphlet_size = 4,
+  mc.cores = getOption("mc.cores", 2L))
 }
 \arguments{
 \item{source_dir}{Path to graph directory}
