@@ -452,14 +452,14 @@ context("Measures NetEMD: Random graphs (EMD)")
 # EMD and NET_EMD: Random graph datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
-  random_edges <- read_all_graphs_as_orca_edge_lists(
+  random_graphs <- read_all_graphs_as_orca_graphs(
     system.file(package = "netdist", "extdata", "random"),
     format = "ncol", pattern = "*")
-  data_indexes <- 1:length(random_edges)
-  data_names <- attr(random_edges, "name")
+  data_indexes <- 1:length(random_graphs)
+  data_names <- attr(random_graphs, "name")
 
   # Calculate graphlet-based degree distributions up to graphlet order 4
-  random_gdd <- purrr::map(random_edges, gdd)
+  random_gdd <- purrr::map(random_graphs, gdd)
 
   # Map over random graphs
   purrr::walk(random_gdd, function(gdd) {
@@ -472,14 +472,14 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of ra
 context("Measures NetEMD: Random graphs (NetEMD)")
 test_that("net_emd return 0 when comparing graphlet orbit degree distributions of random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
-  random_edges <- read_all_graphs_as_orca_edge_lists(
+  random_graphs <- read_all_graphs_as_orca_graphs(
     system.file(package = "netdist", "extdata", "random"),
     format = "ncol", pattern = "*")
-  data_indexes <- 1:length(random_edges)
-  data_names <- attr(random_edges, "name")
+  data_indexes <- 1:length(random_graphs)
+  data_names <- attr(random_graphs, "name")
 
   # Calculate graphlet-based degree distributions up to graphlet order 4
-  random_gdd <- purrr::map(random_edges, gdd)
+  random_gdd <- purrr::map(random_graphs, gdd)
 
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)

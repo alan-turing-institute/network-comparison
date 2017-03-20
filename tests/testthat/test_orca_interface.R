@@ -1,6 +1,4 @@
 library("igraph")
-context("ORCA Graph Functions")
-
 data_dir <- system.file(file.path("inst", "extdata", "VRPINS"), package = "netdist")
 
 context("ORCA interface: Graph to indexed edge round trip")
@@ -12,7 +10,8 @@ test_that("Graph to indexed edge list round trip conversion works", {
 
 context("ORCA interface: Orbit to graphlet counts")
 test_that("orbit_to_graphlet_counts summation works", {
-  edges <- netdist::virusppi$EBV
+  graph <- netdist::virusppi$EBV
+  edges <- graph_to_indexed_edges(graph)
   orbit_counts_4 <- orca::count4(edges)
   orbit_counts_5 <- orca::count5(edges)
   # Define orbit indexes belonging to each graphlet using the xero-based indexing
@@ -103,9 +102,10 @@ test_that("orbit_to_graphlet_counts summation works", {
 })
 
 
-context("Graphlet-based degree distributions")
+context("ORCA interface: Graphlet-based degree distributions")
 test_that("gdd works", {
-  edges <- netdist::virusppi$EBV
+  graph <- netdist::virusppi$EBV
+  edges <- graph_to_indexed_edges(graph)
   # Caclulate expected outputs (NOTE: relies on orbit_to_graphlet_counts and
   # orca_counts_to_graphlet_orbit_degree_distribution methods)
   orbit_counts_4 <- orca::count4(edges)
@@ -117,15 +117,15 @@ test_that("gdd works", {
   gdd_graphlet_4_expected <- orca_counts_to_graphlet_orbit_degree_distribution(graphlet_counts_4)
   gdd_graphlet_5_expected <- orca_counts_to_graphlet_orbit_degree_distribution(graphlet_counts_5)
   # Calculate actual outputs from code under test
-  gdd_orbit_4_actual <- gdd(edges, feature_type = "orbit", max_graphlet_size = 4)
-  gdd_orbit_5_actual <- gdd(edges, feature_type = "orbit", max_graphlet_size = 5)
-  gdd_graphlet_4_actual <- gdd(edges, feature_type = "graphlet", max_graphlet_size = 4)
-  gdd_graphlet_5_actual <- gdd(edges, feature_type = "graphlet", max_graphlet_size = 5)
-  gdd_default_4_actual <- gdd(edges, max_graphlet_size = 4)
-  gdd_default_5_actual <- gdd(edges, max_graphlet_size = 5)
-  gdd_orbit_default_actual <- gdd(edges, feature_type = "orbit")
-  gdd_graphlet_default_actual <- gdd(edges, feature_type = "graphlet")
-  gdd_default_default_actual <- gdd(edges)
+  gdd_orbit_4_actual <- gdd(graph, feature_type = "orbit", max_graphlet_size = 4)
+  gdd_orbit_5_actual <- gdd(graph, feature_type = "orbit", max_graphlet_size = 5)
+  gdd_graphlet_4_actual <- gdd(graph, feature_type = "graphlet", max_graphlet_size = 4)
+  gdd_graphlet_5_actual <- gdd(graph, feature_type = "graphlet", max_graphlet_size = 5)
+  gdd_default_4_actual <- gdd(graph, max_graphlet_size = 4)
+  gdd_default_5_actual <- gdd(graph, max_graphlet_size = 5)
+  gdd_orbit_default_actual <- gdd(graph, feature_type = "orbit")
+  gdd_graphlet_default_actual <- gdd(graph, feature_type = "graphlet")
+  gdd_default_default_actual <- gdd(graph)
   # Compare actual with expected
   expect_equal(gdd_orbit_4_actual, gdd_orbit_4_expected)
   expect_equal(gdd_orbit_5_actual, gdd_orbit_5_expected)

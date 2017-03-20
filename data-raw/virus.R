@@ -4,7 +4,7 @@
 data_dir <- file.path("inst", "extdata", "VRPINS")
 
 load_virus_data <- function(filename) {
-  read_orca_edge_list(file = file.path(data_dir, filename), format = "ncol")
+  read_orca_graph(file = file.path(data_dir, filename), format = "ncol")
 }
 
 virusppi <- list(EBV = load_virus_data("EBV-1.txt"), 
@@ -15,3 +15,4 @@ virusppi <- list(EBV = load_virus_data("EBV-1.txt"),
                  )
 
 devtools::use_data(virusppi, overwrite = TRUE)
+

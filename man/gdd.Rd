@@ -4,18 +4,18 @@
 \alias{gdd}
 \title{Graphlet-based degree distributions (GDDs)}
 \usage{
-gdd(indexed_edges, feature_type = "orbit", max_graphlet_size = 4)
+gdd(graph, feature_type = "orbit", max_graphlet_size = 4)
 }
 \arguments{
-\item{indexed_edges}{A 2 x numEdges edgelist with vertices labelled with 
-integer indices, with an optional "vertex_names" attribute}
-
 \item{feature_type}{Type of graphlet-based feature to count: "graphlet"
 counts the number of graphlets each node participates in; "orbit" calculates
 the number of graphlet orbits each node participates in.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
 Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
+
+\item{indexed_edges}{A 2 x numEdges edgelist with vertices labelled with 
+integer indices, with an optional "vertex_names" attribute}
 }
 \value{
 List of graphlet-based degree distributions, with each distribution

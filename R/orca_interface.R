@@ -90,10 +90,10 @@ read_orca_graph <- function(file, format = "ncol") {
   return(graph)
 }
 
-#' Load graph from file and convert to an ORCA compatible indexed edge list
+#' Load graph from file and convert to an ORCA compatible graph
 #' 
-#' Loads a graph from file and converts to an indexed edge list compatible with 
-#' the ORCA fast orbit calculation package by:
+#' Loads a graph from file and converts to an \code{igraph} graph compatible  
+#' with the ORCA fast orbit calculation package by:
 #'   1. Making the graph undirected
 #'   2. Removing loops (where both endpoints of an edge are the same vertex)
 #'   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
@@ -101,10 +101,9 @@ read_orca_graph <- function(file, format = "ncol") {
 #'   4. Removing isolated vertices (i.e. vertices with no edges after the 
 #'      previous alterations)
 #'   5. Relabelling vertices with an integer index from 1 to numVertices
-#'   6. Converting the graph to an edge list
 #' @param file Path to graph file
 #' @param format Format of graph file
-#' @return An ORCA compatible edge list
+#' @return An ORCA compatible\code{igraph} graph object
 #' @export
 read_orca_edge_list <- function(file, format = "ncol") {
   graph_to_indexed_edges(read_orca_graph(file, format))
@@ -141,6 +140,36 @@ read_all_graphs_as_orca_edge_lists <- function (source_dir, format = "ncol", pat
   return(edges)
 }
 
+#' Load all graphs in a directory, converting to ORCA compatible graphs
+#' 
+#' Loads graphs from all files matching the given pattern in the given directory
+#' and converts them to graphs compatible with the ORCA fast orbit 
+#' counting package by:
+#'   1. Making the graph undirected
+#'   2. Removing loops (where both endpoints of an edge are the same vertex)
+#'   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
+#'      pair of endpoints)
+#'   4. Removing isolated vertices (i.e. vertices with no edges after the 
+#'      previous alterations)
+#'   5. Relabelling vertices with an integer index from 1 to numVertices
+#' @param source_dir Path to graph directory
+#' @param format Format of graph files
+#' @param pattern Filename pattern to match graph files
+#' @return A list of ORCA compatible graphs, with element names corresponding 
+#' to the names of the files each graph was loaded from
+#' @export
+read_all_graphs_as_orca_graphs <- function (source_dir, format = "ncol", pattern = ".txt") {
+  # Get list of all filenames in firectory that match the pattern
+  file_names <- dir(source_dir, pattern = pattern)
+  # Read graph data from each ".txt" file as an ORCA-compatible indexed edge list
+  graphs <- purrr::map(file_names, function(file_name) {
+    read_orca_graph(file = file.path(source_dir, file_name), format = "ncol")
+  })
+  # Name each graph with the name of the file it was read from
+  attr(graphs, "names") <- file_names
+  return(graphs)
+}
+
 #' ORCA vertex graphlet orbit counts to graphlet orbit histograms
 #' 
 #' Converts ORCA output (counts of each graphlet orbit at each graph vertex) to 
@@ -169,7 +198,7 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 #' @return List of graphlet-based degree distributions, with each distribution
 #' represented as a \code{dhist} discrete histogram object.
 #' @export
-gdd <- function(indexed_edges, feature_type = 'orbit', max_graphlet_size = 4){
+gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4){
   if(max_graphlet_size == 4) {
     orca_fn <- orca::count4
   } else if(max_graphlet_size == 5) {
@@ -177,6 +206,7 @@ gdd <- function(indexed_edges, feature_type = 'orbit', max_graphlet_size = 4){
   } else {
     stop("Unsupported maximum graphlet size")
   }
+  indexed_edges <- graph_to_indexed_edges(graph)
   orbit_counts <- orca_fn(indexed_edges)
   if(feature_type == "orbit") {
     out <- orbit_counts
@@ -240,10 +270,10 @@ gdd_for_all_graphs <- function(
   source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit", 
   max_graphlet_size = 4,mc.cores = getOption("mc.cores", 2L)) {
   # Read graphs from source directory as ORCA-compatible edge lists
-  edges <- read_all_graphs_as_orca_edge_lists(
+  graphs <- read_all_graphs_as_orca_graphs(
     source_dir = source_dir, format = format, pattern = pattern)
   # Calculate specified GDDs for each graph
-  parallel::mcmapply(gdd, edges, MoreArgs = 
+  parallel::mcmapply(gdd, graphs, MoreArgs = 
                        list(feature_type = feature_type, 
                             max_graphlet_size = max_graphlet_size), 
                      SIMPLIFY = FALSE, mc.cores = mc.cores)
