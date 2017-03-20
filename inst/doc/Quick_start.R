@@ -18,8 +18,8 @@ num_threads = getOption("mc.cores", 2L)
 # If type is set to "orb5", graphlet-based degree distributions will be 
 # calculated for all orbits in graphlets comprising up to 5 nodes
 virus_gdds <- gdd_for_all_graphs(
-  source_dir = source_dir, type = "orb4", format = edge_format, 
-  pattern = file_pattern, mc.cores = num_threads)
+  source_dir = source_dir, feature_type = "orbit", max_graphlet_size = 4,
+  format = edge_format, pattern = file_pattern, mc.cores = num_threads)
 names(virus_gdds)
 
 # Compute NetEMDs between all virus PPI graphs based on the computed graphlet- 

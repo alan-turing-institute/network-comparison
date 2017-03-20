@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martin O’Reilly" />
 
-<meta name="date" content="2017-03-14" />
+<meta name="date" content="2017-03-20" />
 
 <title>Quick start</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Quick start</h1>
 <h4 class="author"><em>Martin O’Reilly</em></h4>
-<h4 class="date"><em>2017-03-14</em></h4>
+<h4 class="date"><em>2017-03-20</em></h4>
 
 
 
@@ -95,8 +95,8 @@ num_threads =<span class="st"> </span><span class="kw">getOption</span>(<span cl
 <span class="co"># If type is set to &quot;orb5&quot;, graphlet-based degree distributions will be </span>
 <span class="co"># calculated for all orbits in graphlets comprising up to 5 nodes</span>
 virus_gdds &lt;-<span class="st"> </span><span class="kw">gdd_for_all_graphs</span>(
-  <span class="dt">source_dir =</span> source_dir, <span class="dt">type =</span> <span class="st">&quot;orb4&quot;</span>, <span class="dt">format =</span> edge_format, 
-  <span class="dt">pattern =</span> file_pattern, <span class="dt">mc.cores =</span> num_threads)
+  <span class="dt">source_dir =</span> source_dir, <span class="dt">feature_type =</span> <span class="st">&quot;orbit&quot;</span>, <span class="dt">max_graphlet_size =</span> <span class="dv">4</span>,
+  <span class="dt">format =</span> edge_format, <span class="dt">pattern =</span> file_pattern, <span class="dt">mc.cores =</span> num_threads)
 <span class="kw">names</span>(virus_gdds)</code></pre></div>
 <pre><code>## [1] &quot;EBV-1.txt&quot;   &quot;ECL-1.txt&quot;   &quot;HSV-1-1.txt&quot; &quot;KSHV-1.txt&quot;  &quot;VZV-1.txt&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Compute NetEMDs between all virus PPI graphs based on the computed graphlet- </span>
