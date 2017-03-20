@@ -155,9 +155,9 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
   apply(orca_counts, 2, dhist_from_obs)
 }
 
-#' Graphlet-based degree distribution (GDD)
+#' Graphlet-based degree distributions (GDDs)
 #' 
-#' Generates pgrahlet-based degree distributions from indexed ege lists,
+#' Generates graphlet-based degree distributions from indexed ege lists,
 #' using the ORCA fast graphlet orbit counting package.
 #' @param indexed_edges A 2 x numEdges edgelist with vertices labelled with 
 #' integer indices, with an optional "vertex_names" attribute
@@ -166,9 +166,10 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 #' the number of graphlet orbits each node participates in.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count. 
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @return List of graphlet-based degree distributions, with each distribution
 #' represented as a \code{dhist} discrete histogram object.
 #' @export
-gdd <- function(indexed_edges, feature_type = 'orbit', max_graphlet_size = 4) {
+gdd <- function(indexed_edges, feature_type = 'orbit', max_graphlet_size = 4){
   if(max_graphlet_size == 4) {
     orca_fn <- orca::count4
   } else if(max_graphlet_size == 5) {
