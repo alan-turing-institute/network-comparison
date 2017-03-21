@@ -186,10 +186,15 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 
 #' Graphlet-based degree distributions (GDDs)
 #' 
-#' Generates graphlet-based degree distributions from indexed ege lists,
+#' Generates graphlet-based degree distributions from \code{igraph} graph object,
 #' using the ORCA fast graphlet orbit counting package.
-#' @param indexed_edges A 2 x numEdges edgelist with vertices labelled with 
-#' integer indices, with an optional "vertex_names" attribute
+#' @param graph An \code{igraph} graph object. The graph must have the following
+#' properties:' 
+#'   1. Be undirected
+#'   2. Have no self-loops (where both endpoints of an edge are the same vertex)
+#'   3. Not have multiple edges multiple edges (i.e. at most one edge exists for
+#'      each pair of vertices)
+#'   4. No isolated vertices (i.e. vertices with no edges)
 #' @param feature_type Type of graphlet-based feature to count: "graphlet"
 #' counts the number of graphlets each node participates in; "orbit" calculates
 #' the number of graphlet orbits each node participates in.
