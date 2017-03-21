@@ -204,21 +204,43 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 #' represented as a \code{dhist} discrete histogram object.
 #' @export
 gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4){
-  if(max_graphlet_size == 4) {
-    orca_fn <- orca::count4
-  } else if(max_graphlet_size == 5) {
-    orca_fn <- orca::count5
-  } else {
-    stop("Unsupported maximum graphlet size")
-  }
-  indexed_edges <- graph_to_indexed_edges(graph)
-  orbit_counts <- orca_fn(indexed_edges)
+  orbit_counts <- orbit_counts(graph, max_graphlet_size = max_graphlet_size)
   if(feature_type == "orbit") {
     out <- orbit_counts
   } else if(feature_type == "graphlet") {
     out <- orbit_to_graphlet_counts(orbit_counts)
   }
   orca_counts_to_graphlet_orbit_degree_distribution(out)
+}
+
+#' Calculate graphlet orbit counts
+#' 
+#' Calculates graphlet orbit counts from \code{igraph} graph object,
+#' using the ORCA fast graphlet orbit counting package.
+#' @param graph An \code{igraph} graph object. The graph must have the following
+#' properties:' 
+#'   1. Be undirected
+#'   2. Have no self-loops (where both endpoints of an edge are the same vertex)
+#'   3. Not have multiple edges multiple edges (i.e. at most one edge exists for
+#'      each pair of vertices)
+#'   4. No isolated vertices (i.e. vertices with no edges)
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @return ORCA-format matrix containing counts of each graphlet
+#' orbit (columns) at each vertex in the graph (rows).
+#' @export
+count_orbits <- function(graph, max_graphlet_size = 4) {
+    if(max_graphlet_size == 4) {
+      orca_fn <- orca::count4
+    } else if(max_graphlet_size == 5) {
+      orca_fn <- orca::count5
+    } else {
+      stop("Unsupported maximum graphlet size")
+    }
+    indexed_edges <- graph_to_indexed_edges(graph)
+    orbit_counts <- orca_fn(indexed_edges)
+    rownames(orbit_counts) <- igraph::get.vertex.attribute(graph, name = "name")
+    return(orbit_counts)
 }
 
 #' Orbit to graphlet counts
