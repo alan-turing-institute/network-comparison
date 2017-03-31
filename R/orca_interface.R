@@ -204,7 +204,7 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 #' represented as a \code{dhist} discrete histogram object.
 #' @export
 gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4){
-  orbit_counts <- orbit_counts(graph, max_graphlet_size = max_graphlet_size)
+  orbit_counts <- count_orbits(graph, max_graphlet_size = max_graphlet_size)
   if(feature_type == "orbit") {
     out <- orbit_counts
   } else if(feature_type == "graphlet") {
