@@ -2,6 +2,8 @@
 
 S3method(knots,dhist_ecmf)
 export(area_between_dhist_ecmfs)
+export(as_smoothed_dhist)
+export(as_unsmoothed_dhist)
 export(count_orbits)
 export(dhist)
 export(dhist_ecmf)

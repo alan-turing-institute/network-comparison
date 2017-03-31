@@ -247,7 +247,7 @@ count_orbits <- function(graph, max_graphlet_size = 4) {
 #' 
 #' Converts graphlet orbit counts at each vertex to graphlet counts at each 
 #' vertex by summing over all orbits contained within each graphlet
-#' @parameter orbit_counts ORCA-format matrix containing counts of each graphlet
+#' @param orbit_counts ORCA-format matrix containing counts of each graphlet
 #' orbit (columns) at each vertex in the graph (rows)
 #' @return An ORCA-style matrix containing counts of each graphlet (columns) at
 #' each vertex in the graph (rows)

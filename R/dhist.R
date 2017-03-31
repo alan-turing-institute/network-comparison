@@ -5,10 +5,14 @@ library("purrr")
 #' 
 #' Creates a discrete histogram object of class \code{dhist}, with bin 
 #' \code{locations} and \code{masses} set to the 1D numeric vectors provided.
-#' @param \code{locations} A 1D numeric vector specifying the discrete locations
+#' @param locations A 1D numeric vector specifying the discrete locations
 #' of the histogram bins
-#' @param \code{masses} A 1D numeric vector specifying the mass present at each 
+#' @param masses A 1D numeric vector specifying the mass present at each 
 #' location
+#' @param smoothing_window_widthIf greater than 0, the discrete histogram will
+#' be treated as having the mass at each location "smoothed" uniformly across
+#' a bin centred on the location and having width = \code{smoothing_window_width}
+#' @return A copy of a \code{dhist} object with its \code{smoothing_window_width}
 #' @return A sparse discrete histogram. Format is a \code{dhist} object, which
 #' is a list of class \code{dhist} with the following named elements:
 #' \itemize{
@@ -21,7 +25,7 @@ library("purrr")
 #' for data where observations have been grouped into bins representing ranges 
 #' of observation values.
 #' @export
-dhist <- function(locations, masses) {
+dhist <- function(locations, masses, smoothing_window_width = 0) {
   if(!is_numeric_vector_1d(locations)) {
     stop("Bin locations must be provided as a 1D numeric vector")
   }
@@ -31,9 +35,47 @@ dhist <- function(locations, masses) {
   if(length(locations) != length(masses)) {
     stop("The number of bin locations and masses provided must be equal")
   }
-  dhist <- list(locations = locations, masses = masses)
+  dhist <- list(locations = locations, masses = masses, 
+                smoothing_window_width = smoothing_window_width)
   class(dhist) <- "dhist"
   dhist <- sort_dhist(dhist)
+  return(dhist)
+}
+
+update_dhist <- 
+  function(dhist, locations = dhist$locations, masses = dhist$masses,
+           smoothing_window_width = dhist$smoothing_window_width) {
+    dhist$locations <- locations
+    dhist$masses <- masses
+    dhist$smoothing_window_width <- smoothing_window_width
+    return(dhist)
+    }
+
+#' Set dhist smoothing
+#' 
+#' Returns a "smoothed" copy of a \code{dhist} object with its 
+#' \code{smoothing_window_width} attribute set to the value provided 
+#' \code{smoothing_window_width} parameter.
+#' @param smoothing_window_width If greater than 0, the discrete histogram will
+#' be treated as having the mass at each location "smoothed" uniformly across
+#' a bin centred on the location and having width = \code{smoothing_window_width}
+#' @return A copy of a \code{dhist} object with its \code{smoothing_window_width}
+#' attribute set  to the value provided \code{smoothing_window_width} parameter.
+#' @export
+as_smoothed_dhist <- function(dhist, smoothing_window_width) {
+  dhist <- update_dhist(dhist, smoothing_window_width = smoothing_window_width)
+  return(dhist)
+}
+
+#' Remove dhist smoothing
+#' 
+#' Returns an "unsmoothed" copy of a \code{dhist} object with its 
+#' \code{smoothing_window_width} attribute set to 0.
+#' @return A copy of a \code{dhist} object with its \code{smoothing_window_width}
+#' attribute set to 0.
+#' @export
+as_unsmoothed_dhist <- function(dhist) {
+  dhist <- update_dhist(dhist, smoothing_window_width = 0)
   return(dhist)
 }
 
@@ -111,19 +153,19 @@ dhist_from_obs <- function(observations) {
 #' @return An interpolating ECMF as an \code{approxfun} object. This function
 #' will return the interpolated cumulative mass for a vector of arbitrary locations.
 #' @export
-dhist_ecmf <- function(dhist, smoothing_window_width = 0) {
+dhist_ecmf <- function(dhist) {
   # Ensure histogram is sorted in order of increasing location
   dhist <- sort_dhist(dhist, decreasing = FALSE)
   # Determine cumulative mass at each location
   cum_mass <- cumsum(dhist$masses)
   # Generate ECMF
-  if(smoothing_window_width == 0) {
+  if(dhist$smoothing_window_width == 0) {
     # Avoid any issues with floating point equality comparison completely when
     # no smoothing is occurring
     x_knots <- dhist$locations
     interpolation_method <- "constant"
   } else {
-    hw <- smoothing_window_width / 2
+    hw <- dhist$smoothing_window_width / 2
     # Determine set of "knots" that define the ECMF and the value of the ECMF
     # at each knot
     # 1. Initial knot candidates are at +/- half the smoothing window width
@@ -339,7 +381,27 @@ dhist_mean_location <- function(dhist) {
 #' @return Variance of histogram
 #' @export
 dhist_variance <- function(dhist) {
-  variance <- sum(dhist$masses * (dhist$locations - dhist_mean_location(dhist))^2) / sum(dhist$masses)
+  mean_centred_locations <- dhist$locations - dhist_mean_location(dhist)
+  # Variance is E[X^2] - E[X]. However, for mean-centred data, E[X] is zero, 
+  # so variance is simply E[X^2]
+  if(dhist$smoothing_window_width == 0) {
+    # For unsmoothed discrete histograms, the mass associated with each location
+    # is located precisely at the lcoation. Therefore cariance (i.e. E[X^2])
+    # is the mass-weighted sum of the mean-centred locations
+    variance <- sum(dhist$masses * (mean_centred_locations)^2) / sum(dhist$masses)
+  } else {
+    # For smoothed histograms, the mass associated with each location is "soothed"
+    # uniformly across a bin centred on the location with width = smoothing_window_width
+    # Variance (i.e. E[X^2]) is therefore the mass-weighted sum of the integrals
+    # of x^2 over the mean-centred bins at each location.
+    hw = dhist$smoothing_window_width / 2
+    bin_lowers <- mean_centred_locations - hw
+    bin_uppers <- mean_centred_locations + hw
+    # See comment in issue #21 on Github repository for verification that E[X^2]
+    # is calculated as below for a uniform bin
+    bin_x2_integrals <- (bin_lowers^2 + bin_uppers^2 + bin_lowers*bin_uppers) / 3
+    variance <- sum(dhist$masses * bin_x2_integrals) / sum(dhist$masses)
+  }
   return(variance)
 }
 
@@ -390,15 +452,27 @@ normalise_dhist_mass <- function(dhist) {
 #' @return A discrete histogram normalised to have variance 1
 #' @export
 normalise_dhist_variance <- function(dhist) {
-  # Special case for histograms with only one location. Variance is zero / undefined
-  # so normalisation fails. Just return bin centres unchanged
-  if(length(dhist$locations) == 1) {
-    return(dhist)
+  # Special case for histograms with only one location and no smoothing. 
+  # Variance is zero / undefined so normalisation fails. Just return bin centres
+  # unchanged
+  if(length(dhist$locations) == 1 && dhist$smoothing_window_width == 0) {
+    dhist <- dhist
+  } else {
+    # Centre locations on mean, divide centred locations by standard deviation
+    # then uncentre them
+    std_dev <- dhist_std(dhist)
+    centred_locations <- (dhist$locations - dhist_mean_location(dhist))
+    normalised_centred_locations <- centred_locations / std_dev
+    normalised_locations <- normalised_centred_locations + dhist_mean_location(dhist)
+    dhist <- update_dhist(dhist, locations = normalised_locations)
+    # If smoothing_window_width not zero, then update it to reflect the variance
+    # normalisation
+    if(dhist$smoothing_window_width != 0) {
+      normalised_smoothing_window_width <- dhist$smoothing_window_width / std_dev
+      dhist <- update_dhist(dhist, smoothing_window_width = normalised_smoothing_window_width)
+    }
   }
-  centred_locations <- (dhist$locations - dhist_mean_location(dhist))
-  normalised_centred_locations <- centred_locations / dhist_std(dhist)
-  normalised_locations <- normalised_centred_locations + dhist_mean_location(dhist)
-  return(dhist(masses = dhist$masses, locations = normalised_locations))
+  return(dhist)
 }
 
 #' Harmonise a pair of discrete histograms to share a common set of locations

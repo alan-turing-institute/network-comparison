@@ -150,20 +150,22 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     method = "optimise"
   }
   
-  # Measure dhist standard deviations prior to variance normalisation
-  std_dev1 <- dhist_std(dhist1)
-  std_dev2 <- dhist_std(dhist2)
-  # Adjust smoothing_windows for each histogram based on their pre-normalised 
-  # variance (must be done prior to variance normalisation)
-  adjust_smoothing_window <- function(std_dev, smoothing_window_width) {
-    if(std_dev != 0) {
-      # Histogram is unaltered if variance is zero as normalisation is undefined
-      smoothing_window_width <- smoothing_window_width / std_dev
-    }
-    return(smoothing_window_width)      
+  # Present dhists as smoothed or unsmoothed histograms depending on the value 
+  # of smoothing_window_width
+  # NOTE: This MUST be done prior to any variance normalisation as the 
+  # calculation of variance differes depending on whether or not the histograms 
+  # are smoothed (i.e. we need to ensure that the smoothing_window_width 
+  # attribute of the dhists is set to the smoothing_window_width parameter
+  # provided by the caller)
+  # TODO: Consider moving the smoothing of histograms outside to the user's 
+  # calling code. It feels a bit untidy in here.
+  if(smoothing_window_width == 0) {
+    dhist1 <- as_unsmoothed_dhist(dhist1)
+    dhist2 <- as_unsmoothed_dhist(dhist2)
+  } else {
+    dhist1 <- as_smoothed_dhist(dhist1, smoothing_window_width)
+    dhist2 <- as_smoothed_dhist(dhist2, smoothing_window_width)
   }
-  smoothing_window_width1 <- adjust_smoothing_window(std_dev1, smoothing_window_width)
-  smoothing_window_width2 <- adjust_smoothing_window(std_dev2, smoothing_window_width)
   
   # Normalise histogram to unit mass and unit variance
   dhist1_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
@@ -184,14 +186,11 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     min_location_sep2 <- min(location_spacing(dhist2_norm$locations))
     step_size <- min(min_location_sep1, min_location_sep2)/2
   }
-  if(smoothing_window_width != 0) {
-    a <- 2
-    # PAuse here
-  }
+  
   emd_offset <- function(offset) {
     # Construct ECMFs for each normalised histogram
-    ecmf1 <- dhist_ecmf(shift_dhist(dhist1_norm, offset), smoothing_window_width1)
-    ecmf2 <- dhist_ecmf(dhist2_norm, smoothing_window_width2)
+    ecmf1 <- dhist_ecmf(shift_dhist(dhist1_norm, offset))
+    ecmf2 <- dhist_ecmf(dhist2_norm)
     area_between_dhist_ecmfs(ecmf1, ecmf2)
   }
   

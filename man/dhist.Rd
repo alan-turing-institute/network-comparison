@@ -4,16 +4,22 @@
 \alias{dhist}
 \title{Discrete histogram constructor}
 \usage{
-dhist(locations, masses)
+dhist(locations, masses, smoothing_window_width = 0)
 }
 \arguments{
-\item{\code{locations}}{A 1D numeric vector specifying the discrete locations
+\item{locations}{A 1D numeric vector specifying the discrete locations
 of the histogram bins}
 
-\item{\code{masses}}{A 1D numeric vector specifying the mass present at each 
+\item{masses}{A 1D numeric vector specifying the mass present at each 
 location}
+
+\item{smoothing_window_widthIf}{greater than 0, the discrete histogram will
+be treated as having the mass at each location "smoothed" uniformly across
+a bin centred on the location and having width = \code{smoothing_window_width}}
 }
 \value{
+A copy of a \code{dhist} object with its \code{smoothing_window_width}
+
 A sparse discrete histogram. Format is a \code{dhist} object, which
 is a list of class \code{dhist} with the following named elements:
 \itemize{

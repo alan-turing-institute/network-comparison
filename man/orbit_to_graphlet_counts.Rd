@@ -6,6 +6,10 @@
 \usage{
 orbit_to_graphlet_counts(orbit_counts)
 }
+\arguments{
+\item{orbit_counts}{ORCA-format matrix containing counts of each graphlet
+orbit (columns) at each vertex in the graph (rows)}
+}
 \value{
 An ORCA-style matrix containing counts of each graphlet (columns) at
 each vertex in the graph (rows)
