@@ -12,8 +12,6 @@ linear interpolates)}
 \arguments{
 \item{dhist_ecmf}{An object of class \code{dhist_ecmf}, returned from a call 
 to the \code{dhist_ecmf} function}
-
-\item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to}
 }
 \value{
 x_knots A list of "knots" for the ECMF, containing all x-values at 

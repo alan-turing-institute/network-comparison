@@ -179,7 +179,6 @@ dhist_ecmf <- function(dhist, smoothing_window_width = 0) {
 #' 
 #' @param dhist_ecmf An object of class \code{dhist_ecmf}, returned from a call 
 #' to the \code{dhist_ecmf} function
-#' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
 #' @return x_knots A list of "knots" for the ECMF, containing all x-values at 
 #' which the y-value changes gradient (i.e. the x-values between which the ECMF
 #' does its constant or linear interpolation)
