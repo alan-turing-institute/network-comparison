@@ -45,11 +45,11 @@ dhist <- function(locations, masses) {
 #' are also made to ensure that the object has the structure required of a
 #' \code{dhist} object. 
 #' @param \code{x} An arbitrary object
-#' @param \code{fast_check} Boolean flag inficating whether to perform only a 
+#' @param \code{fast_check} Boolean flag indicating whether to perform only a 
 #' superficial fast check limited to checking the object's class attribute 
-#' is set to \code{dhist} (default = \code{FALSE})
+#' is set to \code{dhist} (default = \code{TRUE})
 #' @export
-is_dhist <- function(x, fast_check = FALSE) {
+is_dhist <- function(x, fast_check = TRUE) {
   # Quick check that relies on user not to construct variables with "dhist" class
   # that do not have the required elements
   has_class_attr <-(class(x) == "dhist")

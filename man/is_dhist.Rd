@@ -4,14 +4,14 @@
 \alias{is_dhist}
 \title{Check if an object is a \code{dhist} discrete histogram}
 \usage{
-is_dhist(x, fast_check = FALSE)
+is_dhist(x, fast_check = TRUE)
 }
 \arguments{
 \item{\code{x}}{An arbitrary object}
 
-\item{\code{fast_check}}{Boolean flag inficating whether to perform only a 
+\item{\code{fast_check}}{Boolean flag indicating whether to perform only a 
 superficial fast check limited to checking the object's class attribute 
-is set to \code{dhist} (default = \code{FALSE})}
+is set to \code{dhist} (default = \code{TRUE})}
 }
 \description{
 Checks if the input object is of class \code{dhist}. If \code{fast_check} is 
