@@ -113,7 +113,27 @@ test_that("as_unsmoothed_dhist sets smoothing_window_width correctly", {
 })
 
 context("dhist: Discrete histogram variance")
-test_that("dhist_variance returns sigma^2 for normal histograms", {
+test_that("dhist_variance difference for smoothed and unsmoothed dhists is smoothing_window_width^2 / 12", {
+  dhist <- dhist(locations <- c(7, 42, 1, 21, 101, 9),  masses = c(15, 12, 16, 13, 11, 14))
+  # Be careful: ensure that no smoothing window width results in overlapping bins
+  smoothing_window_width_A <- 1
+  smoothing_window_width_B <- 2
+  dhist_unsmoothed <- as_unsmoothed_dhist(dhist)
+  dhist_smoothed_A <- as_smoothed_dhist(dhist, smoothing_window_width_A)
+  dhist_smoothed_B <- as_smoothed_dhist(dhist, smoothing_window_width_B)
+  
+  var_unsmoothed <- dhist_variance(dhist_unsmoothed)
+  var_smoothed_A <- dhist_variance(dhist_smoothed_A)
+  var_smoothed_B <- dhist_variance(dhist_smoothed_B)
+  
+  expected_var_smoothed_A <- var_unsmoothed + ((smoothing_window_width_A^2) / 12)
+  expected_var_smoothed_B <- var_unsmoothed + ((smoothing_window_width_B^2) / 12)
+  
+  expect_equal(var_smoothed_A, expected_var_smoothed_A)
+  expect_equal(var_smoothed_B, expected_var_smoothed_B)
+})
+
+test_that("dhist_variance returns sigma^2 for unsmoothed normal histograms", {
   num_hists <- 5
   num_bins <- 100001
   
