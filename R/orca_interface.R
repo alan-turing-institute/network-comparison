@@ -209,6 +209,8 @@ gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4){
     out <- orbit_counts
   } else if(feature_type == "graphlet") {
     out <- orbit_to_graphlet_counts(orbit_counts)
+  } else {
+    stop('gdd: unrecognised feature_type')
   }
   orca_counts_to_graphlet_orbit_degree_distribution(out)
 }
@@ -304,7 +306,7 @@ orbit_to_graphlet_counts <- function(orbit_counts) {
 #' @export
 gdd_for_all_graphs <- function(
   source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit", 
-  max_graphlet_size = 4,mc.cores = getOption("mc.cores", 2L)) {
+  max_graphlet_size = 4, mc.cores = getOption("mc.cores", 2L)) {
   # Read graphs from source directory as ORCA-compatible edge lists
   graphs <- read_all_graphs_as_orca_graphs(
     source_dir = source_dir, format = format, pattern = pattern)
