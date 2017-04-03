@@ -60,7 +60,55 @@ test_that("discrete_hist generates correct discrete histograms for random intege
 })
 
 context("dhist: constructor and as_* transformation functions")
-test_that("dhist constuctor has correct locations and masses, sorted by ascending location", {
+test_that("dhist constuctor has correct locations and masses (default smoothing, unsorted)", {
+  locations1 = c(7, 42, 1, 21, 101, 9)
+  masses1 = c(15, 12, 16, 13, 11, 14)
+  actual1 <- dhist(locations = locations1, masses = masses1, sorted = FALSE)
+  locations2 = c(3, 0, -62, 7, 16, -58)
+  masses2 = c(23, 24, 26, 22, 21, 25)
+  actual2 <- dhist(locations = locations2, masses = masses2, sorted = FALSE)
+  
+  expected_class <- "dhist"
+  expected_smoothing_window_width <- 0
+  
+  expected1 = list(locations = locations1, masses = masses1, 
+                   smoothing_window_width = expected_smoothing_window_width)
+  class(expected1) <- expected_class
+  
+  expected2 = list(locations = locations2, masses = masses2, 
+                   smoothing_window_width = expected_smoothing_window_width)
+  class(expected2) <- expected_class
+  
+  expect_equal(actual1, expected1)
+  expect_equal(actual2, expected2)
+})
+
+test_that("dhist constuctor has correct locations and masses (default smoothing, sorted)", {
+  locations1 = c(7, 42, 1, 21, 101, 9)
+  masses1 = c(15, 12, 16, 13, 11, 14)
+  actual1 <- dhist(locations = locations1, masses = masses1, sorted = TRUE)
+  locations2 = c(3, 0, -62, 7, 16, -58)
+  masses2 = c(23, 24, 26, 22, 21, 25)
+  actual2 <- dhist(locations = locations2, masses = masses2, sorted = TRUE)
+  
+  expected_class <- "dhist"
+  expected_smoothing_window_width <- 0
+  
+  expected1 = list(locations = c(1, 7, 9, 21, 42, 101), 
+                   masses = c(16, 15, 14, 13 ,12, 11), 
+                   smoothing_window_width = expected_smoothing_window_width)
+  class(expected1) <- expected_class
+  
+  expected2 = list(locations = c(-62, -58, 0, 3, 7, 16), 
+                   masses = c(26, 25, 24, 23, 22, 21), 
+                   smoothing_window_width = expected_smoothing_window_width)
+  class(expected2) <- expected_class
+  
+  expect_equal(actual1, expected1)
+  expect_equal(actual2, expected2)
+})
+
+test_that("dhist constuctor has correct locations and masses (default smoothing, default sorting)", {
   locations1 = c(7, 42, 1, 21, 101, 9)
   masses1 = c(15, 12, 16, 13, 11, 14)
   actual1 <- dhist(locations = locations1, masses = masses1)
@@ -79,6 +127,88 @@ test_that("dhist constuctor has correct locations and masses, sorted by ascendin
   expected2 = list(locations = c(-62, -58, 0, 3, 7, 16), 
                    masses = c(26, 25, 24, 23, 22, 21), 
                    smoothing_window_width = expected_smoothing_window_width)
+  class(expected2) <- expected_class
+  
+  expect_equal(actual1, expected1)
+  expect_equal(actual2, expected2)
+})
+
+test_that("dhist constuctor has correct locations and masses (specified smoothing, unsorted)", {
+  smoothing_window_width <- 1
+  
+  locations1 = c(7, 42, 1, 21, 101, 9)
+  masses1 = c(15, 12, 16, 13, 11, 14)
+  actual1 <- dhist(locations = locations1, masses = masses1, 
+                   smoothing_window_width = smoothing_window_width, sorted = FALSE)
+  locations2 = c(3, 0, -62, 7, 16, -58)
+  masses2 = c(23, 24, 26, 22, 21, 25)
+  actual2 <- dhist(locations = locations2, masses = masses2, 
+                   smoothing_window_width = smoothing_window_width, sorted = FALSE)
+  
+  expected_class <- "dhist"
+  
+  expected1 = list(locations = locations1, masses = masses1, 
+                   smoothing_window_width = smoothing_window_width)
+  class(expected1) <- expected_class
+  
+  expected2 = list(locations = locations2, masses = masses2, 
+                   smoothing_window_width = smoothing_window_width)
+  class(expected2) <- expected_class
+  
+  expect_equal(actual1, expected1)
+  expect_equal(actual2, expected2)
+})
+
+test_that("dhist constuctor has correct locations and masses (specified smoothing, sorted)", {
+  smoothing_window_width <- 1
+  
+  locations1 = c(7, 42, 1, 21, 101, 9)
+  masses1 = c(15, 12, 16, 13, 11, 14)
+  actual1 <- dhist(locations = locations1, masses = masses1, 
+                   smoothing_window_width = smoothing_window_width, sorted = TRUE)
+  locations2 = c(3, 0, -62, 7, 16, -58)
+  masses2 = c(23, 24, 26, 22, 21, 25)
+  actual2 <- dhist(locations = locations2, masses = masses2, 
+                   smoothing_window_width = smoothing_window_width, sorted = TRUE)
+  
+  expected_class <- "dhist"
+  
+  expected1 = list(locations = c(1, 7, 9, 21, 42, 101), 
+                   masses = c(16, 15, 14, 13 ,12, 11), 
+                   smoothing_window_width = smoothing_window_width)
+  class(expected1) <- expected_class
+  
+  expected2 = list(locations = c(-62, -58, 0, 3, 7, 16), 
+                   masses = c(26, 25, 24, 23, 22, 21), 
+                   smoothing_window_width = smoothing_window_width)
+  class(expected2) <- expected_class
+  
+  expect_equal(actual1, expected1)
+  expect_equal(actual2, expected2)
+})
+
+test_that("dhist constuctor has correct locations and masses (specified smoothing, default sorting)", {
+  smoothing_window_width <- 1
+  
+  locations1 = c(7, 42, 1, 21, 101, 9)
+  masses1 = c(15, 12, 16, 13, 11, 14)
+  actual1 <- dhist(locations = locations1, masses = masses1, 
+                   smoothing_window_width = smoothing_window_width)
+  locations2 = c(3, 0, -62, 7, 16, -58)
+  masses2 = c(23, 24, 26, 22, 21, 25)
+  actual2 <- dhist(locations = locations2, masses = masses2, 
+                   smoothing_window_width = smoothing_window_width)
+  
+  expected_class <- "dhist"
+  
+  expected1 = list(locations = c(1, 7, 9, 21, 42, 101), 
+                   masses = c(16, 15, 14, 13 ,12, 11), 
+                   smoothing_window_width = smoothing_window_width)
+  class(expected1) <- expected_class
+  
+  expected2 = list(locations = c(-62, -58, 0, 3, 7, 16), 
+                   masses = c(26, 25, 24, 23, 22, 21), 
+                   smoothing_window_width = smoothing_window_width)
   class(expected2) <- expected_class
   
   expect_equal(actual1, expected1)
@@ -113,7 +243,27 @@ test_that("as_unsmoothed_dhist sets smoothing_window_width correctly", {
 })
 
 context("dhist: Discrete histogram variance")
-test_that("dhist_variance returns sigma^2 for normal histograms", {
+test_that("dhist_variance difference for smoothed and unsmoothed dhists is smoothing_window_width^2 / 12", {
+  dhist <- dhist(locations <- c(7, 42, 1, 21, 101, 9),  masses = c(15, 12, 16, 13, 11, 14))
+  # Be careful: ensure that no smoothing window width results in overlapping bins
+  smoothing_window_width_A <- 1
+  smoothing_window_width_B <- 2
+  dhist_unsmoothed <- as_unsmoothed_dhist(dhist)
+  dhist_smoothed_A <- as_smoothed_dhist(dhist, smoothing_window_width_A)
+  dhist_smoothed_B <- as_smoothed_dhist(dhist, smoothing_window_width_B)
+  
+  var_unsmoothed <- dhist_variance(dhist_unsmoothed)
+  var_smoothed_A <- dhist_variance(dhist_smoothed_A)
+  var_smoothed_B <- dhist_variance(dhist_smoothed_B)
+  
+  expected_var_smoothed_A <- var_unsmoothed + ((smoothing_window_width_A^2) / 12)
+  expected_var_smoothed_B <- var_unsmoothed + ((smoothing_window_width_B^2) / 12)
+  
+  expect_equal(var_smoothed_A, expected_var_smoothed_A)
+  expect_equal(var_smoothed_B, expected_var_smoothed_B)
+})
+
+test_that("dhist_variance returns sigma^2 for unsmoothed normal histograms", {
   num_hists <- 5
   num_bins <- 100001
   
@@ -149,15 +299,20 @@ test_that("normalise_dhist_mass output sums to 1", {
   mass_max <- 100
   rand_bin_masses <- function() {return(runif(num_bins, mass_min, mass_max))}
   bin_mass_lists <- replicate(num_hists, rand_bin_masses(), simplify = FALSE)
-
-  actuals <- purrr::map(bin_mass_lists, function(masses) {
-    # Locations are unimportant as they do not affect mass normalisation
-    locations <- 1:length(masses)
-    mass_normalised_dhist = normalise_dhist_mass(dhist(masses = masses, locations = locations))
-    return(sum(mass_normalised_dhist$masses))
+  # Locations are unimportant as they do not affect mass normalisation
+  locations <- 1:num_bins
+  smoothing_window_width <- 1
+  
+  normalised_dhists <- purrr::map(bin_mass_lists, function(masses) {
+    normalise_dhist_mass(dhist(masses = masses, locations = locations,
+                               smoothing_window_width = smoothing_window_width))
   })
-  expected <- 1
-  purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
+  expected_total_mass <- 1
+  # Check total masses match expectations
+  purrr::map_dbl(normalised_dhists, function(dhist) {expect_equal(sum(dhist$masses), expected_total_mass)})
+  # Check other histogram properties unchanged
+  purrr::walk(normalised_dhists, function(dhist) {expect_equal(dhist$locations, locations)})
+  purrr::walk(normalised_dhists, function(dhist) {expect_equal(dhist$smoothing_window_width, smoothing_window_width)})
 })
 
 context("dhist: Discrete histogram variance normalisation")
@@ -180,11 +335,25 @@ test_that("normalise_histogram_variance output has variance of 1 for random inte
   rand_dhists_unsmoothed <- purrr::map(rand_dhists, as_unsmoothed_dhist)
   rand_dhists_smoothed <- purrr::map(rand_dhists, as_smoothed_dhist, smoothing_window_width = smoothing_window_width)
   
-  actual_unsmoothed <- purrr::map(rand_dhists_unsmoothed, function(dhist) {dhist_variance(normalise_dhist_variance(dhist))})
-  actual_smoothed <- purrr::map(rand_dhists_smoothed, function(dhist) {dhist_variance(normalise_dhist_variance(dhist))})
-  expected <- 1
-  purrr::map_dbl(actual_unsmoothed, function(actual) {expect_equal(actual, expected)})
-  purrr::map_dbl(actual_smoothed, function(actual) {expect_equal(actual, expected)})
+  expected_post_norm_smoothing_windows <- map_dbl(rand_dhists_smoothed, function(dhist) {
+    smoothing_window_width/dhist_std(dhist)
+    })
+  
+  actual_dhist_unsmoothed <- purrr::map(rand_dhists_unsmoothed, function(dhist) {normalise_dhist_variance(dhist)})
+  actual_dhist_smoothed <- purrr::map(rand_dhists_smoothed, function(dhist) {normalise_dhist_variance(dhist)})
+  expected_variance <- 1
+  # Check variance of normalised hostograms is as expected
+  purrr::walk(actual_dhist_unsmoothed, function(dhist) {expect_equal(dhist_variance(dhist), expected_variance)})
+  purrr::walk(actual_dhist_smoothed, function(dhist) {expect_equal(dhist_variance(dhist), expected_variance)})
+  # Check smoothing window is as expected (0 for unsmoothe; smoothing_window_width/sigma for smoothed)
+  purrr::walk(actual_dhist_unsmoothed, function(dhist) {expect_equal(dhist$smoothing_window_width, 0)})
+  purrr::walk2(actual_dhist_smoothed, expected_post_norm_smoothing_windows, 
+                  function(dhist, sww) {expect_equal(dhist$smoothing_window_width, sww)})
+  # Check masses unaltered
+  purrr::walk2(actual_dhist_unsmoothed, rand_dhists_unsmoothed, 
+               function(actual, expected) {expect_equal(actual$masses, expected$masses)})
+  purrr::walk2(actual_dhist_smoothed, rand_dhists_smoothed, 
+               function(actual, expected) {expect_equal(actual$masses, expected$masses)})
 })
 
 test_that("normalise_histogram_variance output has variance of 1 for normal histograms", {
@@ -375,24 +544,24 @@ test_that("area_between_dhist_ecmfs returns correct value for non-integer normal
 
 context("dhist: Harmonise dhist locations")
 test_that("harmonise_dhist_locations works A", {
-  dhist1 <- dhist(masses = c(11, 12, 13), locations = c(1, 3, 5))
-  dhist2 <- dhist(masses = c(21, 22, 23), locations = c(2, 4, 6))
+  dhist1 <- dhist(masses = c(11, 12, 13), locations = c(1, 3, 5), smoothing_window_width = 1, sorted = FALSE)
+  dhist2 <- dhist(masses = c(21, 22, 23), locations = c(2, 4, 6), smoothing_window_width = 1, sorted = FALSE)
   
   expected <- list(
-    dhist1 = dhist(masses = c(11, 0, 12, 0, 13, 0), locations = c(1, 2, 3, 4, 5, 6)),
-    dhist2 = dhist(masses = c(0, 21, 0, 22, 0, 23), locations = c(1, 2, 3, 4, 5, 6))
+    dhist1 = dhist(masses = c(11, 12, 13, 0, 0, 0), locations = c(1, 3, 5, 2, 4, 6), smoothing_window_width = 1, sorted = FALSE),
+    dhist2 = dhist(masses = c(21, 22, 23, 0, 0, 0), locations = c(2, 4, 6, 1, 3, 5), smoothing_window_width = 1, sorted = FALSE)
   )
   actual <- harmonise_dhist_locations(dhist1, dhist2)
   expect_equal(actual, expected)
 })
 
 test_that("harmonise_dhist_locations works B", {
-  dhist1 <- dhist(masses = c(1, 1, 1), locations = c(1, 3, 5))
-  dhist2 <- dhist(masses = c(1, 1, 1), locations = c(4, 5, 6))
+  dhist1 <- dhist(masses = c(1, 1, 1), locations = c(1, 3, 5), smoothing_window_width = 1, sorted = FALSE)
+  dhist2 <- dhist(masses = c(1, 1, 1), locations = c(4, 5, 6), smoothing_window_width = 1, sorted = FALSE)
   
   expected <- list(
-    dhist1 = dhist(masses = c(1, 1, 1, 0, 0), locations = c(1, 3, 5, 4, 6)),
-    dhist2 = dhist(masses = c(1, 1, 1, 0, 0), locations = c(4, 5, 6, 1, 3))
+    dhist1 = dhist(masses = c(1, 1, 1, 0, 0), locations = c(1, 3, 5, 4, 6), smoothing_window_width = 1, sorted = FALSE),
+    dhist2 = dhist(masses = c(1, 1, 1, 0, 0), locations = c(4, 5, 6, 1, 3), smoothing_window_width = 1, sorted = FALSE)
   )
 
   actual <- harmonise_dhist_locations(dhist1, dhist2)

@@ -9,10 +9,12 @@ library("purrr")
 #' of the histogram bins
 #' @param masses A 1D numeric vector specifying the mass present at each 
 #' location
-#' @param smoothing_window_widthIf greater than 0, the discrete histogram will
+#' @param smoothing_window_width If greater than 0, the discrete histogram will
 #' be treated as having the mass at each location "smoothed" uniformly across
 #' a bin centred on the location and having width = \code{smoothing_window_width}
-#' @return A copy of a \code{dhist} object with its \code{smoothing_window_width}
+#' (default = \code{0} - no smoothing)
+#' @param sorted Whether or not to return a discrete histogram with locations 
+#' and masses sorted by ascending mass (default = \code{TRUE})
 #' @return A sparse discrete histogram. Format is a \code{dhist} object, which
 #' is a list of class \code{dhist} with the following named elements:
 #' \itemize{
@@ -25,7 +27,7 @@ library("purrr")
 #' for data where observations have been grouped into bins representing ranges 
 #' of observation values.
 #' @export
-dhist <- function(locations, masses, smoothing_window_width = 0) {
+dhist <- function(locations, masses, smoothing_window_width = 0, sorted = TRUE) {
   if(!is_numeric_vector_1d(locations)) {
     stop("Bin locations must be provided as a 1D numeric vector")
   }
@@ -38,7 +40,9 @@ dhist <- function(locations, masses, smoothing_window_width = 0) {
   dhist <- list(locations = locations, masses = masses, 
                 smoothing_window_width = smoothing_window_width)
   class(dhist) <- "dhist"
-  dhist <- sort_dhist(dhist)
+  if(sorted == TRUE) {
+    dhist <- sort_dhist(dhist)
+  }
   return(dhist)
 }
 
@@ -427,7 +431,8 @@ dhist_std <- function(dhist) {
 #' @export
 mean_centre_dhist <- function(dhist) {
   centred_locations <- dhist$locations - dhist_mean_location(dhist)
-  return(dhist(masses = dhist$masses, locations = centred_locations))
+  dhist <- update_dhist(dhist,locations = centred_locations)
+  return(dhist)
 }
 
 #' Normalise a discrete histogram to unit mass
@@ -440,7 +445,8 @@ mean_centre_dhist <- function(dhist) {
 normalise_dhist_mass <- function(dhist) {
   total_mass <- sum(dhist$masses)
   normalised_masses <- dhist$masses / total_mass
-  return(dhist(masses = normalised_masses, locations = dhist$locations))
+  dhist <- update_dhist(dhist, masses = normalised_masses)
+  return(dhist)
 }
 
 #' Normalise a discrete histogram to unit variance
@@ -498,8 +504,8 @@ harmonise_dhist_locations <- function(dhist1, dhist2) {
   # harmonised histograms have the same properties as if they had been 
   # constructed with the additional bins in the first place
   # (e.g. sorted by location)
-  dhist1 <- dhist(locations = locations1, masses = masses1)
-  dhist2 <- dhist(locations = locations2, masses = masses2)
+  dhist1 <- update_dhist(dhist1, locations = locations1, masses = masses1)
+  dhist2 <- update_dhist(dhist2, locations = locations2, masses = masses2)
   return(list(dhist1 = dhist1, dhist2 = dhist2))
 }
 
