@@ -2,7 +2,7 @@
 % Please edit documentation in R/orca_interface.R
 \name{read_orca_edge_list}
 \alias{read_orca_edge_list}
-\title{Load graph from file and convert to an ORCA compatible indexed edge list}
+\title{Load graph from file and convert to an ORCA compatible graph}
 \usage{
 read_orca_edge_list(file, format = "ncol")
 }
@@ -12,11 +12,11 @@ read_orca_edge_list(file, format = "ncol")
 \item{format}{Format of graph file}
 }
 \value{
-An ORCA compatible edge list
+An ORCA compatible\code{igraph} graph object
 }
 \description{
-Loads a graph from file and converts to an indexed edge list compatible with 
-the ORCA fast orbit calculation package by:
+Loads a graph from file and converts to an \code{igraph} graph compatible  
+with the ORCA fast orbit calculation package by:
   1. Making the graph undirected
   2. Removing loops (where both endpoints of an edge are the same vertex)
   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
@@ -24,5 +24,4 @@ the ORCA fast orbit calculation package by:
   4. Removing isolated vertices (i.e. vertices with no edges after the 
      previous alterations)
   5. Relabelling vertices with an integer index from 1 to numVertices
-  6. Converting the graph to an edge list
 }

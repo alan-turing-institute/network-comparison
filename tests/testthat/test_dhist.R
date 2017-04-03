@@ -1,6 +1,6 @@
 library("purrr")
-context("dhist: Discrete histogram from observations")
 
+context("dhist: Discrete histogram from observations")
 test_that("discrete_hist generates correct discrete histograms for random integer observations", {
   # Method for generating random observations containing specific locations a 
   # specific number of times
@@ -59,6 +59,59 @@ test_that("discrete_hist generates correct discrete histograms for random intege
   }
 })
 
+context("dhist: constructor and as_* transformation functions")
+test_that("dhist constuctor has correct locations and masses, sorted by ascending location", {
+  locations1 = c(7, 42, 1, 21, 101, 9)
+  masses1 = c(15, 12, 16, 13, 11, 14)
+  actual1 <- dhist(locations = locations1, masses = masses1)
+  locations2 = c(3, 0, -62, 7, 16, -58)
+  masses2 = c(23, 24, 26, 22, 21, 25)
+  actual2 <- dhist(locations = locations2, masses = masses2)
+  
+  expected_class <- "dhist"
+  expected_smoothing_window_width <- 0
+  
+  expected1 = list(locations = c(1, 7, 9, 21, 42, 101), 
+                   masses = c(16, 15, 14, 13 ,12, 11), 
+                   smoothing_window_width = expected_smoothing_window_width)
+  class(expected1) <- expected_class
+  
+  expected2 = list(locations = c(-62, -58, 0, 3, 7, 16), 
+                   masses = c(26, 25, 24, 23, 22, 21), 
+                   smoothing_window_width = expected_smoothing_window_width)
+  class(expected2) <- expected_class
+  
+  expect_equal(actual1, expected1)
+  expect_equal(actual2, expected2)
+})
+
+test_that("as_smoothed_dhist sets smoothing_window_width correctly", {
+  dhist_pre <- dhist(locations <- c(7, 42, 1, 21, 101, 9), 
+                  masses = c(15, 12, 16, 13, 11, 14))
+  expected_smoothing_window_width_pre <- 0
+  expected_smoothing_window_width_post <- 1
+  
+  expect_equal(dhist_pre$smoothing_window_width, 
+               expected_smoothing_window_width_pre)
+  dhist_post <- as_smoothed_dhist(dhist_pre, expected_smoothing_window_width_post)
+  expect_equal(dhist_post$smoothing_window_width, 
+               expected_smoothing_window_width_post)
+})
+
+test_that("as_unsmoothed_dhist sets smoothing_window_width correctly", {
+  dhist_pre <- dhist(locations <- c(7, 42, 1, 21, 101, 9), 
+                     masses = c(15, 12, 16, 13, 11, 14),
+                     smoothing_window_width <- 1)
+  expected_smoothing_window_width_pre <- 1
+  expected_smoothing_window_width_post <- 0
+  
+  expect_equal(dhist_pre$smoothing_window_width, 
+               expected_smoothing_window_width_pre)
+  dhist_post <- as_smoothed_dhist(dhist_pre, expected_smoothing_window_width_post)
+  expect_equal(dhist_post$smoothing_window_width, 
+               expected_smoothing_window_width_post)
+})
+
 context("dhist: Discrete histogram variance")
 test_that("dhist_variance returns sigma^2 for normal histograms", {
   num_hists <- 5
@@ -108,10 +161,10 @@ test_that("normalise_dhist_mass output sums to 1", {
 })
 
 context("dhist: Discrete histogram variance normalisation")
-test_that("normalise_histogram_variance output has variance of 1 for random histograms", {
+test_that("normalise_histogram_variance output has variance of 1 for random integer histograms", {
   # Generate histograms with random masses and random centres
   num_hists <- 10
-  num_bins <- 100
+  num_bins <- 70
   
   mass_min <- 0
   mass_max <- 100
@@ -119,13 +172,19 @@ test_that("normalise_histogram_variance output has variance of 1 for random hist
   
   centre_min <- -30
   centre_max <- 70
-  rand_locations <- function() {return(runif(num_bins, centre_min, centre_max))}
+  rand_locations <- function() {return(round(sample(centre_min:centre_max, num_bins), digits = 0))}
   
   rand_dhists <- replicate(num_hists, dhist(masses = rand_masses(), locations = rand_locations()), simplify = FALSE)
   
-  actuals <- purrr::map(rand_dhists, function(dhist) {dhist_variance(normalise_dhist_variance(dhist))})
+  smoothing_window_width <- 1
+  rand_dhists_unsmoothed <- purrr::map(rand_dhists, as_unsmoothed_dhist)
+  rand_dhists_smoothed <- purrr::map(rand_dhists, as_smoothed_dhist, smoothing_window_width = smoothing_window_width)
+  
+  actual_unsmoothed <- purrr::map(rand_dhists_unsmoothed, function(dhist) {dhist_variance(normalise_dhist_variance(dhist))})
+  actual_smoothed <- purrr::map(rand_dhists_smoothed, function(dhist) {dhist_variance(normalise_dhist_variance(dhist))})
   expected <- 1
-  purrr::map_dbl(actuals, function(actual) {expect_equal(actual, expected)})
+  purrr::map_dbl(actual_unsmoothed, function(actual) {expect_equal(actual, expected)})
+  purrr::map_dbl(actual_smoothed, function(actual) {expect_equal(actual, expected)})
 })
 
 test_that("normalise_histogram_variance output has variance of 1 for normal histograms", {
@@ -172,8 +231,9 @@ test_that("sort_dhist works", {
 context("dhist: ECMF")
 test_that("dhist_ecmf returns correct step function when smoothing_window_width is zero", {
   dhist1 <- dhist(locations = c(1, 2, 4, 7, 11, 16, 22), masses = c(21, 22, 23, 27, 31, 36, 42))
+  dhist1_unsmoothed <- as_unsmoothed_dhist(dhist1)
   
-  ecmf1 <- dhist_ecmf(dhist1, smoothing_window_width = 0)
+  ecmf1 <- dhist_ecmf(dhist1)
   actual_knots1 <- knots(ecmf1)
   actual_knots_ecds1 <- ecmf1(actual_knots1)
   inter_knots_x <- head(actual_knots1, length(actual_knots1) - 1)
@@ -204,14 +264,23 @@ test_that("area_between_dhist_ecmfs returns correct value for simple integer dhi
   # Smoothed ECMF crossing points are on a quarter-integer grid
   dhistA <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
   dhistB <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
+  
+  # Set up smoothed and unsmoothed versions of histograms
+  smoothing_window_width <- 1
+  dhistA_unsmoothed <- as_unsmoothed_dhist(dhistA)
+  dhistB_unsmoothed <- as_unsmoothed_dhist(dhistB)
+  dhistA_smoothed <- as_smoothed_dhist(dhistA, smoothing_window_width)
+  dhistB_smoothed <- as_smoothed_dhist(dhistB, smoothing_window_width)
+  
+  # Set expected area
   expected_area_unsmoothed <- 4
   expected_area_smoothed <- 3
   
   # Generate ecmfs
-  ecmfA_unsmoothed <- dhist_ecmf(dhistA, smoothing_window_width = 0)
-  ecmfB_unsmoothed <- dhist_ecmf(dhistB, smoothing_window_width = 0)
-  ecmfA_smoothed <- dhist_ecmf(dhistA, smoothing_window_width = 1)
-  ecmfB_smoothed <- dhist_ecmf(dhistB, smoothing_window_width = 1)
+  ecmfA_unsmoothed <- dhist_ecmf(dhistA_unsmoothed)
+  ecmfB_unsmoothed <- dhist_ecmf(dhistB_unsmoothed)
+  ecmfA_smoothed <- dhist_ecmf(dhistA_smoothed)
+  ecmfB_smoothed <- dhist_ecmf(dhistB_smoothed)
 
   # Calculate area between ECMFs
   actual_area_unsmoothed <- area_between_dhist_ecmfs(ecmfA_unsmoothed, ecmfB_unsmoothed)
@@ -230,8 +299,23 @@ test_that("area_between_dhist_ecmfs returns correct value for non-integer normal
   # of floating point locations. Has bowties, triangles and trapeziums.
   dhistA <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
   dhistB <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
+
   dhistA <- normalise_dhist_mass(normalise_dhist_variance(dhistA))
   dhistB <- normalise_dhist_mass(normalise_dhist_variance(dhistB))
+  
+  # Set up smoothed and unsmoothed versions of histograms
+  smoothing_window_width <- 1
+  dhistA_unsmoothed <- as_unsmoothed_dhist(dhistA)
+  dhistB_unsmoothed <- as_unsmoothed_dhist(dhistB)
+  dhistA_smoothed <- as_smoothed_dhist(dhistA, smoothing_window_width)
+  dhistB_smoothed <- as_smoothed_dhist(dhistB, smoothing_window_width)
+  
+  # Generate ecmfs
+  ecmfA_unsmoothed <- dhist_ecmf(dhistA_unsmoothed)
+  ecmfB_unsmoothed <- dhist_ecmf(dhistB_unsmoothed)
+  ecmfA_smoothed <- dhist_ecmf(dhistA_smoothed)
+  ecmfB_smoothed <- dhist_ecmf(dhistB_smoothed)
+  
   # Define some functions to make calculation of manually measured areas easier
   rectangle_area <- function(width, height) {
     return(width * height)
@@ -272,12 +356,6 @@ test_that("area_between_dhist_ecmfs returns correct value for non-integer normal
     sum(area_A_smoothed, area_B_smoothed, area_C_smoothed, area_D_smoothed, 
         area_E_smoothed, area_F_smoothed, area_G_smoothed, area_H_smoothed,
         area_I_smoothed, area_J_smoothed, area_K_smoothed, area_L_smoothed)
-  
-  # Generate ecmfs
-  ecmfA_unsmoothed <- dhist_ecmf(dhistA, smoothing_window_width = 0)
-  ecmfB_unsmoothed <- dhist_ecmf(dhistB, smoothing_window_width = 0)
-  ecmfA_smoothed <- dhist_ecmf(dhistA, smoothing_window_width = 1)
-  ecmfB_smoothed <- dhist_ecmf(dhistB, smoothing_window_width = 1)
   
   # Calculate area between ECMFs
   actual_area_unsmoothed <- area_between_dhist_ecmfs(ecmfA_unsmoothed, ecmfB_unsmoothed)

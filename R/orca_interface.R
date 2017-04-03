@@ -90,10 +90,10 @@ read_orca_graph <- function(file, format = "ncol") {
   return(graph)
 }
 
-#' Load graph from file and convert to an ORCA compatible indexed edge list
+#' Load graph from file and convert to an ORCA compatible graph
 #' 
-#' Loads a graph from file and converts to an indexed edge list compatible with 
-#' the ORCA fast orbit calculation package by:
+#' Loads a graph from file and converts to an \code{igraph} graph compatible  
+#' with the ORCA fast orbit calculation package by:
 #'   1. Making the graph undirected
 #'   2. Removing loops (where both endpoints of an edge are the same vertex)
 #'   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
@@ -101,10 +101,9 @@ read_orca_graph <- function(file, format = "ncol") {
 #'   4. Removing isolated vertices (i.e. vertices with no edges after the 
 #'      previous alterations)
 #'   5. Relabelling vertices with an integer index from 1 to numVertices
-#'   6. Converting the graph to an edge list
 #' @param file Path to graph file
 #' @param format Format of graph file
-#' @return An ORCA compatible edge list
+#' @return An ORCA compatible\code{igraph} graph object
 #' @export
 read_orca_edge_list <- function(file, format = "ncol") {
   graph_to_indexed_edges(read_orca_graph(file, format))
@@ -113,8 +112,8 @@ read_orca_edge_list <- function(file, format = "ncol") {
 #' Load all graphs in a directory, converting to ORCA compatible indexed edge lists
 #' 
 #' Loads graphs from all files matching the given pattern in the given directory
-#' and converts them to indexed edge list compatible with the ORCA fast orbit c
-#' alculation package by:
+#' and converts them to indexed edge lists compatible with the ORCA fast orbit 
+#' counting package by:
 #'   1. Making the graph undirected
 #'   2. Removing loops (where both endpoints of an edge are the same vertex)
 #'   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
@@ -123,7 +122,7 @@ read_orca_edge_list <- function(file, format = "ncol") {
 #'      previous alterations)
 #'   5. Relabelling vertices with an integer index from 1 to numVertices
 #'   6. Converting the graph to an edge list
-#' @param dir Path to graph directory
+#' @param source_dir Path to graph directory
 #' @param format Format of graph files
 #' @param pattern Filename pattern to match graph files
 #' @return A named list of ORCA compatible edge lists, with names corresponding 
@@ -141,6 +140,36 @@ read_all_graphs_as_orca_edge_lists <- function (source_dir, format = "ncol", pat
   return(edges)
 }
 
+#' Load all graphs in a directory, converting to ORCA compatible graphs
+#' 
+#' Loads graphs from all files matching the given pattern in the given directory
+#' and converts them to graphs compatible with the ORCA fast orbit 
+#' counting package by:
+#'   1. Making the graph undirected
+#'   2. Removing loops (where both endpoints of an edge are the same vertex)
+#'   3. Removing multiple edges (i.e. ensuring only one edge exists for each 
+#'      pair of endpoints)
+#'   4. Removing isolated vertices (i.e. vertices with no edges after the 
+#'      previous alterations)
+#'   5. Relabelling vertices with an integer index from 1 to numVertices
+#' @param source_dir Path to graph directory
+#' @param format Format of graph files
+#' @param pattern Filename pattern to match graph files
+#' @return A list of ORCA compatible graphs, with element names corresponding 
+#' to the names of the files each graph was loaded from
+#' @export
+read_all_graphs_as_orca_graphs <- function (source_dir, format = "ncol", pattern = ".txt") {
+  # Get list of all filenames in firectory that match the pattern
+  file_names <- dir(source_dir, pattern = pattern)
+  # Read graph data from each ".txt" file as an ORCA-compatible indexed edge list
+  graphs <- purrr::map(file_names, function(file_name) {
+    read_orca_graph(file = file.path(source_dir, file_name), format = "ncol")
+  })
+  # Name each graph with the name of the file it was read from
+  attr(graphs, "names") <- file_names
+  return(graphs)
+}
+
 #' ORCA vertex graphlet orbit counts to graphlet orbit histograms
 #' 
 #' Converts ORCA output (counts of each graphlet orbit at each graph vertex) to 
@@ -155,22 +184,133 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
   apply(orca_counts, 2, dhist_from_obs)
 }
 
-#' Graphlet Orbit Degree Distributions
+#' Graphlet-based degree distributions (GDDs)
 #' 
-#' Calculates the set of graphlet orbit degree distributions for graphlets of
-#' up to 4 nodes. 
-#' @param indexed_edges A 2 x numEdges edgelist with vertices labelled with 
-#' integer indices, with an optional "vertex_names" attribute
-#' @param type Type of graphlet orbits to calculate degree distributions
-#' for: "node4" counts all graphlets comprising up to 4 nodes; "node5" counts
-#' all graphlets comprising up to 5 nodes
-#' @return Graphlet degree histograms: List of degree histograms for each 
-#' graphlet orbit, with each histogram represented as a \code{dhist} discrete
-#' histogram object
+#' Generates graphlet-based degree distributions from \code{igraph} graph object,
+#' using the ORCA fast graphlet orbit counting package.
+#' @param graph An \code{igraph} graph object. The graph must have the following
+#' properties:' 
+#'   1. Be undirected
+#'   2. Have no self-loops (where both endpoints of an edge are the same vertex)
+#'   3. Not have multiple edges multiple edges (i.e. at most one edge exists for
+#'      each pair of vertices)
+#'   4. No isolated vertices (i.e. vertices with no edges)
+#' @param feature_type Type of graphlet-based feature to count: "graphlet"
+#' counts the number of graphlets each node participates in; "orbit" calculates
+#' the number of graphlet orbits each node participates in.
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @return List of graphlet-based degree distributions, with each distribution
+#' represented as a \code{dhist} discrete histogram object.
 #' @export
-godd <- function(indexed_edges, type = "node4") {
-  orca_fn <- switch(type,
-         node4 = orca::count4,
-         node5 = orca::count5)
-  orca_counts_to_graphlet_orbit_degree_distribution(orca_fn(indexed_edges))
+gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4){
+  orbit_counts <- count_orbits(graph, max_graphlet_size = max_graphlet_size)
+  if(feature_type == "orbit") {
+    out <- orbit_counts
+  } else if(feature_type == "graphlet") {
+    out <- orbit_to_graphlet_counts(orbit_counts)
+  }
+  orca_counts_to_graphlet_orbit_degree_distribution(out)
+}
+
+#' Calculate graphlet orbit counts
+#' 
+#' Calculates graphlet orbit counts from \code{igraph} graph object,
+#' using the ORCA fast graphlet orbit counting package.
+#' @param graph An \code{igraph} graph object. The graph must have the following
+#' properties:' 
+#'   1. Be undirected
+#'   2. Have no self-loops (where both endpoints of an edge are the same vertex)
+#'   3. Not have multiple edges multiple edges (i.e. at most one edge exists for
+#'      each pair of vertices)
+#'   4. No isolated vertices (i.e. vertices with no edges)
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @return ORCA-format matrix containing counts of each graphlet
+#' orbit (columns) at each vertex in the graph (rows).
+#' @export
+count_orbits <- function(graph, max_graphlet_size = 4) {
+    if(max_graphlet_size == 4) {
+      orca_fn <- orca::count4
+    } else if(max_graphlet_size == 5) {
+      orca_fn <- orca::count5
+    } else {
+      stop("Unsupported maximum graphlet size")
+    }
+    indexed_edges <- graph_to_indexed_edges(graph)
+    orbit_counts <- orca_fn(indexed_edges)
+    rownames(orbit_counts) <- igraph::get.vertex.attribute(graph, name = "name")
+    return(orbit_counts)
+}
+
+#' Orbit to graphlet counts
+#' 
+#' Converts graphlet orbit counts at each vertex to graphlet counts at each 
+#' vertex by summing over all orbits contained within each graphlet
+#' @param orbit_counts ORCA-format matrix containing counts of each graphlet
+#' orbit (columns) at each vertex in the graph (rows)
+#' @return An ORCA-style matrix containing counts of each graphlet (columns) at
+#' each vertex in the graph (rows)
+#' @export
+orbit_to_graphlet_counts <- function(orbit_counts) {
+  num_orbits <- dim(orbit_counts)[2]
+  # Indexes to select the orbit(s) that comprise each graphlet. Note that we 
+  # define these in the zero-based indexing used in journal papers, but 
+  # need to add 1 to convert to the 1-based indexing used by R
+  if(num_orbits == 15) {
+    # Orbits for graphlets comprising up to 4 nodes
+    orbit_to_graphlet_map <- 
+      purrr::map(list(0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14), 
+                 function(indexes){ indexes + 1})
+    graphlet_names <- purrr::simplify(purrr::map(0:8, function(index) {
+      paste('G', index, sep = "")}))
+  } else if(num_orbits == 73) {
+    # Orbits for graphlets comprising up to 4 nodes
+    orbit_to_graphlet_map <- 
+      purrr::map(list(0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14, 15:17, 18:21, 
+                      22:23, 24:26, 27:30, 31:33, 34, 35:38, 39:42, 43:44, 
+                      45:48, 49:50, 51:53, 54:55, 56:58, 59:61, 62:64, 
+                      65:67, 68:69, 70:71, 72), 
+                 function(indexes){ indexes + 1})
+    graphlet_names <- purrr::simplify(purrr::map(0:29, function(index) {
+      paste('G', index, sep = "")}))
+  } else {
+    stop(("Unsupported number of orbits"))
+  }
+  # Sum counts across orbits in graphlets
+  graphlet_counts <- sapply(orbit_to_graphlet_map, function(indexes){
+    rowSums(orbit_counts[,indexes, drop = FALSE])})
+  # Add graphlet names
+  colnames(graphlet_counts) <- graphlet_names
+  return(graphlet_counts)
+}
+
+#' Load all graphs in a directory and calculates their Graphlet-based Degree
+#' Distributions (GDDs)
+#' 
+#' Loads graphs from all files matching the given pattern in the given directory,
+#' converts them to indexed edge lists compatible with the ORCA fast orbit 
+#' counting package and calculates the specified set of graphlet-based degree 
+#' distributions usingthe ORCA package.
+#' @param source_dir Path to graph directory
+#' @param format Format of graph files
+#' @param pattern Filename pattern to match graph files
+#' @param type Type of graphlet-based degree distributions: "orb4" counts all 
+#' orbits for graphlets comprising up to 4 nodes; "orb5" counts all orbits for
+#' graphlets comprising up to 5 nodes.
+#' @return A named list where each element contains a set of GDDs for a single 
+#' graph from the source directory. Each set of GDDs is itself a named list,  
+#' where each GDD element is a \code{dhist} discrete histogram object.
+#' @export
+gdd_for_all_graphs <- function(
+  source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit", 
+  max_graphlet_size = 4,mc.cores = getOption("mc.cores", 2L)) {
+  # Read graphs from source directory as ORCA-compatible edge lists
+  graphs <- read_all_graphs_as_orca_graphs(
+    source_dir = source_dir, format = format, pattern = pattern)
+  # Calculate specified GDDs for each graph
+  parallel::mcmapply(gdd, graphs, MoreArgs = 
+                       list(feature_type = feature_type, 
+                            max_graphlet_size = max_graphlet_size), 
+                     SIMPLIFY = FALSE, mc.cores = mc.cores)
 }

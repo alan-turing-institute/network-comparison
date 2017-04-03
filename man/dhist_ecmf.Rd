@@ -5,7 +5,7 @@
 \title{Generate interpolating empirical cumulative mass function (ECMF) for 
 a discrete histogram}
 \usage{
-dhist_ecmf(dhist, smoothing_window_width = 0)
+dhist_ecmf(dhist)
 }
 \arguments{
 \item{dhist}{A discrete histogram as a \code{dhist} object}

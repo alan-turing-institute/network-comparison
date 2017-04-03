@@ -1,6 +1,69 @@
 library("lpSolve")
 library("purrr")
 
+#' NetEMDs between all graph pairs using provided Graphlet-based Degree 
+#' Distributions 
+#' @param gdds List containing sets of Graphlet-based Degree Distributions for 
+#' all graphs being compared
+#' @param method The method to use to find the minimum EMD across all potential 
+#' offsets for each pair of histograms. Default is "optimise" to use
+#' R's built-in \code{optimise} method to efficiently find the offset with the 
+#' minimal EMD. However, this is not guaranteed to find the global minimum if 
+#' multiple local minima EMDs exist. You can alternatively specify the 
+#' "fixed_step" method, which will exhaustively evaluate the EMD between the 
+#' histograms at overlapping offsets separated by a fixed step. The size of the 
+#' fixed step is 1/2 the the minimum spacing between locations in either
+#' histogram after normalising to unit variance
+#' @param step_size Additional optional argument for "fixed_step" method allowing
+#' user to specify their own minumum step size. Note that this step size is 
+#' applied to the histograms after they have been normalised to unit variance
+#' @param return_details Logical indicating whether to return the individual
+#' minimal EMDs and associated offsets for all pairs of histograms
+#' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
+#' "smear" point masses across a finite width in the real domain. Default is 0, 
+#' which  results in no smoothing. Care should be taken to select a 
+#' \code{smoothing_window_width} that is appropriate for the discrete domain 
+#' (e.g.for the integer domain a width of 1 is the natural choice)
+#' @return NetEMD measures between all pairs of graphs for which GDDs 
+#' were provided. Format of returned data depends on the \code{return_details}
+#' parameter. If set to FALSE, a list is returned with the following named
+#' elements:\code{net_emd}: a vector of NetEMDs for each pair of graphs, 
+#' \code{comp_spec}: a comaprison specification table containing the graph names 
+#' and indices within the input GDD list for each pair of graphs compared.
+#' If \code{return_details} is set to FALSE, the list also contains the following
+#' matrices for each graph pair: \code{min_emds}: the minimal EMD for each GDD 
+#' used to compute the NetEMD, \code{min_offsets}: the associated offsets giving
+#' the minimal EMD for each GDD
+#' @export
+net_emds_for_all_graphs <- function(
+  gdds, method = "optimise", step_size = NULL, smoothing_window_width = 0, 
+  return_details = FALSE, mc.cores = getOption("mc.cores", 2L)) {
+  comp_spec <- graph_cross_comparison_spec(gdds)
+  out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {net_emd(
+    gdds[[index_a]], gdds[[index_b]], method = method, return_details = return_details,
+    smoothing_window_width = smoothing_window_width)
+    }, comp_spec$index_a, comp_spec$index_b, SIMPLIFY = FALSE))
+  if(return_details) {
+    net_emds <- purrr::simplify(purrr::map(out, ~.$net_emd))
+    min_emds <- matrix(purrr::simplify(purrr::map(out, ~.$min_emds)), ncol = num_features, byrow = TRUE)
+    colnames(min_emds) <- purrr::simplify(purrr::map(1:num_features, ~paste("MinEMD_O", .-1, sep = "")))
+    min_offsets <- matrix(purrr::simplify(purrr::map(out, ~.$min_offsets)), ncol = num_features, byrow = TRUE)
+    colnames(min_offsets) <- purrr::simplify(purrr::map(1:num_features, ~paste("MinOffsets_O", .-1, sep = "")))
+    ret <- list(net_emds = net_emds, comp_spec = comp_spec, min_emds = min_emds, min_offsets = min_offsets)
+  } else {
+    net_emds <- out
+    ret <- list(net_emds = net_emds, comp_spec = comp_spec)
+  }
+}
+
+graph_cross_comparison_spec <- function(gdds) {
+  indexes <- as.data.frame(t(utils::combn(1:length(gdds),2)))
+  names <- as.data.frame(cbind(names(gdds)[indexes[,1]], names(gdds)[indexes[,2]]))
+  spec <- cbind(names, indexes)
+  colnames(spec) <- c("name_a", "name_b", "index_a", "index_b")
+  return(spec)
+}
+
 #' NetEMD Network Earth Mover's Distance
 #' 
 #' Calculates the mean minimum Earth Mover's Distance (EMD) between two sets of
@@ -87,20 +150,22 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     method = "optimise"
   }
   
-  # Measure dhist standard deviations prior to variance normalisation
-  std_dev1 <- dhist_std(dhist1)
-  std_dev2 <- dhist_std(dhist2)
-  # Adjust smoothing_windows for each histogram based on their pre-normalised 
-  # variance (must be done prior to variance normalisation)
-  adjust_smoothing_window <- function(std_dev, smoothing_window_width) {
-    if(std_dev != 0) {
-      # Histogram is unaltered if variance is zero as normalisation is undefined
-      smoothing_window_width <- smoothing_window_width / std_dev
-    }
-    return(smoothing_window_width)      
+  # Present dhists as smoothed or unsmoothed histograms depending on the value 
+  # of smoothing_window_width
+  # NOTE: This MUST be done prior to any variance normalisation as the 
+  # calculation of variance differes depending on whether or not the histograms 
+  # are smoothed (i.e. we need to ensure that the smoothing_window_width 
+  # attribute of the dhists is set to the smoothing_window_width parameter
+  # provided by the caller)
+  # TODO: Consider moving the smoothing of histograms outside to the user's 
+  # calling code. It feels a bit untidy in here.
+  if(smoothing_window_width == 0) {
+    dhist1 <- as_unsmoothed_dhist(dhist1)
+    dhist2 <- as_unsmoothed_dhist(dhist2)
+  } else {
+    dhist1 <- as_smoothed_dhist(dhist1, smoothing_window_width)
+    dhist2 <- as_smoothed_dhist(dhist2, smoothing_window_width)
   }
-  smoothing_window_width1 <- adjust_smoothing_window(std_dev1, smoothing_window_width)
-  smoothing_window_width2 <- adjust_smoothing_window(std_dev2, smoothing_window_width)
   
   # Normalise histogram to unit mass and unit variance
   dhist1_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
@@ -121,14 +186,11 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     min_location_sep2 <- min(location_spacing(dhist2_norm$locations))
     step_size <- min(min_location_sep1, min_location_sep2)/2
   }
-  if(smoothing_window_width != 0) {
-    a <- 2
-    # PAuse here
-  }
+  
   emd_offset <- function(offset) {
     # Construct ECMFs for each normalised histogram
-    ecmf1 <- dhist_ecmf(shift_dhist(dhist1_norm, offset), smoothing_window_width1)
-    ecmf2 <- dhist_ecmf(dhist2_norm, smoothing_window_width2)
+    ecmf1 <- dhist_ecmf(shift_dhist(dhist1_norm, offset))
+    ecmf2 <- dhist_ecmf(dhist2_norm)
     area_between_dhist_ecmfs(ecmf1, ecmf2)
   }
   
