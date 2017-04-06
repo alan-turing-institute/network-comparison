@@ -1,6 +1,9 @@
 # netdist
 An R package implementing the NetEMD network comparison measure
 
+### BETA: Package under construction
+Until this package hits version 1.0 anything can change with no notice.
+
 [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
 
 ## Usage
