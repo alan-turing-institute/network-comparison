@@ -48,3 +48,10 @@ You can list the functions available in the package with `library(help = "netdis
 and get more detailed help on individual functions using `?function_name` (e.g.
 `?net_emd`). In RStudio, typing `?netdist::` should also provide a drop down list
 of functions you can select to load the more detailed help.
+
+## References
+#### NetEMD
+Anatol E. Wegner, Luis Ospina-Forero, Robert E. Gaunt, Charlotte M. Deane, Gesine Reinert; Identifying networks with common organizational principles. ArXiv pre-print. [arXiv:1704.00387](https://arxiv.org/abs/1704.00387)
+
+#### NetDis
+Waqar Ali, Tiago Rito, Gesine Reinert, Fengzhu Sun, Charlotte M. Deane; Alignment-free protein interaction network comparison. Bioinformatics 2014; 30 (17): i430-i437. [doi:10.1093/bioinformatics/btu447](https://dx.doi.org/10.1093/bioinformatics/btu447) (Open Access)
