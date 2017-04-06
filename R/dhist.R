@@ -229,7 +229,7 @@ dhist_ecmf <- function(dhist) {
 #' which the y-value changes gradient (i.e. the x-values between which the ECMF
 #' does its constant or linear interpolation)
 #' @export
-knots.dhist_ecmf <- function(dhist_ecmf, ...) {
+dhist_ecmf_knots <- function(dhist_ecmf, ...) {
   eval(expression(x), envir=environment(dhist_ecmf))
 }
 
@@ -252,8 +252,8 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
   }
   ecmf_type <- ecmf_type1
   # Determine all possible locations where either ECMF changes gradient ("knots")
-  x1 <- knots(dhist_ecmf1)
-  x2 <- knots(dhist_ecmf2)
+  x1 <- dhist_ecmf_knots(dhist_ecmf1)
+  x2 <- dhist_ecmf_knots(dhist_ecmf2)
   x <- sort(union(x1, x2))
   # Calculate the cumulative density at each of these locations for both ECMFs
   ecm1 <- dhist_ecmf1(x)
