@@ -78,7 +78,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2>Virus PPI example</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;netdist&quot;</span>)
 <span class="co"># Set source directory and file properties for Virus PPI graph edge files</span>
-source_dir &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="dt">package =</span> <span class="st">&quot;netdist&quot;</span>, <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;VRPINS&quot;</span>)
+source_dir &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="kw">file.path</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;VRPINS&quot;</span>), <span class="dt">package =</span> <span class="st">&quot;netdist&quot;</span>)
+
 edge_format =<span class="st"> &quot;ncol&quot;</span>
 file_pattern =<span class="st"> &quot;.txt&quot;</span>
 
