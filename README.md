@@ -18,7 +18,7 @@ See "Quick start" vignette in documentation for example usage.
 When published to the CRAN package repository, the library and all documentation
 will be installed in the standard manner using `install.packages("netdist")`,
 which will also install all dependencies from CRAN. However, prior to publication
-on CRAN, some additional effort is required to install the package from source.
+on CRAN, the package can be installed from Github using the `devtools` package.
 
 ### Prerequisites
 - Install the `devtools` package using `install.packages("devtools")`
@@ -29,10 +29,8 @@ Core dependencies are listed in the `Imports` section of the package
 updating the package using `devtools` as described below. Note that this does
 not build the package documentation.
 
-  - Fetch the package source from GitHub 
-  ("https://github.com/alan-turing-institute/network-comparison.git")
-  - Open an R terminal in the folder containing the package source
-  - Install the package using `devtools::install()`
+Install the latest package from GitHub using:
+  - `devtools::install_github("alan-turing-institute/network-comparison")`
   
 ### Installing additional optional dependencies
 Additional optional packages required to generate documentation, run tests or 
