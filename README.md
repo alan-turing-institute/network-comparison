@@ -7,7 +7,7 @@ Until this package hits release 1.0 anything can change with no notice.
 [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) 
 [![GitHub release](https://img.shields.io/github/release/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/releases/latest) 
 [![Travis](https://img.shields.io/travis/alan-turing-institute/network-comparison/master.svg)](https://travis-ci.org/alan-turing-institute/network-comparison)
-[![Codecov](https://img.shields.io/codecov/c/github/alan-turing-institute/network-comparison.svg)]()
+[![Codecov](https://img.shields.io/codecov/c/github/alan-turing-institute/network-comparison.svg)](https://codecov.io/gh/alan-turing-institute/network-comparison)
 [![license](https://img.shields.io/github/license/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/edit/master/LICENSE) 
 [![Github All Releases](https://img.shields.io/github/downloads/alan-turing-institute/network-comparison/total.svg)]()
 
