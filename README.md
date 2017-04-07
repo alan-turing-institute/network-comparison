@@ -26,8 +26,7 @@ on CRAN, the package can be installed from Github using the `devtools` package.
 ### Installing package and core dependencies needed to use it
 Core dependencies are listed in the `Imports` section of the package 
 `DEPENDENDCIES` file and will be automatically installed when installing / 
-updating the package using `devtools` as described below. Note that this does
-not build the package documentation.
+updating the package using `devtools` as described below.
 
 Install the latest package from GitHub using:
   - `devtools::install_github("alan-turing-institute/network-comparison")`
