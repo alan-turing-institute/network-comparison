@@ -1,6 +1,6 @@
 language: r
 cache: packages
-warnings_are_errors: true
+warnings_are_errors: false
 r_packages:
 - covr
 os:
@@ -9,9 +9,9 @@ after_success:
 - Rscript -e 'library(covr); codecov()'
 notifications:
   slack:
-    on_success: always
+    on_success: change
     on_failure: change
     rooms:
       secure: BZLpMK+Hoh7Bv6CUqYvyebuxQiSi9KptXeCabjFBeJWPi7aLq09RNUI3w8QEsbnl2qmaLckDyaJBXLUvB1cb49Hp/q3obEh9wGBP5Y/Qbsi18pwHAFvJcZKAHVaTcNBBomvO4bYwopcZSmwiKzMdlk2BeYjbnPbf4DVo1QvGXqREw8R71Lk1oBgZ+KoienFkhdpG2pSECQV0iU6v+MbmwYBxV9k2B9bmySinxvvzwbV9nON/5dOYggPc6uIVCLbwaU3Y2c9ffzsXKGB/FrfYaWeYVRiZ3Gp2E6ZcAmK2AcjAfyij1IalU9D6AWBuKhHHxk+nJhyGK3tgvXlO1G3XTUBLhYgURvzTugLBJm0MU2KkTiSLxJEaZl+fUvoDuXmwwusZV8vZFHvwkdOBgnWFFcoH7ocy8OCfXFkFMDtpx+CwXFa/uBjLRhWmgwBXeIytHcfwHKVhgH7Vj7ShldgonTM0hcVoRldenXg22pK2W8MDcek16I9JZ6htJ/8f7doqOTNnepDIFHTBkpR3WQWd7GfdHwmxwwyJi5tJr3qpnkFAKaJhUAyNIPU5EU2JZTqGsxaYwLSI8xxIwMgzZTXijWIi5KXbsn85n1rpT9CsObLbROeYLngs9YvdarT6OvFIXSN9Oo05fW32iwvWuck001w8jn2pYD8u7jy5AMM1g4k=
     template:
-    - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}. *%{message}*"
+    - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}. %{message}"
