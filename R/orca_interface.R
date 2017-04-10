@@ -245,6 +245,30 @@ count_orbits <- function(graph, max_graphlet_size = 4) {
     return(orbit_counts)
 }
 
+#' @export
+count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size) {
+  # Extract ego network for each node in original graph, naming each ego network
+  # in the list with the name of the node the ego network is generated for
+  ego_networks <- igraph::make_ego_graph(graph, order = neighbourhood_size)
+  names(ego_networks) <- igraph::V(graph)$name
+  # Generate orbit counts for each node in each ego network (returns an ORCA
+  # format orbit count matrix for each ego network)
+  ego_orbit_counts_per_node <- purrr::map(ego_networks, count_orbits, 
+                                          max_graphlet_size = max_graphlet_size)
+  # Convert orbit count matrices to graphlet count matrices
+  ego_graphlet_counts_per_node <- purrr::map(ego_orbit_counts_per_node, orbit_to_graphlet_counts)
+  # Sum graphlet counts across all nodes in each ego network
+  ego_graphlet_counts <- purrr::map(ego_graphlet_counts_per_node, apply, MARGIN = 2, FUN = sum)
+  # To ensure we only count each graphlet present in an ego network once, divide
+  # the ego network graphlet counts by the number of nodes that contribute to 
+  # each graphlet type
+  ego_graphlet_counts_dedup <- purrr::map(ego_graphlet_counts, function(egc) {
+    egc / graphlet_orders(max_graphlet_size)})
+  # Reshape the list of per node single row graphlet count matrices to a single
+  # ORCA format graphlet count matrix with one row per node
+  t(simplify2array(ego_graphlet_counts_dedup))
+}
+
 #' Orbit to graphlet counts
 #' 
 #' Converts graphlet orbit counts at each vertex to graphlet counts at each 
@@ -285,6 +309,17 @@ orbit_to_graphlet_counts <- function(orbit_counts) {
   # Add graphlet names
   colnames(graphlet_counts) <- graphlet_names
   return(graphlet_counts)
+}
+
+#' @export
+graphlet_orders <- function(max_graphlet_size) {
+  if(max_graphlet_size == 4) {
+    graphlet_orders <- c(2, rep(3,2), rep(4,6))
+  } else if (max_graphlet_size == 5) {
+    graphlet_orders <- c(2, rep(3,2), rep(4,6), rep(5, 21))
+  } else {
+    stop("Unsupported maximum graphlet size")
+  }
 }
 
 #' Load all graphs in a directory and calculates their Graphlet-based Degree
