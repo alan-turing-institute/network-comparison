@@ -137,3 +137,76 @@ test_that("gdd works", {
   expect_equal(gdd_graphlet_default_actual, gdd_graphlet_4_expected)
   expect_equal(gdd_default_default_actual, gdd_orbit_4_expected)
 })
+
+context("ORCA interface: Ego-network graphlet counts for manually verified networks")
+test_that("Ego-network 4-node graphlet counts match manually verified totals",{
+  # Set up a small sample network with at least one ego-network that contains
+  # at least one of each graphlets
+  elist <- rbind(
+    c("n1","n2"),
+    c("n2","n3"),
+    c("n1","n4"),
+    c("n2","n5"),
+    c("n1","n6"),
+    c("n1","n7"),
+    c("n2","n4"),
+    c("n4","n6"),
+    c("n6","n8"),
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
+  
+  # Set node and graphlet labels to use for row and col names in expected counts
+  node_labels <- igraph::V(graph)$name
+  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  
+  # Count graphlets in each ego network of the graph with neighbourhood sizes of 1 and 2
+  max_graphlet_size <- 4
+  atual_counts_order_1 <- 
+    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 1)
+  atual_counts_order_2 <- 
+    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 2)
+  
+  # Set manually verified counts
+  # 1-step ego networks
+  expected_counts_order_1 <- rbind(
+    c(6, 5, 2, 0, 1, 0, 2, 1, 0),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0),
+    c(1, 0, 0, 0, 0, 0, 0, 0, 0),
+    c(5, 2, 2, 0, 0, 0, 0, 1, 0),
+    c(1, 0, 0, 0, 0, 0, 0, 0, 0),
+    c(4, 2, 1, 0, 0, 0, 1, 0, 0),
+    c(7, 3, 4, 0, 0, 0, 3, 0, 1),
+    c(7, 3, 4, 0, 0, 0, 3, 0, 1),
+    c(6, 0, 4, 0, 0, 0, 0, 0, 1),
+    c(6, 0, 4, 0, 0, 0, 0, 0, 1)
+  )
+  rownames(expected_counts_order_1) <- node_labels
+  colnames(expected_counts_order_1) <- graphlet_labels
+  # 2-step ego networks
+  expected_counts_order_2 <- rbind(
+    c(15, 18, 6, 21, 3, 1, 11, 1, 1),
+    c(8, 10, 2, 6, 3, 0, 4, 1, 0),
+    c(5, 5, 1, 0, 2, 0, 2 ,0, 0),
+    c(10, 14, 2, 11, 3, 1, 5, 1, 0),
+    c(5, 5, 1, 0, 2, 0, 2 ,0, 0),
+    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
+    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
+    c(11, 10, 5, 10 ,0 ,1, 8, 0, 1),
+    c(9, 8, 4, 4, 0, 1, 6, 0, 1),
+    c(9, 8, 4, 4, 0, 1, 6, 0, 1)
+  )
+  rownames(expected_counts_order_2) <- node_labels
+  colnames(expected_counts_order_2) <- graphlet_labels
+
+  # Test that actual counts match expected
+  expect_equal(atual_counts_order_1, expected_counts_order_1)
+  expect_equal(atual_counts_order_2, expected_counts_order_2)
+})
