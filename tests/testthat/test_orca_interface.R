@@ -138,7 +138,7 @@ test_that("gdd works", {
   expect_equal(gdd_default_default_actual, gdd_orbit_4_expected)
 })
 
-context("ORCA interface: Ego-network graphlet counts for manually verified networks")
+context("ORCA interface: Ego-network graphlet outputs for manually verified networks")
 test_that("Ego-network 4-node graphlet counts match manually verified totals",{
   # Set up a small sample network with at least one ego-network that contains
   # at least one of each graphlets
@@ -167,10 +167,10 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
   
   # Count graphlets in each ego network of the graph with neighbourhood sizes of 1 and 2
   max_graphlet_size <- 4
-  atual_counts_order_1 <- 
+  actual_counts_order_1 <- 
     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
                         neighbourhood_size = 1)
-  atual_counts_order_2 <- 
+  actual_counts_order_2 <- 
     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
                         neighbourhood_size = 2)
   
@@ -193,20 +193,52 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
   # 2-step ego networks
   expected_counts_order_2 <- rbind(
     c(15, 18, 6, 21, 3, 1, 11, 1, 1),
-    c(8, 10, 2, 6, 3, 0, 4, 1, 0),
-    c(5, 5, 1, 0, 2, 0, 2 ,0, 0),
-    c(10, 14, 2, 11, 3, 1, 5, 1, 0),
-    c(5, 5, 1, 0, 2, 0, 2 ,0, 0),
-    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
-    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
-    c(11, 10, 5, 10 ,0 ,1, 8, 0, 1),
-    c(9, 8, 4, 4, 0, 1, 6, 0, 1),
-    c(9, 8, 4, 4, 0, 1, 6, 0, 1)
+    c( 8, 10, 2,  6, 3, 0,  4, 1, 0),
+    c( 5,  5, 1,  0, 2, 0,  2, 0, 0),
+    c(10, 14, 2, 11, 3, 1,  5, 1, 0),
+    c( 5,  5, 1,  0, 2, 0,  2, 0, 0),
+    c(13, 13, 6, 15, 1, 1,  9, 1, 1),
+    c(13, 13, 6, 15, 1, 1,  9, 1, 1),
+    c(11, 10, 5, 10 ,0 ,1,  8, 0, 1),
+    c( 9,  8, 4,  4, 0, 1,  6, 0, 1),
+    c( 9,  8, 4,  4, 0, 1,  6, 0, 1)
   )
   rownames(expected_counts_order_2) <- node_labels
   colnames(expected_counts_order_2) <- graphlet_labels
 
   # Test that actual counts match expected
-  expect_equal(atual_counts_order_1, expected_counts_order_1)
-  expect_equal(atual_counts_order_2, expected_counts_order_2)
+  expect_equal(actual_counts_order_1, expected_counts_order_1)
+  expect_equal(actual_counts_order_2, expected_counts_order_2)
+  
+  # Test that gdd method gives the expected graphlet degree distributions
+  # 1-step ego-networks
+  actual_gdd_order_1 <- gdd(graph, feature_type = "graphlet", 
+                            max_graphlet_size = 4, ego_neighbourhood_size = 1)
+  expected_gdd_order_1 <- list(
+    G0 = dhist(locations = c(1, 4, 5, 6, 7), masses = c(2, 1, 2, 3, 2)),
+    G1 = dhist(locations = c(0, 2, 3, 5), masses = c(4, 2, 2, 2)),
+    G2 = dhist(locations = c(0, 1, 2, 4), masses = c(2, 2, 2, 4)),
+    G3 = dhist(locations = c(0), masses = c(10)),
+    G4 = dhist(locations = c(0, 1, 2), masses = c(8, 1, 1)),
+    G5 = dhist(locations = c(0), masses = c(10)),
+    G6 = dhist(locations = c(0, 1, 2, 3), masses = c(5, 1, 2, 2)),
+    G7 = dhist(locations = c(0, 1), masses = c(8, 2)),
+    G8 = dhist(locations = c(0, 1), masses = c(6, 4))
+  )
+  expect_equal(actual_gdd_order_1, expected_gdd_order_1)
+  # 2-step ego-networks
+  actual_gdd_order_2 <- gdd(graph, feature_type = "graphlet", 
+                            max_graphlet_size = 4, ego_neighbourhood_size = 2)
+  expected_gdd_order_2 <- list(
+    G0 = dhist(locations = c(5, 8, 9, 10, 11, 13, 15), masses = c(2, 1, 2, 1, 1, 2, 1)),
+    G1 = dhist(locations = c(5, 8, 10, 13, 14, 18), masses = c(2, 2, 2, 2, 1, 1)),
+    G2 = dhist(locations = c(1, 2, 4, 5, 6), masses = c(2, 2, 2, 1, 3)),
+    G3 = dhist(locations = c(0, 4, 6, 10, 11, 15, 21), masses = c(2, 2, 1, 1, 1, 2, 1)),
+    G4 = dhist(locations = c(0, 1, 2, 3), masses = c(3, 2, 2, 3)),
+    G5 = dhist(locations = c(0, 1), masses = c(3, 7)),
+    G6 = dhist(locations = c(2, 4, 5, 6, 8, 9, 11), masses = c(2, 1, 1, 2, 1, 2, 1)),
+    G7 = dhist(locations = c(0, 1), masses = c(5, 5)),
+    G8 = dhist(locations = c(0, 1), masses = c(4, 6))
+  )
+  expect_equal(actual_gdd_order_2, expected_gdd_order_2)
 })

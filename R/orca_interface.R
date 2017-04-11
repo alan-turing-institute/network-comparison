@@ -203,9 +203,17 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 #' @return List of graphlet-based degree distributions, with each distribution
 #' represented as a \code{dhist} discrete histogram object.
 #' @export
-gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4){
+gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4, 
+                ego_neighbourhood_size = 0){
   orbit_counts <- count_orbits(graph, max_graphlet_size = max_graphlet_size)
-  if(feature_type == "orbit") {
+  if(ego_neighbourhood_size > 0) {
+    if(feature_type != 'graphlet') {
+      stop("Feature type not supported for ego-networks")
+    } else {
+      out <- count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+                                 neighbourhood_size = ego_neighbourhood_size)
+    }
+  } else  if(feature_type == "orbit") {
     out <- orbit_counts
   } else if(feature_type == "graphlet") {
     out <- orbit_to_graphlet_counts(orbit_counts)
