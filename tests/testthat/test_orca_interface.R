@@ -1,4 +1,3 @@
-library("igraph")
 data_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
 context("ORCA interface: Graph to indexed edge round trip")

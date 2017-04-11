@@ -1,6 +1,3 @@
-library("lpSolve")
-library("purrr")
-
 #' NetEMDs between all graph pairs using provided Graphlet-based Degree 
 #' Distributions 
 #' @param gdds List containing sets of Graphlet-based Degree Distributions for 

@@ -1,4 +1,3 @@
-library("purrr")
 context("Utility Functions")
 
 test_that("rotl_vec rotates left by specified number of places", {

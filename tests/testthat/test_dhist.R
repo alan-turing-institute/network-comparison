@@ -1,5 +1,3 @@
-library("purrr")
-
 context("dhist: Discrete histogram from observations")
 test_that("discrete_hist generates correct discrete histograms for random integer observations", {
   # Method for generating random observations containing specific locations a 
@@ -335,7 +333,7 @@ test_that("normalise_histogram_variance output has variance of 1 for random inte
   rand_dhists_unsmoothed <- purrr::map(rand_dhists, as_unsmoothed_dhist)
   rand_dhists_smoothed <- purrr::map(rand_dhists, as_smoothed_dhist, smoothing_window_width = smoothing_window_width)
   
-  expected_post_norm_smoothing_windows <- map_dbl(rand_dhists_smoothed, function(dhist) {
+  expected_post_norm_smoothing_windows <- purrr::map_dbl(rand_dhists_smoothed, function(dhist) {
     smoothing_window_width/dhist_std(dhist)
     })
   

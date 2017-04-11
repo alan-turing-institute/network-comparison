@@ -1,6 +1,3 @@
-library("netdist")
-library("purrr")
-
 context("Measures NetEMD: Cost matrix")
 # COST_MATRIX: Property-based tests
 test_that("cost_matrix returns all zeros when all bin locations are identical", {

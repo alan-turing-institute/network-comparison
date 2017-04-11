@@ -1,5 +1,3 @@
-library("purrr")
-
 # VECTOR FUNCTIONS
 rotl_vec <- function(vec, lshift) {
   num_els <- length(vec)
