@@ -2,7 +2,7 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{adaptive_breaks}
 \alias{adaptive_breaks}
-\title{Generate a set of breaks that attempt to be evenly spaces while ensuring each
+\title{Generate a set of breaks that attempt to be evenly spaced while ensuring each
 interval has the specified minimum count}
 \usage{
 adaptive_breaks(x, min_count, breaks)

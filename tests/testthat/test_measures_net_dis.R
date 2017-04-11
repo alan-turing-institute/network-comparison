@@ -7,7 +7,7 @@ test_that("adaptive_breaks merges 2 lowest bins where only first bin is below mi
   initial_breaks <- 1:7
   final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
   final_breaks_expected <- c(1, 3, 4, 5, 6, 7)
-
+  
   expect_equal(final_breaks_actual, final_breaks_expected)
 })
 
@@ -61,7 +61,28 @@ test_that("adaptive_breaks merges 2 uppermost bins where only last bin is below 
          rep(4.5, min_count), rep(5.5, min_count), rep(6.5, 3))
   initial_breaks <- 1:7
   final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
-  final_breaks_expected <- c(1, 2,3, 4, 5, 7)
+  final_breaks_expected <- c(1, 2, 3, 4, 5, 7)
+  
+  expect_equal(final_breaks_actual, final_breaks_expected)
+})
+
+test_that("adaptive_breaks merges bins with no members with the next bin", {
+  min_count <- 5
+  x <- c(rep(1.5, min_count), rep(5.5, min_count), rep(6.5, min_count))
+  initial_breaks <- 1:7
+  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
+  final_breaks_expected <- c(1, 2, 6, 7)
+  
+  expect_equal(final_breaks_actual, final_breaks_expected)
+})
+
+
+test_that("adaptive_breaks merges 2 bins below minimum, plus the empty bins between them", {
+  min_count <- 5
+  x <- c(rep(1.5, min_count), rep(2.3, 1), rep(5.5, 4), rep(6.5, min_count))
+  initial_breaks <- 1:7
+  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
+  final_breaks_expected <- c(1, 2, 6, 7)
   
   expect_equal(final_breaks_actual, final_breaks_expected)
 })

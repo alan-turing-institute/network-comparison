@@ -9,7 +9,14 @@ expected_graphlet_counts_ego_fn <- function(reference_graph) {
   
 }
 
-#' Generate a set of breaks that attempt to be evenly spaces while ensuring each
+interval_indexes <- function(x, breaks) {
+  # Get indexes for the intervals each value of x falls into. Setting 
+  # all.inside = TRUE ensures that the minimum and maximum values of x will be 
+  # assigned to the intervals they bound.
+  indexes <- findInterval(x, breaks, all.inside = TRUE)
+}
+
+#' Generate a set of breaks that attempt to be evenly spaced while ensuring each
 #' interval has the specified minimum count
 #' 
 #' Starts by binning the variable by the breaks provided in \code{breaks} (if
@@ -33,18 +40,24 @@ adaptive_breaks <- function(x, min_count, breaks) {
     max_x <- max(x)
     breaks = seq(from = min_x, to = max_x, length.out = breaks + 1)
   }
-  # There is one less interval than breaks
+  # There is one less interval than there are breaks
   num_intervals <- length(breaks) - 1
-  # Get indexes for the intervals each value of x falls into. Setting 
-  # all.inside = TRUE ensures that the minimum and maximum values of x will be 
-  # assigned to the intervals they bound.
-  indexes <- findInterval(x, breaks, all.inside = TRUE)
+  # Get indexes for the intervals each value of x falls into.
+  x_interval_indexes <- interval_indexes(x, breaks)
+  # Find the lowest interval with fewer than the minimum required count.
+  # Not all intervals are guaranteed to have members in x. If they don't, they 
+  # won't appear in x_interval_indexes. We therefore append the full list of 
+  # indexes prior to counting and subtract 1 from all counts afterwards to get 
+  # an accurate count that includes indexes with no members with zero counts
+  all_interval_indexes <- 1:num_intervals
+  interval_index_counts <- plyr::count(c(x_interval_indexes, all_interval_indexes))
+  interval_index_counts$freq <- interval_index_counts$freq - 1
   
-  # Find the lowest interval with fewer than the minimum required count
-  index_counts <- plyr::count(indexes)
-
-  merge_position <- Position(function(i) i < min_count, index_counts$freq)
-  merge_interval_index <- index_counts$x[merge_position]
+  # Find the first interval with fewer members than the minimum specified count
+  merge_position <- Position(function(i) i < min_count, interval_index_counts$freq)
+  # Not all intervals are guaranteed to have members, so convert the index 
+  # provided by Position into an index into the full interval list and then add
+  merge_interval_index <- interval_index_counts$x[merge_position]
   if(is.na(merge_interval_index)) {
     # If all intervals have at least the minimum count, return the breaks
     return(breaks)
