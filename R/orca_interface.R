@@ -245,6 +245,22 @@ count_orbits <- function(graph, max_graphlet_size = 4) {
     return(orbit_counts)
 }
 
+#' Ego-network graphlet counts
+#' 
+#' Calculates graphlet counts for the n-step ego-network of each node in a graph
+#' @param graph An \code{igraph} graph object. The graph must have the following
+#' properties:' 
+#'   1. Be undirected
+#'   2. Have no self-loops (where both endpoints of an edge are the same vertex)
+#'   3. Not have multiple edges multiple edges (i.e. at most one edge exists for
+#'      each pair of vertices)
+#'   4. No isolated vertices (i.e. vertices with no edges)
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @param neighbourhood_size The number of steps from the source node to include
+#' node in ego-network.
+#' @return ORCA-format matrix containing counts of each graphlet (columns) for 
+#' the n-step ego-network for each vertex in the graph (rows).
 #' @export
 count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size) {
   # Extract ego network for each node in original graph, naming each ego network
