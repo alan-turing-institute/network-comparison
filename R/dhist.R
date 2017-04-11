@@ -1,5 +1,3 @@
-library("purrr")
-
 # HISTOGRAM FUNCTIONS
 #' Discrete histogram constructor
 #' 

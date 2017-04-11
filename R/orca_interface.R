@@ -1,6 +1,3 @@
-# GRAPH FUNCTIONS
-library(igraph)
-
 #' Integer index edge list from igraph
 #' 
 #' Takes a igraph graph object and generates an edgelist where each edge is

@@ -1,4 +1,3 @@
-library("purrr")
 context("Graph comparison")
 
 # GRAPH_CROSS_COMPARISON_SPEC
