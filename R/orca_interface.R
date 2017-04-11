@@ -245,6 +245,46 @@ count_orbits <- function(graph, max_graphlet_size = 4) {
     return(orbit_counts)
 }
 
+#' Ego-network graphlet counts
+#' 
+#' Calculates graphlet counts for the n-step ego-network of each node in a graph
+#' @param graph An \code{igraph} graph object. The graph must have the following
+#' properties:' 
+#'   1. Be undirected
+#'   2. Have no self-loops (where both endpoints of an edge are the same vertex)
+#'   3. Not have multiple edges multiple edges (i.e. at most one edge exists for
+#'      each pair of vertices)
+#'   4. No isolated vertices (i.e. vertices with no edges)
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @param neighbourhood_size The number of steps from the source node to include
+#' node in ego-network.
+#' @return ORCA-format matrix containing counts of each graphlet (columns) for 
+#' the n-step ego-network for each vertex in the graph (rows).
+#' @export
+count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size) {
+  # Extract ego network for each node in original graph, naming each ego network
+  # in the list with the name of the node the ego network is generated for
+  ego_networks <- igraph::make_ego_graph(graph, order = neighbourhood_size)
+  names(ego_networks) <- igraph::V(graph)$name
+  # Generate orbit counts for each node in each ego network (returns an ORCA
+  # format orbit count matrix for each ego network)
+  ego_orbit_counts_per_node <- purrr::map(ego_networks, count_orbits, 
+                                          max_graphlet_size = max_graphlet_size)
+  # Convert orbit count matrices to graphlet count matrices
+  ego_graphlet_counts_per_node <- purrr::map(ego_orbit_counts_per_node, orbit_to_graphlet_counts)
+  # Sum graphlet counts across all nodes in each ego network
+  ego_graphlet_counts <- purrr::map(ego_graphlet_counts_per_node, apply, MARGIN = 2, FUN = sum)
+  # To ensure we only count each graphlet present in an ego network once, divide
+  # the ego network graphlet counts by the number of nodes that contribute to 
+  # each graphlet type
+  ego_graphlet_counts_dedup <- purrr::map(ego_graphlet_counts, function(egc) {
+    egc / graphlet_key(max_graphlet_size)$node_count})
+  # Reshape the list of per node single row graphlet count matrices to a single
+  # ORCA format graphlet count matrix with one row per node
+  t(simplify2array(ego_graphlet_counts_dedup))
+}
+
 #' Orbit to graphlet counts
 #' 
 #' Converts graphlet orbit counts at each vertex to graphlet counts at each 
@@ -261,21 +301,19 @@ orbit_to_graphlet_counts <- function(orbit_counts) {
   # need to add 1 to convert to the 1-based indexing used by R
   if(num_orbits == 15) {
     # Orbits for graphlets comprising up to 4 nodes
+    max_nodes <- 4
     orbit_to_graphlet_map <- 
       purrr::map(list(0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14), 
                  function(indexes){ indexes + 1})
-    graphlet_names <- purrr::simplify(purrr::map(0:8, function(index) {
-      paste('G', index, sep = "")}))
   } else if(num_orbits == 73) {
-    # Orbits for graphlets comprising up to 4 nodes
+    # Orbits for graphlets comprising up to 5 nodes
+    max_nodes <- 5
     orbit_to_graphlet_map <- 
       purrr::map(list(0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14, 15:17, 18:21, 
                       22:23, 24:26, 27:30, 31:33, 34, 35:38, 39:42, 43:44, 
                       45:48, 49:50, 51:53, 54:55, 56:58, 59:61, 62:64, 
                       65:67, 68:69, 70:71, 72), 
                  function(indexes){ indexes + 1})
-    graphlet_names <- purrr::simplify(purrr::map(0:29, function(index) {
-      paste('G', index, sep = "")}))
   } else {
     stop(("Unsupported number of orbits"))
   }
@@ -283,8 +321,35 @@ orbit_to_graphlet_counts <- function(orbit_counts) {
   graphlet_counts <- sapply(orbit_to_graphlet_map, function(indexes){
     rowSums(orbit_counts[,indexes, drop = FALSE])})
   # Add graphlet names
-  colnames(graphlet_counts) <- graphlet_names
+  colnames(graphlet_counts) <- graphlet_key(max_nodes)$id
   return(graphlet_counts)
+}
+
+#' Graphlet key
+#' 
+#' Metdata about graphlet groups.
+#' @param max_graphlet_size Maximum number of nodes graphlets can contain
+#' @return Metadata list with the following named fields:
+#' \itemize{
+#'   \item \code{max_nodes}: Maximum number of nodes graphlets can contain
+#'   \item \code{id}: ID of each graphlet in format Gn, where n is in range 0 to 
+#'  num_graphlets
+#'   \item \code{node_count}: Number of nodes contained within each graphlet
+#' }
+#' @export
+graphlet_key <- function(max_graphlet_size) {
+  if(max_graphlet_size == 4) {
+    node_count <- c(2, rep(3,2), rep(4,6))
+  } else if (max_graphlet_size == 5) {
+    node_count <- c(2, rep(3,2), rep(4,6), rep(5, 21))
+  } else {
+    stop("Unsupported maximum graphlet size")
+  }
+  max_node_index <- length(node_count)-1
+  id <- purrr::simplify(purrr::map(0:max_node_index, function(index) {
+    paste('G', index, sep = "")}))
+  name <- 
+  return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
 }
 
 #' Load all graphs in a directory and calculates their Graphlet-based Degree
