@@ -202,7 +202,6 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 #' @export
 gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4, 
                 ego_neighbourhood_size = 0){
-  orbit_counts <- count_orbits(graph, max_graphlet_size = max_graphlet_size)
   if(ego_neighbourhood_size > 0) {
     if(feature_type != 'graphlet') {
       stop("Feature type not supported for ego-networks")
@@ -211,9 +210,9 @@ gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4,
                                  neighbourhood_size = ego_neighbourhood_size)
     }
   } else  if(feature_type == "orbit") {
-    out <- orbit_counts
+    out <- count_orbits(graph, max_graphlet_size = max_graphlet_size)
   } else if(feature_type == "graphlet") {
-    out <- orbit_to_graphlet_counts(orbit_counts)
+    out <- count_graphlets(graph, max_graphlet_size = max_graphlet_size)
   } else {
     stop('gdd: unrecognised feature_type')
   }
@@ -236,7 +235,7 @@ gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4,
 #' @return ORCA-format matrix containing counts of each graphlet
 #' orbit (columns) at each vertex in the graph (rows).
 #' @export
-count_orbits <- function(graph, max_graphlet_size = 4) {
+count_orbits <- function(graph, max_graphlet_size) {
     if(max_graphlet_size == 4) {
       orca_fn <- orca::count4
     } else if(max_graphlet_size == 5) {
@@ -248,6 +247,27 @@ count_orbits <- function(graph, max_graphlet_size = 4) {
     orbit_counts <- orca_fn(indexed_edges)
     rownames(orbit_counts) <- igraph::get.vertex.attribute(graph, name = "name")
     return(orbit_counts)
+}
+
+#' Calculate graphlet counts
+#' 
+#' Calculates graphlet counts from \code{igraph} graph object using the ORCA
+#' fast graphlet orbit counting package by summing orbits over graphlets.
+#' @param graph An \code{igraph} graph object. The graph must have the following
+#' properties:' 
+#'   1. Be undirected
+#'   2. Have no self-loops (where both endpoints of an edge are the same vertex)
+#'   3. Not have multiple edges multiple edges (i.e. at most one edge exists for
+#'      each pair of vertices)
+#'   4. No isolated vertices (i.e. vertices with no edges)
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @return ORCA-format matrix containing counts of each graphlet (columns) at 
+#' each vertex in the graph (rows).
+#' @export
+count_graphlets <- function(graph, max_graphlet_size) {
+  orbit_counts <- count_orbits(graph, max_graphlet_size = max_graphlet_size)
+  orbit_to_graphlet_counts(orbit_counts)
 }
 
 #' Ego-network graphlet counts
@@ -272,12 +292,10 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
   # in the list with the name of the node the ego network is generated for
   ego_networks <- igraph::make_ego_graph(graph, order = neighbourhood_size)
   names(ego_networks) <- igraph::V(graph)$name
-  # Generate orbit counts for each node in each ego network (returns an ORCA
-  # format orbit count matrix for each ego network)
-  ego_orbit_counts_per_node <- purrr::map(ego_networks, count_orbits, 
+  # Generate graphlet counts for each node in each ego network (returns an ORCA
+  # format graphlet count matrix for each ego network)
+  ego_graphlet_counts_per_node <- purrr::map(ego_networks, count_graphlets, 
                                           max_graphlet_size = max_graphlet_size)
-  # Convert orbit count matrices to graphlet count matrices
-  ego_graphlet_counts_per_node <- purrr::map(ego_orbit_counts_per_node, orbit_to_graphlet_counts)
   # Sum graphlet counts across all nodes in each ego network
   ego_graphlet_counts <- purrr::map(ego_graphlet_counts_per_node, apply, MARGIN = 2, FUN = sum)
   # To ensure we only count each graphlet present in an ego network once, divide
