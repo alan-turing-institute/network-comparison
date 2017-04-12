@@ -29,7 +29,7 @@ count_graphlets_ego_scaled <- function(graph, max_graphlet_size,
 
 #' Bin values into intervals based on the provided breaks
 #' 
-#' @param densities The values to be binned
+#' @param x The values to be binned
 #' @param breaks The boundaries between bins
 #' @param out_of_range_intervals If \code{TRUE}, "out of range" values lying  
 #' below the first break or above the last break will be assigned to additional 
@@ -72,7 +72,7 @@ adaptive_breaks <- function(x, min_count, breaks) {
   # There is one less interval than there are breaks
   num_intervals <- length(breaks) - 1
   # Get indexes for the intervals each value of x falls into.
-  x_interval_indexes <- interval_indexes(x, breaks)
+  x_interval_indexes <- interval_index(x, breaks)
   # Find the lowest interval with fewer than the minimum required count.
   # Not all intervals are guaranteed to have members in x. If they don't, they 
   # won't appear in x_interval_indexes. We therefore append the full list of 
