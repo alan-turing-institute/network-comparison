@@ -1,12 +1,20 @@
-
-expected_graphlet_counts_ego_fn <- function(reference_graph) {
-  ego_networks <- 
-  ego_densities <-
-  ego_graphlet_counts <-  
-  ego_graphlet_counts_scaled <-
-  density_bins <-
-  binned_
-  
+#' @export
+count_graphlets_ego_scaled <- function(graph, max_graphlet_size, 
+                                            neighbourhood_size) {
+  # Calculate ego-network graphlet counts
+  ego_graphlet_counts <- 
+    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = neighbourhood_size)
+  # Calculate total number of k-tuples in ego-network for each graphlet type
+  ego_networks <- igraph::make_ego_graph(graph, order = neighbourhood_size)
+  ego_node_counts <- purrr::map_int(ego_networks, function(g) {length(igraph::V(g))})
+  graphlet_key <- graphlet_key(max_graphlet_size)
+  ego_ktuples <- simplify2array(purrr::map(graphlet_key$node_count,
+     function(k) { choose(ego_node_counts, k) }))
+  # Scale ego-network graphlet counts by dividing by total number of k-tuples in
+  # ego-network (where k is graphlet size)
+  ego_graphlet_counts_scaled <- ego_graphlet_counts / ego_ktuples
+  return(ego_graphlet_counts_scaled)
 }
 
 #' @export
