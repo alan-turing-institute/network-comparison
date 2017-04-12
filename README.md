@@ -4,11 +4,13 @@ An R package implementing the NetEMD network comparison measure
 ### BETA: Package under construction (pre-release)
 Until this package hits release 1.0 anything can change with no notice.
 
-[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) 
-[![GitHub release](https://img.shields.io/github/release/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/releases/latest) 
+[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+[![GitHub release](https://img.shields.io/github/release/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/releases/latest)
 [![Travis](https://img.shields.io/travis/alan-turing-institute/network-comparison/master.svg)](https://travis-ci.org/alan-turing-institute/network-comparison/branches)
+[![Appveyor](https://ci.appveyor.com/api/projects/status/jn1a36c22vjw1l4d/branch/master?svg=true)](https://ci.appveyor.com/project/alan-turing-institute/network-comparison/branch/master)
+
 [![Codecov](https://img.shields.io/codecov/c/github/alan-turing-institute/network-comparison/master.svg)](https://codecov.io/gh/alan-turing-institute/network-comparison?branch=master)
-[![license](https://img.shields.io/github/license/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/edit/master/LICENSE) 
+[![license](https://img.shields.io/github/license/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/edit/master/LICENSE)
 [![Github All Releases](https://img.shields.io/github/downloads/alan-turing-institute/network-comparison/total.svg)]()
 
 ## Usage
@@ -24,23 +26,23 @@ on CRAN, the package can be installed from Github using the `devtools` package.
 - Install the `devtools` package using `install.packages("devtools")`
 
 ### Installing package and core dependencies needed to use it
-Core dependencies are listed in the `Imports` section of the package 
-`DEPENDENDCIES` file and will be automatically installed when installing / 
+Core dependencies are listed in the `Imports` section of the package
+`DEPENDENDCIES` file and will be automatically installed when installing /
 updating the package using `devtools` as described below.
 
 Install the latest package from GitHub using:
   - `devtools::install_github("alan-turing-institute/network-comparison")`
-  
+
 ### Installing additional optional dependencies
-Additional optional packages required to generate documentation, run tests or 
-develop the package are listed in the `Suggests` section of the apckage 
-`DEPENDENCIES`  file. These will not be automatically installed by 
-`devtools::install()` and, if required, each optional package will need to be 
+Additional optional packages required to generate documentation, run tests or
+develop the package are listed in the `Suggests` section of the apckage
+`DEPENDENCIES`  file. These will not be automatically installed by
+`devtools::install()` and, if required, each optional package will need to be
 separately installed using `devtools::install("<package_name>")`.
 
 Example optional libraries are:
 
-- `testthat` for running tests via `devtools::test()` or generating package 
+- `testthat` for running tests via `devtools::test()` or generating package
 documentation using `devtools::document()`
 - `knitr` for building the package long-form documentation vignettes using
 `devtools::build_vignettes()`
