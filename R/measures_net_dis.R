@@ -38,11 +38,11 @@ count_graphlets_ego_scaled <- function(graph, max_graphlet_size,
 #' uppermost break respectively.
 #' @return A vector of bin indexes, one per value provided
 #' @export
-interval_indexes <- function(x, breaks, out_of_range_intervals = FALSE) {
+interval_index <- function(x, breaks, out_of_range_intervals = FALSE) {
   # Get indexes for the intervals each value falls into. Setting 
   # all.inside = TRUE ensures that the minimum and maximum values will be 
   # assigned to the intervals they bound.
-  indexes <- findInterval(x, breaks, all.inside = !out_of_range_intervals)
+  findInterval(x, breaks, all.inside = !out_of_range_intervals)
 }
 
 #' Generate a set of breaks that attempt to be evenly spaced while ensuring each
