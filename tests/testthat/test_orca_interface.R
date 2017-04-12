@@ -205,9 +205,32 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
   rownames(expected_counts_order_2) <- node_labels
   colnames(expected_counts_order_2) <- graphlet_labels
 
-  # Test that actual counts match expected
+  # Test that actual counts match expected with only counts requested (default)
   expect_equal(actual_counts_order_1, expected_counts_order_1)
   expect_equal(actual_counts_order_2, expected_counts_order_2)
+  
+  # Test that actual counts and returned ego networks match expected
+  # 1. Define expected
+  expected_ego_networks_order_1 <- igraph::make_ego_graph(graph, order = 1)
+  names(expected_ego_networks_order_1) <- igraph::V(graph)$name
+  expected_ego_networks_order_2 <- igraph::make_ego_graph(graph, order = 2)
+  names(expected_ego_networks_order_2) <- igraph::V(graph)$name
+  expected_counts_with_networks_order_1 <- 
+    list(graphlet_counts = expected_counts_order_1,
+         ego_networks = expected_ego_networks_order_1)
+  expected_counts_with_networks_order_2 <- 
+    list(graphlet_counts = expected_counts_order_2,
+         ego_networks = expected_ego_networks_order_2)
+  # 2. Calculate actual
+  actual_counts_with_networks_order_1 <- 
+    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 1, return_ego_networks = TRUE)
+  actual_counts_with_networks_order_2 <- 
+    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 2, return_ego_networks = TRUE)
+  # 3. Compare
+  expect_equal(actual_counts_with_networks_order_1, expected_counts_with_networks_order_1)
+  expect_equal(actual_counts_with_networks_order_2, expected_counts_with_networks_order_2)
   
   # Test that gdd method gives the expected graphlet degree distributions
   # 1-step ego-networks

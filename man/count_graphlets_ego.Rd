@@ -4,7 +4,8 @@
 \alias{count_graphlets_ego}
 \title{Ego-network graphlet counts}
 \usage{
-count_graphlets_ego(graph, max_graphlet_size = 4, neighbourhood_size)
+count_graphlets_ego(graph, max_graphlet_size = 4, neighbourhood_size,
+  return_ego_networks = FALSE)
 }
 \arguments{
 \item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
@@ -14,6 +15,9 @@ Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
 
 \item{neighbourhood_size}{The number of steps from the source node to include
 node in ego-network.}
+
+\item{return_ego_networks}{If TRUE, return ego_networks alongside graphlet 
+counts to enable further processing.}
 }
 \value{
 ORCA-format matrix containing counts of each graphlet (columns) for 

@@ -197,10 +197,13 @@ count_graphlets <- function(graph, max_graphlet_size) {
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
 #' @param neighbourhood_size The number of steps from the source node to include
 #' node in ego-network.
+#' @param return_ego_networks If TRUE, return ego_networks alongside graphlet 
+#' counts to enable further processing. 
 #' @return ORCA-format matrix containing counts of each graphlet (columns) for 
 #' the n-step ego-network for each vertex in the graph (rows).
 #' @export
-count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size) {
+count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size, 
+                                return_ego_networks = FALSE) {
   # Extract ego network for each node in original graph, naming each ego network
   # in the list with the name of the node the ego network is generated for
   ego_networks <- igraph::make_ego_graph(graph, order = neighbourhood_size)
@@ -214,11 +217,17 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
   # To ensure we only count each graphlet present in an ego network once, divide
   # the ego network graphlet counts by the number of nodes that contribute to 
   # each graphlet type
-  ego_graphlet_counts_dedup <- purrr::map(ego_graphlet_counts, function(egc) {
+  ego_graphlet_counts <- purrr::map(ego_graphlet_counts, function(egc) {
     egc / graphlet_key(max_graphlet_size)$node_count})
   # Reshape the list of per node single row graphlet count matrices to a single
   # ORCA format graphlet count matrix with one row per node
-  t(simplify2array(ego_graphlet_counts_dedup))
+  ego_graphlet_counts <- t(simplify2array(ego_graphlet_counts))
+  # Return either graphlet counts, or graphlet counts and ego_networks
+  if(return_ego_networks) {
+    return(list(graphlet_counts = ego_graphlet_counts, ego_networks = ego_networks))
+  } else {
+    return(ego_graphlet_counts)
+  }
 }
 
 #' Orbit to graphlet counts
