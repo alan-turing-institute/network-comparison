@@ -9,6 +9,7 @@ expected_graphlet_counts_ego_fn <- function(reference_graph) {
   
 }
 
+#' @export
 interval_indexes <- function(x, breaks) {
   # Get indexes for the intervals each value of x falls into. Setting 
   # all.inside = TRUE ensures that the minimum and maximum values of x will be 
