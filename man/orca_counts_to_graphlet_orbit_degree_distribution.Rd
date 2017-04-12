@@ -2,20 +2,20 @@
 % Please edit documentation in R/orca_interface.R
 \name{orca_counts_to_graphlet_orbit_degree_distribution}
 \alias{orca_counts_to_graphlet_orbit_degree_distribution}
-\title{ORCA vertex graphlet orbit counts to graphlet orbit histograms}
+\title{ORCA vertex graphlet or orbit counts to graphlet-based histograms}
 \usage{
 orca_counts_to_graphlet_orbit_degree_distribution(orca_counts)
 }
 \arguments{
-\item{orca_counts}{ORCA output: Counts of each graphlet orbit 
+\item{orca_counts}{ORCA output: Counts of each graphlet or orbit 
 (columns) at each graph vertex (rows)}
 }
 \value{
 Graphlet degree histograms: List of degree histograms for each 
-graphlet orbit
+graphlet or orbit
 }
 \description{
-Converts ORCA output (counts of each graphlet orbit at each graph vertex) to 
+Converts ORCA output (counts of each graphlet or orbit at each graph vertex) to 
 a set of graphlet degree histograms (a histogram of counts across all graph 
-vertices for each graphlet orbit)
+vertices for each graphlet or orbit)
 }

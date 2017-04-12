@@ -7,13 +7,7 @@
 count_graphlets_ego(graph, max_graphlet_size = 4, neighbourhood_size)
 }
 \arguments{
-\item{graph}{An \code{igraph} graph object. The graph must have the following
-properties:' 
-  1. Be undirected
-  2. Have no self-loops (where both endpoints of an edge are the same vertex)
-  3. Not have multiple edges multiple edges (i.e. at most one edge exists for
-     each pair of vertices)
-  4. No isolated vertices (i.e. vertices with no edges)}
+\item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
 Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}

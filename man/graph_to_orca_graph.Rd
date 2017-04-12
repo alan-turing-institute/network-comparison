@@ -13,8 +13,9 @@ graph_to_orca_graph(graph)
 An ORCA compatible igraph graph object
 }
 \description{
-Takes a igraph graph object and does the following to make the graph 
-compatible with the ORCA fast orbit calculation package:
+Takes a igraph graph object and does the following to make the graph
+connected, undirected and simple to ensure compatiblity with the ORCA
+fast orbit calculation package:
   1. Makes the graph undirected
   2. Removes loops (where both endpoints of an edge are the same vertex)
   3. Removes multiple edges (i.e. ensuring only one edge exists for each 

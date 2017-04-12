@@ -15,12 +15,6 @@ read_orca_graph(file, format = "ncol")
 An ORCA compatible igraph graph object
 }
 \description{
-Loads a graph from file into an igraph graph object and does the following 
-to make the graph compatible with the ORCA fast orbit calculation package:
-  1. Makes the graph undirected
-  2. Removes loops (where both endpoints of an edge are the same vertex)
-  3. Removes multiple edges (i.e. ensuring only one edge exists for each 
-     pair of endpoints)
-  4. Removes isolated vertices (i.e. vertices with no edges after the 
-     previous alterations)
+Loads a graph from file as a connected, undirected, simple 
+\code{igraph} object.
 }

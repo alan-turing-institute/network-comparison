@@ -20,13 +20,5 @@ to the names of the files each graph was loaded from
 }
 \description{
 Loads graphs from all files matching the given pattern in the given directory
-and converts them to graphs compatible with the ORCA fast orbit 
-counting package by:
-  1. Making the graph undirected
-  2. Removing loops (where both endpoints of an edge are the same vertex)
-  3. Removing multiple edges (i.e. ensuring only one edge exists for each 
-     pair of endpoints)
-  4. Removing isolated vertices (i.e. vertices with no edges after the 
-     previous alterations)
-  5. Relabelling vertices with an integer index from 1 to numVertices
+as connected, undirected, simple \code{igraph} objects.
 }

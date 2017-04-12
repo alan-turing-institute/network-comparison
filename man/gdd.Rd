@@ -8,13 +8,7 @@ gdd(graph, feature_type = "orbit", max_graphlet_size = 4,
   ego_neighbourhood_size = 0)
 }
 \arguments{
-\item{graph}{An \code{igraph} graph object. The graph must have the following
-properties:' 
-  1. Be undirected
-  2. Have no self-loops (where both endpoints of an edge are the same vertex)
-  3. Not have multiple edges multiple edges (i.e. at most one edge exists for
-     each pair of vertices)
-  4. No isolated vertices (i.e. vertices with no edges)}
+\item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
 
 \item{feature_type}{Type of graphlet-based feature to count: "graphlet"
 counts the number of graphlets each node participates in; "orbit" calculates
