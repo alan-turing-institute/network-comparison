@@ -1,3 +1,13 @@
+#' Scaled graphlet count for ego-networks
+#' 
+#' Scales the ego-network count for each graphlet by dividing it by the total
+#' number of possible groupings of nodes in the ego-network with the same number
+#' of nodes as the graphlet.
+#' @param graph A connected, undirected, simple graph as an \code{igraph} object. 
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @return ORCA-format matrix containing counts of each graphlet (columns) at 
+#' each vertex in the graph (rows).
 #' @export
 count_graphlets_ego_scaled <- function(graph, max_graphlet_size, 
                                             neighbourhood_size) {
@@ -17,12 +27,22 @@ count_graphlets_ego_scaled <- function(graph, max_graphlet_size,
   return(ego_graphlet_counts_scaled)
 }
 
+#' Bin values into intervals based on the provided breaks
+#' 
+#' @param densities The values to be binned
+#' @param breaks The boundaries between bins
+#' @param out_of_range_intervals If \code{TRUE}, "out of range" values lying  
+#' below the first break or above the last break will be assigned to additional 
+#' unbounded lower and upper extrema intervals. If \code{FALSE} these "out of 
+#' range" values will be assigned to intervals bounded by the lowest or 
+#' uppermost break respectively.
+#' @return A vector of bin indexes, one per value provided
 #' @export
-interval_indexes <- function(x, breaks) {
-  # Get indexes for the intervals each value of x falls into. Setting 
-  # all.inside = TRUE ensures that the minimum and maximum values of x will be 
+interval_indexes <- function(x, breaks, out_of_range_intervals = FALSE) {
+  # Get indexes for the intervals each value falls into. Setting 
+  # all.inside = TRUE ensures that the minimum and maximum values will be 
   # assigned to the intervals they bound.
-  indexes <- findInterval(x, breaks, all.inside = TRUE)
+  indexes <- findInterval(x, breaks, all.inside = !out_of_range_intervals)
 }
 
 #' Generate a set of breaks that attempt to be evenly spaced while ensuring each
