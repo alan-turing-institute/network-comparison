@@ -4,7 +4,7 @@
 \alias{count_graphlets}
 \title{Calculate graphlet counts}
 \usage{
-count_graphlets(graph, max_graphlet_size = 4)
+count_graphlets(graph, max_graphlet_size)
 }
 \arguments{
 \item{graph}{An \code{igraph} graph object. The graph must have the following

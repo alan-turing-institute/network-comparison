@@ -4,7 +4,7 @@
 \alias{count_orbits}
 \title{Calculate graphlet orbit counts}
 \usage{
-count_orbits(graph, max_graphlet_size = 4)
+count_orbits(graph, max_graphlet_size)
 }
 \arguments{
 \item{graph}{An \code{igraph} graph object. The graph must have the following
