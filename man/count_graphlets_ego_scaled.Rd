@@ -4,7 +4,8 @@
 \alias{count_graphlets_ego_scaled}
 \title{Scaled graphlet count for ego-networks}
 \usage{
-count_graphlets_ego_scaled(graph, max_graphlet_size, neighbourhood_size)
+count_graphlets_ego_scaled(graph, max_graphlet_size, neighbourhood_size,
+  return_ego_networks = FALSE)
 }
 \arguments{
 \item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}

@@ -9,22 +9,51 @@
 #' @return ORCA-format matrix containing counts of each graphlet (columns) at 
 #' each vertex in the graph (rows).
 #' @export
-count_graphlets_ego_scaled <- function(graph, max_graphlet_size, 
-                                            neighbourhood_size) {
-  # Calculate ego-network graphlet counts
-  ego_graphlet_counts <- 
+count_graphlets_ego_scaled <- function(
+  graph, max_graphlet_size, neighbourhood_size, return_ego_networks = FALSE) {
+  # Calculate ego-network graphlet counts, also returning the ego networks for
+  # use later in function
+  ego_data <- 
     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = neighbourhood_size)
-  # Calculate total number of k-tuples in ego-network for each graphlet type
-  ego_networks <- igraph::make_ego_graph(graph, order = neighbourhood_size)
-  ego_node_counts <- purrr::map_int(ego_networks, function(g) {length(igraph::V(g))})
-  graphlet_key <- graphlet_key(max_graphlet_size)
-  ego_ktuples <- simplify2array(purrr::map(graphlet_key$node_count,
-     function(k) { choose(ego_node_counts, k) }))
+                        neighbourhood_size = neighbourhood_size, 
+                        return_ego_networks = TRUE)
+  ego_graphlet_counts <- ego_data$ego_graphlet_counts
+  ego_networks <- ego_data$ego_networks
   # Scale ego-network graphlet counts by dividing by total number of k-tuples in
   # ego-network (where k is graphlet size)
-  ego_graphlet_counts_scaled <- ego_graphlet_counts / ego_ktuples
-  return(ego_graphlet_counts_scaled)
+  ego_graphlet_tuples <- 
+    count_graphlet_tuples_ego(ego_networks, max_graphlet_size = max_graphlet_size)
+  ego_graphlet_counts <- ego_graphlet_counts / ego_graphlet_tuples
+  # Return either graphlet counts, or graphlet counts and ego_networks
+  if(return_ego_networks) {
+    return(list(graphlet_counts = ego_graphlet_counts, 
+                ego_networks = ego_networks))
+  } else {
+    return(ego_graphlet_counts)
+  }
+}
+
+count_graphlet_tuples_ego <- function(ego_networks, max_graphlet_size) {
+  purrr::map(ego_networks, count_graphlet_tuples, 
+             max_graphlet_size = max_graphlet_size)
+}
+
+count_graphlet_tuples <- function(graph, max_graphlet_size) {
+  graph_node_count <- length(igraph::V(g))
+  graphlet_node_counts <- graphlet_key(max_graphlet_size)$node_count
+  choose(node_count, graphlet_node_counts)
+}
+
+expected_ego_graphlet_counts <- function(graph, density_breaks, reference_counts) {
+  # Look up average scaled graphlet counts for ego-networks of similar density 
+  # in the reference graph
+  query_density <- igraph::edge_density(graph)
+  reference_index <- interval_index(query_density, density_breaks)
+  reference_graphlet_counts <- reference_counts[reference_index]
+  # Scale reference counts by multiplying by the number of possible sets of
+  # k nodes in the query graph, where k is the number of nodes in each graphlet
+  
+  reference_graphlet_counts * choose()
 }
 
 #' Bin values into intervals based on the provided breaks
