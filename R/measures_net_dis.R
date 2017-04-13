@@ -33,15 +33,22 @@ count_graphlets_ego_scaled <- function(
   }
 }
 
+#' @export
 count_graphlet_tuples_ego <- function(ego_networks, max_graphlet_size) {
-  purrr::map(ego_networks, count_graphlet_tuples, 
-             max_graphlet_size = max_graphlet_size)
+  graphlet_tuple_counts <- 
+    t(simplify2array(purrr::map(ego_networks, count_graphlet_tuples, 
+             max_graphlet_size = max_graphlet_size)))
+  graphlet_tuple_counts
 }
 
+#' @export
 count_graphlet_tuples <- function(graph, max_graphlet_size) {
-  graph_node_count <- length(igraph::V(g))
-  graphlet_node_counts <- graphlet_key(max_graphlet_size)$node_count
-  choose(node_count, graphlet_node_counts)
+  graph_node_count <- length(igraph::V(graph))
+  graphlet_key <- graphlet_key(max_graphlet_size)
+  graphlet_node_counts <- graphlet_key$node_count
+  graphlet_tuple_counts <- choose(graph_node_count, graphlet_node_counts)
+  graphlet_tuple_counts <- setNames(graphlet_tuple_counts, graphlet_key$id)
+  graphlet_tuple_counts
 }
 
 expected_ego_graphlet_counts <- function(graph, density_breaks, reference_counts) {
