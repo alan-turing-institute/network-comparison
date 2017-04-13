@@ -11,7 +11,7 @@ Until this package hits release 1.0 anything can change with no notice.
 
 [![Codecov](https://img.shields.io/codecov/c/github/alan-turing-institute/network-comparison/master.svg)](https://codecov.io/gh/alan-turing-institute/network-comparison?branch=master)
 [![license](https://img.shields.io/github/license/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/edit/master/LICENSE)
-[![Github All Releases](https://img.shields.io/github/downloads/alan-turing-institute/network-comparison/total.svg)]()
+[![Github All Releases](https://img.shields.io/github/downloads/alan-turing-institute/network-comparison/total.svg)](https://github.com/alan-turing-institute/network-comparison/releases/latest)
 
 ## Usage
 See "Quick start" vignette in documentation for example usage.
