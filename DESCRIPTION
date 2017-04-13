@@ -1,6 +1,6 @@
 Package: netdist
 Title: An implementation of the NetEMD alignment-free network distance measure
-Version: 0.3.0
+Version: 0.3.0.9000
 Authors@R: person("Martin", "O'Reilly",email = "developer@mtspace.net", 
                   role = c("aut", "cre"))
 Description: An implementation of the NetEMD alignment-free network
