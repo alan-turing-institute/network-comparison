@@ -203,3 +203,155 @@ test_that(test_message, {
   expect_equal(expected_tuple_count_n37_ego2_gs5, actual_tuple_count_n37_ego2_gs5)
   expect_equal(expected_tuple_count_n73_ego2_gs5, actual_tuple_count_n73_ego2_gs5)
 })
+
+context("Measures Netdis: Ego-network scaled graphlet outputs for manually verified networks")
+test_that("Ego-network 4-node graphlet counts match manually verified totals",{
+  # Set up a small sample network with at least one ego-network that contains
+  # at least one of each graphlets
+  elist <- rbind(
+    c("n1","n2"),
+    c("n2","n3"),
+    c("n1","n4"),
+    c("n2","n5"),
+    c("n1","n6"),
+    c("n1","n7"),
+    c("n2","n4"),
+    c("n4","n6"),
+    c("n6","n8"),
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
+  
+  # Set node and graphlet labels to use for row and col names in expected counts
+  node_labels <- igraph::V(graph)$name
+  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  
+  # Count graphlets in each ego network of the graph with neighbourhood sizes of 1 and 2
+  max_graphlet_size <- 4
+  actual_counts_order_1 <- 
+    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 1)
+  actual_counts_order_2 <- 
+    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 2)
+  graphlet_key <- graphlet_key(max_graphlet_size)
+  k <- graphlet_key$node_count
+  # Set manually verified counts
+  # 1-step ego networks
+  expected_counts_order_1 <- rbind(
+    c(6, 5, 2, 0, 1, 0, 2, 1, 0) / zeros_to_ones(choose(5, k)),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0) / zeros_to_ones(choose(5, k)),
+    c(1, 0, 0, 0, 0, 0, 0, 0, 0) / zeros_to_ones(choose(2, k)),
+    c(5, 2, 2, 0, 0, 0, 0, 1, 0) / zeros_to_ones(choose(4, k)),
+    c(1, 0, 0, 0, 0, 0, 0, 0, 0) / zeros_to_ones(choose(2, k)),
+    c(4, 2, 1, 0, 0, 0, 1, 0, 0) / zeros_to_ones(choose(4, k)),
+    c(7, 3, 4, 0, 0, 0, 3, 0, 1) / zeros_to_ones(choose(5, k)), 
+    c(7, 3, 4, 0, 0, 0, 3, 0, 1) / zeros_to_ones(choose(5, k)),
+    c(6, 0, 4, 0, 0, 0, 0, 0, 1) / zeros_to_ones(choose(4, k)),
+    c(6, 0, 4, 0, 0, 0, 0, 0, 1) / zeros_to_ones(choose(4, k))
+  )
+  rownames(expected_counts_order_1) <- node_labels
+  colnames(expected_counts_order_1) <- graphlet_labels
+  # 2-step ego networks
+  expected_counts_order_2 <- rbind(
+    c(15, 18, 6, 21, 3, 1, 11, 1, 1) / zeros_to_ones(choose(10 , k)),
+    c( 8, 10, 2,  6, 3, 0,  4, 1, 0) / zeros_to_ones(choose(7 , k)),
+    c( 5,  5, 1,  0, 2, 0,  2, 0, 0) / zeros_to_ones(choose(5 , k)),
+    c(10, 14, 2, 11, 3, 1,  5, 1, 0) / zeros_to_ones(choose(8 , k)),
+    c( 5,  5, 1,  0, 2, 0,  2, 0, 0) / zeros_to_ones(choose(5 , k)),
+    c(13, 13, 6, 15, 1, 1,  9, 1, 1) / zeros_to_ones(choose(8 , k)),
+    c(13, 13, 6, 15, 1, 1,  9, 1, 1) / zeros_to_ones(choose(8 , k)),
+    c(11, 10, 5, 10 ,0 ,1,  8, 0, 1) / zeros_to_ones(choose(7 , k)),
+    c( 9,  8, 4,  4, 0, 1,  6, 0, 1) / zeros_to_ones(choose(6 , k)),
+    c( 9,  8, 4,  4, 0, 1,  6, 0, 1) / zeros_to_ones(choose(6 , k))
+  )
+  rownames(expected_counts_order_2) <- node_labels
+  colnames(expected_counts_order_2) <- graphlet_labels
+  
+  # Test that actual counts match expected with only counts requested (default)
+  expect_equal(actual_counts_order_1, expected_counts_order_1)
+  expect_equal(actual_counts_order_2, expected_counts_order_2)
+  
+  # Test that actual counts and returned ego networks match expected
+  # 1. Define expected
+  expected_ego_networks_order_1 <- igraph::make_ego_graph(graph, order = 1)
+  names(expected_ego_networks_order_1) <- igraph::V(graph)$name
+  expected_ego_networks_order_2 <- igraph::make_ego_graph(graph, order = 2)
+  names(expected_ego_networks_order_2) <- igraph::V(graph)$name
+  expected_counts_with_networks_order_1 <- 
+    list(graphlet_counts = expected_counts_order_1,
+         ego_networks = expected_ego_networks_order_1)
+  expected_counts_with_networks_order_2 <- 
+    list(graphlet_counts = expected_counts_order_2,
+         ego_networks = expected_ego_networks_order_2)
+  # 2. Calculate actual
+  actual_counts_with_networks_order_1 <- 
+    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 1, return_ego_networks = TRUE)
+  actual_counts_with_networks_order_2 <- 
+    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 2, return_ego_networks = TRUE)
+  
+  # 3. Compare
+  # Comparison is not implemented for igraph objects, so convert all igraphs to 
+  # indexed edge list and then compare. Do in-situ replacement of igraphs with
+  # indexed edge lists to ensure we are checking full properties of returned
+  # objects (i.e. named lists with matching elements).
+  # 3a. Convert expected and actual ego networks from igraphs to indexed edges
+  expected_counts_with_networks_order_1$ego_networks <- 
+    purrr::map(expected_counts_with_networks_order_1$ego_networks, 
+               graph_to_indexed_edges)
+  expected_counts_with_networks_order_2$ego_networks <- 
+    purrr::map(expected_counts_with_networks_order_2$ego_networks, 
+               graph_to_indexed_edges)
+  actual_counts_with_networks_order_1$ego_networks <- 
+    purrr::map(actual_counts_with_networks_order_1$ego_networks, 
+               graph_to_indexed_edges)
+  actual_counts_with_networks_order_2$ego_networks <- 
+    purrr::map(actual_counts_with_networks_order_2$ego_networks, 
+               graph_to_indexed_edges)
+  # 3b. Do comparison
+  expect_equal(actual_counts_with_networks_order_1, 
+               expected_counts_with_networks_order_1)
+  expect_equal(actual_counts_with_networks_order_2, 
+               expected_counts_with_networks_order_2)
+  
+  # TODO: Decide if we will generate gdd from scaled ego-network counts. If we do,
+  # alter the test below to test this
+  # # Test that gdd method gives the expected graphlet degree distributions
+  # # 1-step ego-networks
+  # actual_gdd_order_1 <- gdd(graph, feature_type = "graphlet", 
+  #                           max_graphlet_size = 4, ego_neighbourhood_size = 1)
+  # expected_gdd_order_1 <- list(
+  #   G0 = dhist(locations = c(1, 4, 5, 6, 7), masses = c(2, 1, 2, 3, 2)),
+  #   G1 = dhist(locations = c(0, 2, 3, 5), masses = c(4, 2, 2, 2)),
+  #   G2 = dhist(locations = c(0, 1, 2, 4), masses = c(2, 2, 2, 4)),
+  #   G3 = dhist(locations = c(0), masses = c(10)),
+  #   G4 = dhist(locations = c(0, 1, 2), masses = c(8, 1, 1)),
+  #   G5 = dhist(locations = c(0), masses = c(10)),
+  #   G6 = dhist(locations = c(0, 1, 2, 3), masses = c(5, 1, 2, 2)),
+  #   G7 = dhist(locations = c(0, 1), masses = c(8, 2)),
+  #   G8 = dhist(locations = c(0, 1), masses = c(6, 4))
+  # )
+  # expect_equal(actual_gdd_order_1, expected_gdd_order_1)
+  # # 2-step ego-networks
+  # actual_gdd_order_2 <- gdd(graph, feature_type = "graphlet", 
+  #                           max_graphlet_size = 4, ego_neighbourhood_size = 2)
+  # expected_gdd_order_2 <- list(
+  #   G0 = dhist(locations = c(5, 8, 9, 10, 11, 13, 15), masses = c(2, 1, 2, 1, 1, 2, 1)),
+  #   G1 = dhist(locations = c(5, 8, 10, 13, 14, 18), masses = c(2, 2, 2, 2, 1, 1)),
+  #   G2 = dhist(locations = c(1, 2, 4, 5, 6), masses = c(2, 2, 2, 1, 3)),
+  #   G3 = dhist(locations = c(0, 4, 6, 10, 11, 15, 21), masses = c(2, 2, 1, 1, 1, 2, 1)),
+  #   G4 = dhist(locations = c(0, 1, 2, 3), masses = c(3, 2, 2, 3)),
+  #   G5 = dhist(locations = c(0, 1), masses = c(3, 7)),
+  #   G6 = dhist(locations = c(2, 4, 5, 6, 8, 9, 11), masses = c(2, 1, 1, 2, 1, 2, 1)),
+  #   G7 = dhist(locations = c(0, 1), masses = c(5, 5)),
+  #   G8 = dhist(locations = c(0, 1), masses = c(4, 6))
+  # )
+  # expect_equal(actual_gdd_order_2, expected_gdd_order_2)
+})

@@ -17,13 +17,13 @@ count_graphlets_ego_scaled <- function(
     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
                         neighbourhood_size = neighbourhood_size, 
                         return_ego_networks = TRUE)
-  ego_graphlet_counts <- ego_data$ego_graphlet_counts
+  ego_graphlet_counts <- ego_data$graphlet_counts
   ego_networks <- ego_data$ego_networks
   # Scale ego-network graphlet counts by dividing by total number of k-tuples in
   # ego-network (where k is graphlet size)
   ego_graphlet_tuples <- 
     count_graphlet_tuples_ego(ego_networks, max_graphlet_size = max_graphlet_size)
-  ego_graphlet_counts <- ego_graphlet_counts / ego_graphlet_tuples
+  ego_graphlet_counts <- scale_graphlet_count(ego_graphlet_counts, ego_graphlet_tuples)
   # Return either graphlet counts, or graphlet counts and ego_networks
   if(return_ego_networks) {
     return(list(graphlet_counts = ego_graphlet_counts, 
@@ -31,6 +31,18 @@ count_graphlets_ego_scaled <- function(
   } else {
     return(ego_graphlet_counts)
   }
+}
+
+zeros_to_ones <- function(v) {
+  zero_index <- which(v == 0)
+  v[zero_index] <- 1
+  v
+}
+
+scale_graphlet_count <- function(graphlet_count, graphlet_tuples) {
+  # Avoid divide by zero errors by replacing all zeros with ones in the
+  # divisor
+  graphlet_count / zeros_to_ones(graphlet_tuples)
 }
 
 #' @export
