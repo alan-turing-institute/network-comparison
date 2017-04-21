@@ -55,7 +55,7 @@ count_graphlet_tuples_ego <- function(ego_networks, max_graphlet_size) {
 
 #' @export
 count_graphlet_tuples <- function(graph, max_graphlet_size) {
-  graph_node_count <- length(igraph::V(graph))
+  graph_node_count <- igraph::vcount(graph)
   graphlet_key <- graphlet_key(max_graphlet_size)
   graphlet_node_counts <- graphlet_key$node_count
   graphlet_tuple_counts <- choose(graph_node_count, graphlet_node_counts)
