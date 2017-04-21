@@ -206,8 +206,7 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
                                 return_ego_networks = FALSE) {
   # Extract ego network for each node in original graph, naming each ego network
   # in the list with the name of the node the ego network is generated for
-  ego_networks <- igraph::make_ego_graph(graph, order = neighbourhood_size)
-  names(ego_networks) <- igraph::V(graph)$name
+  ego_networks <- make_named_ego_graph(graph, order = neighbourhood_size)
   # Generate graphlet counts for each node in each ego network (returns an ORCA
   # format graphlet count matrix for each ego network)
   ego_graphlet_counts_per_node <- purrr::map(ego_networks, count_graphlets, 
@@ -228,6 +227,18 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
   } else {
     return(ego_graphlet_counts)
   }
+}
+
+#' Get ego-networks for a graph as a named list
+#'
+#' Simple wrapper for the \code{igraph::make_ego_graph} function that names
+#' each ego-network in the returned list with the name of the node in the
+#' original graph that the ego-network was generated from
+#' @export
+make_named_ego_graph <- function(graph, order, ...) {
+  ego_networks <- igraph::make_ego_graph(graph, order, ...)
+  names(ego_networks) <- igraph::V(graph)$name
+  ego_networks
 }
 
 #' Orbit to graphlet counts

@@ -7,6 +7,128 @@ test_that("Graph to indexed edge list round trip conversion works", {
   expect_true(all.equal(igraph::get.edgelist(g_orig),igraph::get.edgelist(g_orig)))
 })
 
+context("ORCA interface: Named ego networks")
+test_that("make_named_ego_graph labels each ego-network with the correct node name", {
+  # Helper function to sort edgelists in consistent order 
+  sort_edge_list <- function(edge_list) {
+    edge_list[order(edge_list[,1],edge_list[,2], decreasing = FALSE),]
+  }
+  # Set up a small sample network with at least one ego-network that contains
+  # at least one of each graphlets
+  elist <- rbind(
+    c("n1","n2"),
+    c("n2","n3"),
+    c("n1","n4"),
+    c("n2","n5"),
+    c("n1","n6"),
+    c("n1","n7"),
+    c("n2","n4"),
+    c("n4","n6"),
+    c("n6","n8"),
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
+  # The expectation below is based on igraph::graph_from_edgelist adding nodes 
+  # in the order they appear in the edge list, and igraph::V returning them
+  # in this same order
+  expected_node_names <- c("n1","n2","n3","n4","n5","n6","n7","n8","n9","n10")
+  
+  # Expected edgelists for ego netwroks of order 1
+  expected_ego_elist_n1_o1 <- rbind(
+    c("n1","n2"),
+    c("n1","n4"),
+    c("n1","n6"),
+    c("n1","n7"),
+    c("n2","n4"),
+    c("n4","n6")
+  )
+  expected_ego_elist_n2_o1 <- rbind(
+    c("n1","n2"),
+    c("n1","n4"),
+    c("n2","n3"),
+    c("n2","n4"),
+    c("n2","n5")
+  )
+  expected_ego_elist_n3_o1 <- rbind(
+    c("n2","n3")
+  )
+  expected_ego_elist_n4_o1 <- rbind(
+    c("n1","n2"),
+    c("n1","n4"),
+    c("n1","n6"),
+    c("n2","n4"),
+    c("n4","n6")
+  )
+  expected_ego_elist_n5_o1 <- rbind(
+    c("n2","n5")
+  )
+  expected_ego_elist_n6_o1 <- rbind(
+    c("n1","n4"),
+    c("n1","n6"),
+    c("n4","n6"),
+    c("n6","n8")
+  )
+  expected_ego_elist_n7_o1 <- rbind(
+    c("n1","n7"),
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  expected_ego_elist_n8_o1 <- rbind(
+    c("n6","n8"),
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  expected_ego_elist_n9_o1 <- rbind(
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  expected_ego_elist_n10_o1 <- rbind(
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  
+  # Test ego-networks of order 1.
+  # We compare edgelists as igraphs do not implement comparison
+  order <- 1
+  expected_ego_elists_o1 <- list(
+    n1 = expected_ego_elist_n1_o1,
+    n2 = expected_ego_elist_n2_o1,
+    n3 = expected_ego_elist_n3_o1,
+    n4 = expected_ego_elist_n4_o1,
+    n5 = expected_ego_elist_n5_o1,
+    n6 = expected_ego_elist_n6_o1,
+    n7 = expected_ego_elist_n7_o1,
+    n8 = expected_ego_elist_n8_o1,
+    n9 = expected_ego_elist_n9_o1,
+    n10 = expected_ego_elist_n10_o1
+  )
+  # Generate actual ego-networks and convert to edge lists for comparison
+  actual_ego_elists_o1 <- 
+    purrr::map(make_named_ego_graph(graph, order), igraph::as_edgelist)
+  expect_equal(actual_ego_elists_o1, expected_ego_elists_o1)
+})
+
 context("ORCA interface: Orbit to graphlet counts")
 test_that("orbit_to_graphlet_counts summation works", {
   graph <- netdist::virusppi$EBV
@@ -211,10 +333,8 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
   
   # Test that actual counts and returned ego networks match expected
   # 1. Define expected
-  expected_ego_networks_order_1 <- igraph::make_ego_graph(graph, order = 1)
-  names(expected_ego_networks_order_1) <- igraph::V(graph)$name
-  expected_ego_networks_order_2 <- igraph::make_ego_graph(graph, order = 2)
-  names(expected_ego_networks_order_2) <- igraph::V(graph)$name
+  expected_ego_networks_order_1 <- make_named_ego_graph(graph, order = 1)
+  expected_ego_networks_order_2 <- make_named_ego_graph(graph, order = 2)
   expected_counts_with_networks_order_1 <- 
     list(graphlet_counts = expected_counts_order_1,
          ego_networks = expected_ego_networks_order_1)

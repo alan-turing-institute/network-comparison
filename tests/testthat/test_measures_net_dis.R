@@ -149,12 +149,12 @@ test_that(test_message, {
       graphlet_tuple_counts(length(igraph::V(g)), max_graphlet_size)}))
   }
   # Generate ego networks for each graph
-  graph_n11_ego1 <- igraph::make_ego_graph(graph_n11, order = 1)
-  graph_n37_ego1 <- igraph::make_ego_graph(graph_n37, order = 1)
-  graph_n73_ego1 <- igraph::make_ego_graph(graph_n73, order = 1)
-  graph_n11_ego2 <- igraph::make_ego_graph(graph_n11, order = 2)
-  graph_n37_ego2 <- igraph::make_ego_graph(graph_n37, order = 2)
-  graph_n73_ego2 <- igraph::make_ego_graph(graph_n73, order = 2)
+  graph_n11_ego1 <- make_named_ego_graph(graph_n11, order = 1)
+  graph_n37_ego1 <- make_named_ego_graph(graph_n37, order = 1)
+  graph_n73_ego1 <- make_named_ego_graph(graph_n73, order = 1)
+  graph_n11_ego2 <- make_named_ego_graph(graph_n11, order = 2)
+  graph_n37_ego2 <- make_named_ego_graph(graph_n37, order = 2)
+  graph_n73_ego2 <- make_named_ego_graph(graph_n73, order = 2)
   # Generate expected tuple counts for graphlets up to size 4 and 5
   # 1. For ego-networks of order 1
   expected_tuple_count_n11_ego1_gs4 <- graphlet_tuple_counts_ego(graph_n11_ego1, 4)  
@@ -279,11 +279,9 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
   
   # Test that actual counts and returned ego networks match expected
   # 1. Define expected
-  expected_ego_networks_order_1 <- igraph::make_ego_graph(graph, order = 1)
-  names(expected_ego_networks_order_1) <- igraph::V(graph)$name
-  expected_ego_networks_order_2 <- igraph::make_ego_graph(graph, order = 2)
-  names(expected_ego_networks_order_2) <- igraph::V(graph)$name
-  expected_counts_with_networks_order_1 <- 
+  expected_ego_networks_order_1 <- make_named_ego_graph(graph, order = 1)
+  expected_ego_networks_order_2 <- make_named_ego_graph(graph, order = 2)
+  expected_counts_with_networks_order_1 <-
     list(graphlet_counts = expected_counts_order_1,
          ego_networks = expected_ego_networks_order_1)
   expected_counts_with_networks_order_2 <- 
