@@ -43,6 +43,8 @@ artifacts:
 
 notifications:
   - provider: Slack
+    on_build_success: false
+    on_build_failure: false
     on_build_status_changed: true
     incoming_webhook:
       secure: k56hsY5K++kvpU/bhF5r2YmgwSeTdGJVY8qnT8z9qRug/zgo50Ev8lB9kN4FT3vNJQpfmkDBOOlXe6XURHzaJPeTtDKKciAsXQe48IVkFVw=
