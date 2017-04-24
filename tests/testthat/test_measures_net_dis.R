@@ -610,17 +610,17 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
   density_indexes_o2 <- c(4, 4, 5, 4, 5, 5, 5, 6, 6, 6)
   # Set dummy reference counts
   scaled_reference_counts <- rbind(
-  c( 1,  2,  3,  4,  5,  6,  7,  8,  9),
-  c(11, 12, 13, 14, 15, 16, 17, 18, 19),
-  c(21, 22, 23, 24, 25, 26, 27, 28, 29),
-  c(31, 32, 33, 34, 35, 36, 37, 38, 39),
-  c(41, 42, 43, 44, 45, 46, 47, 48, 49),
-  c(51, 52, 53, 54, 55, 56, 57, 58, 59),
-  c(61, 62, 63, 64, 65, 66, 67, 68 ,69),
-  c(71, 72, 73, 74, 75, 76, 77, 78, 79),
-  c(81, 82, 83, 84, 85, 86 ,87, 88, 89),
-  c(91, 92, 93, 94, 95, 96, 97, 98, 99)
-)
+    c( 1,  2,  3,  4,  5,  6,  7,  8,  9),
+    c(11, 12, 13, 14, 15, 16, 17, 18, 19),
+    c(21, 22, 23, 24, 25, 26, 27, 28, 29),
+    c(31, 32, 33, 34, 35, 36, 37, 38, 39),
+    c(41, 42, 43, 44, 45, 46, 47, 48, 49),
+    c(51, 52, 53, 54, 55, 56, 57, 58, 59),
+    c(61, 62, 63, 64, 65, 66, 67, 68 ,69),
+    c(71, 72, 73, 74, 75, 76, 77, 78, 79),
+    c(81, 82, 83, 84, 85, 86 ,87, 88, 89),
+    c(91, 92, 93, 94, 95, 96, 97, 98, 99)
+  )
   
   # Helper function to calculate expected expected graphlet counts
   expected_expected_graphlet_counts_fn <- function(density_index, node_count) {
@@ -655,3 +655,4 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
   expect_equal(actual_expected_graphlet_counts_ego_o2, 
                expected_expected_graphlet_counts_ego_o2)
 })
+
