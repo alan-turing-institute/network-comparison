@@ -33,6 +33,18 @@ count_graphlets_ego_scaled <- function(
   }
 }
 
+#' @export
+mean_density_binned_graphlet_counts <- function(
+  graphlet_counts, density_interval_indexes) {
+  # The ego network graphlet counts are an E x G matrix with rows (E) representing
+  # ego networks and columns (G) representing graphlets. We want to calculate
+  # the mean count for each graphlet / density bin combination, so we will
+  # use tapply to average counts for each graphlet across density bins, using
+  # apply to map this operation over graphlets
+  mean_density_binned_graphlet_counts <- 
+    apply(graphlet_counts, MARGIN = 2, function(gc) {
+      tapply(gc, INDEX = density_interval_indexes, FUN = mean)})
+}
 zeros_to_ones <- function(v) {
   zero_index <- which(v == 0)
   v[zero_index] <- 1
