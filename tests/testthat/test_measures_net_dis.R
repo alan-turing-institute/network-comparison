@@ -556,7 +556,7 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
     purrr::map(graphs, netdis_expected_graphlet_counts, 
                max_graphlet_size = max_graphlet_size, 
                density_breaks = density_breaks, 
-               scaled_reference_counts = scaled_reference_counts)
+               density_binned_reference_counts = scaled_reference_counts)
   # Check actual against expected
   purrr::map2(actual_expected_graphlet_counts,
               expected_expected_graphlet_counts, expect_equal)
@@ -642,12 +642,12 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
     netdis_expected_graphlet_counts_ego(
       graph, max_graphlet_size = max_graphlet_size, 
       neighbourhood_size = 1, density_breaks = breaks, 
-      scaled_reference_counts = scaled_reference_counts)
+      density_binned_reference_counts = scaled_reference_counts)
   actual_expected_graphlet_counts_ego_o2 <- 
     netdis_expected_graphlet_counts_ego(
       graph, max_graphlet_size = max_graphlet_size, 
       neighbourhood_size = 2, density_breaks = breaks, 
-      scaled_reference_counts = scaled_reference_counts)
+      density_binned_reference_counts = scaled_reference_counts)
   
   # Compare actual to expected
   expect_equal(actual_expected_graphlet_counts_ego_o1, 
