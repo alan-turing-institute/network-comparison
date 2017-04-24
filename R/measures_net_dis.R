@@ -39,6 +39,7 @@ zeros_to_ones <- function(v) {
   v
 }
 
+#' @export
 scale_graphlet_count <- function(graphlet_count, graphlet_tuples) {
   # Avoid divide by zero errors by replacing all zeros with ones in the
   # divisor
@@ -63,16 +64,14 @@ count_graphlet_tuples <- function(graph, max_graphlet_size) {
   graphlet_tuple_counts
 }
 
-expected_ego_graphlet_counts <- function(graph, density_breaks, reference_counts) {
-  # Look up average scaled graphlet counts for ego-networks of similar density 
-  # in the reference graph
-  query_density <- igraph::edge_density(graph)
-  reference_index <- interval_index(query_density, density_breaks)
-  reference_graphlet_counts <- reference_counts[reference_index]
-  # Scale reference counts by multiplying by the number of possible sets of
-  # k nodes in the query graph, where k is the number of nodes in each graphlet
-  
-  reference_graphlet_counts * choose()
+#' @export
+binned_densities_adaptive <- function(densities, min_counts_per_interval, num_intervals)
+{
+  breaks <- adaptive_breaks(densities, min_count = min_counts_per_interval,
+                            breaks = num_intervals)
+  interval_indexes <- interval_index(densities, breaks = breaks,
+                                     out_of_range_intervals = FALSE)
+  list(densities = densities, interval_indexes = interval_indexes, breaks = breaks)
 }
 
 #' Bin values into intervals based on the provided breaks

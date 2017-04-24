@@ -87,6 +87,42 @@ test_that("adaptive_breaks merges 2 bins below minimum, plus the empty bins betw
   expect_equal(final_breaks_actual, final_breaks_expected)
 })
 
+context("Measures Netdis:  Adaptively binned densities")
+test_that("binned_densities_adaptive works", {
+  # Helper function
+  test_binning <- function(densities, min_counts_per_interval, num_intervals,
+                           expected_breaks, expected_interval_indexes) {
+    # Set up expected output
+    expected <- list(densities = densities, 
+                     interval_indexes = expected_interval_indexes, 
+                     breaks = expected_breaks)
+    # Calculate actual output
+    actual <- binned_densities_adaptive(
+      densities, min_counts_per_interval = min_counts_per_interval,
+      num_intervals = num_intervals)
+    # Check actual matches expected
+    expect_equal(actual, expected)
+  }
+  # Test 1:
+  densities <- c(0, 0.099, 0.2, 0.299, 0.4, 0.49, 0.6, 0.699, 0.8, 0.899, 1.0)
+  min_counts_per_interval <- 2
+  num_intervals <- 100
+  expected_breaks <-c(0, 0.1, 0.3, 0.5, 0.7, 1.0)
+  expected_interval_indexes <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5)
+  test_binning(densities, min_counts_per_interval = min_counts_per_interval,
+               num_intervals = num_intervals, expected_breaks = expected_breaks,
+               expected_interval_indexes = expected_interval_indexes)
+  # Test 2:
+  densities <- c(0, 0.012, 0.099, 0.201, 0.299, 0.402, 0.49, 0.596, 0.699, 0.803, 0.899, 1.0)
+  min_counts_per_interval <- 2
+  num_intervals <- 100
+  expected_breaks <-c(0, 0.02, 0.21, 0.41, 0.6, 0.81, 1.0)
+  expected_interval_indexes <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6)
+  test_binning(densities, min_counts_per_interval = min_counts_per_interval,
+               num_intervals = num_intervals, expected_breaks = expected_breaks,
+               expected_interval_indexes = expected_interval_indexes)
+})
+
 context("Measures Netdis: Graphlet tuples")
 test_message <-
   paste("count_graphlet_tuples and count_graphlet_tuples_ego give",
