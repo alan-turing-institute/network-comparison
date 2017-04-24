@@ -47,6 +47,42 @@ mean_density_binned_graphlet_counts <- function(
 }
 
 #' @export
+netdis_expected_graphlet_counts_ego_fn <- function(
+  graph, max_graphlet_size, neighbourhood_size, 
+  min_bin_count = 5, num_bins = 100) {
+  
+  # Calculate the scaled graphlet counts for all ego networks in the reference
+  # graph, also returning the ego networks themselves in order to calculate
+  # their densities
+  res <- count_graphlets_ego_scaled(
+    graph, max_graphlet_size, neighbourhood_size, return_ego_networks = TRUE)
+  scaled_graphlet_counts = res$graphlet_counts
+  ego_networks <- res$ego_networks
+  
+  # Get ego-network densities
+  densities <- purrr::simplify(purrr::map_dbl(ego_networks, igraph::edge_density))
+  
+  # Adaptively bin ego-network densities
+  binned_densities <- binned_densities_adaptive(
+    densities, min_count = min_bin_count, num_intervals = num_bins)
+  
+  # Average graphlet counts across density bins
+  density_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
+    scaled_graphlet_counts, binned_densities$interval_indexes)
+  
+  # Return a partially applied function with the key reference graph information
+  # built-in
+  purrr::partial(
+    netdis_expected_graphlet_counts_ego,
+    max_graphlet_size = max_graphlet_size,
+    neighbourhood_size = neighbourhood_size,
+    density_breaks = binned_densities$breaks,
+    density_binned_reference_counts = density_binned_graphlet_counts)
+}
+
+
+
+#' @export
 netdis_expected_graphlet_counts <- function(
   graph, max_graphlet_size, density_breaks, density_binned_reference_counts) {
   # Look up average scaled graphlet counts for graphs of similar density
