@@ -196,11 +196,20 @@ count_graphlets <- function(graph, max_graphlet_size) {
 #' @param max_graphlet_size Determines the maximum size of graphlets to count. 
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
 #' @param neighbourhood_size The number of steps from the source node to include
-#' node in ego-network.
-#' @param return_ego_networks If TRUE, return ego_networks alongside graphlet 
-#' counts to enable further processing. 
-#' @return ORCA-format matrix containing counts of each graphlet (columns) for 
-#' the n-step ego-network for each vertex in the graph (rows).
+#' nodes for each ego-network.
+#' @param return_ego_networks If \code{TRUE}, return ego-networks alongside 
+#' graphlet counts to enable further processing. 
+#' @return If \code{return_ego_networks = FALSE}, returns an RxC matrix 
+#' containing counts of each graphlet (columns, C) for each ego-network in the 
+#' input graph (rows, R). Columns are labelled with graphlet IDs and rows are 
+#' labelled with the ID of the central node in each ego-network (if nodes in the
+#' input graph are labelled). If \code{return_ego_networks = TRUE}, returns a
+#' list with the following elements:
+#' \itemize{
+#'   \item \code{graphlet_counts}: A matrix containing graphlet counts for each 
+#'   ego-network in the input graph as described above.
+#'   \item \code{ego_networks}: The ego-networks of the query graph.
+#' }
 #' @export
 count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size, 
                                 return_ego_networks = FALSE) {

@@ -1,13 +1,28 @@
 #' Scaled graphlet count for ego-networks
 #' 
-#' Scales the ego-network count for each graphlet by dividing it by the total
+#' Calculates graphlet counts for the n-step ego-network of each node in a graph, 
+#' scaled by dividing the graphlet counts for each ego-network by the total
 #' number of possible groupings of nodes in the ego-network with the same number
-#' of nodes as the graphlet.
+#' of nodes as each graphlet. This scaling factor is choose(n, k), where n is the
+#' number of nodes in the ego-network and k is the number of nodes in the graphlet.
 #' @param graph A connected, undirected, simple graph as an \code{igraph} object. 
 #' @param max_graphlet_size Determines the maximum size of graphlets to count. 
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
-#' @return ORCA-format matrix containing counts of each graphlet (columns) at 
-#' each vertex in the graph (rows).
+#' @param neighbourhood_size The number of steps from the source node to include
+#' nodes for each ego-network.
+#' @param return_ego_networks If \code{TRUE}, return ego-networks alongside 
+#' graphlet counts to enable further processing. 
+#' @return If \code{return_ego_networks = FALSE}, returns an RxC matrix 
+#' containing counts of each graphlet (columns, C) for each ego-network in the 
+#' input graph (rows, R). Columns are labelled with graphlet IDs and rows are 
+#' labelled with the ID of the central node in each ego-network (if nodes in the
+#' input graph are labelled). If \code{return_ego_networks = TRUE}, returns a
+#' list with the following elements:
+#' \itemize{
+#'   \item \code{graphlet_counts}: A matrix containing graphlet counts for each 
+#'   ego-network in the input graph as described above.
+#'   \item \code{ego_networks}: The ego-networks of the query graph.
+#' }
 #' @export
 count_graphlets_ego_scaled <- function(
   graph, max_graphlet_size, neighbourhood_size, return_ego_networks = FALSE) {
@@ -33,19 +48,35 @@ count_graphlets_ego_scaled <- function(
   }
 }
 
-#' @export
-mean_density_binned_graphlet_counts <- function(
-  graphlet_counts, density_interval_indexes) {
-  # The ego network graphlet counts are an E x G matrix with rows (E) representing
-  # ego networks and columns (G) representing graphlets. We want to calculate
-  # the mean count for each graphlet / density bin combination, so we will
-  # use tapply to average counts for each graphlet across density bins, using
-  # apply to map this operation over graphlets
-  mean_density_binned_graphlet_counts <- 
-    apply(graphlet_counts, MARGIN = 2, function(gc) {
-      tapply(gc, INDEX = density_interval_indexes, FUN = mean)})
-}
-
+#' Generate Netdis expected graphlet count function
+#' 
+#' Generates a function to calculate expected ego-network graphlet counts for 
+#' query graphs based on the statistics of a provided reference graph.
+#' 
+#' Generates graphlet counts for all ego-networks in the supplied reference graph 
+#' and then averages these graphlet counts over density bins to generate
+#' density-dependent reference graphlet counts. Prior to averaging, the graphlet
+#' counts are scaled in a size-dependent manner to permit ego-networks with 
+#' similar densities but different sizes to be averaged together.
+#' 
+#' Returns a function that uses the density-dependent reference graphlet 
+#' counts to generate expected graphlet counts for all ego-networks in a query
+#' network. When doing so, it matches ego-networks to reference counts by
+#' density and reverses the scaling that was applied to the original reference
+#' counts in order to allow averaging across ego-networks with similar density
+#' but different numbers of nodes.
+#' @param graph A connected, undirected, simple reference graph as an 
+#' \code{igraph} object. 
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @param neighbourhood_size The number of steps from the source node to include
+#' node in ego-network.
+#' @return A function taking a connected, undirected, simple query graph as an 
+#' \code{igraph} object and returning an RxC matrix containing the expected 
+#' counts of each graphlet (columns, C) for each ego-network in the query graph 
+#' (rows, R). Columns are labelled with graphlet IDs and rows are labelled with 
+#' the ID of the central node in each ego-network (if nodes in the query graph 
+#' are labelled)
 #' @export
 netdis_expected_graphlet_counts_ego_fn <- function(
   graph, max_graphlet_size, neighbourhood_size, 
@@ -80,8 +111,37 @@ netdis_expected_graphlet_counts_ego_fn <- function(
     density_binned_reference_counts = density_binned_graphlet_counts)
 }
 
+#' INTERNAL FUNCTION - Do not call directly
+#' 
+#' Used by \code{netdis_expected_graphlet_counts_ego_fn} to 
+#' generate a function for calculating expected ego-network graphlet counts
+#' from the statistics of a provided reference graph.
+#' Temporarily accessible during development. 
+#' TODO: Remove @export prior to publishing
+#' @export
+netdis_expected_graphlet_counts_ego <- function(
+  graph, max_graphlet_size, neighbourhood_size,
+  density_breaks, density_binned_reference_counts) {
+  # Generate ego-networks for query graph
+  ego_networks <- make_named_ego_graph(graph, neighbourhood_size)
+  # Map over query graph ego-networks, using reference graph statistics to 
+  # calculate expected graphlet counts for each ego-network.
+  expected_graphlet_counts <- 
+    purrr::map(ego_networks, netdis_expected_graphlet_counts,
+               max_graphlet_size = max_graphlet_size,
+               density_breaks = density_breaks,
+               density_binned_reference_counts = density_binned_reference_counts)
+  names(expected_graphlet_counts) <- names(ego_networks)
+  expected_graphlet_counts
+}
 
-
+#' INTERNAL FUNCTION - Do not call directly
+#' 
+#' Used by \code{netdis_expected_graphlet_counts_ego} to 
+#' calculate expected graphlet counts for a query graph ego-network from the 
+#' statistics of a provided reference graph.
+#' Temporarily accessible during development. 
+#' TODO: Remove @export prior to publishing
 #' @export
 netdis_expected_graphlet_counts <- function(
   graph, max_graphlet_size, density_breaks, density_binned_reference_counts) {
@@ -96,18 +156,42 @@ netdis_expected_graphlet_counts <- function(
   matched_reference_counts * count_graphlet_tuples(graph, max_graphlet_size)
 }
 
+#' INTERNAL FUNCTION - Do not call directly
+#' 
+#' Used by \code{netdis_expected_graphlet_counts_ego_fn} to 
+#' generate a function for calculating expected ego-network graphlet counts
+#' from the statistics of a provided reference graph.
+#' Temporarily accessible during development. 
+#' TODO: Remove @export prior to publishing
 #' @export
-netdis_expected_graphlet_counts_ego <- function(
-  graph, max_graphlet_size, neighbourhood_size,
-  density_breaks, density_binned_reference_counts) {
-  ego_networks <- make_named_ego_graph(graph, neighbourhood_size)
-  expected_graphlet_counts <- purrr::map(ego_networks,
-             netdis_expected_graphlet_counts,
-             max_graphlet_size = max_graphlet_size,
-             density_breaks = density_breaks,
-             density_binned_reference_counts = density_binned_reference_counts)
-  names(expected_graphlet_counts) <- names(ego_networks)
-  expected_graphlet_counts
+mean_density_binned_graphlet_counts <- function(
+  graphlet_counts, density_interval_indexes) {
+  # The ego network graphlet counts are an E x G matrix with rows (E) representing
+  # ego networks and columns (G) representing graphlets. We want to calculate
+  # the mean count for each graphlet / density bin combination, so we will
+  # use tapply to average counts for each graphlet across density bins, using
+  # apply to map this operation over graphlets
+  mean_density_binned_graphlet_counts <- 
+    apply(graphlet_counts, MARGIN = 2, function(gc) {
+      tapply(gc, INDEX = density_interval_indexes, FUN = mean)})
+}
+
+
+#' INTERNAL FUNCTION - Do not call directly
+#' 
+#' Used by \code{netdis_expected_graphlet_counts_ego_fn} to 
+#' generate a function for calculating expected ego-network graphlet counts
+#' from the statistics of a provided reference graph.
+#' Temporarily accessible during development. 
+#' TODO: Remove @export prior to publishing
+#' @export
+binned_densities_adaptive <- function(densities, min_counts_per_interval, num_intervals)
+{
+  breaks <- adaptive_breaks(densities, min_count = min_counts_per_interval,
+                            breaks = num_intervals)
+  interval_indexes <- interval_index(densities, breaks = breaks,
+                                     out_of_range_intervals = FALSE)
+  list(densities = densities, interval_indexes = interval_indexes, breaks = breaks)
 }
 
 #' @export
@@ -140,16 +224,6 @@ count_graphlet_tuples <- function(graph, max_graphlet_size) {
   graphlet_tuple_counts <- choose(graph_node_count, graphlet_node_counts)
   graphlet_tuple_counts <- setNames(graphlet_tuple_counts, graphlet_key$id)
   graphlet_tuple_counts
-}
-
-#' @export
-binned_densities_adaptive <- function(densities, min_counts_per_interval, num_intervals)
-{
-  breaks <- adaptive_breaks(densities, min_count = min_counts_per_interval,
-                            breaks = num_intervals)
-  interval_indexes <- interval_index(densities, breaks = breaks,
-                                     out_of_range_intervals = FALSE)
-  list(densities = densities, interval_indexes = interval_indexes, breaks = breaks)
 }
 
 #' Bin values into intervals based on the provided breaks

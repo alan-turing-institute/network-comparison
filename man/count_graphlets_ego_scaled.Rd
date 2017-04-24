@@ -12,13 +12,30 @@ count_graphlets_ego_scaled(graph, max_graphlet_size, neighbourhood_size,
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
 Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
+
+\item{neighbourhood_size}{The number of steps from the source node to include
+nodes for each ego-network.}
+
+\item{return_ego_networks}{If \code{TRUE}, return ego-networks alongside 
+graphlet counts to enable further processing.}
 }
 \value{
-ORCA-format matrix containing counts of each graphlet (columns) at 
-each vertex in the graph (rows).
+If \code{return_ego_networks = FALSE}, returns an RxC matrix 
+containing counts of each graphlet (columns, C) for each ego-network in the 
+input graph (rows, R). Columns are labelled with graphlet IDs and rows are 
+labelled with the ID of the central node in each ego-network (if nodes in the
+input graph are labelled). If \code{return_ego_networks = TRUE}, returns a
+list with the following elements:
+\itemize{
+  \item \code{graphlet_counts}: A matrix containing graphlet counts for each 
+  ego-network in the input graph as described above.
+  \item \code{ego_networks}: The ego-networks of the query graph.
+}
 }
 \description{
-Scales the ego-network count for each graphlet by dividing it by the total
+Calculates graphlet counts for the n-step ego-network of each node in a graph, 
+scaled by dividing the graphlet counts for each ego-network by the total
 number of possible groupings of nodes in the ego-network with the same number
-of nodes as the graphlet.
+of nodes as each graphlet. This scaling factor is choose(n, k), where n is the
+number of nodes in the ego-network and k is the number of nodes in the graphlet.
 }
