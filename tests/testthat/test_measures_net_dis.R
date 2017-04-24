@@ -561,3 +561,97 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
   purrr::map2(actual_expected_graphlet_counts,
               expected_expected_graphlet_counts, expect_equal)
 })
+
+test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes", {
+  # Helper function to generate graphs with known density and number of nodes
+  # Set up a small sample network with at least one ego-network that contains
+  # at least one of each graphlets
+  elist <- rbind(
+    c("n1","n2"),
+    c("n2","n3"),
+    c("n1","n4"),
+    c("n2","n5"),
+    c("n1","n6"),
+    c("n1","n7"),
+    c("n2","n4"),
+    c("n4","n6"),
+    c("n6","n8"),
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
+  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  graphlet_sizes <- c(2, 3, 3, 4, 4, 4, 4, 4, 4)
+  names(graphlet_sizes) <- graphlet_labels
+  max_graphlet_size = 4
+  # Make graph ego networks
+  ego_networks_o1 <- make_named_ego_graph(graph, order = 1)
+  ego_networks_o2 <- make_named_ego_graph(graph, order = 2)
+  # Set manually-verified node counts and densities
+  # 1. Ego-networks of order 1
+  num_nodes_o1 <- c(5, 5, 2, 4, 2, 4, 5, 5, 4, 4)
+  num_edges_o1 <- c(6, 5, 1, 5, 1, 4, 7, 7, 6, 6)
+  max_edges_o1 <- choose(num_nodes_o1, 2)
+  densities_o1 <- num_edges_o1 / max_edges_o1
+  # Order 1 densities should be: 0.6000000 0.5000000 1.0000000 0.8333333 1.0000000 0.6666667 0.7000000 0.7000000 1.0000000 1.0000000
+  # 2. Ego-networks of order 2
+  num_nodes_o2 <- c(10, 7, 5, 8, 5, 8, 8, 7, 6, 6)
+  num_edges_o2 <- c(15, 8, 5, 10, 5, 13, 13, 11, 9, 9)
+  max_edges_o2 <- choose(num_nodes_o2, 2)
+  densities_o2 <- num_edges_o2 / max_edges_o2
+  # Order 2 densities should be: 0.3333333 0.3809524 0.5000000 0.3571429 0.5000000 0.4642857 0.4642857 0.5238095 0.6000000 0.6000000
+  # Set manually defined density breaks and indexes
+  breaks <- c(0, 0.11, 0.21, 0.31, 0.41, 0.51, 0.61, 0.71, 0.81, 0.91, 1.0)
+  density_indexes_o1 <- c(6, 5, 10, 9, 10, 7, 7, 7, 10, 10)
+  density_indexes_o2 <- c(4, 4, 5, 4, 5, 5, 5, 6, 6, 6)
+  # Set dummy reference counts
+  scaled_reference_counts <- rbind(
+  c( 1,  2,  3,  4,  5,  6,  7,  8,  9),
+  c(11, 12, 13, 14, 15, 16, 17, 18, 19),
+  c(21, 22, 23, 24, 25, 26, 27, 28, 29),
+  c(31, 32, 33, 34, 35, 36, 37, 38, 39),
+  c(41, 42, 43, 44, 45, 46, 47, 48, 49),
+  c(51, 52, 53, 54, 55, 56, 57, 58, 59),
+  c(61, 62, 63, 64, 65, 66, 67, 68 ,69),
+  c(71, 72, 73, 74, 75, 76, 77, 78, 79),
+  c(81, 82, 83, 84, 85, 86 ,87, 88, 89),
+  c(91, 92, 93, 94, 95, 96, 97, 98, 99)
+)
+  
+  # Helper function to calculate expected expected graphlet counts
+  expected_expected_graphlet_counts_fn <- function(density_index, node_count) {
+    reference_counts <- scaled_reference_counts[density_index,]
+    reference_counts * choose(node_count, graphlet_sizes)
+  }
+  # Calculate expected graphlet counts
+  expected_expected_graphlet_counts_ego_o1 <- purrr::map2(
+    density_indexes_o1, num_nodes_o1, expected_expected_graphlet_counts_fn
+  )
+  names(expected_expected_graphlet_counts_ego_o1) <- names(ego_networks_o1)
+  expected_expected_graphlet_counts_ego_o2 <- purrr::map2(
+    density_indexes_o2, num_nodes_o2, expected_expected_graphlet_counts_fn
+  )
+  names(expected_expected_graphlet_counts_ego_o2) <- names(ego_networks_o2)
+  
+  # Calculate actual output of function under test
+  actual_expected_graphlet_counts_ego_o1 <- 
+    netdis_expected_graphlet_counts_ego(
+      graph, max_graphlet_size = max_graphlet_size, 
+      neighbourhood_size = 1, density_breaks = breaks, 
+      scaled_reference_counts = scaled_reference_counts)
+  actual_expected_graphlet_counts_ego_o2 <- 
+    netdis_expected_graphlet_counts_ego(
+      graph, max_graphlet_size = max_graphlet_size, 
+      neighbourhood_size = 2, density_breaks = breaks, 
+      scaled_reference_counts = scaled_reference_counts)
+  
+  # Compare actual to expected
+  expect_equal(actual_expected_graphlet_counts_ego_o1, 
+               expected_expected_graphlet_counts_ego_o1)
+  expect_equal(actual_expected_graphlet_counts_ego_o2, 
+               expected_expected_graphlet_counts_ego_o2)
+})

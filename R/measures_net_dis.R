@@ -59,6 +59,22 @@ netdis_expected_graphlet_counts <- function(
   # number of nodes in the graphlet
   matched_reference_counts * count_graphlet_tuples(graph, max_graphlet_size)
 }
+
+#' @export
+netdis_expected_graphlet_counts_ego <- function(
+  graph, max_graphlet_size, neighbourhood_size,
+  density_breaks, scaled_reference_counts) {
+  ego_networks <- make_named_ego_graph(graph, neighbourhood_size)
+  expected_graphlet_counts <- purrr::map(ego_networks,
+             netdis_expected_graphlet_counts,
+             max_graphlet_size = max_graphlet_size,
+             density_breaks = density_breaks,
+             scaled_reference_counts = scaled_reference_counts)
+  names(expected_graphlet_counts) <- names(ego_networks)
+  expected_graphlet_counts
+}
+
+#' @export
 zeros_to_ones <- function(v) {
   zero_index <- which(v == 0)
   v[zero_index] <- 1
