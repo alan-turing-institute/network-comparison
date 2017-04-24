@@ -38,7 +38,7 @@ test_that("make_named_ego_graph labels each ego-network with the correct node na
   # in this same order
   expected_node_names <- c("n1","n2","n3","n4","n5","n6","n7","n8","n9","n10")
   
-  # Expected edgelists for ego netwroks of order 1
+  # Expected edgelists for ego networks of order 1
   expected_ego_elist_n1_o1 <- rbind(
     c("n1","n2"),
     c("n1","n4"),
@@ -295,7 +295,7 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
                         neighbourhood_size = 2)
   
-  # Set manually verified counts
+  # Set manually verified ego-network graphlet counts
   # 1-step ego networks
   expected_counts_order_1 <- rbind(
     c(6, 5, 2, 0, 1, 0, 2, 1, 0),
