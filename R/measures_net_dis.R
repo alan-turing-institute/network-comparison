@@ -45,6 +45,20 @@ mean_density_binned_graphlet_counts <- function(
     apply(graphlet_counts, MARGIN = 2, function(gc) {
       tapply(gc, INDEX = density_interval_indexes, FUN = mean)})
 }
+
+#' @export
+netdis_expected_graphlet_counts <- function(
+  graph, max_graphlet_size, density_breaks, scaled_reference_counts) {
+  # Look up average scaled graphlet counts for graphs of similar density
+  # in the reference graph
+  query_density <- igraph::edge_density(graph)
+  matched_density_index <- interval_index(query_density, density_breaks)
+  matched_reference_counts <- scaled_reference_counts[matched_density_index,]
+  # Scale reference counts by multiplying the reference count for each graphlet
+  # by the number of possible sets of k nodes in the query graph, where k is the
+  # number of nodes in the graphlet
+  matched_reference_counts * count_graphlet_tuples(graph, max_graphlet_size)
+}
 zeros_to_ones <- function(v) {
   zero_index <- which(v == 0)
   v[zero_index] <- 1

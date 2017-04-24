@@ -507,3 +507,57 @@ test_that("Ego-network 4-node density-binned reference counts match manually ver
   expect_equal(actual_mean_density_binned_counts_o2, 
                expected_mean_density_binned_counts_o2)
 })
+
+context("Measures Netdis: Expected graphlet counts")
+test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
+  # Helper function to generate graphs with known density and number of nodes
+  rand_graph <- function(num_nodes, density) {
+    max_edges <- choose(num_nodes, 2)
+    num_edges <- density * max_edges
+    igraph::erdos.renyi.game(num_nodes, num_edges , "gnm", 
+                             loops = FALSE, directed = FALSE)
+  }
+  # Set up some dummy reference density breaks and scaled reference counts
+  density_breaks <- c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+  scaled_reference_counts <- rbind(
+    c( 1,  2,  3,  4,  5,  6,  7,  8,  9),
+    c(11, 12, 13, 14, 15, 16, 17, 18, 19),
+    c(21, 22, 23, 24, 25, 26, 27, 28, 29),
+    c(31, 32, 33, 34, 35, 36, 37, 38, 39),
+    c(41, 42, 43, 44, 45, 46, 47, 48, 49),
+    c(51, 52, 53, 54, 55, 56, 57, 58, 59),
+    c(61, 62, 63, 64, 65, 66, 67, 68 ,69),
+    c(71, 72, 73, 74, 75, 76, 77, 78, 79),
+    c(81, 82, 83, 84, 85, 86 ,87, 88, 89),
+    c(91, 92, 93, 94, 95, 96, 97, 98, 99)
+  )
+  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  colnames(scaled_reference_counts) <- graphlet_labels
+  rownames(scaled_reference_counts) <- 1:10
+  graphlet_sizes <- c(2, 3, 3, 4, 4, 4, 4, 4, 4)
+  names(graphlet_sizes) <- graphlet_labels
+  max_graphlet_size = 4
+  
+  # Generate some test graphs
+  densities <- c(0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95)
+  density_indexes <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+  num_nodes <- rep(120, 10)
+  graphs <- purrr::map2(num_nodes, densities, rand_graph)
+  
+  # Helper function to calculate expected expected graphlet counts
+  expected_expected_graphlet_counts_fn <- function(density_index, node_count) {
+    reference_counts <- scaled_reference_counts[density_index,]
+    reference_counts * choose(node_count, graphlet_sizes)
+  }
+  # Determine expected expected graphlet counts
+  expected_expected_graphlet_counts <- 
+    purrr::map2(density_indexes, num_nodes, expected_expected_graphlet_counts_fn)
+  actual_expected_graphlet_counts <- 
+    purrr::map(graphs, netdis_expected_graphlet_counts, 
+               max_graphlet_size = max_graphlet_size, 
+               density_breaks = density_breaks, 
+               scaled_reference_counts = scaled_reference_counts)
+  # Check actual against expected
+  purrr::map2(actual_expected_graphlet_counts,
+              expected_expected_graphlet_counts, expect_equal)
+})
