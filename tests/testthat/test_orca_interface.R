@@ -282,7 +282,7 @@ test_that("gdd works", {
   gdd_orbit_default_actual <- gdd(graph, feature_type = "orbit")
   gdd_graphlet_default_actual <- gdd(graph, feature_type = "graphlet")
   gdd_default_default_actual <- gdd(graph)
-  # Compare actual with expected
+  # Compare actual gdd with expected gdd 
   expect_equal(gdd_orbit_4_actual, gdd_orbit_4_expected)
   expect_equal(gdd_orbit_5_actual, gdd_orbit_5_expected)
   expect_equal(gdd_graphlet_4_actual, gdd_graphlet_4_expected)
@@ -292,10 +292,23 @@ test_that("gdd works", {
   expect_equal(gdd_orbit_default_actual, gdd_orbit_4_expected)
   expect_equal(gdd_graphlet_default_actual, gdd_graphlet_4_expected)
   expect_equal(gdd_default_default_actual, gdd_orbit_4_expected)
+  
+  # Check gdd throws error for invalid feature type
+  expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 4))
+  expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 5))
+  # Check gdd throws error for invalid maximum graphlet size
+  expect_error(gdd(graph, feature_type = "orbit", max_graphlet_size = 2))
+  expect_error(gdd(graph, feature_type = "orbit", max_graphlet_size = 3))
+  expect_error(gdd(graph, feature_type = "orbit", max_graphlet_size = 6))
+  expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 2))
+  expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 3))
+  expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 6))
+  
 })
 
 context("ORCA interface: Ego-network graphlet outputs for manually verified networks")
-test_that("Ego-network 4-node graphlet counts match manually verified totals",{
+test_that("Ego-network 4-node graphlet counts match manually verified totals
+          and gdd gives expected discrete histograms",{
   # Set up a small sample network with at least one ego-network that contains
   # at least one of each graphlets
   elist <- rbind(
@@ -438,4 +451,32 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
     G8 = dhist(locations = c(0, 1), masses = c(4, 6))
   )
   expect_equal(actual_gdd_order_2, expected_gdd_order_2)
+  
+  # Check gdd throws error for invalid feature type
+  expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 4, 
+                   ego_neighbourhood_size = 0))
+  expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 4, 
+                   ego_neighbourhood_size = 1))
+  expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 5, 
+                   ego_neighbourhood_size = 0))
+  expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 5, 
+                   ego_neighbourhood_size = 1))
+  # We don't support orbit feature type for ego networks (i.e. neighbourhood > 0)
+  expect_error(gdd(graph, feature_type = "orbit", max_graphlet_size = 4, 
+                   ego_neighbourhood_size = 1))
+  expect_error(gdd(graph, feature_type = "orbit", max_graphlet_size = 5, 
+                   ego_neighbourhood_size = 1))
+  # Check gdd throws error for invalid maximum graphlet size
+  expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 2, 
+                   ego_neighbourhood_size = 0))
+  expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 2, 
+                   ego_neighbourhood_size = 1))
+  expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 3, 
+                   ego_neighbourhood_size = 0))
+  expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 3, 
+                   ego_neighbourhood_size = 1))
+  expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 6, 
+                   ego_neighbourhood_size = 0))
+  expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 6, 
+                   ego_neighbourhood_size = 1))
 })

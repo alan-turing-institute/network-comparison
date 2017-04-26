@@ -16,6 +16,9 @@ the number of graphlet orbits each node participates in.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
 Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
+
+\item{ego_neighbourhood_size}{The number of steps from the source node to include
+nodes for each ego-network.}
 }
 \value{
 List of graphlet-based degree distributions, with each distribution
