@@ -482,7 +482,7 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals
 })
 
 context("ORCA interface: GDD for all graphs in a directory:")
-test_that("All virus PPI files read correctly from external data directory", {
+test_that("gdd_for_all_graphs works", {
   # Set source directory and file properties for Virus PPI graph edge files
   source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
   edge_format = "ncol"
