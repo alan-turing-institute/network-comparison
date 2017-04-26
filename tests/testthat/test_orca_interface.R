@@ -480,3 +480,57 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals
   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 6, 
                    ego_neighbourhood_size = 1))
 })
+
+context("ORCA interface: GDD for all graphs in a directory:")
+test_that("All virus PPI files read correctly from external data directory", {
+  # Set source directory and file properties for Virus PPI graph edge files
+  source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+  edge_format = "ncol"
+  file_pattern = ".txt"
+  
+  # Set number of threads to use at once for parallel processing.
+  num_threads = getOption("mc.cores", 2L)
+  
+  # Use previously tested gdd code to calculate expected gdds
+  expected_gdd_fn <- function(feature_type, max_graphlet_size, ego_neighbourhood_size) {
+    gdds <- list(
+      gdd(virusppi$EBV, feature_type, max_graphlet_size, ego_neighbourhood_size),
+      gdd(virusppi$ECL, feature_type, max_graphlet_size, ego_neighbourhood_size),
+      gdd(virusppi$HSV, feature_type, max_graphlet_size, ego_neighbourhood_size),
+      gdd(virusppi$KSHV, feature_type, max_graphlet_size, ego_neighbourhood_size),
+      gdd(virusppi$VZV, feature_type, max_graphlet_size, ego_neighbourhood_size)
+    )
+    names(gdds) <- c("EBV-1.txt", "ECL-1.txt", "HSV-1-1.txt", "KSHV-1.txt", "VZV-1.txt")
+    gdds
+  }
+
+  # Use code under test to generate actual gdds
+  actual_gdd_fn <- function (feature_type, max_graphlet_size, ego_neighbourhood_size) {
+    gdd_for_all_graphs(source_dir = source_dir, format = edge_format, 
+                       pattern = file_pattern, feature_type = feature_type, 
+                       max_graphlet_size = max_graphlet_size, 
+                       ego_neighbourhood_size = ego_neighbourhood_size,
+                       mc.cores = num_threads)
+  }
+  
+  # Helper function to make comparison code clearer
+  compare_fn <- function(feature_type, max_graphlet_size, ego_neighbourhood_size) {
+    expect_equal(actual_gdd_fn(feature_type, max_graphlet_size, ego_neighbourhood_size), 
+                 expected_gdd_fn(feature_type, max_graphlet_size, ego_neighbourhood_size)
+                 )
+  }
+  
+  # Map over test parameters, comparing actual gdds to expected
+  # No ego-networks
+  compare_fn(feature_type = "orbit", max_graphlet_size = 4, ego_neighbourhood_size = 0)
+  compare_fn(feature_type = "orbit", max_graphlet_size = 5, ego_neighbourhood_size = 0)
+  compare_fn(feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 0)
+  compare_fn(feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 0)
+  # Ego networks of order 1
+  compare_fn(feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 1)
+  compare_fn(feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 1)
+  # Ego networks of order 2
+  compare_fn(feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 2)
+  compare_fn(feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 2)
+  
+})
