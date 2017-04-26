@@ -16,6 +16,9 @@ Until this package hits release 1.0 anything can change with no notice.
 ## Usage
 See "Quick start" vignette in documentation for example usage.
 
+### Parallel processing support
+The `gdd_for_all_graphs` method will make use of multiple threads to calculate graphlet-based degree distributions for multiple graphs in parallel. However, this is only supported on unix-like systems (e.g. Linux and Mac OSX), as the underlying `mcapply` method requires system support for forks. The `gdd_for_all_graphs` method will run on Windows, but the number of cores will be restricted to 1, regardless of the value of `mc.cores` provided to `gdd_for_all_graphs` or set in the R environment.
+
 ## Installing package from source
 When published to the CRAN package repository, the library and all documentation
 will be installed in the standard manner using `install.packages("netdist")`,
