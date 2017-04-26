@@ -491,3 +491,70 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions o
     })
   })
 })
+
+context("Measures NetEMD: All graphs in directory")
+test_that("net_emds_for_all_graphs works", {
+  # Set source directory and file properties for Virus PPI graph edge files
+  source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+  edge_format = "ncol"
+  file_pattern = ".txt"
+  
+  # Set number of threads to use at once for parallel processing.
+  num_threads = getOption("mc.cores", 2L)
+  
+  # Use previously tested GDD code to generate inputs to function under test
+  gdds_orbits_g4 <- gdd_for_all_graphs(
+    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    feature_type = "orbit", max_graphlet_size = 4)
+  gdds_orbits_g5 <- gdd_for_all_graphs(
+    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    feature_type = "orbit", max_graphlet_size = 5)
+  gdds_graphlets_g4 <- gdd_for_all_graphs(
+    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    feature_type = "graphlet", max_graphlet_size = 4)
+  gdds_graphlets_g5 <- gdd_for_all_graphs(
+    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    feature_type = "graphlet", max_graphlet_size = 5)
+  gdds_graphlets_g4_e1 <- gdd_for_all_graphs(
+    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 1)
+  gdds_graphlets_g5_e1 <- gdd_for_all_graphs(
+    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 1)
+  gdds_graphlets_g4_e2 <- gdd_for_all_graphs(
+    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 2)
+  gdds_graphlets_g5_e2 <- gdd_for_all_graphs(
+    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 2)
+  
+  # Use previously tested NetEMD function to generate expected NetEMD scores
+  # individually and combine into expected output for code under test
+  expected_net_emd_fn<- function(gdds) {
+    list(net_emds = c(net_emd(gdds$EBV, gdds$ECL), net_emd(gdds$EBV, gdds$HSV),
+                      net_emd(gdds$EBV, gdds$KSHV), net_emd(gdds$EBV, gdds$VZV),
+                      net_emd(gdds$ECL, gdds$HSV), net_emd(gdds$ECL, gdds$KSHV), 
+                      net_emd(gdds$ECL, gdds$VZV), net_emd(gdds$HSV, gdds$KSHV), 
+                      net_emd(gdds$HSV, gdds$VZV), net_emd(gdds$KSHV, gdds$VZV)),
+         comp_spec = cross_comparison_spec(gdds))
+  }
+  
+  # Comparison function for clarity
+  compare_fn <- function(gdds) {
+    expect_equal(net_emds_for_all_graphs(gdds), expected_net_emd_fn(gdds))
+  }
+  
+  # Map over test parameters, comparing actual gdds to expected
+  # No ego-networks
+  compare_fn(gdds_orbits_g4)
+  compare_fn(gdds_orbits_g5)
+  compare_fn(gdds_graphlets_g4)
+  compare_fn(gdds_graphlets_g5)
+  # Ego networks of order 1
+  compare_fn(gdds_graphlets_g4_e1)
+  compare_fn(gdds_graphlets_g5_e1)
+  # Ego networks of order 2
+  compare_fn(gdds_graphlets_g4_e2)
+  compare_fn(gdds_graphlets_g5_e2)
+})
+

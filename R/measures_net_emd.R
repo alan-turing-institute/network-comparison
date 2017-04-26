@@ -36,6 +36,15 @@ net_emds_for_all_graphs <- function(
   gdds, method = "optimise", step_size = NULL, smoothing_window_width = 0, 
   return_details = FALSE, mc.cores = getOption("mc.cores", 2L)) {
   comp_spec <- cross_comparison_spec(gdds)
+  # NOTE: mcapply only works on unix-like systems with system level forking 
+  # capability. This means it will work on Linux and OSX, but not Windows.
+  # For now, we just revert to single threaded operation on Windows
+  # TODO: Look into using the parLappy function on Windows
+  if(.Platform$OS.type != "unix") {
+    # Force cores to 1 if system is not unix-like as it will not support 
+    # forking
+    mc.cores = 1
+  }
   out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {net_emd(
     gdds[[index_a]], gdds[[index_b]], method = method, return_details = return_details,
     smoothing_window_width = smoothing_window_width)
