@@ -7,7 +7,7 @@ Distributions (GDDs)}
 \usage{
 gdd_for_all_graphs(source_dir, format = "ncol", pattern = ".txt",
   feature_type = "orbit", max_graphlet_size = 4,
-  mc.cores = getOption("mc.cores", 2L))
+  ego_neighbourhood_size = 0, mc.cores = getOption("mc.cores", 2L))
 }
 \arguments{
 \item{source_dir}{Path to graph directory}
