@@ -1,8 +1,18 @@
-## ---- fig.show='hold'----------------------------------------------------
+---
+title: "Quick start guide for NetEMD"
+author: "Martin O'Reilly"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick start for NetEMD}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+## Virus PPI example for NetEMD
+```{r, fig.show='hold'}
 library("netdist")
 # Set source directory and file properties for Virus PPI graph edge files
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
-
 edge_format = "ncol"
 file_pattern = ".txt"
 
@@ -14,10 +24,12 @@ file_pattern = ".txt"
 num_threads = getOption("mc.cores", 2L)
 
 # Calculate graphlet-based degree distributions for all orbits in graphlets 
-# comprising up to 4 nodes for all graphs (type = "orb4"). This only needs to 
-# be done once per graph. 
-# If type is set to "orb5", graphlet-based degree distributions will be 
-# calculated for all orbits in graphlets comprising up to 5 nodes
+# comprising up to 4 nodes for all graphs. This only needs to be done once 
+# per graph (feature_type = "orbit", max_graphlet_size = 4).. 
+# If feature_type is set to "feature_type", orbit counts for orbits in the
+# same graphlet will be summed to generate graphlet counts
+# If max_graphlet_size is set to 5, graphlet-based degree distributions will  
+# be calculated for graphlets comprising up to 5 nodes.
 virus_gdds <- gdd_for_all_graphs(
   source_dir = source_dir, feature_type = "orbit", max_graphlet_size = 4,
   format = edge_format, pattern = file_pattern, mc.cores = num_threads)
@@ -53,11 +65,12 @@ print(out$net_emds)
 # Note that this step size is applied to the histograms after they have been 
 # normalised to unit variance
 
-# Link NetEMDs with their respective comp_specs
+# Display NetEMDs for all network pairs, alongside the details of the network pairs
 print(cbind(out$comp_spec, out$net_emds))
 
 # Confirm NetEMD of a graph with itself is zero within (or at least close to)
 # the limits of machine precision
 purrr::map2(virus_gdds, virus_gdds, net_emd)
 .Machine$double.eps
+```
 

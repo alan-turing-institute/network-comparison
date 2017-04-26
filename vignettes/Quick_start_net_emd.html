@@ -12,9 +12,9 @@
 
 <meta name="author" content="Martin O’Reilly" />
 
-<meta name="date" content="2017-04-07" />
+<meta name="date" content="2017-04-26" />
 
-<title>Quick start</title>
+<title>Quick start guide for NetEMD</title>
 
 
 
@@ -68,18 +68,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Quick start</h1>
+<h1 class="title toc-ignore">Quick start guide for NetEMD</h1>
 <h4 class="author"><em>Martin O’Reilly</em></h4>
-<h4 class="date"><em>2017-04-07</em></h4>
+<h4 class="date"><em>2017-04-26</em></h4>
 
 
 
-<div id="virus-ppi-example" class="section level2">
-<h2>Virus PPI example</h2>
+<div id="virus-ppi-example-for-netemd" class="section level2">
+<h2>Virus PPI example for NetEMD</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;netdist&quot;</span>)
 <span class="co"># Set source directory and file properties for Virus PPI graph edge files</span>
 source_dir &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="kw">file.path</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;VRPINS&quot;</span>), <span class="dt">package =</span> <span class="st">&quot;netdist&quot;</span>)
-
 edge_format =<span class="st"> &quot;ncol&quot;</span>
 file_pattern =<span class="st"> &quot;.txt&quot;</span>
 
@@ -91,10 +90,12 @@ file_pattern =<span class="st"> &quot;.txt&quot;</span>
 num_threads =<span class="st"> </span><span class="kw">getOption</span>(<span class="st">&quot;mc.cores&quot;</span>, 2L)
 
 <span class="co"># Calculate graphlet-based degree distributions for all orbits in graphlets </span>
-<span class="co"># comprising up to 4 nodes for all graphs (type = &quot;orb4&quot;). This only needs to </span>
-<span class="co"># be done once per graph. </span>
-<span class="co"># If type is set to &quot;orb5&quot;, graphlet-based degree distributions will be </span>
-<span class="co"># calculated for all orbits in graphlets comprising up to 5 nodes</span>
+<span class="co"># comprising up to 4 nodes for all graphs. This only needs to be done once </span>
+<span class="co"># per graph (feature_type = &quot;orbit&quot;, max_graphlet_size = 4).. </span>
+<span class="co"># If feature_type is set to &quot;feature_type&quot;, orbit counts for orbits in the</span>
+<span class="co"># same graphlet will be summed to generate graphlet counts</span>
+<span class="co"># If max_graphlet_size is set to 5, graphlet-based degree distributions will  </span>
+<span class="co"># be calculated for graphlets comprising up to 5 nodes.</span>
 virus_gdds &lt;-<span class="st"> </span><span class="kw">gdd_for_all_graphs</span>(
   <span class="dt">source_dir =</span> source_dir, <span class="dt">feature_type =</span> <span class="st">&quot;orbit&quot;</span>, <span class="dt">max_graphlet_size =</span> <span class="dv">4</span>,
   <span class="dt">format =</span> edge_format, <span class="dt">pattern =</span> file_pattern, <span class="dt">mc.cores =</span> num_threads)
@@ -120,7 +121,7 @@ virus_gdds &lt;-<span class="st"> </span><span class="kw">gdd_for_all_graphs</sp
 out &lt;-<span class="st"> </span><span class="kw">net_emds_for_all_graphs</span>(
   <span class="dt">gdds =</span> virus_gdds, <span class="dt">method =</span> <span class="st">&quot;optimise&quot;</span>, <span class="dt">smoothing_window_width =</span> <span class="dv">0</span>, 
   <span class="dt">return_details =</span> <span class="ot">FALSE</span>, <span class="dt">mc.cores =</span> num_threads)
-<span class="kw">print</span>(out$net_emds)</code></pre></div>
+<span class="kw">print</span>(out<span class="op">$</span>net_emds)</code></pre></div>
 <pre><code>##  [1] 0.4876042 0.1662898 0.1607299 0.1994619 0.3986298 0.4024202 0.4029356
 ##  [8] 0.1581559 0.2164026 0.2323955</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># You can also specify method = &quot;fixed_step&quot; to use the much slower method of </span>
@@ -131,8 +132,8 @@ out &lt;-<span class="st"> </span><span class="kw">net_emds_for_all_graphs</span
 <span class="co"># Note that this step size is applied to the histograms after they have been </span>
 <span class="co"># normalised to unit variance</span>
 
-<span class="co"># Link NetEMDs with their respective comp_specs</span>
-<span class="kw">print</span>(<span class="kw">cbind</span>(out$comp_spec, out$net_emds))</code></pre></div>
+<span class="co"># Display NetEMDs for all network pairs, alongside the details of the network pairs</span>
+<span class="kw">print</span>(<span class="kw">cbind</span>(out<span class="op">$</span>comp_spec, out<span class="op">$</span>net_emds))</code></pre></div>
 <pre><code>##         name_a      name_b index_a index_b out$net_emds
 ## 1    EBV-1.txt   ECL-1.txt       1       2    0.4876042
 ## 2    EBV-1.txt HSV-1-1.txt       1       3    0.1662898
@@ -146,7 +147,7 @@ out &lt;-<span class="st"> </span><span class="kw">net_emds_for_all_graphs</span
 ## 10  KSHV-1.txt   VZV-1.txt       4       5    0.2323955</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Confirm NetEMD of a graph with itself is zero within (or at least close to)</span>
 <span class="co"># the limits of machine precision</span>
-purrr::<span class="kw">map2</span>(virus_gdds, virus_gdds, net_emd)</code></pre></div>
+purrr<span class="op">::</span><span class="kw">map2</span>(virus_gdds, virus_gdds, net_emd)</code></pre></div>
 <pre><code>## $`EBV-1.txt`
 ## [1] 6.256724e-16
 ## 
@@ -161,7 +162,7 @@ purrr::<span class="kw">map2</span>(virus_gdds, virus_gdds, net_emd)</code></pre
 ## 
 ## $`VZV-1.txt`
 ## [1] 7.162562e-16</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">.Machine$double.eps</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">.Machine<span class="op">$</span>double.eps</code></pre></div>
 <pre><code>## [1] 2.220446e-16</code></pre>
 </div>
 
