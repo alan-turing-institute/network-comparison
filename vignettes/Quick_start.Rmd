@@ -13,7 +13,6 @@ vignette: >
 library("netdist")
 # Set source directory and file properties for Virus PPI graph edge files
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
-
 edge_format = "ncol"
 file_pattern = ".txt"
 
