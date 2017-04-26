@@ -82,13 +82,6 @@ source_dir &lt;-<span class="st"> </span><span class="kw">system.file</span>(<sp
 edge_format =<span class="st"> &quot;ncol&quot;</span>
 file_pattern =<span class="st"> &quot;.txt&quot;</span>
 
-<span class="co"># Set number of threads to use at once for parallel processing. To fully utilise</span>
-<span class="co"># a modern consumer processor, this should be set to 2x the number of available</span>
-<span class="co"># processor cores as each core supports two threads. The getOption() function</span>
-<span class="co"># will take this from the local R environment if set there. Otherwise it </span>
-<span class="co"># assumes 1 core, so sets 2 threads.</span>
-num_threads =<span class="st"> </span><span class="kw">getOption</span>(<span class="st">&quot;mc.cores&quot;</span>, 2L)
-
 <span class="co"># Calculate graphlet-based degree distributions for all orbits in graphlets </span>
 <span class="co"># comprising up to 4 nodes for all graphs. This only needs to be done once </span>
 <span class="co"># per graph (feature_type = &quot;orbit&quot;, max_graphlet_size = 4).. </span>
@@ -97,8 +90,8 @@ num_threads =<span class="st"> </span><span class="kw">getOption</span>(<span cl
 <span class="co"># If max_graphlet_size is set to 5, graphlet-based degree distributions will  </span>
 <span class="co"># be calculated for graphlets comprising up to 5 nodes.</span>
 virus_gdds &lt;-<span class="st"> </span><span class="kw">gdd_for_all_graphs</span>(
-  <span class="dt">source_dir =</span> source_dir, <span class="dt">feature_type =</span> <span class="st">&quot;orbit&quot;</span>, <span class="dt">max_graphlet_size =</span> <span class="dv">4</span>,
-  <span class="dt">format =</span> edge_format, <span class="dt">pattern =</span> file_pattern, <span class="dt">mc.cores =</span> num_threads)
+  <span class="dt">source_dir =</span> source_dir, <span class="dt">format =</span> edge_format, <span class="dt">pattern =</span> file_pattern, 
+  <span class="dt">feature_type =</span> <span class="st">&quot;orbit&quot;</span>, <span class="dt">max_graphlet_size =</span> <span class="dv">4</span>)
 <span class="kw">names</span>(virus_gdds)</code></pre></div>
 <pre><code>## [1] &quot;EBV-1.txt&quot;   &quot;ECL-1.txt&quot;   &quot;HSV-1-1.txt&quot; &quot;KSHV-1.txt&quot;  &quot;VZV-1.txt&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Compute NetEMDs between all virus PPI graphs based on the computed graphlet- </span>
@@ -110,17 +103,10 @@ virus_gdds &lt;-<span class="st"> </span><span class="kw">gdd_for_all_graphs</sp
 <span class="co"># whether to calculate the NetEMD from the unaltered discrete GDD histograms</span>
 <span class="co"># (smoothing_window_width = 0; default) or to first apply &quot;nearest neighbour&quot; </span>
 <span class="co"># smoothing by &quot;smearing&quot; the discrete GDD histogram point masses across bins </span>
-<span class="co"># of unit width (smoothing_window_width = 1). In this example we choose to </span>
-<span class="co"># return only the NetEMDs between each pair of histograms, so set return_details </span>
-<span class="co"># = FALSE (default), which returns a named list containing (i) the NetEMDs </span>
-<span class="co"># and (ii) a table containing the graph names and indices within the input </span>
-<span class="co"># GDD list for each pair of graphs compared. When return_details = TRUE the</span>
-<span class="co"># returned list contains the following additional matrix elements for each </span>
-<span class="co"># graph pair: (iii) the minimal EMD for each GDD used to compute the NetEMD  </span>
-<span class="co"># and (iv) the offsets associated with these minimal GDD EMDs.</span>
-out &lt;-<span class="st"> </span><span class="kw">net_emds_for_all_graphs</span>(
-  <span class="dt">gdds =</span> virus_gdds, <span class="dt">method =</span> <span class="st">&quot;optimise&quot;</span>, <span class="dt">smoothing_window_width =</span> <span class="dv">0</span>, 
-  <span class="dt">return_details =</span> <span class="ot">FALSE</span>, <span class="dt">mc.cores =</span> num_threads)
+<span class="co"># of unit width (smoothing_window_width = 1). Returns a named list containing:</span>
+<span class="co"># (i) the NetEMDs and (ii) a table containing the graph names and indices </span>
+<span class="co"># within the input GDD list for each pair of graphs compared.</span>
+out &lt;-<span class="st"> </span><span class="kw">net_emds_for_all_graphs</span>(virus_gdds, <span class="dt">smoothing_window_width =</span> <span class="dv">0</span>)
 <span class="kw">print</span>(out<span class="op">$</span>net_emds)</code></pre></div>
 <pre><code>##  [1] 0.4876042 0.1662898 0.1607299 0.1994619 0.3986298 0.4024202 0.4029356
 ##  [8] 0.1581559 0.2164026 0.2323955</code></pre>
@@ -164,6 +150,13 @@ purrr<span class="op">::</span><span class="kw">map2</span>(virus_gdds, virus_gd
 ## [1] 7.162562e-16</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">.Machine<span class="op">$</span>double.eps</code></pre></div>
 <pre><code>## [1] 2.220446e-16</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The gdd_for_all_graphs and net_emds_for_all_graphs functions will run in </span>
+<span class="co"># parallel using multiple threads where supported. The number of threads</span>
+<span class="co"># used is determined by the global R option &quot;mc.cores&quot;. You can inspect the </span>
+<span class="co"># current value of this using options(&quot;mc.cores&quot;) and set it with </span>
+<span class="co"># options(&quot;mc.cores&quot; = &lt;num_cores&gt;). To fully utilise a modern consumer</span>
+<span class="co"># processor, this should be set to 2x the number of available processor </span>
+<span class="co"># cores as each core supports two threads.</span></code></pre></div>
 </div>
 
 
