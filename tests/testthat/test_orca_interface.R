@@ -7,6 +7,41 @@ test_that("Graph to indexed edge list round trip conversion works", {
   expect_true(all.equal(igraph::get.edgelist(g_orig),igraph::get.edgelist(g_orig)))
 })
 
+context("ORCA interface: Graphlet key")
+test_that("graphlet_key gives correct output for all supported max graphlet sizes", {
+  correct_graphlet_key_2 <- list(max_nodes = 2, id = c("G0"), node_count = c(2))
+  correct_graphlet_key_3 <- list(max_nodes = 3, id = c("G0", "G1", "G2"), 
+                                 node_count = c(2, 3, 3))
+  correct_graphlet_key_4 = list(max_nodes = 4, 
+                                id = c("G0", "G1", "G2", "G3", "G4", "G5", "G6",
+                                       "G7", "G8"),
+                                node_count = c(2, 3, 3, 4, 4, 4, 4, 4, 4))
+  correct_graphlet_key_5 <- list(max_nodes = 5,
+                                 id = c("G0", "G1", "G2", "G3", "G4", "G5", "G6",
+                                        "G7", "G8", "G9", "G10", "G11", "G12", 
+                                        "G13", "G14", "G15", "G16", "G17", 
+                                        "G18", "G19", "G20", "G21", "G22", 
+                                        "G23", "G24", "G25", "G26", "G27", 
+                                        "G28", "G29"),
+                                 node_count = c(2, 3, 3, 4, 4, 4, 4, 4, 4,
+                                                5, 5, 5, 5, 5, 5, 5, 
+                                                5, 5, 5, 5, 5, 5, 5,
+                                                5, 5, 5, 5, 5, 5, 5))
+  expect_equal(graphlet_key(2), correct_graphlet_key_2)
+  expect_equal(graphlet_key(3), correct_graphlet_key_3)
+  expect_equal(graphlet_key(4), correct_graphlet_key_4)
+  expect_equal(graphlet_key(5), correct_graphlet_key_5)
+  })
+
+test_that("graphlet_key gives error for unsupported max graphlet sizes", {
+  max_size_too_low <- c(1, 0, -1, -2, -3, -4, -5, -6)
+  max_size_too_high <- c(6, 7, 8, 9, 10)
+  max_size_not_int <- c(2.5, 3.5, 4.5)
+  purrr::map(max_size_too_low, function(s) {expect_error(graphlet_key(s))})
+  purrr::map(max_size_too_high, function(s) {expect_error(graphlet_key(s))})
+  purrr::map(max_size_not_int, function(s) {expect_error(graphlet_key(s))})
+})
+
 context("ORCA interface: Named ego networks")
 test_that("make_named_ego_graph labels each ego-network with the correct node name", {
   # Helper function to sort edgelists in consistent order 

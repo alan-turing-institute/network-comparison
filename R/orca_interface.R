@@ -303,7 +303,11 @@ orbit_to_graphlet_counts <- function(orbit_counts) {
 #' }
 #' @export
 graphlet_key <- function(max_graphlet_size) {
-  if(max_graphlet_size == 4) {
+  if(max_graphlet_size == 2) {
+    node_count <- c(2)
+  } else if(max_graphlet_size == 3) {
+    node_count <- c(2, rep(3,2))
+  } else if(max_graphlet_size == 4) {
     node_count <- c(2, rep(3,2), rep(4,6))
   } else if (max_graphlet_size == 5) {
     node_count <- c(2, rep(3,2), rep(4,6), rep(5, 21))
