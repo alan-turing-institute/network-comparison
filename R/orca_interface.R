@@ -363,3 +363,23 @@ gdd_for_all_graphs <- function(
                             ego_neighbourhood_size = ego_neighbourhood_size), 
                      SIMPLIFY = FALSE, mc.cores = mc.cores)
 }
+
+#' Generate a cross-comparison specification
+#' 
+#' Creates a cross-comparison matrix with all possible pair-wise combinations
+#' of elements from the provided list.
+#' @param named_list A named list of items for which an exhaustive pair-wise
+#' cross-comparison is required.
+#' @return A matrix with one row for each possible pair-wise combination
+#' of elements from the provided named list. The first and second columns  
+#' contain the names of the elements in the pair and the third and fourth  
+#'columns contain the indexes of these elements in the provided list.
+#' @export
+cross_comparison_spec <- function(named_list) {
+  indexes <- as.data.frame(t(utils::combn(1:length(named_list),2)))
+  names <- as.data.frame(cbind(names(named_list)[indexes[,1]], 
+                               names(named_list)[indexes[,2]]))
+  spec <- cbind(names, indexes)
+  colnames(spec) <- c("name_a", "name_b", "index_a", "index_b")
+  return(spec)
+}

@@ -481,7 +481,7 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals
                    ego_neighbourhood_size = 1))
 })
 
-context("ORCA interface: GDD for all graphs in a directory:")
+context("ORCA interface: GDD for all graphs in a directory")
 test_that("gdd_for_all_graphs works", {
   # Set source directory and file properties for Virus PPI graph edge files
   source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
@@ -533,4 +533,33 @@ test_that("gdd_for_all_graphs works", {
   compare_fn(feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 2)
   compare_fn(feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 2)
   
+})
+
+context("ORCA interface: Graph comparison")
+test_that("cross_comparison_spec works for virus PPI data", {
+  # Load viurs PPI network data in ORCA-compatible edge list format
+  data("virusppi")
+  
+  expected_name_A <- c(rep("EBV", 4), rep("ECL", 3), rep("HSV", 2), 
+                       rep("KSHV", 1), rep("VZV", 0))
+  expected_index_A <- c(rep(1, 4), rep(2, 3), rep(3, 2), rep(4, 1), rep(5, 0))
+  expected_name_B <- c(c("ECL", "HSV", "KSHV", "VZV"), c("HSV", "KSHV", "VZV"), 
+                       c("KSHV", "VZV"), c("VZV"))
+  expected_index_B <- c(c(2, 3, 4, 5), c(3, 4, 5), c(4, 5), c(5))
+  expected <- as.data.frame(cbind(expected_name_A, expected_name_B, 
+                                  expected_index_A, expected_index_B))
+  colnames(expected) <- c("name_a", "name_b", "index_a", "index_b")
+  
+  actual <- cross_comparison_spec(virusppi)
+  
+  matched_output <- function(actual, expected) {
+    dims_match <- all.equal(dim(as.matrix(expected)), dim(as.matrix(actual)))
+    data_matches <- all.equal(as.matrix(expected), as.matrix(actual))
+    headers_match <- all.equal(colnames(expected), colnames(actual))
+    return(dims_match && data_matches && headers_match)
+  }
+  
+  # Check that actual output matches one of the two acceptable outputs at each 
+  # cell
+  expect_true(matched_output(actual, expected))
 })

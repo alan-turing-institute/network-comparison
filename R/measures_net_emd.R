@@ -35,7 +35,7 @@
 net_emds_for_all_graphs <- function(
   gdds, method = "optimise", step_size = NULL, smoothing_window_width = 0, 
   return_details = FALSE, mc.cores = getOption("mc.cores", 2L)) {
-  comp_spec <- graph_cross_comparison_spec(gdds)
+  comp_spec <- cross_comparison_spec(gdds)
   out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {net_emd(
     gdds[[index_a]], gdds[[index_b]], method = method, return_details = return_details,
     smoothing_window_width = smoothing_window_width)
@@ -51,14 +51,6 @@ net_emds_for_all_graphs <- function(
     net_emds <- out
     ret <- list(net_emds = net_emds, comp_spec = comp_spec)
   }
-}
-
-graph_cross_comparison_spec <- function(gdds) {
-  indexes <- as.data.frame(t(utils::combn(1:length(gdds),2)))
-  names <- as.data.frame(cbind(names(gdds)[indexes[,1]], names(gdds)[indexes[,2]]))
-  spec <- cbind(names, indexes)
-  colnames(spec) <- c("name_a", "name_b", "index_a", "index_b")
-  return(spec)
 }
 
 #' NetEMD Network Earth Mover's Distance
