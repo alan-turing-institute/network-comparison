@@ -348,6 +348,15 @@ gdd_for_all_graphs <- function(
   graphs <- read_all_graphs_as_orca_graphs(
     source_dir = source_dir, format = format, pattern = pattern)
   # Calculate specified GDDs for each graph
+  # NOTE: mcapply only works on unix-like systems with system level forking 
+  # capability. This means it will work on Linux and OSX, but not Windows.
+  # For now, we just revert to single threaded operation on Windows
+  # TODO: Look into using the parLappy function on Windows
+  if(.Platform$OS.type != "unix") {
+    # Force cores to 1 if system is not unix-like as it will not support 
+    # forking
+    mc.cores = 1
+  }
   parallel::mcmapply(gdd, graphs, MoreArgs = 
                        list(feature_type = feature_type, 
                             max_graphlet_size = max_graphlet_size,
