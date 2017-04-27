@@ -38,7 +38,7 @@ Install the latest package from GitHub using:
 
 ### Installing additional optional dependencies
 Additional optional packages required to generate documentation, run tests or
-develop the package are listed in the `Suggests` section of the apckage
+develop the package are listed in the `Suggests` section of the package
 `DEPENDENCIES`  file. These will not be automatically installed by
 `devtools::install()` and, if required, each optional package will need to be
 separately installed using `devtools::install("<package_name>")`.
