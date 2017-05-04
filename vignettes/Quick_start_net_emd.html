@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martin O’Reilly" />
 
-<meta name="date" content="2017-04-26" />
+<meta name="date" content="2017-05-04" />
 
 <title>Quick start guide for NetEMD</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Quick start guide for NetEMD</h1>
 <h4 class="author"><em>Martin O’Reilly</em></h4>
-<h4 class="date"><em>2017-04-26</em></h4>
+<h4 class="date"><em>2017-05-04</em></h4>
 
 
 
@@ -93,7 +93,7 @@ virus_gdds &lt;-<span class="st"> </span><span class="kw">gdd_for_all_graphs</sp
   <span class="dt">source_dir =</span> source_dir, <span class="dt">format =</span> edge_format, <span class="dt">pattern =</span> file_pattern, 
   <span class="dt">feature_type =</span> <span class="st">&quot;orbit&quot;</span>, <span class="dt">max_graphlet_size =</span> <span class="dv">4</span>)
 <span class="kw">names</span>(virus_gdds)</code></pre></div>
-<pre><code>## [1] &quot;EBV-1.txt&quot;   &quot;ECL-1.txt&quot;   &quot;HSV-1-1.txt&quot; &quot;KSHV-1.txt&quot;  &quot;VZV-1.txt&quot;</code></pre>
+<pre><code>## [1] &quot;EBV.txt&quot;  &quot;ECL.txt&quot;  &quot;HSV.txt&quot;  &quot;KSHV.txt&quot; &quot;VZV.txt&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Compute NetEMDs between all virus PPI graphs based on the computed graphlet- </span>
 <span class="co"># based degree distributions using the default fast &quot;optimise&quot; method and no</span>
 <span class="co"># smoothing (default). The &quot;optimise&quot; method uses the built-in R optimise</span>
@@ -120,33 +120,33 @@ out &lt;-<span class="st"> </span><span class="kw">net_emds_for_all_graphs</span
 
 <span class="co"># Display NetEMDs for all network pairs, alongside the details of the network pairs</span>
 <span class="kw">print</span>(<span class="kw">cbind</span>(out<span class="op">$</span>comp_spec, out<span class="op">$</span>net_emds))</code></pre></div>
-<pre><code>##         name_a      name_b index_a index_b out$net_emds
-## 1    EBV-1.txt   ECL-1.txt       1       2    0.4876042
-## 2    EBV-1.txt HSV-1-1.txt       1       3    0.1662898
-## 3    EBV-1.txt  KSHV-1.txt       1       4    0.1607299
-## 4    EBV-1.txt   VZV-1.txt       1       5    0.1994619
-## 5    ECL-1.txt HSV-1-1.txt       2       3    0.3986298
-## 6    ECL-1.txt  KSHV-1.txt       2       4    0.4024202
-## 7    ECL-1.txt   VZV-1.txt       2       5    0.4029356
-## 8  HSV-1-1.txt  KSHV-1.txt       3       4    0.1581559
-## 9  HSV-1-1.txt   VZV-1.txt       3       5    0.2164026
-## 10  KSHV-1.txt   VZV-1.txt       4       5    0.2323955</code></pre>
+<pre><code>##      name_a   name_b index_a index_b out$net_emds
+## 1   EBV.txt  ECL.txt       1       2    0.4876042
+## 2   EBV.txt  HSV.txt       1       3    0.1662898
+## 3   EBV.txt KSHV.txt       1       4    0.1607299
+## 4   EBV.txt  VZV.txt       1       5    0.1994619
+## 5   ECL.txt  HSV.txt       2       3    0.3986298
+## 6   ECL.txt KSHV.txt       2       4    0.4024202
+## 7   ECL.txt  VZV.txt       2       5    0.4029356
+## 8   HSV.txt KSHV.txt       3       4    0.1581559
+## 9   HSV.txt  VZV.txt       3       5    0.2164026
+## 10 KSHV.txt  VZV.txt       4       5    0.2323955</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Confirm NetEMD of a graph with itself is zero within (or at least close to)</span>
 <span class="co"># the limits of machine precision</span>
 purrr<span class="op">::</span><span class="kw">map2</span>(virus_gdds, virus_gdds, net_emd)</code></pre></div>
-<pre><code>## $`EBV-1.txt`
+<pre><code>## $EBV.txt
 ## [1] 6.256724e-16
 ## 
-## $`ECL-1.txt`
+## $ECL.txt
 ## [1] 1.523036e-15
 ## 
-## $`HSV-1-1.txt`
+## $HSV.txt
 ## [1] 1.483447e-16
 ## 
-## $`KSHV-1.txt`
+## $KSHV.txt
 ## [1] 3.342511e-16
 ## 
-## $`VZV-1.txt`
+## $VZV.txt
 ## [1] 7.162562e-16</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">.Machine<span class="op">$</span>double.eps</code></pre></div>
 <pre><code>## [1] 2.220446e-16</code></pre>
