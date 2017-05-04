@@ -385,14 +385,16 @@ dhist_mean_location <- function(dhist) {
 dhist_variance <- function(dhist) {
   mean_centred_locations <- dhist$locations - dhist_mean_location(dhist)
   # Variance is E[X^2] - E[X]. However, for mean-centred data, E[X] is zero, 
-  # so variance is simply E[X^2]
+  # so variance is simply E[X^2]. Centring prior to squaring also helps avoid
+  # any potential integer overfloww issues (R uses a signed 32-bit integer 
+  # representation, so cannot handle integers over ~2.1 billion)
   if(dhist$smoothing_window_width == 0) {
     # For unsmoothed discrete histograms, the mass associated with each location
     # is located precisely at the lcoation. Therefore cariance (i.e. E[X^2])
     # is the mass-weighted sum of the mean-centred locations
     variance <- sum(dhist$masses * (mean_centred_locations)^2) / sum(dhist$masses)
   } else {
-    # For smoothed histograms, the mass associated with each location is "soothed"
+    # For smoothed histograms, the mass associated with each location is "smoothed"
     # uniformly across a bin centred on the location with width = smoothing_window_width
     # Variance (i.e. E[X^2]) is therefore the mass-weighted sum of the integrals
     # of x^2 over the mean-centred bins at each location.
