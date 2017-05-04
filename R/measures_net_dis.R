@@ -48,6 +48,34 @@ count_graphlets_ego_scaled <- function(
   }
 }
 
+#' Generate Netdis centred graphlets counts by subtracting expected counts
+#' @param graph A connected, undirected, simple graph as an \code{igraph} object.
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @param neighbourhood_size The number of steps from the source node to include
+#' nodes for each ego-network. 
+#' @param expected_ego_count_fn A function for generating expected ego-network
+#' graphlet counts for a graph. This function should take a connected, 
+#' undirected, simple graph as an \code{igraph} object for its only argument. 
+#' Where \code{expected_ego_count_fn} is specific to particular values of 
+#' \code{max_graphlet_size} or \code{neighbourhood_size}, care should be taken 
+#' to ensure that the values of these parameters passed to this function are
+#' consistent with those used when creating \code{expected_ego_count_fn}.
+#' @return A vector with centred counts for each graphlet type
+#' @export 
+netdis_centred_graphlet_counts <- function(
+  graph, max_graphlet_size, neighbourhood_size, expected_ego_count_fn = 
+    function(g) {0}) {
+  # Get unscaled ego-network graphlet counts
+  actual_counts <- count_graphlets_ego(graph, 
+                                       max_graphlet_size = max_graphlet_size,
+                                       neighbourhood_size = neighbourhood_size)
+  # Centre these counts by subtracting the expected counts
+  centred_counts <- actual_counts - expected_ego_count_fn(g)
+  # Sum centred counts over ego-networks
+  apply(centred_counts, MARGIN = 2, FUN = sum)
+}
+
 #' Generate Netdis expected graphlet count function
 #' 
 #' Generates a function to calculate expected ego-network graphlet counts for 
