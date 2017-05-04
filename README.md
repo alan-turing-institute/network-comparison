@@ -61,7 +61,7 @@ of functions you can select to load the more detailed help.
 
 ## References
 #### NetEMD
-Anatol E. Wegner, Luis Ospina-Forero, Robert E. Gaunt, Charlotte M. Deane, Gesine Reinert; Identifying networks with common organizational principles. [arXiv:1704.00387](https://arxiv.org/abs/1704.00387) (Open Access pre-print)
+Anatol E. Wegner, Luis Ospina-Forero, Robert E. Gaunt, Charlotte M. Deane, Gesine Reinert; Identifying networks with common organizational principles. [arXiv:1704.00387](https://arxiv.org/abs/1704.00387) [stat.ML] (Open Access pre-print)
 
 #### NetDis
 Waqar Ali, Tiago Rito, Gesine Reinert, Fengzhu Sun, Charlotte M. Deane; Alignment-free protein interaction network comparison. Bioinformatics 2014; 30 (17): i430-i437. https://doi.org/10.1093/bioinformatics/btu447 (Open Access)
