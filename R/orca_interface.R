@@ -82,6 +82,124 @@ read_orca_graph <- function(file, format = "ncol") {
   return(graph)
 }
 
+#' Read all graphs in a directory, simplifying as requested
+#' 
+#' Reads graph data from all files in a directory matching the specified
+#' filename pattern. From each file, an a igraph graph object is constructed
+#' and the requested subset of the following simplifications is made in the 
+#' following order:
+#'   1. Makes the graph undirected
+#'   2. Removes loops (where both endpoints of an edge are the same vertex)
+#'   3. Removes multiple edges (i.e. ensuring only one edge exists for each 
+#'      pair of endpoints)
+#'   4. Removes isolated vertices (i.e. vertices with no edges after the 
+#'      previous alterations)
+#' @param path Path to directory containing file with graph data
+#' @param format Format of graph data. Any format supported by 
+#' \code{igraph::read_graph} can be used.
+#' @param pattern Pattern to use to filter filenames. Any pattern supported by
+#' \code{dir} can be used.
+#' @param as_undirected If TRUE make graph edges undirected
+#' @param remove_loops If TRUE, remove edgeds that connect a vertex to itself
+#' @param remove_multiple If TRUE remove multiple edges connencting the same 
+#' pair of vertices
+#' @param remove_isolates If TRUE, remove vertices with no edges after the 
+#' previous alterations have been made
+#' @return A named list of simplified igraph graph object, with the name of each
+#' graph set to the name of the file it was read from.
+#' @export
+read_simple_graphs <- function(path, format = "ncol", pattern = "*", 
+            as_undirected = TRUE, remove_loops = TRUE, 
+            remove_multiple = TRUE, remove_isolates = TRUE) {
+  # Get list of all filenames in directory that match the pattern
+  file_names <- dir(path, pattern = pattern)
+  # Read graph data from each matched file as an igraph format graph
+  graphs <- purrr::map(file_names, function(file_name) {
+    read_orca_graph(file = file.path(source_dir, file_name), format = format)
+  })
+  # Perform any requested simplifications
+  graphs <- purrr::map(
+    graphs, simplify_graph, as_undirected = as_undirected,
+    remove_loops = remove_loops, remove_multiple = remove_multiple,
+    remove_isolates = remove_isolates)
+  # Name each graph with the name of the file it was read from
+  attr(graphs, "names") <- file_names
+  return(graphs)
+}
+
+#' Read a graph from file, simplifying as requested
+#' 
+#' Reads graph data from file, constructing an a igraph graph object, making the
+#' requested subset of the following simplifications in the following order:
+#'   1. Makes the graph undirected
+#'   2. Removes loops (where both endpoints of an edge are the same vertex)
+#'   3. Removes multiple edges (i.e. ensuring only one edge exists for each 
+#'      pair of endpoints)
+#'   4. Removes isolated vertices (i.e. vertices with no edges after the 
+#'      previous alterations)
+#' @param path Path to file containing graph data
+#' @param format Format of graph data. All formats supported by 
+#' \code{igraph::read_graph} are supported.
+#' @param graph Original igraph graph object
+#' @param as_undirected If TRUE make graph edges undirected
+#' @param remove_loops If TRUE, remove edgeds that connect a vertex to itself
+#' @param remove_multiple If TRUE remove multiple edges connencting the same 
+#' pair of vertices
+#' @param remove_isolates If TRUE, remove vertices with no edges after the 
+#' previous alterations have been made
+#' @return A simplified igraph graph object
+#' @export
+read_simple_graph <- function(path, format, as_undirected = TRUE, remove_loops = TRUE, 
+           remove_multiple = TRUE, remove_isolates = TRUE) {
+  # Read graph from file
+  graph <- igraph::read.graph(file = path, format = format)
+  # Perform any requested simplifications
+  simplify_graph(graph)
+}
+
+#' Simplify an igraph
+#' 
+#' Takes a igraph graph object and makes the requested subset of the following
+#' simplifications in the following order:
+#'   1. Makes the graph undirected
+#'   2. Removes loops (where both endpoints of an edge are the same vertex)
+#'   3. Removes multiple edges (i.e. ensuring only one edge exists for each 
+#'      pair of endpoints)
+#'   4. Removes isolated vertices (i.e. vertices with no edges after the 
+#'      previous alterations)
+#' @param graph An graph or list of graphs in igraph format
+#' @param as_undirected If TRUE make graph edges undirected
+#' @param remove_loops If TRUE, remove edgeds that connect a vertex to itself
+#' @param remove_multiple If TRUE remove multiple edges connencting the same 
+#' pair of vertices
+#' @param remove_isolates If TRUE, remove vertices with no edges after the 
+#' previous alterations have been made
+#' @return A simplified igraph graph object
+#' @export
+simplify_graph<- function(graph, as_undirected = TRUE, remove_loops = TRUE, 
+               remove_multiple = TRUE, remove_isolates = TRUE) {
+  if(as_undirected) {
+    # Ensure graph is undirected
+    graph <- igraph::as.undirected(graph)
+  }
+  if(remove_loops || remove_multiple) {
+    # Remove loops (where both endpoints of an edge are the same vertex) and 
+    # multiple edges (where two edges have the same endpoints [in the same order
+    # for directed graphs])
+    graph <- igraph::simplify(graph, remove.loops = remove_loops, 
+                              remove.multiple = remove_multiple)
+  }
+  if(remove_isolates) { 
+    # Remove vertices that have no edges connecting them to other vertices
+    # NOTE: Vertices that only connect to themselves will only be removed if
+    # their self-connecting edges have been removed by setting remove_loops to
+    # TRUE
+    isolated_vertex_indices <- (igraph::degree(graph) == 0)
+    graph <- igraph::delete.vertices(graph, isolated_vertex_indices)
+  }
+  return(graph)
+}
+
 #' Load all graphs in a directory, converting to ORCA compatible graphs
 #' 
 #' Loads graphs from all files matching the given pattern in the given directory

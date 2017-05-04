@@ -2,7 +2,7 @@ data_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
 context("ORCA interface: Graph to indexed edge round trip")
 test_that("Graph to indexed edge list round trip conversion works", {
-  g_orig <- igraph::read_graph(file = file.path(data_dir, "EBV-1.txt"), format = "ncol")
+  g_orig <- igraph::read_graph(file = file.path(data_dir, "EBV.txt"), format = "ncol")
   g_rtrip <- netdist::indexed_edges_to_graph(graph_to_indexed_edges(g_orig))
   expect_true(all.equal(igraph::get.edgelist(g_orig),igraph::get.edgelist(g_orig)))
 })
@@ -500,7 +500,7 @@ test_that("gdd_for_all_graphs works", {
       gdd(virusppi$KSHV, feature_type, max_graphlet_size, ego_neighbourhood_size),
       gdd(virusppi$VZV, feature_type, max_graphlet_size, ego_neighbourhood_size)
     )
-    names(gdds) <- c("EBV-1.txt", "ECL-1.txt", "HSV-1-1.txt", "KSHV-1.txt", "VZV-1.txt")
+    names(gdds) <- c("EBV.txt", "ECL.txt", "HSV.txt", "KSHV.txt", "VZV.txt")
     gdds
   }
 
