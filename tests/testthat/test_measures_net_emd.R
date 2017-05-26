@@ -476,8 +476,8 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
   
   purrr::map2(rand_dhists, offset_lists, function(dhist, offsets) {
     purrr::map(offsets, function(offset){
-      expect_self_net_emd_correct(dhist, offset, "fixed_step", r
-                                  eturn_details = TRUE)
+      expect_self_net_emd_correct(dhist, offset, "fixed_step", 
+                                  return_details = TRUE)
     })
   })
 })
