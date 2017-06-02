@@ -533,7 +533,7 @@ context("Measures NetEMD: Random graphs (EMD)")
 test_that("emd return 0 when comparing graphlet orbit degree distributions of 
           random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
-  random_graphs <- read_all_graphs_as_orca_graphs(
+  random_graphs <- read_simple_graphs(
     system.file(package = "netdist", "extdata", "random"),
     format = "ncol", pattern = "*")
   data_indexes <- 1:length(random_graphs)
@@ -554,7 +554,7 @@ context("Measures NetEMD: Random graphs (NetEMD)")
 test_that("net_emd return 0 when comparing graphlet orbit degree distributions 
           of random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
-  random_graphs <- read_all_graphs_as_orca_graphs(
+  random_graphs <- read_simple_graphs(
     system.file(package = "netdist", "extdata", "random"),
     format = "ncol", pattern = "*")
   data_indexes <- 1:length(random_graphs)
