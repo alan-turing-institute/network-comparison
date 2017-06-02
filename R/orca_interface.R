@@ -122,8 +122,13 @@ read_simple_graphs <- function(source_dir, format = "ncol", pattern = "*",
     graphs, simplify_graph, as_undirected = as_undirected,
     remove_loops = remove_loops, remove_multiple = remove_multiple,
     remove_isolates = remove_isolates)
-  # Name each graph with the name of the file it was read from
-  attr(graphs, "names") <- file_names
+  # Name each graph with the name of the file it was read from (with any
+  # extension moved)
+  names <- purrr::simplify(purrr::map(strsplit(file_names, "\\."), 
+                                      function(s) {
+                                        paste(head(s, -1), collapse = ".")
+                                        }))
+  attr(graphs, "names") <- names
   return(graphs)
 }
 
