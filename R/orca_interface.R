@@ -281,17 +281,28 @@ gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4,
 #' orbit (columns) at each vertex in the graph (rows).
 #' @export
 count_orbits <- function(graph, max_graphlet_size) {
-    if(max_graphlet_size == 4) {
-      orca_fn <- orca::count4
-    } else if(max_graphlet_size == 5) {
-      orca_fn <- orca::count5
-    } else {
-      stop("Unsupported maximum graphlet size")
-    }
-    indexed_edges <- graph_to_indexed_edges(graph)
+  if(max_graphlet_size == 4) {
+    orca_fn <- orca::count4
+  } else if(max_graphlet_size == 5) {
+    orca_fn <- orca::count5
+  } else {
+    stop("Unsupported maximum graphlet size")
+  }
+  indexed_edges <- graph_to_indexed_edges(graph)
+  num_edges <- dim(indexed_edges)[[1]]
+  if(num_edges >= 1) {
     orbit_counts <- orca_fn(indexed_edges)
-    rownames(orbit_counts) <- igraph::get.vertex.attribute(graph, name = "name")
-    return(orbit_counts)
+  } else {
+    # ORCA functions expect at least one edge, so handle this case separately
+    # and manually construct empty orbit count matrix
+    orbit_ids <- orbit_key(max_graphlet_size)$id
+    num_orbits <- length(orbit_ids)
+    num_nodes <- igraph::vcount(graph)
+    orbit_counts <- matrix(0, nrow = num_nodes, ncol = num_orbits)
+    colnames(orbit_counts) <- orbit_ids
+  }
+  rownames(orbit_counts) <- igraph::get.vertex.attribute(graph, name = "name")
+  return(orbit_counts)
 }
 
 #' Calculate graphlet counts
@@ -439,6 +450,37 @@ graphlet_key <- function(max_graphlet_size) {
     paste('G', index, sep = "")}))
   name <- 
   return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
+}
+
+#' Orbit key
+#' 
+#' Metdata about orbit groups.
+#' @param max_graphlet_size Maximum number of nodes graphlets can contain
+#' @return Metadata list with the following named fields:
+#' \itemize{
+#'   \item \code{max_nodes}: Maximum number of nodes graphlets can contain
+#'   \item \code{id}: ID of each graphlet in format On, where n is in range 0 to 
+#'  num_orbits
+#'   \item \code{node_count}: Number of nodes contained within each graphlet
+#' }
+#' @export
+orbit_key <- function(max_graphlet_size) {
+  if(max_graphlet_size == 2) {
+    node_count <- c(2)
+  } else if(max_graphlet_size == 3) {
+    node_count <- c(2, rep(3,3))
+  } else if(max_graphlet_size == 4) {
+    node_count <- c(2, rep(3,3), rep(4,11))
+  } else if (max_graphlet_size == 5) {
+    node_count <- c(2, rep(3,3), rep(4,11), rep(5, 58))
+  } else {
+    stop("Unsupported maximum graphlet size")
+  }
+  max_node_index <- length(node_count)-1
+  id <- purrr::simplify(purrr::map(0:max_node_index, function(index) {
+    paste('O', index, sep = "")}))
+  name <- 
+    return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
 }
 
 #' Load all graphs in a directory and calculates their Graphlet-based Degree
