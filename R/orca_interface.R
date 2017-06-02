@@ -435,6 +435,18 @@ orbit_key <- function(max_graphlet_size) {
     return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
 }
 
+#' Graphlet IDs for size
+#'
+#' List IDs for all graphlets of a specified size
+#' @param graphlet_size Graphlet size (i.e. number of nodes in the graphlet)
+#' @return A vector containing the IDs of all graphlets made up of the specified
+#' number of nodes
+#' @export
+graphlet_ids_for_size <- function(graphlet_size) {
+  graphlet_key <- graphlet_key(graphlet_size)
+  graphlet_key$id[graphlet_key$node_count==graphlet_size]
+}
+
 #' Load all graphs in a directory and calculates their Graphlet-based Degree
 #' Distributions (GDDs)
 #' 
