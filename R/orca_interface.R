@@ -38,50 +38,6 @@ indexed_edges_to_graph <- function(indexed_edges) {
   return(graph)
 }
 
-#' Make arbitrary igraph ORCA compatible
-#' 
-#' Takes a igraph graph object and does the following to make the graph
-#' connected, undirected and simple to ensure compatiblity with the ORCA
-#' fast orbit calculation package:
-#'   1. Makes the graph undirected
-#'   2. Removes loops (where both endpoints of an edge are the same vertex)
-#'   3. Removes multiple edges (i.e. ensuring only one edge exists for each 
-#'      pair of endpoints)
-#'   4. Removes isolated vertices (i.e. vertices with no edges after the 
-#'      previous alterations)
-#' @param graph Original igraph graph object
-#' @return An ORCA compatible igraph graph object
-#' @export
-graph_to_orca_graph <- function(graph) {
-  # Ensure graph is undirected
-  graph <- igraph::as.undirected(graph)
-  # Remove loops (where both endpoints of an edge are the same vertex) and 
-  # multiple edges (where two edges have the same endpoints [in the same order
-  # for directed graphs])
-  graph <- igraph::simplify(graph, remove.loops = TRUE, remove.multiple = TRUE)
-  # Remove vertices that have no edges to ensure no missing IDs when generating
-  # an ID-based edge list from the graph
-  isolated_vertex_indices <- (igraph::degree(graph) == 0)
-  graph <- igraph::delete.vertices(graph, isolated_vertex_indices)
-  return(graph)
-}
-
-#' Load graph from file and process to be ORCA compatible
-#' 
-#' Loads a graph from file as a connected, undirected, simple 
-#' \code{igraph} object. 
-#' @param file Path to graph file
-#' @param format Format of graph file
-#' @return An ORCA compatible igraph graph object
-#' @export
-read_orca_graph <- function(file, format = "ncol") {
-  # Read graph from file
-  graph <- igraph::read.graph(file = file, format = format)
-  # Make graph compatibe with ORCA fast orbit calculation package
-  graph <- graph_to_orca_graph(graph)
-  return(graph)
-}
-
 #' Read all graphs in a directory, simplifying as requested
 #' 
 #' Reads graph data from all files in a directory matching the specified
@@ -113,9 +69,13 @@ read_simple_graphs <- function(source_dir, format = "ncol", pattern = "*",
             remove_multiple = TRUE, remove_isolates = TRUE) {
   # Get list of all filenames in directory that match the pattern
   file_names <- dir(source_dir, pattern = pattern)
-  # Read graph data from each matched file as an igraph format graph
+  # Read graph data from each matched file as an igraph format graph, 
+  # simplifying as requested
   graphs <- purrr::map(file_names, function(file_name) {
-    read_orca_graph(file = file.path(source_dir, file_name), format = format)
+    read_simple_graph(file = file.path(source_dir, file_name), format = format, 
+                      as_undirected = as_undirected, remove_loops = remove_loops, 
+                      remove_multiple = remove_multiple, 
+                      remove_isolates = remove_isolates)
   })
   # Perform any requested simplifications
   graphs <- purrr::map(
@@ -154,12 +114,21 @@ read_simple_graphs <- function(source_dir, format = "ncol", pattern = "*",
 #' previous alterations have been made
 #' @return A simplified igraph graph object
 #' @export
-read_simple_graph <- function(path, format, as_undirected = TRUE, remove_loops = TRUE, 
-           remove_multiple = TRUE, remove_isolates = TRUE) {
-  # Read graph from file
-  graph <- igraph::read.graph(file = path, format = format)
+read_simple_graph <- function(file, format, as_undirected = TRUE, 
+                              remove_loops = TRUE, remove_multiple = TRUE, 
+                              remove_isolates = TRUE) {
+  # Read graph from file. NOTE: igraph only supported the "directed" argument
+  # for some formats, but passes it to formats that don't support it, which 
+  # then throw an error
+  if(format %in% c("edgelist", "ncol", "lgl", "dimacs", "dl")) {
+    graph <- igraph::read_graph(file = file, format = format, directed = TRUE)
+  } else {
+    graph <- igraph::read_graph(file = file, format = format)
+  }
   # Perform any requested simplifications
-  simplify_graph(graph)
+  simplify_graph(graph, as_undirected = as_undirected, 
+                 remove_loops = remove_loops, remove_multiple = remove_multiple, 
+                 remove_isolates = remove_isolates)
 }
 
 #' Simplify an igraph
@@ -181,11 +150,11 @@ read_simple_graph <- function(path, format, as_undirected = TRUE, remove_loops =
 #' previous alterations have been made
 #' @return A simplified igraph graph object
 #' @export
-simplify_graph<- function(graph, as_undirected = TRUE, remove_loops = TRUE, 
+simplify_graph <- function(graph, as_undirected = TRUE, remove_loops = TRUE, 
                remove_multiple = TRUE, remove_isolates = TRUE) {
   if(as_undirected) {
     # Ensure graph is undirected
-    graph <- igraph::as.undirected(graph)
+    graph <- igraph::as.undirected(graph, mode = "each")
   }
   if(remove_loops || remove_multiple) {
     # Remove loops (where both endpoints of an edge are the same vertex) and 
@@ -203,28 +172,6 @@ simplify_graph<- function(graph, as_undirected = TRUE, remove_loops = TRUE,
     graph <- igraph::delete.vertices(graph, isolated_vertex_indices)
   }
   return(graph)
-}
-
-#' Load all graphs in a directory, converting to ORCA compatible graphs
-#' 
-#' Loads graphs from all files matching the given pattern in the given directory
-#' as connected, undirected, simple \code{igraph} objects. 
-#' @param source_dir Path to graph directory
-#' @param format Format of graph files
-#' @param pattern Filename pattern to match graph files
-#' @return A list of ORCA compatible graphs, with element names corresponding 
-#' to the names of the files each graph was loaded from
-#' @export
-read_all_graphs_as_orca_graphs <- function (source_dir, format = "ncol", pattern = ".txt") {
-  # Get list of all filenames in firectory that match the pattern
-  file_names <- dir(source_dir, pattern = pattern)
-  # Read graph data from each ".txt" file as an ORCA-compatible indexed edge list
-  graphs <- purrr::map(file_names, function(file_name) {
-    read_orca_graph(file = file.path(source_dir, file_name), format = "ncol")
-  })
-  # Name each graph with the name of the file it was read from
-  attr(graphs, "names") <- file_names
-  return(graphs)
 }
 
 #' ORCA vertex graphlet or orbit counts to graphlet-based histograms
@@ -510,7 +457,7 @@ gdd_for_all_graphs <- function(
   max_graphlet_size = 4, ego_neighbourhood_size = 0,
   mc.cores = getOption("mc.cores", 2L)) {
   # Read graphs from source directory as ORCA-compatible edge lists
-  graphs <- read_all_graphs_as_orca_graphs(
+  graphs <- read_simple_graphs(
     source_dir = source_dir, format = format, pattern = pattern)
   # Calculate specified GDDs for each graph
   # NOTE: mcapply only works on unix-like systems with system level forking 

@@ -4,12 +4,10 @@
 \alias{read_simple_graph}
 \title{Read a graph from file, simplifying as requested}
 \usage{
-read_simple_graph(path, format, as_undirected = TRUE, remove_loops = TRUE,
+read_simple_graph(file, format, as_undirected = TRUE, remove_loops = TRUE,
   remove_multiple = TRUE, remove_isolates = TRUE)
 }
 \arguments{
-\item{path}{Path to file containing graph data}
-
 \item{format}{Format of graph data. All formats supported by 
 \code{igraph::read_graph} are supported.}
 
@@ -22,6 +20,8 @@ pair of vertices}
 
 \item{remove_isolates}{If TRUE, remove vertices with no edges after the 
 previous alterations have been made}
+
+\item{path}{Path to file containing graph data}
 
 \item{graph}{Original igraph graph object}
 }
