@@ -33,6 +33,41 @@ test_that("graphlet_key gives correct output for all supported max graphlet size
   expect_equal(graphlet_key(5), correct_graphlet_key_5)
   })
 
+context("ORCA interface: Orbit key")
+test_that("orbit_key gives correct output for all supported max graphlet sizes", {
+  correct_orbit_key_2 <- list(max_nodes = 2, id = c("O0"), node_count = c(2))
+  correct_orbit_key_3 <- list(max_nodes = 3, id = c("O0", "O1", "O2", "O3"), 
+                                 node_count = c(2, 3, 3, 3))
+  correct_orbit_key_4 = list(max_nodes = 4, 
+                                id =  c("O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", 
+                                        "O10", "O11", "O12", "O13", "O14"),
+                                node_count = c(2, 3, 3, 3,
+                                               4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4))
+  correct_orbit_key_5 <- list(max_nodes = 5,
+                                 id =  c("O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", 
+                                         "O10", "O11", "O12", "O13", "O14", "O15", "O16", "O17", 
+                                         "O18", "O19", "O20", "O21", "O22", 
+                                         "O23", "O24", "O25", "O26", "O27", "O28", "O29",
+                                         "O30", "O31", "O32", "O33", "O34", "O35", "O36", "O37",
+                                         "O38", "O39", "O40", "O41", "O42", "O43", "O44", "O45",
+                                         "O46", "O47", "O48", "O49", "O50", "O51", "O52", "O53",
+                                         "O54", "O55", "O56", "O57", "O58", "O59", "O60", "O61",
+                                         "O62", "O63", "O64", "O65", "O66", "O67", "O68", "O69",
+                                         "O70", "O71", "O72"),
+                                 node_count = c(2, 3, 3, 3, 
+                                                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+                                                5, 5, 5, 5, 5, 5, 5, 5))
+  expect_equal(orbit_key(2), correct_orbit_key_2)
+  expect_equal(orbit_key(3), correct_orbit_key_3)
+  expect_equal(orbit_key(4), correct_orbit_key_4)
+  expect_equal(orbit_key(5), correct_orbit_key_5)
+})
+
 test_that("graphlet_key gives error for unsupported max graphlet sizes", {
   max_size_too_low <- c(1, 0, -1, -2, -3, -4, -5, -6)
   max_size_too_high <- c(6, 7, 8, 9, 10)
@@ -562,4 +597,39 @@ test_that("cross_comparison_spec works for virus PPI data", {
   # Check that actual output matches one of the two acceptable outputs at each 
   # cell
   expect_true(matched_output(actual, expected))
+})
+
+context("Orbit count wrapper")
+test_that("Single and zero node graphs are gracefully handled", {
+  single_node_graph <- igraph::graph_from_adjacency_matrix(0, mode = "undirected")
+  zero_node_graph <- igraph::delete.vertices(single_node_graph, 1)
+  names4 <- c("O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", 
+              "O10", "O11", "O12", "O13", "O14")
+  names5 <- c(names4, c("O15", "O16", "O17", "O18", "O19", "O20", "O21", "O22", 
+                        "O23", "O24", "O25", "O26", "O27", "O28", "O29",
+                        "O30", "O31", "O32", "O33", "O34", "O35", "O36", "O37",
+                        "O38", "O39", "O40", "O41", "O42", "O43", "O44", "O45",
+                        "O46", "O47", "O48", "O49", "O50", "O51", "O52", "O53",
+                        "O54", "O55", "O56", "O57", "O58", "O59", "O60", "O61",
+                        "O62", "O63", "O64", "O65", "O66", "O67", "O68", "O69",
+                        "O70", "O71", "O72"))
+  expected_zero_node_counts4 <- matrix(0, nrow = 0, ncol = length(names4))
+  colnames(expected_zero_node_counts4) <- names4
+  expected_zero_node_counts5 <- matrix(0, nrow = 0, ncol = length(names5))
+  colnames(expected_zero_node_counts5) <- names5
+  
+  expected_single_node_counts4 <- matrix(0, nrow = 1, ncol = length(names4))
+  colnames(expected_single_node_counts4) <- names4
+  expected_single_node_counts5 <- matrix(0, nrow = 1, ncol = length(names5))
+  colnames(expected_single_node_counts5) <- names5
+  
+  expect_equal(expected_zero_node_counts4, 
+               count_orbits(zero_node_graph, max_graphlet_size = 4))
+  expect_equal(expected_zero_node_counts5, 
+               count_orbits(zero_node_graph, max_graphlet_size = 5))
+  
+  expect_equal(expected_single_node_counts4, 
+               count_orbits(single_node_graph, max_graphlet_size = 4))
+  expect_equal(expected_single_node_counts5, 
+               count_orbits(single_node_graph, max_graphlet_size = 5))
 })
