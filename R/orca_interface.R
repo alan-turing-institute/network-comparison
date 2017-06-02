@@ -108,11 +108,11 @@ read_orca_graph <- function(file, format = "ncol") {
 #' @return A named list of simplified igraph graph object, with the name of each
 #' graph set to the name of the file it was read from.
 #' @export
-read_simple_graphs <- function(path, format = "ncol", pattern = "*", 
+read_simple_graphs <- function(source_dir, format = "ncol", pattern = "*", 
             as_undirected = TRUE, remove_loops = TRUE, 
             remove_multiple = TRUE, remove_isolates = TRUE) {
   # Get list of all filenames in directory that match the pattern
-  file_names <- dir(path, pattern = pattern)
+  file_names <- dir(source_dir, pattern = pattern)
   # Read graph data from each matched file as an igraph format graph
   graphs <- purrr::map(file_names, function(file_name) {
     read_orca_graph(file = file.path(source_dir, file_name), format = format)

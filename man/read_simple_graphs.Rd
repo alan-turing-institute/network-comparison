@@ -4,13 +4,11 @@
 \alias{read_simple_graphs}
 \title{Read all graphs in a directory, simplifying as requested}
 \usage{
-read_simple_graphs(path, format = "ncol", pattern = "*",
+read_simple_graphs(source_dir, format = "ncol", pattern = "*",
   as_undirected = TRUE, remove_loops = TRUE, remove_multiple = TRUE,
   remove_isolates = TRUE)
 }
 \arguments{
-\item{path}{Path to directory containing file with graph data}
-
 \item{format}{Format of graph data. Any format supported by 
 \code{igraph::read_graph} can be used.}
 
@@ -26,6 +24,8 @@ pair of vertices}
 
 \item{remove_isolates}{If TRUE, remove vertices with no edges after the 
 previous alterations have been made}
+
+\item{path}{Path to directory containing file with graph data}
 }
 \value{
 A named list of simplified igraph graph object, with the name of each
