@@ -535,7 +535,7 @@ test_that("gdd_for_all_graphs works", {
       gdd(virusppi$KSHV, feature_type, max_graphlet_size, ego_neighbourhood_size),
       gdd(virusppi$VZV, feature_type, max_graphlet_size, ego_neighbourhood_size)
     )
-    names(gdds) <- c("EBV.txt", "ECL.txt", "HSV.txt", "KSHV.txt", "VZV.txt")
+    names(gdds) <- c("EBV", "ECL", "HSV-1", "KSHV", "VZV")
     gdds
   }
 
@@ -547,14 +547,12 @@ test_that("gdd_for_all_graphs works", {
                        ego_neighbourhood_size = ego_neighbourhood_size,
                        mc.cores = num_threads)
   }
-  
   # Helper function to make comparison code clearer
   compare_fn <- function(feature_type, max_graphlet_size, ego_neighbourhood_size) {
-    expect_equal(actual_gdd_fn(feature_type, max_graphlet_size, ego_neighbourhood_size), 
-                 expected_gdd_fn(feature_type, max_graphlet_size, ego_neighbourhood_size)
-                 )
+    actual_gdds <- actual_gdd_fn(feature_type, max_graphlet_size, ego_neighbourhood_size)
+    expected_gdds <- expected_gdd_fn(feature_type, max_graphlet_size, ego_neighbourhood_size)
+    expect_equal(actual_gdds, expected_gdds)
   }
-  
   # Map over test parameters, comparing actual gdds to expected
   # No ego-networks
   compare_fn(feature_type = "orbit", max_graphlet_size = 4, ego_neighbourhood_size = 0)
@@ -575,10 +573,10 @@ test_that("cross_comparison_spec works for virus PPI data", {
   # Load viurs PPI network data in ORCA-compatible edge list format
   data("virusppi")
   
-  expected_name_A <- c(rep("EBV", 4), rep("ECL", 3), rep("HSV", 2), 
+  expected_name_A <- c(rep("EBV", 4), rep("ECL", 3), rep("HSV-1", 2), 
                        rep("KSHV", 1), rep("VZV", 0))
   expected_index_A <- c(rep(1, 4), rep(2, 3), rep(3, 2), rep(4, 1), rep(5, 0))
-  expected_name_B <- c(c("ECL", "HSV", "KSHV", "VZV"), c("HSV", "KSHV", "VZV"), 
+  expected_name_B <- c(c("ECL", "HSV-1", "KSHV", "VZV"), c("HSV-1", "KSHV", "VZV"), 
                        c("KSHV", "VZV"), c("VZV"))
   expected_index_B <- c(c(2, 3, 4, 5), c(3, 4, 5), c(4, 5), c(5))
   expected <- as.data.frame(cbind(expected_name_A, expected_name_B, 
@@ -588,9 +586,9 @@ test_that("cross_comparison_spec works for virus PPI data", {
   actual <- cross_comparison_spec(virusppi)
   
   matched_output <- function(actual, expected) {
-    dims_match <- all.equal(dim(as.matrix(expected)), dim(as.matrix(actual)))
-    data_matches <- all.equal(as.matrix(expected), as.matrix(actual))
-    headers_match <- all.equal(colnames(expected), colnames(actual))
+    dims_match <- identical(dim(as.matrix(expected)), dim(as.matrix(actual)))
+    data_matches <- identical(as.matrix(expected), as.matrix(actual))
+    headers_match <- identical(colnames(expected), colnames(actual))
     return(dims_match && data_matches && headers_match)
   }
   
