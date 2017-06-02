@@ -49,6 +49,7 @@ count_graphlets_ego_scaled <- function(
 }
 
 #' Generate Netdis centred graphlets counts by subtracting expected counts
+#' 
 #' @param graph A connected, undirected, simple graph as an \code{igraph} object.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count. 
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
@@ -160,7 +161,8 @@ netdis_expected_graphlet_counts_ego <- function(
                density_breaks = density_breaks,
                density_binned_reference_counts = density_binned_reference_counts)
   names(expected_graphlet_counts) <- names(ego_networks)
-  expected_graphlet_counts
+  # Simplify list to array
+  t(simplify2array(expected_graphlet_counts))
 }
 
 #' INTERNAL FUNCTION - Do not call directly

@@ -548,8 +548,9 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
   expected_expected_graphlet_counts_fn <- function(density_index, node_count) {
     reference_counts <- scaled_reference_counts[density_index,]
     reference_counts * choose(node_count, graphlet_sizes)
+    
   }
-  # Determine expected expected graphlet counts
+  # Determine expected and actual expected graphlet counts
   expected_expected_graphlet_counts <- 
     purrr::map2(density_indexes, num_nodes, expected_expected_graphlet_counts_fn)
   actual_expected_graphlet_counts <- 
@@ -557,7 +558,7 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
                max_graphlet_size = max_graphlet_size, 
                density_breaks = density_breaks, 
                density_binned_reference_counts = scaled_reference_counts)
-  # Check actual against expected
+  # Map over each graph and compare expected with actual
   purrr::map2(actual_expected_graphlet_counts,
               expected_expected_graphlet_counts, expect_equal)
 })
@@ -586,7 +587,6 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
   graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
   graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
   graphlet_sizes <- c(2, 3, 3, 4, 4, 4, 4, 4, 4)
-  names(graphlet_sizes) <- graphlet_labels
   max_graphlet_size = 4
   # Make graph ego networks
   ego_networks_o1 <- make_named_ego_graph(graph, order = 1)
@@ -621,21 +621,31 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
     c(81, 82, 83, 84, 85, 86 ,87, 88, 89),
     c(91, 92, 93, 94, 95, 96, 97, 98, 99)
   )
+  expected_dims <- dim(scaled_reference_counts)
   
   # Helper function to calculate expected expected graphlet counts
   expected_expected_graphlet_counts_fn <- function(density_index, node_count) {
     reference_counts <- scaled_reference_counts[density_index,]
     reference_counts * choose(node_count, graphlet_sizes)
   }
-  # Calculate expected graphlet counts
-  expected_expected_graphlet_counts_ego_o1 <- purrr::map2(
+  # Calculate expected graphlet counts. NOTE: We expect a matrix with graphlet
+  # types as columns and ego networks for nodes in graph as rows
+  expected_expected_graphlet_counts_ego_o1 <- t(simplify2array(purrr::map2(
     density_indexes_o1, num_nodes_o1, expected_expected_graphlet_counts_fn
-  )
-  names(expected_expected_graphlet_counts_ego_o1) <- names(ego_networks_o1)
-  expected_expected_graphlet_counts_ego_o2 <- purrr::map2(
+  )))
+  expected_expected_graphlet_counts_ego_o2 <- t(simplify2array(purrr::map2(
     density_indexes_o2, num_nodes_o2, expected_expected_graphlet_counts_fn
-  )
-  names(expected_expected_graphlet_counts_ego_o2) <- names(ego_networks_o2)
+  )))
+  # Sanity check for expected output shape. Should be matrix with graphlet types
+  # as columns and nodes as rows
+  expect_equal(dim(expected_expected_graphlet_counts_ego_o1), expected_dims)
+  expect_equal(dim(expected_expected_graphlet_counts_ego_o2), expected_dims)
+  # Set column labels to graphlet names
+  colnames(expected_expected_graphlet_counts_ego_o1) <- graphlet_labels
+  colnames(expected_expected_graphlet_counts_ego_o2) <- graphlet_labels
+  # Set row labels to ego network names
+  rownames(expected_expected_graphlet_counts_ego_o1) <- names(ego_networks_o1)
+  rownames(expected_expected_graphlet_counts_ego_o2) <- names(ego_networks_o2)
   
   # Calculate actual output of function under test
   actual_expected_graphlet_counts_ego_o1 <- 
@@ -789,14 +799,14 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
     reference_counts * choose(node_count, graphlet_sizes)
   }
   # Calculate expected graphlet counts
-  expected_expected_graphlet_counts_ego_o1 <- purrr::map2(
+  expected_expected_graphlet_counts_ego_o1 <- t(simplify2array(purrr::map2(
     density_indexes_o1, num_nodes_o1, expected_expected_graphlet_counts_o1_fn
-  )
-  names(expected_expected_graphlet_counts_ego_o1) <- names(ego_networks_o1)
-  expected_expected_graphlet_counts_ego_o2 <- purrr::map2(
+  )))
+  rownames(expected_expected_graphlet_counts_ego_o1) <- names(ego_networks_o1)
+  expected_expected_graphlet_counts_ego_o2 <- t(simplify2array(purrr::map2(
     density_indexes_o2, num_nodes_o2, expected_expected_graphlet_counts_o2_fn
-  )
-  names(expected_expected_graphlet_counts_ego_o2) <- names(ego_networks_o2)
+  )))
+  rownames(expected_expected_graphlet_counts_ego_o2) <- names(ego_networks_o2)
   
   # Sanity check manually derived expected expected counts by comparing against 
   # pre-tested fully applied expected_graphlet_counts_ego function
