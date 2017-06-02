@@ -1,3 +1,61 @@
+#' Netdis between all graph pairs using provided Centred Graphlet Counts
+#' @param centred_graphlet_counts List containing Centred Graphlet Counts for 
+#' all graphs being compared
+#' @param graphlet_size The size of graphlets to use for the Netdis calculation
+#' (only counts for graphlets of the specified size will be used). The size of
+#' a graphlet is the number of nodes it contains.
+#' @return Pairwise Netdis statistics between graphs calculated using centred 
+#' counts for graphlets of the specified size
+#' @export
+netdis_for_all_graphs <- function(
+  centred_graphlet_counts, graphlet_size, mc.cores = getOption("mc.cores", 2L)) {
+  comp_spec <- cross_comparison_spec(centred_graphlet_counts)
+  # NOTE: mcapply only works on unix-like systems with system level forking 
+  # capability. This means it will work on Linux and OSX, but not Windows.
+  # For now, we just revert to single threaded operation on Windows
+  # TODO: Look into using the parLappy function on Windows
+  if(.Platform$OS.type != "unix") {
+    # Force cores to 1 if system is not unix-like as it will not support 
+    # forking
+    mc.cores = 1
+  }
+  netdis <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {netdis(
+    centred_graphlet_counts[[index_a]], centred_graphlet_counts[[index_b]], 
+    graphlet_size = graphlet_size)
+  }, comp_spec$index_a, comp_spec$index_b, SIMPLIFY = FALSE))
+  list(netdis = netdis, comp_spec = comp_spec)
+}
+
+#' Netdis
+#' 
+#' Calculate Netdis statistic between two graphs from their Centred Graphlet
+#' Counts (generated using \code{netdis_centred_graphlet_counts}).
+#' @param centred_graphlet_counts1 Centred Graphlet Counts for graph 1
+#' @param centred_graphlet_counts2 Centred Graphlet Counts for graph 2
+#' @param graphlet_size The size of graphlets to use for the Netdis calculation
+#' (only counts for graphlets of the specified size will be used). The size of
+#' a graphlet is the number of nodes it contains.
+#' @return Netdis statistic calculated using centred counts for graphlets of 
+#' the specified size
+#' @export
+netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2, 
+                   graphlet_size)
+{
+  # Select subset of centred counts corresponding to graphlets of the 
+  # specified size
+  ids <- graphlet_ids_for_size(graphlet_size)
+  counts1 <- centred_graphlet_counts1[ids]
+  counts2 <- centred_graphlet_counts2[ids]
+  
+  # Calculate normalising constant
+  norm_const <- sum(counts1^2 / sqrt(counts1^2 + counts2^2)) *
+    sum(counts2^2 / sqrt(counts1^2 + counts2^2))
+  # Calculate intermediate "netD" statistic that falls within range -1..1
+  netD <- (1/norm_const) * sum((counts1 * counts2) / sqrt(counts1^2 + counts2^2))
+  # Calculate corresponding "netd" Netdis statistic that falls within range 0..1
+  0.5 * (1 - netD)
+} 
+
 #' Scaled graphlet count for ego-networks
 #' 
 #' Calculates graphlet counts for the n-step ego-network of each node in a graph, 
