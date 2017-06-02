@@ -66,15 +66,29 @@ count_graphlets_ego_scaled <- function(
 #' @export 
 netdis_centred_graphlet_counts <- function(
   graph, max_graphlet_size, neighbourhood_size, expected_ego_count_fn = 
-    function(g) {0}) {
-  # Get unscaled ego-network graphlet counts
-  actual_counts <- count_graphlets_ego(graph, 
-                                       max_graphlet_size = max_graphlet_size,
-                                       neighbourhood_size = neighbourhood_size)
-  # Centre these counts by subtracting the expected counts
-  centred_counts <- actual_counts - expected_ego_count_fn(g)
+    NULL) {
+  # Get centred counts for each ego network
+  centred_counts <- netdis_centred_graphlet_counts_ego(
+    graph, max_graphlet_size, neighbourhood_size, expected_ego_count_fn)
   # Sum centred counts over ego-networks
   apply(centred_counts, MARGIN = 2, FUN = sum)
+}
+
+
+#' TODO: Remove @export prior to publishing
+#' @export
+netdis_centred_graphlet_counts_ego <- function(
+  graph, max_graphlet_size, neighbourhood_size, expected_ego_count_fn = NULL) {
+    # Get unscaled ego-network graphlet counts
+    actual_counts <- count_graphlets_ego(graph, 
+                                         max_graphlet_size = max_graphlet_size,
+                                         neighbourhood_size = neighbourhood_size)
+    # Centre these counts by subtracting the expected counts
+    if(is.null(expected_ego_count_fn)) {
+      centred_counts = actual_counts
+    } else {
+      centred_counts <- actual_counts - expected_ego_count_fn(graph)
+    }
 }
 
 #' Generate Netdis expected graphlet count function

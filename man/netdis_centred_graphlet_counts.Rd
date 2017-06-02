@@ -5,7 +5,7 @@
 \title{Generate Netdis centred graphlets counts by subtracting expected counts}
 \usage{
 netdis_centred_graphlet_counts(graph, max_graphlet_size, neighbourhood_size,
-  expected_ego_count_fn = function(g) {     0 })
+  expected_ego_count_fn = NULL)
 }
 \arguments{
 \item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
