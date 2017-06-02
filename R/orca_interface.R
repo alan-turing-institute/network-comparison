@@ -507,3 +507,30 @@ cross_comparison_spec <- function(named_list) {
   colnames(spec) <- c("name_a", "name_b", "index_a", "index_b")
   return(spec)
 }
+
+#' Convert a pair-wise cross-comparison into a matrix format
+#' 
+#' Converts a pair-wise cross-comparison into a matrix format
+#' @param measure A list of pair-wise comparison measiures
+#' @param cross_comparison_spec A cross-comparison specification generated
+#' using \code{cross_comparison_spec}
+#' @return A square symmetric matrix with a zero diagonal, with elements
+#' Cij and Cji populated from the element from \code{measure} corresponding to
+#' the row of \code{cross_comparison_spec} with \code{index_a = i} and 
+#' \code{index_b = j}
+#' @export
+cross_comp_to_matrix <- function(measure, cross_comparison_spec) {
+  num_items <- max(c(cross_comparison_spec$index_a, cross_comparison_spec$index_b))
+  out <- matrix(data = 0, nrow = num_items, ncol = num_items);
+  out[cbind(cross_comparison_spec$index_a, cross_comparison_spec$index_b)] <- measure
+  out[cbind(cross_comparison_spec$index_b, cross_comparison_spec$index_a)] <- measure
+  row_labels <- rep("<MISSING>", num_items)
+  row_labels[cross_comparison_spec$index_a] <- as.character(cross_comparison_spec$name_a)
+  row_labels[cross_comparison_spec$index_b] <- as.character(cross_comparison_spec$name_b)
+  rownames(out) <- row_labels
+  col_labels <- rep("<MISSING>", num_items)
+  col_labels[cross_comparison_spec$index_a] <- as.character(cross_comparison_spec$name_a)
+  col_labels[cross_comparison_spec$index_b] <- as.character(cross_comparison_spec$name_b)
+  colnames(out) <- col_labels
+  return(out)
+}
