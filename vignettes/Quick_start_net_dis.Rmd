@@ -1,0 +1,101 @@
+---
+title: "Quick start guide for Netdis"
+author: "Martin O'Reilly"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick start for Netdis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Virus PPI example for Netdis
+
+### Load graphs
+Use `read_simple_graphs` to read graph data from all files in a directory that 
+match a specific filename pattern in a format suitable for calculating 
+graphlet-based feature counts using the 
+[ORCA package](https://CRAN.R-project.org/package=orca).
+We use `igraph::read_graph` to read graph data from files, so support
+all file formats it supports. See help for `igraph::read_graph` for a list of 
+supported values for the `format` parameter and the [igraph documentation](http://igraph.org/c/doc/igraph-Foreign.html#igraph_read_graph_edgelist)
+for descriptions of each of the supported file formats.
+
+The ORCA package we use to efficiently calculate graphlet and orbit counts 
+requires that graphs are _undirected_, _simple_ (i.e. have no self-loops or 
+multiple edges) and _connected_ (i.e. have no isolated vertices). Therefore, by
+default, graphs loaded by `read_simple_graphs` will be coerced to have the above
+properties. This can be avoided by setting the relevant `as_undirected`, 
+`remove_loops`, `remove_multiple` or `remove_isolates` parameters to `FALSE`.
+```{r}
+library("netdist")
+# Set source directory and file properties for Virus PPI graph edge files
+source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+edge_format = "ncol"
+file_pattern = "*"
+
+# Load all graphs in the source folder matching the filename pattern
+graphs <- read_simple_graphs(source_dir, format = edge_format, 
+                             pattern = file_pattern)
+print(names(graphs))
+```
+Set the reference graph to the first graph and use the rest of the graphs as 
+query graphs
+```{r}
+ref_graph <- head(graphs, 1)[[1]]
+query_graphs <- tail(graphs,- 1)
+```
+In this example we will use counts of graphlets containing up to 4 nodes and 
+consider ego-network neighbourhoods of size 2 (i.e. the immediate neighbours of 
+each node plus their immediate neighbours). 
+```{r}
+# Set the maximum graphlet size to compute counts for
+max_graphlet_size <- 4
+neighbourhood_size <- 2
+```
+
+## Generate a function to generate expected graphlet counts
+Use `netdis_expected_graphlet_counts_ego_fn` to generate a function that 
+calculates expected ego-network graphlet counts for query graphs based on the 
+statistics of a provided reference graph.
+
+```{r}
+expected_count_fn <- netdis_expected_graphlet_counts_ego_fn(
+  ref_graph, max_graphlet_size, neighbourhood_size) 
+```
+
+## Generate centred graphlet counts for a set of query graphs
+```{r}
+centred_counts <- purrr::map(query_graphs, netdis_centred_graphlet_counts,
+                             max_graphlet_size = max_graphlet_size, 
+                             neighbourhood_size = neighbourhood_size,
+                             expected_ego_count_fn = expected_count_fn)
+```
+
+## Generate NetDis measures between each pair of query graphs
+```{r}
+# Netdis measure for graphlets of size 3
+res3 <- netdis_for_all_graphs(centred_counts, 3)
+netdis3_mat <- cross_comp_to_matrix(res3$netdis, res3$comp_spec)
+# Netdis measure for graphlets of size 4
+res4 <- netdis_for_all_graphs(centred_counts, 3)
+netdis4_mat <- cross_comp_to_matrix(res4$netdis, res4$comp_spec)
+```
+
+## Generate dendrograms
+```{r}
+graphdists<-as.dist(netdis4_mat)
+par(mfrow=c(1,2))
+cex=1
+# Dendrogram based on Netdis measure for graphlets of size 3
+title = paste("Netdis: graphlet size = ", 3, sep = "")
+plot(phangorn::upgma(as.dist(netdis3_mat), method="average"), use.edge.length=FALSE, 
+     edge.width=cex*2, main=title, cex.lab=cex, cex.axis=cex, cex.main=cex, 
+     cex.sub=cex, cex=cex)
+# Dendrogram based on Netdis measure for graphlets of size 4
+title = paste("Netdis: graphlet size = ", 4, sep = "")
+plot(phangorn::upgma(as.dist(netdis4_mat), method="average"), use.edge.length=FALSE, 
+     edge.width=cex*2, main=title, cex.lab=cex, cex.axis=cex, cex.main=cex, 
+     cex.sub=cex, cex=cex)
+
+```

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Martin O’Reilly" />
+
+<meta name="date" content="2017-06-02" />
+
+<title>Quick start guide for Netdis</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Quick start guide for Netdis</h1>
+<h4 class="author"><em>Martin O’Reilly</em></h4>
+<h4 class="date"><em>2017-06-02</em></h4>
+
+
+
+<div id="virus-ppi-example-for-netdis" class="section level2">
+<h2>Virus PPI example for Netdis</h2>
+<div id="load-graphs" class="section level3">
+<h3>Load graphs</h3>
+<p>Use <code>read_simple_graphs</code> to read graph data from all files in a directory that match a specific filename pattern in a format suitable for calculating graphlet-based feature counts using the <a href="https://CRAN.R-project.org/package=orca">ORCA package</a>. We use <code>igraph::read_graph</code> to read graph data from files, so support all file formats it supports. See help for <code>igraph::read_graph</code> for a list of supported values for the <code>format</code> parameter and the <a href="http://igraph.org/c/doc/igraph-Foreign.html#igraph_read_graph_edgelist">igraph documentation</a> for descriptions of each of the supported file formats.</p>
+<p>The ORCA package we use to efficiently calculate graphlet and orbit counts requires that graphs are <em>undirected</em>, <em>simple</em> (i.e. have no self-loops or multiple edges) and <em>connected</em> (i.e. have no isolated vertices). Therefore, by default, graphs loaded by <code>read_simple_graphs</code> will be coerced to have the above properties. This can be avoided by setting the relevant <code>as_undirected</code>, <code>remove_loops</code>, <code>remove_multiple</code> or <code>remove_isolates</code> parameters to <code>FALSE</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;netdist&quot;</span>)
+<span class="co"># Set source directory and file properties for Virus PPI graph edge files</span>
+source_dir &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="kw">file.path</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;VRPINS&quot;</span>), <span class="dt">package =</span> <span class="st">&quot;netdist&quot;</span>)
+edge_format =<span class="st"> &quot;ncol&quot;</span>
+file_pattern =<span class="st"> &quot;*&quot;</span>
+
+<span class="co"># Load all graphs in the source folder matching the filename pattern</span>
+graphs &lt;-<span class="st"> </span><span class="kw">read_simple_graphs</span>(source_dir, <span class="dt">format =</span> edge_format, 
+                             <span class="dt">pattern =</span> file_pattern)
+<span class="kw">print</span>(<span class="kw">names</span>(graphs))</code></pre></div>
+<pre><code>## [1] &quot;EBV&quot;   &quot;ECL&quot;   &quot;HSV-1&quot; &quot;KSHV&quot;  &quot;VZV&quot;</code></pre>
+<p>Set the reference graph to the first graph and use the rest of the graphs as query graphs</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ref_graph &lt;-<span class="st"> </span><span class="kw">head</span>(graphs, <span class="dv">1</span>)[[<span class="dv">1</span>]]
+query_graphs &lt;-<span class="st"> </span><span class="kw">tail</span>(graphs,<span class="op">-</span><span class="st"> </span><span class="dv">1</span>)</code></pre></div>
+<p>In this example we will use counts of graphlets containing up to 4 nodes and consider ego-network neighbourhoods of size 2 (i.e. the immediate neighbours of each node plus their immediate neighbours).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Set the maximum graphlet size to compute counts for</span>
+max_graphlet_size &lt;-<span class="st"> </span><span class="dv">4</span>
+neighbourhood_size &lt;-<span class="st"> </span><span class="dv">2</span></code></pre></div>
+</div>
+</div>
+<div id="generate-a-function-to-generate-expected-graphlet-counts" class="section level2">
+<h2>Generate a function to generate expected graphlet counts</h2>
+<p>Use <code>netdis_expected_graphlet_counts_ego_fn</code> to generate a function that calculates expected ego-network graphlet counts for query graphs based on the statistics of a provided reference graph.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">expected_count_fn &lt;-<span class="st"> </span><span class="kw">netdis_expected_graphlet_counts_ego_fn</span>(
+  ref_graph, max_graphlet_size, neighbourhood_size) </code></pre></div>
+</div>
+<div id="generate-centred-graphlet-counts-for-a-set-of-query-graphs" class="section level2">
+<h2>Generate centred graphlet counts for a set of query graphs</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">centred_counts &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">map</span>(query_graphs, netdis_centred_graphlet_counts,
+                             <span class="dt">max_graphlet_size =</span> max_graphlet_size, 
+                             <span class="dt">neighbourhood_size =</span> neighbourhood_size,
+                             <span class="dt">expected_ego_count_fn =</span> expected_count_fn)</code></pre></div>
+</div>
+<div id="generate-netdis-measures-between-each-pair-of-query-graphs" class="section level2">
+<h2>Generate NetDis measures between each pair of query graphs</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Netdis measure for graphlets of size 3</span>
+res3 &lt;-<span class="st"> </span><span class="kw">netdis_for_all_graphs</span>(centred_counts, <span class="dv">3</span>)
+netdis3_mat &lt;-<span class="st"> </span><span class="kw">cross_comp_to_matrix</span>(res3<span class="op">$</span>netdis, res3<span class="op">$</span>comp_spec)
+<span class="co"># Netdis measure for graphlets of size 4</span>
+res4 &lt;-<span class="st"> </span><span class="kw">netdis_for_all_graphs</span>(centred_counts, <span class="dv">3</span>)
+netdis4_mat &lt;-<span class="st"> </span><span class="kw">cross_comp_to_matrix</span>(res4<span class="op">$</span>netdis, res4<span class="op">$</span>comp_spec)</code></pre></div>
+</div>
+<div id="generate-dendrograms" class="section level2">
+<h2>Generate dendrograms</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graphdists&lt;-<span class="kw">as.dist</span>(netdis4_mat)
+<span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))
+cex=<span class="dv">1</span>
+<span class="co"># Dendrogram based on Netdis measure for graphlets of size 3</span>
+title =<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;Netdis: graphlet size = &quot;</span>, <span class="dv">3</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)
+<span class="kw">plot</span>(phangorn<span class="op">::</span><span class="kw">upgma</span>(<span class="kw">as.dist</span>(netdis3_mat), <span class="dt">method=</span><span class="st">&quot;average&quot;</span>), <span class="dt">use.edge.length=</span><span class="ot">FALSE</span>, 
+     <span class="dt">edge.width=</span>cex<span class="op">*</span><span class="dv">2</span>, <span class="dt">main=</span>title, <span class="dt">cex.lab=</span>cex, <span class="dt">cex.axis=</span>cex, <span class="dt">cex.main=</span>cex, 
+     <span class="dt">cex.sub=</span>cex, <span class="dt">cex=</span>cex)
+<span class="co"># Dendrogram based on Netdis measure for graphlets of size 4</span>
+title =<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;Netdis: graphlet size = &quot;</span>, <span class="dv">4</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)
+<span class="kw">plot</span>(phangorn<span class="op">::</span><span class="kw">upgma</span>(<span class="kw">as.dist</span>(netdis4_mat), <span class="dt">method=</span><span class="st">&quot;average&quot;</span>), <span class="dt">use.edge.length=</span><span class="ot">FALSE</span>, 
+     <span class="dt">edge.width=</span>cex<span class="op">*</span><span class="dv">2</span>, <span class="dt">main=</span>title, <span class="dt">cex.lab=</span>cex, <span class="dt">cex.axis=</span>cex, <span class="dt">cex.main=</span>cex, 
+     <span class="dt">cex.sub=</span>cex, <span class="dt">cex=</span>cex)</code></pre></div>
+<p><img src="data:image/png;base64,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L79cdtllF9l8881t3LPPPlu0HWF68sknpU+fPnL++eeHWVm32oZbb71VunXrJjvssIPtpc2YMcOeO2LECHvOu+++a4912Dlp0iTZbrvt5JhjjpG6ujpZuXKljB8/Xg4++GDZcsstZd999xXl9ffff9tzP/roI3vuWWedZY1ch5ZbbbWVHHvssfbasjXq888/l6OOOkratm0rffv2lbfffjtbsSgvX/5RBf/txOF6//3323uhRqRJ+Srn9Nd/1UUb9IN+QjHE0s+ECRMCc0Kw//77BzU1NXbfzN+YZzUIzJDMHhvh2eN169YFe+65p81r2bJlUFtba/fNwxz8/vvvwQ8//GCPtb7wde6559pzr7vuuihv2223Dcw8T2AMxeYddthhtsy8efOiMmYew+YZs7N5xrSCI444Ith6663tseaHyRiFzTvkkEPCrKzbG2+8Mao/bIMxUptnjM+e8+qrr9rjbbbZJjC9MLuvcTWZYaU9Vk6dO3e2+3qdF154oX3/zTfftHlad+vWrYNWrVpFZbbffvvAGJgtZ4wqyleGxsijsltssUXwxx9/2HLG7Gy5QYMG2eOm8LcVpP2JwzUzvvIN72u4RT/oJ9dzGUc/UQ+oU6dO0RyQTj6m9zCM2GxSR9NP7J122kmWLFkiy5YtExPc9oAmT54s5iGTBQsWhMXtUOyee+4R80DJnXfeafMvu+wye572FvRTX5N5Luw2258XXnjBZr/44ovyxhtvyCeffCKnnXaa7LbbblHPQ3siV155pQwdOjRbFTZPP/HvuOMOu689Kp1w18m8cJ4qsw2//vqraE9rzpw5ttekvTXtAWks7al99dVXNl8rzOy1/PLLL6ITx8uXL5d33nlHjGnaCXntUWWmiy66yPL44osvZLPNNrNDnvfeey+zmD3Ol3+2yuJwzTxv6tSpsmjRInvvn376aWnevHlUBP3U1zD6iaQR7WTVT/gJduqppwZm/BcYc7GfcpdcckmDHtCQIUPse8OGDQvMA2hft9xyi80Lewlm5csem6jBN998Yz9zP/jggyjvyy+/jD6HjRnZ/EMPPdTmZesB9erVy5YxD2fQv3//4K677gq+/vrrqI64O7naoNetbTXDJVtV2APSPGOwWatfunRpYOZFguOPP96eax4+Wy7sAem5xtyic41h2nInnHCCzUvvARkzi8p16dLFljND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" /><!-- --></p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
