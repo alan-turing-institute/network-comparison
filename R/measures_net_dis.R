@@ -48,12 +48,12 @@ netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2,
   counts2 <- centred_graphlet_counts2[ids]
   
   # Calculate normalising constant
-  norm_const <- sum(counts1^2 / sqrt(counts1^2 + counts2^2)) *
-    sum(counts2^2 / sqrt(counts1^2 + counts2^2))
+  norm_const <- sum(counts1^2 / sqrt(counts1^2 + counts2^2),na.rm = TRUE) *
+    sum(counts2^2 / sqrt(counts1^2 + counts2^2),na.rm = TRUE)
   # Calculate intermediate "netD" statistic that falls within range -1..1
-  netD <- (1/norm_const) * sum((counts1 * counts2) / sqrt(counts1^2 + counts2^2))
+  netds2 <- (1/sqrt(norm_const)) * sum((counts1 * counts2) / sqrt(counts1^2 + counts2^2),na.rm = TRUE)
   # Calculate corresponding "netd" Netdis statistic that falls within range 0..1
-  0.5 * (1 - netD)
+  0.5 * (1 - netds2)
 } 
 
 #' Scaled graphlet count for ego-networks
