@@ -31,7 +31,7 @@ properties. This can be avoided by setting the relevant `as_undirected`,
 library("netdist")
 edge_format = "ncol"
 # Load reference graph (used for Netdis. Not required for NetEMD)
-ref_path = "~/OneDrive - The Alan Turing Institute/Documents/Network comparison/Data/Netdis/DIP/core/Yeast-core.txt"
+ref_path = file.path(system.file(file.path("extdata", "random"), package = "netdist"), "ER_1250_10_1")
 ref_graph <- read_simple_graph(ref_path, format = edge_format)
 
 # Set source directory and file properties for Virus PPI graph edge files
@@ -98,5 +98,16 @@ title = paste("Netdis: graphlet size = ", 4, sep = "")
 plot(phangorn::upgma(as.dist(netdis4_mat), method="average"), use.edge.length=FALSE, 
      edge.width=cex*2, main=title, cex.lab=cex, cex.axis=cex, cex.main=cex, 
      cex.sub=cex, cex=cex)
-
+```
+```{r}
+cex=1.5
+col <- colorRampPalette(colors = c("blue","white"))(100)
+title = paste("Netdis: graphlet size = ", 3, sep = "")
+heatmap(netdis3_mat, Rowv = NULL, Colv = NULL, col = col, main = title, cexRow = cex, cexCol = cex, symm = TRUE)
+```
+```{r}
+cex=1.5
+col <- colorRampPalette(colors = c("blue","white"))(100)
+title = paste("Netdis: graphlet size = ", 4, sep = "")
+heatmap(netdis4_mat, Rowv = NULL, Colv = NULL, col = col, main = title, cexRow = cex, cexCol = cex, symm = TRUE)
 ```
