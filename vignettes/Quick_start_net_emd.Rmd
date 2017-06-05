@@ -40,8 +40,7 @@ names(virus_gdds)
 # of unit width (smoothing_window_width = 1). Returns a named list containing:
 # (i) the NetEMDs and (ii) a table containing the graph names and indices 
 # within the input GDD list for each pair of graphs compared.
-out <- net_emds_for_all_graphs(virus_gdds, smoothing_window_width = 0)
-print(out$net_emds)
+res <- net_emds_for_all_graphs(virus_gdds, smoothing_window_width = 0)
 
 # You can also specify method = "fixed_step" to use the much slower method of 
 # exhaustively evaluating the EMD at all offsets separated by a fixed step. 
@@ -51,13 +50,18 @@ print(out$net_emds)
 # Note that this step size is applied to the histograms after they have been 
 # normalised to unit variance
 
-# Display NetEMDs for all network pairs, alongside the details of the network pairs
-print(cbind(out$comp_spec, out$net_emds))
+# Convert to matrix for input to dendrogram method
+netemd_mat <- cross_comp_to_matrix(res$net_emds, res$comp_spec)
+netemd_mat
+```
 
-# Confirm NetEMD of a graph with itself is zero within (or at least close to)
-# the limits of machine precision
-purrr::map2(virus_gdds, virus_gdds, net_emd)
-.Machine$double.eps
+```{r}
+cex=1
+# Dendrogram based on Netdis measure for graphlets of size 3
+title = paste("Netdis: graphlet size = ", 4, sep = "")
+plot(phangorn::upgma(as.dist(netemd_mat), method="average"), use.edge.length=FALSE, 
+     edge.width=cex*2, main=title, cex.lab=cex, cex.axis=cex, cex.main=cex, 
+     cex.sub=cex, cex=cex)
 
 # The gdd_for_all_graphs and net_emds_for_all_graphs functions will run in 
 # parallel using multiple threads where supported. The number of threads
