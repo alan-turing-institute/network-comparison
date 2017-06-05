@@ -487,7 +487,6 @@ context("Measures NetEMD: Virus PPI (EMD)")
 test_that("emd return 0 when comparing graphlet orbit degree distributions of 
           virus PPI graphs to themselves", {
   # Load viurs PPI network data in ORCA-compatible edge list format
-  data("virusppi")
   data_indexes <- 1:length(virusppi)
   data_names <- attr(virusppi, "name")
 
@@ -506,7 +505,6 @@ context("Measures NetEMD: Virus PPI (NetEMD)")
 test_that("net_emd return 0 when comparing graphlet orbit degree distributions 
           of virus PPI graphs to themselves", {
   # Load virus PPI network data in ORCA-compatible edge list format
-  data("virusppi")
   data_indexes <- 1:length(virusppi)
   data_names <- attr(virusppi, "name")
 

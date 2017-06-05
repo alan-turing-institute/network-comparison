@@ -1,18 +1,19 @@
 ## ------------------------------------------------------------------------
 library("netdist")
+edge_format = "ncol"
+# Load reference graph (used for Netdis. Not required for NetEMD)
+ref_path = "~/OneDrive - The Alan Turing Institute/Documents/Network comparison/Data/Netdis/DIP/core/Yeast-core.txt"
+ref_graph <- read_simple_graph(ref_path, format = edge_format)
+
 # Set source directory and file properties for Virus PPI graph edge files
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 edge_format = "ncol"
 file_pattern = "*"
 
 # Load all graphs in the source folder matching the filename pattern
-graphs <- read_simple_graphs(source_dir, format = edge_format, 
+query_graphs <- read_simple_graphs(source_dir, format = edge_format, 
                              pattern = file_pattern)
-print(names(graphs))
-
-## ------------------------------------------------------------------------
-ref_graph <- head(graphs, 1)[[1]]
-query_graphs <- tail(graphs,- 1)
+print(names(query_graphs))
 
 ## ------------------------------------------------------------------------
 # Set the maximum graphlet size to compute counts for
@@ -36,6 +37,7 @@ netdis3_mat <- cross_comp_to_matrix(res3$netdis, res3$comp_spec)
 # Netdis measure for graphlets of size 4
 res4 <- netdis_for_all_graphs(centred_counts, 3)
 netdis4_mat <- cross_comp_to_matrix(res4$netdis, res4$comp_spec)
+netdis4_mat
 
 ## ------------------------------------------------------------------------
 graphdists<-as.dist(netdis4_mat)
