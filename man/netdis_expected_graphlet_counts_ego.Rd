@@ -5,8 +5,8 @@
 \title{INTERNAL FUNCTION - Do not call directly}
 \usage{
 netdis_expected_graphlet_counts_ego(graph, max_graphlet_size,
-  neighbourhood_size, min_ego_nodes, min_ego_edges, density_breaks,
-  density_binned_reference_counts)
+  neighbourhood_size, density_breaks, density_binned_reference_counts,
+  min_ego_nodes = 3, min_ego_edges = 1)
 }
 \description{
 Used by \code{netdis_expected_graphlet_counts_ego_fn} to 

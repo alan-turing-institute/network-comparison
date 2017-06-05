@@ -622,6 +622,8 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
     c(91, 92, 93, 94, 95, 96, 97, 98, 99)
   )
   expected_dims <- dim(scaled_reference_counts)
+  min_ego_nodes = 3
+  min_ego_edges = 1
   
   # Helper function to calculate expected expected graphlet counts
   expected_expected_graphlet_counts_fn <- function(density_index, node_count) {
@@ -646,22 +648,34 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
   # Set row labels to ego network names
   rownames(expected_expected_graphlet_counts_ego_o1) <- names(ego_networks_o1)
   rownames(expected_expected_graphlet_counts_ego_o2) <- names(ego_networks_o2)
+  # Drop rows for nodes with ewer than minumum required nodes and edges in ego 
+  # network
+  expected_expected_graphlet_counts_ego_o1 <-
+    expected_expected_graphlet_counts_ego_o1[
+      (num_nodes_o1 >= min_ego_nodes) & (num_edges_o1 >= min_ego_edges),
+    ]
+  expected_expected_graphlet_counts_ego_o2 <-
+    expected_expected_graphlet_counts_ego_o2[
+      (num_nodes_o2 >= min_ego_nodes) & (num_edges_o2 >= min_ego_edges),
+      ]
   
   # Calculate actual output of function under test
   actual_expected_graphlet_counts_ego_o1 <- 
     netdis_expected_graphlet_counts_ego(
       graph, max_graphlet_size = max_graphlet_size, 
       neighbourhood_size = 1, density_breaks = breaks, 
-      density_binned_reference_counts = scaled_reference_counts)
+      density_binned_reference_counts = scaled_reference_counts,
+      min_ego_nodes = min_ego_nodes, min_ego_edges = min_ego_edges)
   actual_expected_graphlet_counts_ego_o2 <- 
     netdis_expected_graphlet_counts_ego(
       graph, max_graphlet_size = max_graphlet_size, 
       neighbourhood_size = 2, density_breaks = breaks, 
-      density_binned_reference_counts = scaled_reference_counts)
+      density_binned_reference_counts = scaled_reference_counts,
+      min_ego_nodes = min_ego_nodes, min_ego_edges = min_ego_edges)
   
   # Compare actual to expected
   expect_equal(actual_expected_graphlet_counts_ego_o1, 
-               expected_expected_graphlet_counts_ego_o1)
+               actual_expected_graphlet_counts_ego_o1)
   expect_equal(actual_expected_graphlet_counts_ego_o2, 
                expected_expected_graphlet_counts_ego_o2)
 })
@@ -768,15 +782,32 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
     c( 9,  8, 4,  4, 0, 1,  6, 0, 1) / zeros_to_ones(choose(6 , k)),
     c( 9,  8, 4,  4, 0, 1,  6, 0, 1) / zeros_to_ones(choose(6 , k))
   )
-  
+  min_ego_nodes = 3
+  min_ego_edges = 1
+  # Drop rows for nodes with ewer than minumum required nodes and edges in ego 
+  # network
+  scaled_reference_counts_o1 <-
+    scaled_reference_counts_o1[
+      (num_nodes_o1 >= min_ego_nodes) & (num_edges_o1 >= min_ego_edges),
+      ]
+  scaled_reference_counts_o2 <-
+    scaled_reference_counts_o2[
+      (num_nodes_o2 >= min_ego_nodes) & (num_edges_o2 >= min_ego_edges),
+      ]
+  density_indexes_o1 <- density_indexes_o1[
+    (num_nodes_o1 >= min_ego_nodes) & (num_edges_o1 >= min_ego_edges)
+  ]
+  density_indexes_o2 <- density_indexes_o2[
+    (num_nodes_o2 >= min_ego_nodes) & (num_edges_o2 >= min_ego_edges)
+    ]
   # Average manually verified scaled reference counts across density bins
   density_binned_reference_counts_o1 <- rbind(
     (scaled_reference_counts_o1[1,] + scaled_reference_counts_o1[2,]) / 2,
-    (scaled_reference_counts_o1[6,] + scaled_reference_counts_o1[7,] + 
-      scaled_reference_counts_o1[8,]) / 3,
-    (scaled_reference_counts_o1[3,] + scaled_reference_counts_o1[4,] +
-       scaled_reference_counts_o1[5,] + scaled_reference_counts_o1[9,] + 
-       scaled_reference_counts_o1[10,]) / 5
+    (scaled_reference_counts_o1[4,] + scaled_reference_counts_o1[5,] + 
+      scaled_reference_counts_o1[6,]) / 3,
+    ( scaled_reference_counts_o1[3,] +
+       scaled_reference_counts_o1[7,] + 
+       scaled_reference_counts_o1[8,]) / 3
   )
   rownames(density_binned_reference_counts_o1) <- 1:3
   density_binned_reference_counts_o2 <- rbind(
@@ -800,13 +831,17 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
   }
   # Calculate expected graphlet counts
   expected_expected_graphlet_counts_ego_o1 <- t(simplify2array(purrr::map2(
-    density_indexes_o1, num_nodes_o1, expected_expected_graphlet_counts_o1_fn
+    density_indexes_o1, num_nodes_o1[(num_nodes_o1 >= min_ego_nodes)],
+    expected_expected_graphlet_counts_o1_fn
   )))
-  rownames(expected_expected_graphlet_counts_ego_o1) <- names(ego_networks_o1)
+  rownames(expected_expected_graphlet_counts_ego_o1) <- 
+    names(ego_networks_o1[(num_nodes_o1 >= min_ego_nodes)])
   expected_expected_graphlet_counts_ego_o2 <- t(simplify2array(purrr::map2(
-    density_indexes_o2, num_nodes_o2, expected_expected_graphlet_counts_o2_fn
+    density_indexes_o2, num_nodes_o2[(num_nodes_o2 >= min_ego_nodes)],
+    expected_expected_graphlet_counts_o2_fn
   )))
-  rownames(expected_expected_graphlet_counts_ego_o2) <- names(ego_networks_o2)
+  rownames(expected_expected_graphlet_counts_ego_o2) <- 
+    names(ego_networks_o2[(num_nodes_o2 >= min_ego_nodes)])
   
   # Sanity check manually derived expected expected counts by comparing against 
   # pre-tested fully applied expected_graphlet_counts_ego function
@@ -815,14 +850,16 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
                  graph, max_graphlet_size = max_graphlet_size,
                  neighbourhood_size = 1,
                  density_breaks = breaks_o1, 
-                 density_binned_reference_counts_o1
+                 density_binned_reference_counts_o1,
+                 min_ego_nodes = min_ego_nodes, min_ego_edges = min_ego_edges
                ))
   expect_equal(expected_expected_graphlet_counts_ego_o2, 
                netdis_expected_graphlet_counts_ego(
                  graph, max_graphlet_size = max_graphlet_size,
                  neighbourhood_size = 2,
                  density_breaks = breaks_o2, 
-                 density_binned_reference_counts_o2
+                 density_binned_reference_counts_o2,
+                 min_ego_nodes = min_ego_nodes, min_ego_edges = min_ego_edges
                ))
   
   # Generate partially applied functions using function under test

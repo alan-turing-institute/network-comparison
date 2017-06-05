@@ -244,8 +244,8 @@ netdis_expected_graphlet_counts_ego_fn <- function(
 #' @export
 netdis_expected_graphlet_counts_ego <- function(
   graph, max_graphlet_size, neighbourhood_size,
-  min_ego_nodes, min_ego_edges,
-  density_breaks, density_binned_reference_counts) {
+  density_breaks, density_binned_reference_counts,
+  min_ego_nodes = 3, min_ego_edges = 1) {
   # Generate ego-networks for query graph
   ego_networks <- make_named_ego_graph(graph, neighbourhood_size)
   # Drop ego-networks that don't have the minimum number of nodes or edges
