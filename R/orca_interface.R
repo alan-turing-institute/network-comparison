@@ -372,6 +372,11 @@ orbit_to_graphlet_counts <- function(orbit_counts) {
   # Sum counts across orbits in graphlets
   graphlet_counts <- sapply(orbit_to_graphlet_map, function(indexes){
     rowSums(orbit_counts[,indexes, drop = FALSE])})
+  if(dim(orbit_counts)[[1]] == 1) {
+    # If orbit counts has only a single row, sapply returns a vector
+    # rather than a matrix, so convert to a matrix by adding dim
+    dim(graphlet_counts) <- c(1, length(graphlet_counts))
+  }
   # Add graphlet names
   colnames(graphlet_counts) <- graphlet_key(max_nodes)$id
   return(graphlet_counts)
@@ -472,7 +477,7 @@ gdd_for_all_graphs <- function(
   source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit", 
   max_graphlet_size = 4, ego_neighbourhood_size = 0,
   mc.cores = getOption("mc.cores", 2L)) {
-  # Read graphs from source directory as ORCA-compatible edge lists
+  # Create function to read graph from file and generate GDD
   graphs <- read_simple_graphs(
     source_dir = source_dir, format = format, pattern = pattern)
   # Calculate specified GDDs for each graph
