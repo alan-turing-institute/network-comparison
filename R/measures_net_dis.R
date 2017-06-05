@@ -136,17 +136,29 @@ netdis_centred_graphlet_counts <- function(
 #' TODO: Remove @export prior to publishing
 #' @export
 netdis_centred_graphlet_counts_ego <- function(
-  graph, max_graphlet_size, neighbourhood_size, expected_ego_count_fn = NULL) {
+  graph, max_graphlet_size, neighbourhood_size, expected_ego_count_fn = NULL,
+  min_ego_nodes = 3, min_ego_edges = 1) {
     # Get unscaled ego-network graphlet counts
-    actual_counts <- count_graphlets_ego(graph, 
-                                         max_graphlet_size = max_graphlet_size,
-                                         neighbourhood_size = neighbourhood_size)
+    res <- count_graphlets_ego(
+      graph, max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size, return_ego_networks = TRUE)
+    actual_counts = res$graphlet_counts
+    ego_networks <- res$ego_networks
+    
+    # Drop ego-networks that don't have the minimum number of nodes or edges
+    drop_index <- purrr::simplify(purrr::map(ego_networks, function(g) { 
+      (igraph::vcount(g) < min_ego_nodes) | (igraph::ecount(g) < min_ego_edges)
+    }))
+    actual_counts <- actual_counts[!drop_index,]
+    ego_networks <- ego_networks[!drop_index]
+    
     # Centre these counts by subtracting the expected counts
     if(is.null(expected_ego_count_fn)) {
       centred_counts = actual_counts
     } else {
       centred_counts <- actual_counts - expected_ego_count_fn(graph)
     }
+    centred_counts
 }
 
 #' Generate Netdis expected graphlet count function
@@ -180,7 +192,8 @@ netdis_centred_graphlet_counts_ego <- function(
 #' are labelled)
 #' @export
 netdis_expected_graphlet_counts_ego_fn <- function(
-  graph, max_graphlet_size, neighbourhood_size, 
+  graph, max_graphlet_size, neighbourhood_size,
+  min_ego_nodes = 3, min_ego_edges = 1, 
   min_bin_count = 5, num_bins = 100) {
   
   # Calculate the scaled graphlet counts for all ego networks in the reference
@@ -190,6 +203,13 @@ netdis_expected_graphlet_counts_ego_fn <- function(
     graph, max_graphlet_size, neighbourhood_size, return_ego_networks = TRUE)
   scaled_graphlet_counts = res$graphlet_counts
   ego_networks <- res$ego_networks
+  
+  # Drop ego-networks that don't have the minimum number of nodes or edges
+  drop_index <- purrr::simplify(purrr::map(ego_networks, function(g) { 
+    (igraph::vcount(g) < min_ego_nodes) | (igraph::ecount(g) < min_ego_edges)
+  }))
+  scaled_graphlet_counts <- scaled_graphlet_counts[!drop_index,]
+  ego_networks <- ego_networks[!drop_index]
   
   # Get ego-network densities
   densities <- purrr::simplify(purrr::map_dbl(ego_networks, igraph::edge_density))
@@ -208,6 +228,8 @@ netdis_expected_graphlet_counts_ego_fn <- function(
     netdis_expected_graphlet_counts_ego,
     max_graphlet_size = max_graphlet_size,
     neighbourhood_size = neighbourhood_size,
+    min_ego_nodes = min_ego_nodes, 
+    min_ego_edges = min_ego_edges,
     density_breaks = binned_densities$breaks,
     density_binned_reference_counts = density_binned_graphlet_counts)
 }
@@ -222,9 +244,15 @@ netdis_expected_graphlet_counts_ego_fn <- function(
 #' @export
 netdis_expected_graphlet_counts_ego <- function(
   graph, max_graphlet_size, neighbourhood_size,
+  min_ego_nodes, min_ego_edges,
   density_breaks, density_binned_reference_counts) {
   # Generate ego-networks for query graph
   ego_networks <- make_named_ego_graph(graph, neighbourhood_size)
+  # Drop ego-networks that don't have the minimum number of nodes or edges
+  drop_index <- purrr::simplify(purrr::map(ego_networks, function(g) { 
+    (igraph::vcount(g) < min_ego_nodes) | (igraph::ecount(g) < min_ego_edges)
+  }))
+  ego_networks <- ego_networks[!drop_index]
   # Map over query graph ego-networks, using reference graph statistics to 
   # calculate expected graphlet counts for each ego-network.
   expected_graphlet_counts <- 

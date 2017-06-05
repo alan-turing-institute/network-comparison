@@ -5,7 +5,8 @@
 \title{Generate Netdis expected graphlet count function}
 \usage{
 netdis_expected_graphlet_counts_ego_fn(graph, max_graphlet_size,
-  neighbourhood_size, min_bin_count = 5, num_bins = 100)
+  neighbourhood_size, min_ego_nodes = 3, min_ego_edges = 1,
+  min_bin_count = 5, num_bins = 100)
 }
 \arguments{
 \item{graph}{A connected, undirected, simple reference graph as an 
