@@ -86,7 +86,11 @@ read_simple_graphs <- function(source_dir, format = "ncol", pattern = "*",
   # extension moved)
   names <- purrr::simplify(purrr::map(strsplit(file_names, "\\."), 
                                       function(s) {
-                                        paste(head(s, -1), collapse = ".")
+                                        if(length(s) == 1) {
+                                          s
+                                        } else {
+                                          paste(head(s, -1), collapse = ".")
+                                        }
                                         }))
   attr(graphs, "names") <- names
   return(graphs)
