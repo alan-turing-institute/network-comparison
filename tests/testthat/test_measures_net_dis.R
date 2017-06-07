@@ -681,7 +681,6 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
 })
 
 test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 nodes", {
-  # Helper function to generate graphs with known density and number of nodes
   # Set up a small sample network with at least one ego-network that contains
   # at least one of each graphlets
   elist <- rbind(
