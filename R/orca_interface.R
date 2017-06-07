@@ -219,24 +219,24 @@ gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4,
   } else  if(feature_type == "orbit") {
     out <- count_orbits(graph, max_graphlet_size = max_graphlet_size)
   } else if(feature_type == "graphlet") {
-    out <- count_graphlets(graph, max_graphlet_size = max_graphlet_size)
+    out <- count_graphlets_per_node(graph, max_graphlet_size = max_graphlet_size)
   } else {
     stop('gdd: unrecognised feature_type')
   }
   orca_counts_to_graphlet_orbit_degree_distribution(out)
 }
 
-#' Calculate graphlet orbit counts
+#' Count graphlet orbits for each node in a graph
 #' 
-#' Calculates graphlet orbit counts from \code{igraph} graph object,
-#' using the ORCA fast graphlet orbit counting package.
+#' Calculates graphlet orbit counts for each node in an \code{igraph} graph 
+#' object, using the ORCA fast graphlet orbit counting package.
 #' @param graph A connected, undirected, simple graph as an \code{igraph} object. 
 #' @param max_graphlet_size Determines the maximum size of graphlets to count. 
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
 #' @return ORCA-format matrix containing counts of each graphlet
-#' orbit (columns) at each vertex in the graph (rows).
+#' orbit (columns) at each node in the graph (rows).
 #' @export
-count_orbits <- function(graph, max_graphlet_size) {
+count_orbits_per_node <- function(graph, max_graphlet_size) {
   if(max_graphlet_size == 4) {
     orca_fn <- orca::count4
   } else if(max_graphlet_size == 5) {
@@ -261,19 +261,43 @@ count_orbits <- function(graph, max_graphlet_size) {
   return(orbit_counts)
 }
 
-#' Calculate graphlet counts
+#' Count graphlets for each node in a graph
 #' 
-#' Calculates graphlet counts from \code{igraph} graph object using the ORCA
-#' fast graphlet orbit counting package by summing orbits over graphlets.
+#' Calculates graphlet counts for each node in an \code{igraph} graph object, 
+#' using the ORCA fast graphlet orbit counting package. by summing orbits over 
+#' graphlets.
 #' @param graph A connected, undirected, simple graph as an \code{igraph} object. 
 #' @param max_graphlet_size Determines the maximum size of graphlets to count. 
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
 #' @return ORCA-format matrix containing counts of each graphlet (columns) at 
-#' each vertex in the graph (rows).
+#' each node in the graph (rows).
 #' @export
-count_graphlets <- function(graph, max_graphlet_size) {
-  orbit_counts <- count_orbits(graph, max_graphlet_size = max_graphlet_size)
+count_graphlets_per_node <- function(graph, max_graphlet_size) {
+  orbit_counts <- count_orbits_per_node(graph, max_graphlet_size = max_graphlet_size)
   orbit_to_graphlet_counts(orbit_counts)
+}
+
+#' Count total number of graphlets in a graph
+#' 
+#' Calculates total graphlet counts for a \code{igraph} graph object using the 
+#' ORCA fast graphlet orbit counting package. Per-node graphlet counts are
+#' calculated by summing orbits over graphlets. These are then divided by the
+#' number of nodes comprising each graphlet to avoid counting the same graphlet 
+#' multiple times.
+#' @param graph A connected, undirected, simple graph as an \code{igraph} object. 
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @return Vector containing counts of each graphlet for the graph.
+#' @export
+count_graphlets_for_graph <- function(graph, max_graphlet_size) {
+  node_counts <- count_graphlets_per_node(graph, max_graphlet_size)
+  # Sum graphlet counts over all nodes (rows)
+  total_counts <- colSums(node_counts)
+  # To ensure we only count each graphlet present in an ego network once, divide
+  # the graphlet counts by the number of nodes that contribute to 
+  # each graphlet type
+  nodes_per_graphlet <- graphlet_key(max_graphlet_size)$node_count
+  return(total_counts / nodes_per_graphlet)
 }
 
 #' Ego-network graphlet counts
@@ -305,15 +329,8 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
   ego_networks <- make_named_ego_graph(graph, order = neighbourhood_size)
   # Generate graphlet counts for each node in each ego network (returns an ORCA
   # format graphlet count matrix for each ego network)
-  ego_graphlet_counts_per_node <- purrr::map(ego_networks, count_graphlets, 
+  ego_graphlet_counts <- purrr::map(ego_networks, count_graphlets_for_graph, 
                                           max_graphlet_size = max_graphlet_size)
-  # Sum graphlet counts across all nodes in each ego network
-  ego_graphlet_counts <- purrr::map(ego_graphlet_counts_per_node, apply, MARGIN = 2, FUN = sum)
-  # To ensure we only count each graphlet present in an ego network once, divide
-  # the ego network graphlet counts by the number of nodes that contribute to 
-  # each graphlet type
-  ego_graphlet_counts <- purrr::map(ego_graphlet_counts, function(egc) {
-    egc / graphlet_key(max_graphlet_size)$node_count})
   # Reshape the list of per node single row graphlet count matrices to a single
   # ORCA format graphlet count matrix with one row per node
   ego_graphlet_counts <- t(simplify2array(ego_graphlet_counts))

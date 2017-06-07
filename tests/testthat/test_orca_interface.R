@@ -76,11 +76,9 @@ test_that("orbit_key gives correct output for all supported max graphlet sizes",
   expect_equal(orbit_key(5), correct_orbit_key_5)
 })
 
-context("ORCA interface: Graph comparison")
+context("ORCA interface: Graph cross comparison")
 test_that("cross_comparison_spec works for virus PPI data", {
   # Load viurs PPI network data in ORCA-compatible edge list format
-  data("virusppi")
-  
   expected_name_A <- c(rep("EBV", 4), rep("ECL", 3), rep("HSV-1", 2), 
                        rep("KSHV", 1), rep("VZV", 0))
   expected_index_A <- c(rep(1, 4), rep(2, 3), rep(3, 2), rep(4, 1), rep(5, 0))
@@ -130,14 +128,14 @@ test_that("Single and zero node graphs are gracefully handled", {
   colnames(expected_single_node_counts5) <- names5
   
   expect_equal(expected_zero_node_counts4, 
-               count_orbits(zero_node_graph, max_graphlet_size = 4))
+               count_orbits_per_node(zero_node_graph, max_graphlet_size = 4))
   expect_equal(expected_zero_node_counts5, 
-               count_orbits(zero_node_graph, max_graphlet_size = 5))
+               count_orbits_per_node(zero_node_graph, max_graphlet_size = 5))
   
   expect_equal(expected_single_node_counts4, 
-               count_orbits(single_node_graph, max_graphlet_size = 4))
+               count_orbits_per_node(single_node_graph, max_graphlet_size = 4))
   expect_equal(expected_single_node_counts5, 
-               count_orbits(single_node_graph, max_graphlet_size = 5))
+               count_orbits_per_node(single_node_graph, max_graphlet_size = 5))
 })
 
 context("ORCA interface: Simplify graph")
@@ -764,8 +762,43 @@ test_that("make_named_ego_graph labels each ego-network with the correct node na
   expect_equal(actual_ego_elists_o1, expected_ego_elists_o1)
 })
 
-context("Measures Netdis: Ego-network graphlet outputs for manually verified networks")
-test_that("Ego-network 4-node graphlet counts match manually verified totals for test graph",{
+context("ORCA interface: Graphlet counts")
+test_that("count_graphlets_for_graph works", {
+  # Set up a small sample network with at least that contains at least one of 
+  # each graphlet
+  elist <- rbind(
+    c("n1","n2"),
+    c("n2","n3"),
+    c("n1","n4"),
+    c("n2","n5"),
+    c("n1","n6"),
+    c("n1","n7"),
+    c("n2","n4"),
+    c("n4","n6"),
+    c("n6","n8"),
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
+  
+  # Setgraphlet labels to use for names in expected counts
+  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  
+  # Manually verified graphlet counts
+  expected_counts <- c(15, 18,6, 21,3,1, 11, 1, 1)
+  names(expected_counts) <- graphlet_labels
+  
+  # Test
+  actual_counts <- count_graphlets_for_graph(graph, max_graphlet_size = 4)
+  expect_equal(expected_counts, actual_counts)
+})
+
+context("ORCA interface: Ego-network graphlet counts")
+test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manually verified totals for test graph",{
   # Set up a small sample network with at least one ego-network that contains
   # at least one of each graphlets
   elist <- rbind(
@@ -833,7 +866,7 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals for
   actual_counts_order_2 <- 
     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
                         neighbourhood_size = 2)
-  
+
   # Test that actual counts match expected with only counts requested (default)
   expect_equal(actual_counts_order_1, expected_counts_order_1)
   expect_equal(actual_counts_order_2, expected_counts_order_2)
