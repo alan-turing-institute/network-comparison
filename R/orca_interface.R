@@ -217,7 +217,7 @@ gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4,
                                  neighbourhood_size = ego_neighbourhood_size)
     }
   } else  if(feature_type == "orbit") {
-    out <- count_orbits(graph, max_graphlet_size = max_graphlet_size)
+    out <- count_orbits_per_node(graph, max_graphlet_size = max_graphlet_size)
   } else if(feature_type == "graphlet") {
     out <- count_graphlets_per_node(graph, max_graphlet_size = max_graphlet_size)
   } else {
