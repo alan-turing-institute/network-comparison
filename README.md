@@ -1,7 +1,7 @@
 # Network Comparison
 An R package implementing the Netdis and NetEMD alignment-free network comparison measures.
 
-### BETA: Package under construction (pre-release)
+### :warning: BETA: Package under construction (pre-release) :warning:
 Until this package hits release 1.0 anything can change with no notice.
 
 [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
