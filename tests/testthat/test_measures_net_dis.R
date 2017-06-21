@@ -1,128 +1,4 @@
 
-context("Measures Netdis: Adaptive binning")
-test_that("adaptive_breaks merges 2 lowest bins where only first bin is below minimum", {
-  min_count <- 5
-  x <- c(1.5, rep(2.2, min_count), rep(3.5, min_count), rep(4.5, min_count), 
-         rep(5.5, min_count), rep(6.5, min_count + 1))
-  initial_breaks <- 1:7
-  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
-  final_breaks_expected <- c(1, 3, 4, 5, 6, 7)
-  
-  expect_equal(final_breaks_actual, final_breaks_expected)
-})
-
-test_that("adaptive_breaks merges 3 lowest bins where lowest 2 combined are below minimum", {
-  min_count <- 5
-  x <- c(1.5, rep(2.2, 2), rep(3.5, min_count), rep(4.5, min_count), 
-         rep(5.5, min_count), rep(6.5, min_count + 1))
-  initial_breaks <- 1:7
-  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
-  final_breaks_expected <- c(1, 4, 5, 6, 7)
-  
-  expect_equal(final_breaks_actual, final_breaks_expected)
-})
-
-test_that("adaptive_breaks merges pair of bins in middle", {
-  min_count <- 5
-  x <- c(rep(1.6, min_count), rep(2.2, min_count), rep(3.5, 2), rep(4.5, 3), 
-         rep(5.5, min_count), rep(6.5, min_count + 1))
-  initial_breaks <- 1:7
-  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
-  final_breaks_expected <- c(1, 2, 3, 5, 6, 7)
-  
-  expect_equal(final_breaks_actual, final_breaks_expected)
-})
-
-test_that("adaptive_breaks merges two spearated pairs of bins in middle", {
-  min_count <- 5
-  x <- c(rep(1.6, min_count), rep(2.2, 2), rep(3.5, 3), rep(4.5, min_count), 
-         rep(5.5, 3), rep(6.5, 2), rep(7.8, min_count))
-  initial_breaks <- 1:8
-  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
-  final_breaks_expected <- c(1, 2, 4, 5, 7, 8)
-  
-  expect_equal(final_breaks_actual, final_breaks_expected)
-})
-
-test_that("adaptive_breaks merges 2 uppermost bins where both are below minimum", {
-  min_count <- 5
-  x <- c(rep(1.5, min_count), rep(2.2, min_count), rep(3.5, min_count),
-         rep(4.5, min_count), rep(5.5, 2), rep(6.5, 3))
-  initial_breaks <- 1:7
-  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
-  final_breaks_expected <- c(1, 2,3, 4, 5, 7)
-
-  expect_equal(final_breaks_actual, final_breaks_expected)
-})
-
-test_that("adaptive_breaks merges 2 uppermost bins where only last bin is below minimum", {
-  min_count <- 5
-  x <- c(rep(1.5, min_count), rep(2.2, min_count), rep(3.5, min_count),
-         rep(4.5, min_count), rep(5.5, min_count), rep(6.5, 3))
-  initial_breaks <- 1:7
-  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
-  final_breaks_expected <- c(1, 2, 3, 4, 5, 7)
-  
-  expect_equal(final_breaks_actual, final_breaks_expected)
-})
-
-test_that("adaptive_breaks merges bins with no members with the next bin", {
-  min_count <- 5
-  x <- c(rep(1.5, min_count), rep(5.5, min_count), rep(6.5, min_count))
-  initial_breaks <- 1:7
-  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
-  final_breaks_expected <- c(1, 2, 6, 7)
-  
-  expect_equal(final_breaks_actual, final_breaks_expected)
-})
-
-
-test_that("adaptive_breaks merges 2 bins below minimum, plus the empty bins between them", {
-  min_count <- 5
-  x <- c(rep(1.5, min_count), rep(2.3, 1), rep(5.5, 4), rep(6.5, min_count))
-  initial_breaks <- 1:7
-  final_breaks_actual <- adaptive_breaks(x, min_count = min_count, breaks = initial_breaks)
-  final_breaks_expected <- c(1, 2, 6, 7)
-  
-  expect_equal(final_breaks_actual, final_breaks_expected)
-})
-
-context("Measures Netdis:  Adaptively binned densities")
-test_that("binned_densities_adaptive works", {
-  # Helper function
-  test_binning <- function(densities, min_counts_per_interval, num_intervals,
-                           expected_breaks, expected_interval_indexes) {
-    # Set up expected output
-    expected <- list(densities = densities, 
-                     interval_indexes = expected_interval_indexes, 
-                     breaks = expected_breaks)
-    # Calculate actual output
-    actual <- binned_densities_adaptive(
-      densities, min_counts_per_interval = min_counts_per_interval,
-      num_intervals = num_intervals)
-    # Check actual matches expected
-    expect_equal(actual, expected)
-  }
-  # Test 1:
-  densities <- c(0, 0.099, 0.2, 0.299, 0.4, 0.49, 0.6, 0.699, 0.8, 0.899, 1.0)
-  min_counts_per_interval <- 2
-  num_intervals <- 100
-  expected_breaks <-c(0, 0.1, 0.3, 0.5, 0.7, 1.0)
-  expected_interval_indexes <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5)
-  test_binning(densities, min_counts_per_interval = min_counts_per_interval,
-               num_intervals = num_intervals, expected_breaks = expected_breaks,
-               expected_interval_indexes = expected_interval_indexes)
-  # Test 2:
-  densities <- c(0, 0.012, 0.099, 0.201, 0.299, 0.402, 0.49, 0.596, 0.699, 0.803, 0.899, 1.0)
-  min_counts_per_interval <- 2
-  num_intervals <- 100
-  expected_breaks <-c(0, 0.02, 0.21, 0.41, 0.6, 0.81, 1.0)
-  expected_interval_indexes <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6)
-  test_binning(densities, min_counts_per_interval = min_counts_per_interval,
-               num_intervals = num_intervals, expected_breaks = expected_breaks,
-               expected_interval_indexes = expected_interval_indexes)
-})
-
 context("Measures Netdis: Graphlet tuples")
 test_message <-
   paste("count_graphlet_tuples and count_graphlet_tuples_ego give",
@@ -882,4 +758,114 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
                expected_expected_graphlet_counts_ego_o1)
   expect_equal(actual_expected_graphlet_counts_ego_o2, 
                expected_expected_graphlet_counts_ego_o2)
+})
+
+context("Measures Netdis: Centered graphlet counts")
+test_that("netdis_centred_graphlet_counts_ego is correct", {
+  # Set up small sample networks each with each graphlet represented in at least
+  # one ego network
+  ref_elist <- rbind(
+    c("n1", "n2"),
+    c("n1", "n3"),
+    c("n1", "n4"),
+    c("n1", "n5"),
+    c("n1", "n6"),
+    c("n2", "n7"),
+    c("n2", "n8"),
+    c("n2", "n9"),
+    c("n9", "n10"),
+    c("n10", "n11"),
+    c("n11", "n12"),
+    c("n11", "n13"),
+    c("n2", "n14"),
+    c("n8", "n14"),
+    c("n12", "n15"),
+    c("n12", "n16"),
+    c("n15", "n17"),
+    c("n12", "n18"),
+    c("n15", "n18"),
+    c("n16", "n17"),
+    c("n16", "n18"),
+    c("n17", "n18"),
+    c("n16", "n19"),
+    c("n16", "n20"),
+    c("n16", "n21"),
+    c("n19", "n20"),
+    c("n19", "n21"),
+    c("n15", "n22"),
+    c("n15", "n23"),
+    c("n15", "n24"),
+    c("n22", "n23"),
+    c("n22", "n24"),
+    c("n23", "n24")
+  )
+  ref_graph <- igraph::graph_from_edgelist(ref_elist, directed = FALSE)
+  
+  query_elist <- rbind(
+    c("n1","n2"),
+    c("n2","n3"),
+    c("n1","n4"),
+    c("n2","n5"),
+    c("n1","n6"),
+    c("n1","n7"),
+    c("n2","n4"),
+    c("n4","n6"),
+    c("n6","n8"),
+    c("n7","n8"),
+    c("n7","n9"),
+    c("n7","n10"),
+    c("n8","n9"),
+    c("n8","n10"),
+    c("n9","n10")
+  )
+  query_graph <- igraph::graph_from_edgelist(query_elist, directed = FALSE)
+  
+  max_graphlet_size = 4
+  # Use pre-tested functions to generate ego-network graphlet counts
+  # 1. Reference graph ego-network graphlet counts
+  ref_o1 <- count_graphlets_ego(
+    ref_graph, max_graphlet_size = max_graphlet_size, 
+    neighbourhood_size = 1, return_ego_networks = TRUE)
+  ego_counts_ref_o1 <- ref_o1$graphlet_counts
+  ego_networks_ref_o1 <- ref_o1$ego_networks
+  density_ref_o1 <- sapply(ego_networks_ref_o1, igraph::edge_density)
+  
+  ref_o2 <- count_graphlets_ego(
+    ref_graph, max_graphlet_size = max_graphlet_size, 
+    neighbourhood_size = 2, return_ego_networks = TRUE)
+  ego_counts_ref_o2 <- ref_o2$graphlet_counts
+  ego_networks_ref_o2 <- ref_o2$ego_networks
+  density_ref_o2 <- sapply(ego_networks_ref_o2, igraph::edge_density)
+
+  # 2. Query graph ego-network graphlet countsa
+  query_o1 <- count_graphlets_ego(
+    query_graph, max_graphlet_size = max_graphlet_size, 
+    neighbourhood_size = 1, return_ego_networks = TRUE)
+  ego_counts_query_o1 <- query_o1$graphlet_counts
+  ego_networks_query_o1 <- query_o1$ego_networks
+  density_query_o1 <- sapply(ego_networks_query_o1, igraph::edge_density)
+    
+  query_o2 <- count_graphlets_ego(
+    query_graph, max_graphlet_size = max_graphlet_size, 
+    neighbourhood_size = 2, return_ego_networks = TRUE)
+  ego_counts_query_o2 <- query_o2$graphlet_counts
+  ego_networks_query_o2 <- query_o2$ego_networks
+  density_query_o2 <- sapply(ego_networks_query_o2, igraph::edge_density)
+  
+  centred_counts_k4 <- function(query_graphlet_count, ref_graphlet_count, 
+                             query_node_counts, ref_node_count,
+                             min_nodes, min_edges,
+                             min_bin_count, num_bins) {
+    graphlet_node_counts_k4 <- c(2, 3, 3, 4, 4, 4, 4, 4, 4)
+    # 1. Calculate scaling factors for each reference and query graphlet count
+    # These are nCk, where n is the number of nodes in the network and
+    # k is the number of nodes in the graphlet
+    ref_scale_factor <- sapply(
+      graphlet_node_counts_k4, FUN <- function(k) {choose(ref_node_count, k)})
+    query_scale_factor <- sapply(
+      graphlet_node_counts_k4, FUN <- function(k) {choose(query_node_count, k)})
+    # 2. Calculate scaled reference counts by dividing by ref_scale_factor
+    ref_scaled_graphlet_count <- query_graphlet_count / ref_scale_factor
+    # 
+  }
 })
