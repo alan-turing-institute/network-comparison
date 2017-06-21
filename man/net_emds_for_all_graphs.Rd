@@ -35,6 +35,9 @@ which  results in no smoothing. Care should be taken to select a
 
 \item{return_details}{Logical indicating whether to return the individual
 minimal EMDs and associated offsets for all pairs of histograms}
+
+\item{mc.cores}{Number of cores to use for parallel processing. Defaults to
+the \code{mc.cores} option set in the R environment.}
 }
 \value{
 NetEMD measures between all pairs of graphs for which GDDs 

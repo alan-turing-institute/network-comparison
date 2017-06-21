@@ -50,7 +50,7 @@ indexed_edges_to_graph <- function(indexed_edges) {
 #'      pair of endpoints)
 #'   4. Removes isolated vertices (i.e. vertices with no edges after the 
 #'      previous alterations)
-#' @param path Path to directory containing file with graph data
+#' @param source_dir Path to directory containing files with graph data
 #' @param format Format of graph data. Any format supported by 
 #' \code{igraph::read_graph} can be used.
 #' @param pattern Pattern to use to filter filenames. Any pattern supported by
@@ -89,7 +89,7 @@ read_simple_graphs <- function(source_dir, format = "ncol", pattern = "*",
                                         if(length(s) == 1) {
                                           s
                                         } else {
-                                          paste(head(s, -1), collapse = ".")
+                                          paste(utils::head(s, -1), collapse = ".")
                                         }
                                         }))
   attr(graphs, "names") <- names
@@ -106,10 +106,9 @@ read_simple_graphs <- function(source_dir, format = "ncol", pattern = "*",
 #'      pair of endpoints)
 #'   4. Removes isolated vertices (i.e. vertices with no edges after the 
 #'      previous alterations)
-#' @param path Path to file containing graph data
+#' @param file Path to file containing graph data
 #' @param format Format of graph data. All formats supported by 
 #' \code{igraph::read_graph} are supported.
-#' @param graph Original igraph graph object
 #' @param as_undirected If TRUE make graph edges undirected
 #' @param remove_loops If TRUE, remove edgeds that connect a vertex to itself
 #' @param remove_multiple If TRUE remove multiple edges connencting the same 
@@ -347,6 +346,11 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
 #' Simple wrapper for the \code{igraph::make_ego_graph} function that names
 #' each ego-network in the returned list with the name of the node in the
 #' original graph that the ego-network was generated from
+#' @param graph An \code{igraph} object
+#' @param order The number of steps from the source node to include
+#' nodes for each ego-network.
+#' @param ... Additional parameters to be passed to the underlying 
+#' \code{igraph::make_ego_graph} function used.
 #' @export
 make_named_ego_graph <- function(graph, order, ...) {
   ego_networks <- igraph::make_ego_graph(graph, order, ...)
@@ -483,10 +487,16 @@ graphlet_ids_for_size <- function(graphlet_size) {
 #' @param source_dir Path to graph directory
 #' @param format Format of graph files
 #' @param pattern Filename pattern to match graph files
-#' @param type Type of graphlet-based degree distributions: "orb4" counts all 
-#' orbits for graphlets comprising up to 4 nodes; "orb5" counts all orbits for
-#' graphlets comprising up to 5 nodes.
-#' @return A named list where each element contains a set of GDDs for a single 
+#' @param feature_type Type of graphlet-based degree distributions. Can be 
+#' \code{graphlet} to count graphlets or \code{orbit} to count orbits.
+#' @return A named list where each element contains a set of GDDs for a single
+#' @param max_graphlet_size Maximum size of graphlets to use when generating GDD
+#' @param ego_neighbourhood_size The number of steps from the source node to 
+#' include nodes for each ego-network. If set to 0, ego-networks will not be 
+#' used
+#' @param  mc.cores Number of cores to use for parallel processing. Defaults to
+#' the \code{mc.cores} option set in the R environment.
+#' @return A named list where each element contains a set of GDDs for a single
 #' graph from the source directory. Each set of GDDs is itself a named list,  
 #' where each GDD element is a \code{dhist} discrete histogram object.
 #' @export

@@ -16,12 +16,22 @@ gdd_for_all_graphs(source_dir, format = "ncol", pattern = ".txt",
 
 \item{pattern}{Filename pattern to match graph files}
 
-\item{type}{Type of graphlet-based degree distributions: "orb4" counts all 
-orbits for graphlets comprising up to 4 nodes; "orb5" counts all orbits for
-graphlets comprising up to 5 nodes.}
+\item{feature_type}{Type of graphlet-based degree distributions. Can be 
+\code{graphlet} to count graphlets or \code{orbit} to count orbits.}
+
+\item{max_graphlet_size}{Maximum size of graphlets to use when generating GDD}
+
+\item{ego_neighbourhood_size}{The number of steps from the source node to 
+include nodes for each ego-network. If set to 0, ego-networks will not be 
+used}
+
+\item{mc.cores}{Number of cores to use for parallel processing. Defaults to
+the \code{mc.cores} option set in the R environment.}
 }
 \value{
-A named list where each element contains a set of GDDs for a single 
+A named list where each element contains a set of GDDs for a single
+
+A named list where each element contains a set of GDDs for a single
 graph from the source directory. Each set of GDDs is itself a named list,  
 where each GDD element is a \code{dhist} discrete histogram object.
 }

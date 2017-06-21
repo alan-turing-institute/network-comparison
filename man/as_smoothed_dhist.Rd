@@ -7,6 +7,8 @@
 as_smoothed_dhist(dhist, smoothing_window_width)
 }
 \arguments{
+\item{dhist}{A discrete histogram as a \code{dhist} object}
+
 \item{smoothing_window_width}{If greater than 0, the discrete histogram will
 be treated as having the mass at each location "smoothed" uniformly across
 a bin centred on the location and having width = \code{smoothing_window_width}}

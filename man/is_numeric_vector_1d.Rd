@@ -6,6 +6,9 @@
 \usage{
 is_numeric_vector_1d(input)
 }
+\arguments{
+\item{input}{Arbitrary object}
+}
 \value{
 TRUE if input is a 1D numeric vector. FALSE otherwise.
 }

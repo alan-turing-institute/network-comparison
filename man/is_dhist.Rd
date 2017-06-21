@@ -7,9 +7,9 @@
 is_dhist(x, fast_check = TRUE)
 }
 \arguments{
-\item{\code{x}}{An arbitrary object}
+\item{x}{An arbitrary object}
 
-\item{\code{fast_check}}{Boolean flag indicating whether to perform only a 
+\item{fast_check}{Boolean flag indicating whether to perform only a 
 superficial fast check limited to checking the object's class attribute 
 is set to \code{dhist} (default = \code{TRUE})}
 }

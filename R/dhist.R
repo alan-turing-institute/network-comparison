@@ -58,6 +58,7 @@ update_dhist <-
 #' Returns a "smoothed" copy of a \code{dhist} object with its 
 #' \code{smoothing_window_width} attribute set to the value provided 
 #' \code{smoothing_window_width} parameter.
+#' @param dhist A discrete histogram as a \code{dhist} object
 #' @param smoothing_window_width If greater than 0, the discrete histogram will
 #' be treated as having the mass at each location "smoothed" uniformly across
 #' a bin centred on the location and having width = \code{smoothing_window_width}
@@ -73,6 +74,7 @@ as_smoothed_dhist <- function(dhist, smoothing_window_width) {
 #' 
 #' Returns an "unsmoothed" copy of a \code{dhist} object with its 
 #' \code{smoothing_window_width} attribute set to 0.
+#' @param dhist A discrete histogram as a \code{dhist} object
 #' @return A copy of a \code{dhist} object with its \code{smoothing_window_width}
 #' attribute set to 0.
 #' @export
@@ -88,8 +90,8 @@ as_unsmoothed_dhist <- function(dhist) {
 #' \code{dhist}. If \code{fast_check} is \code{FALSE} (default), then checks
 #' are also made to ensure that the object has the structure required of a
 #' \code{dhist} object. 
-#' @param \code{x} An arbitrary object
-#' @param \code{fast_check} Boolean flag indicating whether to perform only a 
+#' @param x An arbitrary object
+#' @param fast_check Boolean flag indicating whether to perform only a 
 #' superficial fast check limited to checking the object's class attribute 
 #' is set to \code{dhist} (default = \code{TRUE})
 #' @export
@@ -144,16 +146,12 @@ dhist_from_obs <- function(observations) {
 #' a discrete histogram
 #' 
 #' @param dhist A discrete histogram as a \code{dhist} object
-#' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
-#' "smear" point masses across a finite width in the real domain prior to 
-#' calculating the ECMF. This will result in a piecewise linear ECMF rather than
-#' the stepwise constant ECMF obtained with no smoothing. Default is 0, which 
-#' results in no smoothing and a stepwise constant ECMF. Care should be taken 
-#' to select a \code{smoothing_window_width} that is appropriate for the 
-#' discrete domain (e.g.for the integer domain a width of 1 is the natural
-#' choice)
 #' @return An interpolating ECMF as an \code{approxfun} object. This function
-#' will return the interpolated cumulative mass for a vector of arbitrary locations.
+#' will return the interpolated cumulative mass for a vector of arbitrary 
+#' locations. If \code{dhist$smoothing_window_width} is zero, the ECMF will be
+#' piecewise constant. If \code{dhist$smoothing_window_width} is one, the ECMF
+#' will be piece-wise linear. If \code{dhist$smoothing_window_width} is any
+#' other value, the ECMF will not correctly represent the cumulative mass.
 #' @export
 dhist_ecmf <- function(dhist) {
   # Ensure histogram is sorted in order of increasing location
@@ -180,10 +178,11 @@ dhist_ecmf <- function(dhist) {
     # 2. Set lower limit cumulative masses to have the same value as the 
     # upper limit of the previous location. This ensures constant interpolation
     # between the upper limit of one location and the lower limit of the next
-    cum_mass_lower <- c(0, head(cum_mass_upper, num_locs -1))
+    cum_mass_lower <- c(0, utils::head(cum_mass_upper, num_locs -1))
     # 3. Identify upper limits within machine precision of the lower limit of 
     # the next location
-    diff <- abs(head(upper_limits, num_locs -1) - tail(lower_limits, num_locs -1))
+    diff <- abs(utils::head(upper_limits, num_locs -1) - 
+                  utils::tail(lower_limits, num_locs -1))
     tolerance <- .Machine$double.eps
     drop_indexes <- which(diff <= tolerance)
     # 4. Drop upper limits and associated cumulative masses where a lower 
@@ -208,7 +207,7 @@ dhist_ecmf <- function(dhist) {
   }
   # Construct ECMF
   max_mass <- cum_mass[length(cum_mass)]
-  dhist_ecmf <- approxfun(x = x_knots, y = cum_mass, 
+  dhist_ecmf <- stats::approxfun(x = x_knots, y = cum_mass, 
                           method = interpolation_method, yleft = 0, 
                           yright = max_mass, f = 0, ties = min)
   class(dhist_ecmf) <- c("dhist_ecmf", class(dhist_ecmf))
@@ -227,7 +226,12 @@ dhist_ecmf <- function(dhist) {
 #' which the y-value changes gradient (i.e. the x-values between which the ECMF
 #' does its constant or linear interpolation)
 #' @export
-dhist_ecmf_knots <- function(dhist_ecmf, ...) {
+dhist_ecmf_knots <- function(dhist_ecmf) {
+  # dhist_ecmf is a stats::approxfun object and is either a piecewise constant
+  # or piece-wise linear function, with the x argument of the underlying 
+  # approxfun set to the inflexion points (or knots) of the pricewise function
+  # We simply recover the value of the x argument by evaluating "x" in the 
+  # environment of the dhist_ecmf approxfun
   eval(expression(x), envir=environment(dhist_ecmf))
 }
 
@@ -258,25 +262,25 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
   ecm2 <- dhist_ecmf2(x)
   # Set some other values used in either case
   num_segs <- length(x) - 1
-  x_lower <- head(x, num_segs)
-  x_upper <- tail(x, num_segs)
+  x_lower <- utils::head(x, num_segs)
+  x_upper <- utils::tail(x, num_segs)
   # Depending on the ECDF type, we calculate the area between ECMFs differently
   if(ecmf_type == "constant") {
     # Area of each rectangular segment between ECMFs is the absolute difference
     # between the ECMFs at the lower limit of the segment * the width of the
     # segement
     ecm_diff <- abs(ecm2 - ecm1)
-    ecm_diff_lower <- head(ecm_diff, num_segs)
+    ecm_diff_lower <- utils::head(ecm_diff, num_segs)
     segment_width <- abs(x_upper - x_lower)
     segment_areas <- ecm_diff_lower * segment_width
   } else if(ecmf_type == "linear") {
     # --------------------------------------------------------------
     # Determine area between pairs of linear segments from each ECMF
     # --------------------------------------------------------------
-    y1_lower <- head(ecm1, num_segs)
-    y1_upper <- tail(ecm1, num_segs)
-    y2_lower <- head(ecm2, num_segs)
-    y2_upper <- tail(ecm2, num_segs)
+    y1_lower <- utils::head(ecm1, num_segs)
+    y1_upper <- utils::tail(ecm1, num_segs)
+    y2_lower <- utils::head(ecm2, num_segs)
+    y2_upper <- utils::tail(ecm2, num_segs)
     # Determine if ECMFs intersect within each segment. The linear segments from
     # each ECMF will only intersect if the ordering of the y-components of their
     # start and end endpoints are different (i.e. the ECMF with the y-component
@@ -516,6 +520,7 @@ harmonise_dhist_locations <- function(dhist1, dhist2) {
 #'   \item \code{is_numeric(input)}: Input is vector, matrix, array or list of numbers
 #'   \item \code{is_null(dim(input))}: Input is not a matrix or array
 #' }
+#' @param input Arbitrary object
 #' @return TRUE if input is a 1D numeric vector. FALSE otherwise.
 is_numeric_vector_1d <- function(input) {
   return(purrr::is_numeric(input) && purrr::is_null(dim(input)))

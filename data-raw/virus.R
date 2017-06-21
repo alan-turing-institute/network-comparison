@@ -4,7 +4,7 @@
 data_dir <- file.path("inst", "extdata", "VRPINS")
 
 load_virus_data <- function(filename) {
-  read_orca_graph(file = file.path(data_dir, filename), format = "ncol")
+  read_simple_graph(file = file.path(data_dir, filename), format = "ncol")
 }
 
 virusppi <- list(EBV = load_virus_data("EBV.txt"), 

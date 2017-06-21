@@ -21,6 +21,8 @@
 #' which  results in no smoothing. Care should be taken to select a 
 #' \code{smoothing_window_width} that is appropriate for the discrete domain 
 #' (e.g.for the integer domain a width of 1 is the natural choice)
+#' @param  mc.cores Number of cores to use for parallel processing. Defaults to
+#' the \code{mc.cores} option set in the R environment.
 #' @return NetEMD measures between all pairs of graphs for which GDDs 
 #' were provided. Format of returned data depends on the \code{return_details}
 #' parameter. If set to FALSE, a list is returned with the following named
@@ -45,6 +47,7 @@ net_emds_for_all_graphs <- function(
     # forking
     mc.cores = 1
   }
+  num_features <- length(gdds[[1]])
   out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {net_emd(
     gdds[[index_a]], gdds[[index_b]], method = method, return_details = return_details,
     smoothing_window_width = smoothing_window_width)
@@ -178,7 +181,7 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     # Set default step_size for "fixed_step" method if step_size not provided
     location_spacing <- function(l) {
       l <- sort(l)
-      tail(l, length(l)-1) - head(l, length(l)-1)
+      utils::tail(l, length(l)-1) - utils::head(l, length(l)-1)
     }
     min_location_sep1 <- min(location_spacing(dhist1_norm$locations))
     min_location_sep2 <- min(location_spacing(dhist2_norm$locations))
@@ -204,7 +207,7 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     #    bounds, even in the case where one of them is the offset with minimum
     #    EMD
     buffer <- 0.1
-    soln <- optimise(emd_offset, lower = (min_offset -buffer), upper = (max_offset + buffer))
+    soln <- stats::optimise(emd_offset, lower = (min_offset -buffer), upper = (max_offset + buffer))
     min_emd <- soln$objective
     min_offset <- soln$minimum
     return(list(min_emd = min_emd, min_offset = min_offset))

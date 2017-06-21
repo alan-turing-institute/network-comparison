@@ -7,7 +7,7 @@
 gradient (i.e. the x-values between which the ECMF does its constant or 
 linear interpolates)}
 \usage{
-dhist_ecmf_knots(dhist_ecmf, ...)
+dhist_ecmf_knots(dhist_ecmf)
 }
 \arguments{
 \item{dhist_ecmf}{An object of class \code{dhist_ecmf}, returned from a call 

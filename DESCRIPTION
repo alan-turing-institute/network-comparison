@@ -15,7 +15,8 @@ Imports:
     igraph,
     orca,
     purrr,
-    lpSolve
+    lpSolve,
+    plyr
 Suggests:
     testthat,
     knitr,

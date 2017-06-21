@@ -6,6 +6,15 @@
 \usage{
 make_named_ego_graph(graph, order, ...)
 }
+\arguments{
+\item{graph}{An \code{igraph} object}
+
+\item{order}{The number of steps from the source node to include
+nodes for each ego-network.}
+
+\item{...}{Additional parameters to be passed to the underlying 
+\code{igraph::make_ego_graph} function used.}
+}
 \description{
 Simple wrapper for the \code{igraph::make_ego_graph} function that names
 each ego-network in the returned list with the name of the node in the

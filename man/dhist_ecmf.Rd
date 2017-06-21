@@ -9,19 +9,14 @@ dhist_ecmf(dhist)
 }
 \arguments{
 \item{dhist}{A discrete histogram as a \code{dhist} object}
-
-\item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
-"smear" point masses across a finite width in the real domain prior to 
-calculating the ECMF. This will result in a piecewise linear ECMF rather than
-the stepwise constant ECMF obtained with no smoothing. Default is 0, which 
-results in no smoothing and a stepwise constant ECMF. Care should be taken 
-to select a \code{smoothing_window_width} that is appropriate for the 
-discrete domain (e.g.for the integer domain a width of 1 is the natural
-choice)}
 }
 \value{
 An interpolating ECMF as an \code{approxfun} object. This function
-will return the interpolated cumulative mass for a vector of arbitrary locations.
+will return the interpolated cumulative mass for a vector of arbitrary 
+locations. If \code{dhist$smoothing_window_width} is zero, the ECMF will be
+piecewise constant. If \code{dhist$smoothing_window_width} is one, the ECMF
+will be piece-wise linear. If \code{dhist$smoothing_window_width} is any
+other value, the ECMF will not correctly represent the cumulative mass.
 }
 \description{
 Generate interpolating empirical cumulative mass function (ECMF) for 
