@@ -2,7 +2,7 @@
 library("netdist")
 edge_format = "ncol"
 # Load reference graph (used for Netdis. Not required for NetEMD)
-ref_path = "~/OneDrive - The Alan Turing Institute/Documents/Network comparison/Data/Netdis/DIP/core/Yeast-core.txt"
+ref_path = file.path(system.file(file.path("extdata", "random"), package = "netdist"), "ER_1250_10_1")
 ref_graph <- read_simple_graph(ref_path, format = edge_format)
 
 # Set source directory and file properties for Virus PPI graph edge files
@@ -35,7 +35,7 @@ centred_counts <- purrr::map(query_graphs, netdis_centred_graphlet_counts,
 res3 <- netdis_for_all_graphs(centred_counts, 3)
 netdis3_mat <- cross_comp_to_matrix(res3$netdis, res3$comp_spec)
 # Netdis measure for graphlets of size 4
-res4 <- netdis_for_all_graphs(centred_counts, 3)
+res4 <- netdis_for_all_graphs(centred_counts, 4)
 netdis4_mat <- cross_comp_to_matrix(res4$netdis, res4$comp_spec)
 netdis4_mat
 
@@ -54,4 +54,15 @@ plot(phangorn::upgma(as.dist(netdis4_mat), method="average"), use.edge.length=FA
      edge.width=cex*2, main=title, cex.lab=cex, cex.axis=cex, cex.main=cex, 
      cex.sub=cex, cex=cex)
 
+## ------------------------------------------------------------------------
+cex=1.5
+col <- colorRampPalette(colors = c("blue","white"))(100)
+title = paste("Netdis: graphlet size = ", 3, sep = "")
+heatmap(netdis3_mat, Rowv = NULL, Colv = NULL, col = col, main = title, cexRow = cex, cexCol = cex, symm = TRUE)
+
+## ------------------------------------------------------------------------
+cex=1.5
+col <- colorRampPalette(colors = c("blue","white"))(100)
+title = paste("Netdis: graphlet size = ", 4, sep = "")
+heatmap(netdis4_mat, Rowv = NULL, Colv = NULL, col = col, main = title, cexRow = cex, cexCol = cex, symm = TRUE)
 

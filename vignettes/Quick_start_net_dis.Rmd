@@ -78,7 +78,7 @@ centred_counts <- purrr::map(query_graphs, netdis_centred_graphlet_counts,
 res3 <- netdis_for_all_graphs(centred_counts, 3)
 netdis3_mat <- cross_comp_to_matrix(res3$netdis, res3$comp_spec)
 # Netdis measure for graphlets of size 4
-res4 <- netdis_for_all_graphs(centred_counts, 3)
+res4 <- netdis_for_all_graphs(centred_counts, 4)
 netdis4_mat <- cross_comp_to_matrix(res4$netdis, res4$comp_spec)
 netdis4_mat
 ```
