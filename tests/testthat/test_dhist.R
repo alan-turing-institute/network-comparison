@@ -401,7 +401,7 @@ test_that("dhist_ecmf returns correct step function when smoothing_window_width 
   dhist1_unsmoothed <- as_unsmoothed_dhist(dhist1)
   
   ecmf1 <- dhist_ecmf(dhist1)
-  actual_knots1 <- dhist_ecmf_knots(ecmf1)
+  actual_knots1 <- ecmf_knots(ecmf1)
   actual_knots_ecds1 <- ecmf1(actual_knots1)
   inter_knots_x <- head(actual_knots1, length(actual_knots1) - 1)
   actual_inter_knots_ecds1 <- ecmf1(inter_knots_x)

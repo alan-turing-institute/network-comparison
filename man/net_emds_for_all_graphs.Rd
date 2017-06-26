@@ -5,7 +5,7 @@
 \title{NetEMDs between all graph pairs using provided Graphlet-based Degree 
 Distributions}
 \usage{
-net_emds_for_all_graphs(gdds, method = "optimise", step_size = NULL,
+net_emds_for_all_graphs(gdds, method = "optimise",
   smoothing_window_width = 0, return_details = FALSE,
   mc.cores = getOption("mc.cores", 2L))
 }
@@ -15,17 +15,11 @@ all graphs being compared}
 
 \item{method}{The method to use to find the minimum EMD across all potential 
 offsets for each pair of histograms. Default is "optimise" to use
-R's built-in \code{optimise} method to efficiently find the offset with the 
-minimal EMD. However, this is not guaranteed to find the global minimum if 
-multiple local minima EMDs exist. You can alternatively specify the 
-"fixed_step" method, which will exhaustively evaluate the EMD between the 
-histograms at overlapping offsets separated by a fixed step. The size of the 
-fixed step is 1/2 the the minimum spacing between locations in either
-histogram after normalising to unit variance}
-
-\item{step_size}{Additional optional argument for "fixed_step" method allowing
-user to specify their own minumum step size. Note that this step size is 
-applied to the histograms after they have been normalised to unit variance}
+R's built-in \code{stats::optimise} method to efficiently find the offset 
+with the minimal EMD. However, this is not guaranteed to find the global 
+minimum if multiple local minima EMDs exist. You can alternatively specify the 
+"exhaustive" method, which will exhaustively evaluate the EMD between the 
+histograms at all offsets that are candidates for the minimal EMD.}
 
 \item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
 "smear" point masses across a finite width in the real domain. Default is 0, 

@@ -4,8 +4,8 @@
 \alias{net_emd}
 \title{NetEMD Network Earth Mover's Distance}
 \usage{
-net_emd(dhists1, dhists2, method = "optimise", step_size = NULL,
-  return_details = FALSE, smoothing_window_width = 0)
+net_emd(dhists1, dhists2, method = "optimise", return_details = FALSE,
+  smoothing_window_width = 0)
 }
 \arguments{
 \item{dhists1}{A \code{dhist} discrete histogram object or a list of such objects}
@@ -14,17 +14,11 @@ net_emd(dhists1, dhists2, method = "optimise", step_size = NULL,
 
 \item{method}{The method to use to find the minimum EMD across all potential 
 offsets for each pair of histograms. Default is "optimise" to use
-R's built-in \code{optimise} method to efficiently find the offset with the 
-minimal EMD. However, this is not guaranteed to find the global minimum if 
-multiple local minima EMDs exist. You can alternatively specify the 
-"fixed_step" method, which will exhaustively evaluate the EMD between the 
-histograms at overlapping offsets separated by a fixed step. The size of the 
-fixed step is 1/2 the the minimum spacing between locations in either
-histogram after normalising to unit variance}
-
-\item{step_size}{Additional optional argument for "fixed_step" method allowing
-user to specify their own minumum step size. Note that this step size is 
-applied to the histograms after they have been normalised to unit variance}
+R's built-in \code{stats::optimise} method to efficiently find the offset 
+with the minimal EMD. However, this is not guaranteed to find the global 
+minimum if multiple local minima EMDs exist. You can alternatively specify the 
+"exhaustive" method, which will exhaustively evaluate the EMD between the 
+histograms at all offsets that are candidates for the minimal EMD.}
 
 \item{return_details}{Logical indicating whether to return the individual
 minimal EMDs and associated offsets for all pairs of histograms}

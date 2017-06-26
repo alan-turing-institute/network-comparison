@@ -226,7 +226,7 @@ dhist_ecmf <- function(dhist) {
 #' which the y-value changes gradient (i.e. the x-values between which the ECMF
 #' does its constant or linear interpolation)
 #' @export
-dhist_ecmf_knots <- function(dhist_ecmf) {
+ecmf_knots <- function(dhist_ecmf) {
   # dhist_ecmf is a stats::approxfun object and is either a piecewise constant
   # or piece-wise linear function, with the x argument of the underlying 
   # approxfun set to the inflexion points (or knots) of the pricewise function
@@ -254,8 +254,8 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
   }
   ecmf_type <- ecmf_type1
   # Determine all possible locations where either ECMF changes gradient ("knots")
-  x1 <- dhist_ecmf_knots(dhist_ecmf1)
-  x2 <- dhist_ecmf_knots(dhist_ecmf2)
+  x1 <- ecmf_knots(dhist_ecmf1)
+  x2 <- ecmf_knots(dhist_ecmf2)
   x <- sort(union(x1, x2))
   # Calculate the cumulative density at each of these locations for both ECMFs
   ecm1 <- dhist_ecmf1(x)
@@ -335,6 +335,23 @@ segment_area_bowtie <- function(x_diff, y_diff_lower, y_diff_upper) {
   # previous approach when the above conditions hold.
   segment_area <- 0.5 * x_diff * (y_diff_lower^2 + y_diff_upper^2) / 
     (abs(y_diff_lower) + abs(y_diff_upper))
+}
+
+#' Area between two offset Empirical Cumulative Mass Functions (ECMFs)
+#' 
+#' @param ecmf1 An Empirical Cululative Mass Function (ECMF) object of class 
+#' \code{dhist_ecmf}
+#' @param ecmf2 An Empirical Cululative Mass Function (ECMF) object of class 
+#' \code{dhist_ecmf}
+#' @param offset An offset to add to all locations of the first ECMF. Postive
+#' offsets will shift the ECMF to the right and negative ones to the left.
+#' @return area The area between the two ECMFs, calculated as the integral of 
+#' the absolute difference between the two ECMFs
+area_between_offset_ecmfs <- function(ecmf1, ecmf2, offset) {
+  # Construct ECMFs for each normalised histogram
+  ecmf1 <- dhist_ecmf(shift_dhist(dhist1_norm, offset))
+  ecmf2 <- dhist_ecmf(dhist2_norm)
+  area_between_dhist_ecmfs(ecmf1, ecmf2)
 }
 
 #' Sort discrete histogram
