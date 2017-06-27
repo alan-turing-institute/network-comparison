@@ -99,6 +99,8 @@ min_emd_exhaustive <- function(dhist1, dhist2) {
   min_emd <- Inf # Inf so that first EMD is less than this
   min_offset <- Inf
   cur_offset <- 0 # 0 so that adding first step shift gives initial offset
+  # Set state variables
+  distance_matrix <- NULL
   while(step_shift < Inf) {
     dhist1 <- shift_dhist(dhist1, step_shift)
     cur_offset <- cur_offset + step_shift
@@ -107,7 +109,11 @@ min_emd_exhaustive <- function(dhist1, dhist2) {
       min_emd <- cur_emd
       min_offset <- cur_offset
     }
-    step_shift <- shift_to_next_alignment(dhist1$locations, dhist2$locations)
+    res <- shift_to_next_alignment(dhist1$locations, dhist2$locations, 
+                                   distance_matrix_prev = distance_matrix,
+                                   shift_prev = step_shift)
+    step_shift <- res$shift
+    distance_matrix <- res$distance_matrix
   }
   return(list(min_emd = min_emd, min_offset = min_offset))
 }
@@ -120,18 +126,30 @@ min_emd_exhaustive <- function(dhist1, dhist2) {
 #' @param x2 Second location vector. This vector is remaining unchanged.
 #' @return Minimum non-zero right-shift to apply to x1 to align at least one 
 #' element of x1 with at least one element of x2
-shift_to_next_alignment <- function(x1, x2) {
+shift_to_next_alignment <- function(x1, x2, distance_matrix_prev = NULL, 
+                                    shift_prev = NULL) {
+  if(!is.null(distance_matrix_prev) && !is.null(shift_prev)) {
+    # If both distance matrix and shift from previous step provided, use these
+    # to more efficiently calculate distance matrix
+    distance_matrix <- (distance_matrix_prev - shift_prev)
+  } else {
+    # Otherwise calculate distance matrix from scratch by calculating the 
+    # distance from each x1 to each x2
+    # NOTE: outer() generates a matrix with the first vector mapped to rows and
+    # the second vector mapped to columns, so the rows will be x2 and the 
+    # columns x1
+    distance_matrix <- outer(x2, x1, "-")
+  } 
   # Calculate the distance from each x1 to each x2
   # outer() generates a matrix with the first vector mapped to rows and the 
   # second vector mapped to columns
-  distance_matrix <- outer(x2, x1, "-")
   # We're stepping x1 from left to right across x2, so drop all negative 
   # distances. Also drop zero distances as we want to step to the next alingment
   # even when x1 and x2 are already aligned
   distance_matrix[distance_matrix <= 0] <- Inf
   # Return the minimum positive distance as the smallest step required to align
   # any x1 with any x2
-  return(min(distance_matrix))
+  return(list(shift = min(distance_matrix), distance_matrix = distance_matrix))
 }
 
 #' Earth Mover's Distance (EMD) 

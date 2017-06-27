@@ -266,16 +266,29 @@ test_that("EMD methods return same result when order of sparsely specified bins
           })
 
 context("EMD: Next step")
-test_that("next_step gives correct result for simple x1, x2", {
+test_that("next_step gives correct shift and matrix for simple x1, x2", {
   x1 <- c(-3000, -2000, -1000, 0, 1000, 2000, 3000, 4000)
-  x2 <- c(-3100, -2100, -1100, 10, 100, 1100, 2100, 2100, 4100)
+  x2 <- c(-3100, -2100, -1100, 10, 100, 1100, 2100, 3100, 4100)
   
   expected_shift <- 10
-  actual_shift <- shift_to_next_alignment(x1, x2)
-  expect_equal(actual_shift, expected_shift)
+  expected_distance_matrix <- rbind(
+    c(-100, -1100, -2100, -3100, -4100, -5100, -6100, -7100),
+    c(900, -100, -1100, -2100, -3100, -4100, -5100, -6100),
+    c(1900, 900, -100, -1100, -2100, -3100, -4100, -5100),
+    c(3010, 2010, 1010, 10, -990, -1990, -2990, -3990),
+    c(3100, 2100, 1100, 100, -900, -1900, -2900, -3900),
+    c(4100, 3100, 2100, 1100, 100, -900, -1900, -2900),
+    c(5100, 4100, 3100, 2100, 1100, 100, -900, -1900),
+    c(6100, 5100, 4100, 3100, 2100, 1100, 100, -900),
+    c(7100, 6100, 5100, 4100, 3100, 2100, 1100, 100)
+  )
+  expected_distance_matrix[expected_distance_matrix<=0] <- Inf
+  expected <- list(shift = 10, distance_matrix = expected_distance_matrix)
+  actual <- shift_to_next_alignment(x1, x2)
+  expect_equal(actual, expected)
 })
 
-test_that("next_step gives correct result for random x1, x2", {
+test_that("next_step gives correct shift for random x1, x2", {
   test_fn <- function(n) {
     # Define x1 as random vector where minimum spacing between elements is
     # x1_prec
@@ -293,7 +306,7 @@ test_that("next_step gives correct result for random x1, x2", {
     x2[x2_rand_ind] <- x2[x2_rand_ind] - std_shift + min_shift
     
     expected_shift <- min_shift
-    actual_shift <- shift_to_next_alignment(x1, x2)
+    actual_shift <- shift_to_next_alignment(x1, x2)$shift
     expect_equal(actual_shift, expected_shift)
   }
   purrr::walk(1:100, test_fn)
