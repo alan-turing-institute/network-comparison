@@ -16,7 +16,8 @@ Imports:
     orca,
     purrr,
     lpSolve,
-    plyr
+    plyr,
+    dplyr
 Suggests:
     testthat,
     knitr,
