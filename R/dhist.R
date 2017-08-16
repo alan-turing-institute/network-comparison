@@ -540,5 +540,5 @@ harmonise_dhist_locations <- function(dhist1, dhist2) {
 #' @param input Arbitrary object
 #' @return TRUE if input is a 1D numeric vector. FALSE otherwise.
 is_numeric_vector_1d <- function(input) {
-  return(purrr::is_numeric(input) && purrr::is_null(dim(input)))
+  return(is.numeric(input) && purrr::is_null(dim(input)))
 }
