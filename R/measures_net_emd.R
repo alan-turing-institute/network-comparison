@@ -46,7 +46,7 @@ net_emds_for_all_graphs <- function(
   out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {net_emd(
     gdds[[index_a]], gdds[[index_b]], method = method, return_details = return_details,
     smoothing_window_width = smoothing_window_width)
-    }, comp_spec$index_a, comp_spec$index_b, SIMPLIFY = FALSE))
+    }, comp_spec$index_a, comp_spec$index_b, SIMPLIFY = FALSE, mc.cores = mc.cores))
   if(return_details) {
     net_emds <- purrr::simplify(purrr::map(out, ~.$net_emd))
     min_emds <- matrix(purrr::simplify(purrr::map(out, ~.$min_emds)), ncol = num_features, byrow = TRUE)
