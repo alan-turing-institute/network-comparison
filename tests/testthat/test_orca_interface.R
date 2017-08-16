@@ -745,20 +745,22 @@ test_that("make_named_ego_graph labels each ego-network with the correct node na
   # We compare edgelists as igraphs do not implement comparison
   order <- 1
   expected_ego_elists_o1 <- list(
-    n1 = expected_ego_elist_n1_o1,
-    n2 = expected_ego_elist_n2_o1,
-    n3 = expected_ego_elist_n3_o1,
-    n4 = expected_ego_elist_n4_o1,
-    n5 = expected_ego_elist_n5_o1,
-    n6 = expected_ego_elist_n6_o1,
-    n7 = expected_ego_elist_n7_o1,
-    n8 = expected_ego_elist_n8_o1,
-    n9 = expected_ego_elist_n9_o1,
-    n10 = expected_ego_elist_n10_o1
+    n1 =  dplyr::arrange(data.frame(expected_ego_elist_n1_o1), X1, X2),
+    n2 =  dplyr::arrange(data.frame(expected_ego_elist_n2_o1), X1, X2),
+    n3 =  dplyr::arrange(data.frame(expected_ego_elist_n3_o1), X1, X2),
+    n4 =  dplyr::arrange(data.frame(expected_ego_elist_n4_o1), X1, X2),
+    n5 =  dplyr::arrange(data.frame(expected_ego_elist_n5_o1), X1, X2),
+    n6 =  dplyr::arrange(data.frame(expected_ego_elist_n6_o1), X1, X2),
+    n7 =  dplyr::arrange(data.frame(expected_ego_elist_n7_o1), X1, X2),
+    n8 =  dplyr::arrange(data.frame(expected_ego_elist_n8_o1), X1, X2),
+    n9 =  dplyr::arrange(data.frame(expected_ego_elist_n9_o1), X1, X2),
+    n10 = dplyr::arrange(data.frame(expected_ego_elist_n10_o1), X1, X2)
   )
   # Generate actual ego-networks and convert to edge lists for comparison
   actual_ego_elists_o1 <- 
-    purrr::map(make_named_ego_graph(graph, order), igraph::as_edgelist)
+    purrr::map(make_named_ego_graph(graph, order), function(g) {
+      dplyr::arrange(data.frame(igraph::as_edgelist(g)), X1, X2)
+      })
   expect_equal(actual_ego_elists_o1, expected_ego_elists_o1)
 })
 
