@@ -208,6 +208,7 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 #' @export
 gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4, 
                 ego_neighbourhood_size = 0){
+  graph <- simplify_graph(graph)
   if(ego_neighbourhood_size > 0) {
     if(feature_type != 'graphlet') {
       stop("Feature type not supported for ego-networks")
