@@ -177,18 +177,21 @@ simplify_graph <- function(graph, as_undirected = TRUE, remove_loops = TRUE,
   return(graph)
 }
 
-#' ORCA vertex graphlet or orbit counts to graphlet-based histograms
+
+
+
+#' Matrix of node level features to a histogram for each feature
 #' 
-#' Converts ORCA output (counts of each graphlet or orbit at each graph vertex) to 
-#' a set of graphlet degree histograms (a histogram of counts across all graph 
-#' vertices for each graphlet or orbit) 
-#' @param orca_counts ORCA output: Counts of each graphlet or orbit 
-#' (columns) at each graph vertex (rows)
-#' @return Graphlet degree histograms: List of degree histograms for each 
-#' graphlet or orbit
+#' Converts a matrix of node level features (e.g. ORCA output - counts of each
+#' graphlet or orbit at each graph vertex) to 
+#' a set of histograms (a histogram of counts across all graph 
+#' vertices for each feature) 
+#' @param A number of nodes (rows) by number of features (columns) matrix, where the ij entry is the score of node i on feature j. orca_counts ORCA output: Counts of each graphlet or orbit 
+#' @return Feature histograms: List of degree histograms for each 
+#' feature 
 #' @export
-orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
-  apply(orca_counts, 2, dhist_from_obs)
+graph_features_to_histogram <- function(featuresMatrix) {
+  apply(featuresMatrix, 2, dhist_from_obs)
 }
 
 #' Graphlet-based degree distributions (GDDs)
@@ -208,10 +211,7 @@ orca_counts_to_graphlet_orbit_degree_distribution <- function(orca_counts) {
 #' @export
 gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4, 
                 ego_neighbourhood_size = 0){
-  if (feature_type !='custom')
-  {
-	  graph <- simplify_graph(graph)
-  }
+  graph <- simplify_graph(graph)
   if(ego_neighbourhood_size > 0) {
     if(feature_type != 'graphlet') {
       stop("Feature type not supported for ego-networks")
@@ -223,13 +223,11 @@ gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4,
     out <- count_orbits_per_node(graph, max_graphlet_size = max_graphlet_size)
   } else if(feature_type == "graphlet") {
     out <- count_graphlets_per_node(graph, max_graphlet_size = max_graphlet_size)
-  } else if(feature_type == "custom") {
-	out<-graph
   }
   else {
     stop('gdd: unrecognised feature_type')
   }
-  orca_counts_to_graphlet_orbit_degree_distribution(out)
+  graph_features_to_histogram(out)
 }
 
 #' Count graphlet orbits for each node in a graph
