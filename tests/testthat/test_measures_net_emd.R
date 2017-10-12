@@ -26,12 +26,12 @@ test_that("net_emd returns 0 when comparing an integer location histogram offset
   expect_equal(self_net_emd(histogram, shift = 0, "exhaustive"), expected)
 })
 
-test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing an 
+test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing an
           integer location histogram offset against itself", {
 
   expect_self_net_emd_correct <- function(histogram, shift, method,
                                           return_details = FALSE) {
-    self_net_emd <- net_emd(histogram, shift_dhist(histogram, shift), 
+    self_net_emd <- net_emd(histogram, shift_dhist(histogram, shift),
                             method = method, return_details = return_details)
     expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift)
     expect_equal(self_net_emd, expected)
@@ -41,29 +41,29 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing an
   masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   histogram <- dhist(locations = locations, masses = masses)
 
-  expect_self_net_emd_correct(histogram, shift = 1, "optimise", 
+  expect_self_net_emd_correct(histogram, shift = 1, "optimise",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 1, "exhaustive", 
+  expect_self_net_emd_correct(histogram, shift = 1, "exhaustive",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0.5, "optimise", 
+  expect_self_net_emd_correct(histogram, shift = 0.5, "optimise",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0.5, "exhaustive", 
+  expect_self_net_emd_correct(histogram, shift = 0.5, "exhaustive",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0.1, "optimise", 
+  expect_self_net_emd_correct(histogram, shift = 0.1, "optimise",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0.1, "exhaustive", 
+  expect_self_net_emd_correct(histogram, shift = 0.1, "exhaustive",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0.05, "optimise", 
+  expect_self_net_emd_correct(histogram, shift = 0.05, "optimise",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0.05, "exhaustive", 
+  expect_self_net_emd_correct(histogram, shift = 0.05, "exhaustive",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0.01, "optimise", 
+  expect_self_net_emd_correct(histogram, shift = 0.01, "optimise",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0.01, "exhaustive", 
+  expect_self_net_emd_correct(histogram, shift = 0.01, "exhaustive",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0, "optimise", 
+  expect_self_net_emd_correct(histogram, shift = 0, "optimise",
                               return_details = TRUE)
-  expect_self_net_emd_correct(histogram, shift = 0, "exhaustive", 
+  expect_self_net_emd_correct(histogram, shift = 0, "exhaustive",
                               return_details = TRUE)
 })
 
@@ -130,14 +130,14 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   }
 
   expected <- 0
-  actuals_list_opt <- purrr::map2(rand_dhists, offset_lists, 
+  actuals_list_opt <- purrr::map2(rand_dhists, offset_lists,
                                   function(dhist, offsets) {
     net_emd_offset_self(dhist, offsets, method = "optimise")})
   purrr::walk(actuals_list_opt, function(actuals) {
         purrr::walk(actuals, function(actual) {
           expect_equal(actual, expected)})
   })
-  actuals_list_exhaustive <- purrr::map2(rand_dhists, offset_lists, 
+  actuals_list_exhaustive <- purrr::map2(rand_dhists, offset_lists,
                                    function(dhist, offsets) {
     net_emd_offset_self(dhist, offsets, method = "exhaustive")})
   purrr::walk(actuals_list_exhaustive, function(actuals) {
@@ -145,7 +145,7 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   })
 })
 
-test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any 
+test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
           normal histogram randomly offset against itself", {
 
   num_hists <- 2
@@ -167,9 +167,9 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
 
   offset_lists <- replicate(num_hists, offsets, simplify = FALSE)
 
-  expect_self_net_emd_correct <- 
+  expect_self_net_emd_correct <-
     function(histogram, shift, method, return_details = FALSE) {
-    self_net_emd <- net_emd(histogram, shift_dhist(histogram, shift), 
+    self_net_emd <- net_emd(histogram, shift_dhist(histogram, shift),
                             method, return_details)
     expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift)
     expect_equal(self_net_emd, expected)
@@ -177,14 +177,14 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
 
   purrr::walk2(rand_dhists, offset_lists, function(dhist, offsets) {
     purrr::walk(offsets, function(offset){
-      expect_self_net_emd_correct(dhist, offset, "optimise", 
+      expect_self_net_emd_correct(dhist, offset, "optimise",
                                   return_details = TRUE)
     })
   })
-  
+
   purrr::walk2(rand_dhists, offset_lists, function(dhist, offsets) {
     purrr::walk(offsets, function(offset){
-      expect_self_net_emd_correct(dhist, offset, "exhaustive", 
+      expect_self_net_emd_correct(dhist, offset, "exhaustive",
                                   return_details = TRUE)
     })
   })
@@ -192,15 +192,15 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
 
 context("Measures NetEMD: Virus PPI (EMD)")
 # EMD and NET_EMD: Virus PPI datasets
-test_that("emd return 0 when comparing graphlet orbit degree distributions of 
+test_that("emd return 0 when comparing graphlet orbit degree distributions of
           virus PPI graphs to themselves", {
             # Load viurs PPI network data in ORCA-compatible edge list format
             data_indexes <- 1:length(virusppi)
             data_names <- attr(virusppi, "name")
-            
+
             # Calculate graphlet-based degree distributions up to graphlet order 4
             virus_gdd <- purrr::map(virusppi, gdd)
-            
+
             # Map over virus PPI networks
             purrr::walk(virus_gdd, function(gdd) {
               purrr::walk(gdd, function(gdd_Ox) {
@@ -210,33 +210,33 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
             })
 
 context("Measures NetEMD: Virus PPI (NetEMD)")
-test_that("net_emd return 0 when comparing graphlet orbit degree distributions 
+test_that("net_emd return 0 when comparing graphlet orbit degree distributions
           of virus PPI graphs to themselves", {
-            # Load virus PPI network data in ORCA-compatible edge list format
-            data_indexes <- 1:length(virusppi)
-            data_names <- attr(virusppi, "name")
-            
-            # Calculate graphlet-based degree distributions up to graphlet order 4
-            virus_gdd <- purrr::map(virusppi, gdd)
-            
-            expect_equalish <- function(actual, expected) {
-              diff <- abs(actual - expected)
-              max_diff <- 1e-12
-              return(expect_lte(diff, max_diff))
-            }
-            
-            # Map over virus PPI networks
-            purrr::walk(virus_gdd, function(gdd) {
-              purrr::walk(gdd, function(gdd_Ox) {
-                expect_equalish(net_emd(gdd_Ox, gdd_Ox, method = "optimise", 
-                                        smoothing_window_width = 0), 0)
-              })
-            })
-            })
+  # Load virus PPI network data in ORCA-compatible edge list format
+  data_indexes <- 1:length(virusppi)
+  data_names <- attr(virusppi, "name")
+
+  # Calculate graphlet-based degree distributions up to graphlet order 4
+  virus_gdd <- purrr::map(virusppi, gdd)
+
+  expect_equalish <- function(actual, expected) {
+    diff <- abs(actual - expected)
+    max_diff <- 1e-12
+    return(expect_lte(diff, max_diff))
+  }
+
+  # Map over virus PPI networks
+  purrr::walk(virus_gdd, function(gdd) {
+    purrr::walk(gdd, function(gdd_Ox) {
+      expect_equalish(net_emd(gdd_Ox, gdd_Ox, method = "optimise",
+                              smoothing_window_width = 0), 0)
+    })
+  })
+})
 
 context("Measures NetEMD: Random graphs (EMD)")
 # EMD and NET_EMD: Random graph datasets
-test_that("emd return 0 when comparing graphlet orbit degree distributions of 
+test_that("emd return 0 when comparing graphlet orbit degree distributions of
           random graphs to themselves", {
             # Load random graph data in ORCA-compatible edge list format
             random_graphs <- read_simple_graphs(
@@ -244,10 +244,10 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
               format = "ncol", pattern = "*")
             data_indexes <- 1:length(random_graphs)
             data_names <- attr(random_graphs, "name")
-            
+
             # Calculate graphlet-based degree distributions up to graphlet order 4
             random_gdd <- purrr::map(random_graphs, gdd)
-            
+
             # Map over random graphs
             purrr::walk(random_gdd, function(gdd) {
               purrr::walk(gdd, function(gdd_Ox) {
@@ -257,7 +257,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
             })
 
 context("Measures NetEMD: Random graphs (NetEMD)")
-test_that("net_emd return 0 when comparing graphlet orbit degree distributions 
+test_that("net_emd return 0 when comparing graphlet orbit degree distributions
           of random graphs to themselves", {
             # Load random graph data in ORCA-compatible edge list format
             random_graphs <- read_simple_graphs(
@@ -265,20 +265,20 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
               format = "ncol", pattern = "*")
             data_indexes <- 1:length(random_graphs)
             data_names <- attr(random_graphs, "name")
-            
+
             # Calculate graphlet-based degree distributions up to graphlet order 4
             random_gdd <- purrr::map(random_graphs, gdd)
-            
+
             expect_equalish <- function(actual, expected) {
               diff <- abs(actual - expected)
               max_diff <- 1e-12
               return(expect_lte(diff, max_diff))
             }
-            
+
             # Map over random graphs
             purrr::walk(random_gdd, function(gdd) {
               purrr::walk(gdd, function(gdd_Ox) {
-                expect_equalish(net_emd(gdd_Ox, gdd_Ox, method = "optimise", 
+                expect_equalish(net_emd(gdd_Ox, gdd_Ox, method = "optimise",
                                         smoothing_window_width = 0), 0)
               })
             })
@@ -290,52 +290,52 @@ test_that("net_emds_for_all_graphs works", {
   source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
   edge_format = "ncol"
   file_pattern = ".txt"
-  
+
   # Set number of threads to use at once for parallel processing.
   num_threads = getOption("mc.cores", 2L)
-  
+
   # Use previously tested GDD code to generate inputs to function under test
   gdds_orbits_g4 <- gdd_for_all_graphs(
-    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "orbit", max_graphlet_size = 4)
   gdds_orbits_g5 <- gdd_for_all_graphs(
-    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "orbit", max_graphlet_size = 5)
   gdds_graphlets_g4 <- gdd_for_all_graphs(
-    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 4)
   gdds_graphlets_g5 <- gdd_for_all_graphs(
-    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 5)
   gdds_graphlets_g4_e1 <- gdd_for_all_graphs(
-    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 1)
   gdds_graphlets_g5_e1 <- gdd_for_all_graphs(
-    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 1)
   gdds_graphlets_g4_e2 <- gdd_for_all_graphs(
-    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 2)
   gdds_graphlets_g5_e2 <- gdd_for_all_graphs(
-    source_dir = source_dir, format = edge_format, pattern = file_pattern, 
+    source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 2)
-  
+
   # Use previously tested NetEMD function to generate expected NetEMD scores
   # individually and combine into expected output for code under test
   expected_net_emd_fn<- function(gdds) {
     list(net_emds = c(net_emd(gdds$EBV, gdds$ECL), net_emd(gdds$EBV, gdds$HSV),
                       net_emd(gdds$EBV, gdds$KSHV), net_emd(gdds$EBV, gdds$VZV),
-                      net_emd(gdds$ECL, gdds$HSV), net_emd(gdds$ECL, gdds$KSHV), 
-                      net_emd(gdds$ECL, gdds$VZV), net_emd(gdds$HSV, gdds$KSHV), 
+                      net_emd(gdds$ECL, gdds$HSV), net_emd(gdds$ECL, gdds$KSHV),
+                      net_emd(gdds$ECL, gdds$VZV), net_emd(gdds$HSV, gdds$KSHV),
                       net_emd(gdds$HSV, gdds$VZV), net_emd(gdds$KSHV, gdds$VZV)),
          comp_spec = cross_comparison_spec(gdds))
   }
-  
+
   # Comparison function for clarity
   compare_fn <- function(gdds) {
     expect_equal(net_emds_for_all_graphs(gdds), expected_net_emd_fn(gdds))
   }
-  
+
   # Map over test parameters, comparing actual gdds to expected
   # No ego-networks
   compare_fn(gdds_orbits_g4)
