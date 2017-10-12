@@ -190,6 +190,33 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
   })
 })
 
+test_that("net_emd returns analytically derived non-zero solutions for distributions
+          where the analytical solution is known", {
+  # Helper functions to create dhists for a given value of "p"
+  two_bin_dhist <- function(p) {
+    dhist(locations = c(0, 1), masses = c(p, 1-p))
+  }
+  three_bin_dhist <- function(p) {
+  dhist(locations = c(-1, 0, 1), masses = c(0.5*p*(1-p), 1-(p*(1-p)), 0.5*p*(1-p)))
+  }
+  
+  # Helper function to test actual vs expected
+  test_pair <- function(p, expected) {
+    dhistA <- two_bin_dhist(p)
+    dhistB <- three_bin_dhist(p)
+    expect_equal(net_emd(dhistA, dhistB, method = "exhaustive"), expected, tolerance = 1e-12)
+    # Even setting the stats::optimise method tolerance to machine double precision, the
+    # optimised NetEMD is ~1e-09, so set a slightly looser tolerance here
+    expect_equal(net_emd(dhistA, dhistB, method = "optimise"), expected, tolerance = 1e-08)
+  }
+  
+  # Test for p values with analytically calculated NetEMD
+  test_pair(1/2, 1)
+  test_pair(1/3, 1/sqrt(2))
+  test_pair(1/5, 1/2)
+   
+})
+
 context("Measures NetEMD: Virus PPI (EMD)")
 # EMD and NET_EMD: Virus PPI datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of
