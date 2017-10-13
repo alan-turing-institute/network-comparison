@@ -46,9 +46,11 @@ min_emd <- function(dhist1, dhist2, method = "optimise", ...) {
 #' using the built-in \code{stats::optimise} method.
 #' @param dhist1 A \code{dhist} discrete histogram object
 #' @param dhist2 A \code{dhist} discrete histogram object
+#' @param tol Tolerance that defines stopping condition for optimiser. See 
+#' documentation for \code{\link{stats:optimise}} for details on its effect.
 #' @return Earth Mover's Distance between the two discrete histograms
 #' @export
-min_emd_optimise <- function(dhist1, dhist2) {
+min_emd_optimise <- function(dhist1, dhist2, tolerance = .Machine$double.eps*1000) {
   # Determine minimum and maximum offset of range in which histograms overlap
   # (based on sliding histogram 1)
   min_offset <- min(dhist2$locations) - max(dhist1$locations)
@@ -76,7 +78,7 @@ min_emd_optimise <- function(dhist1, dhist2) {
   
   # Get solution from optimiser
   soln <- stats::optimise(emd_offset, lower = min_offset, upper = max_offset, 
-                          tol = .Machine$double.eps*1000)
+                          tol = tolerance)
   
   # Return mnimum EMD and associated offset
   min_emd <- soln$objective

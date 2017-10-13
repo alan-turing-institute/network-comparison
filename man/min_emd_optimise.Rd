@@ -4,12 +4,15 @@
 \alias{min_emd_optimise}
 \title{Minimum Earth Mover's Distance (EMD) using optimiser search}
 \usage{
-min_emd_optimise(dhist1, dhist2)
+min_emd_optimise(dhist1, dhist2, tolerance = .Machine$double.eps * 1000)
 }
 \arguments{
 \item{dhist1}{A \code{dhist} discrete histogram object}
 
 \item{dhist2}{A \code{dhist} discrete histogram object}
+
+\item{tol}{Tolerance that defines stopping condition for optimiser. See 
+documentation for \code{\link{stats:optimise}} for details on its effect.}
 }
 \value{
 Earth Mover's Distance between the two discrete histograms
