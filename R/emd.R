@@ -6,25 +6,42 @@
 #' @param dhist1 A \code{dhist} discrete histogram object
 #' @param dhist2 A \code{dhist} discrete histogram object
 #' @param method The method to use to find the minimum EMD across all potential 
-#' offsets for each pair of histograms. Default is "optimise" to use
+#' offsets for each pair of histograms. Default is "optimise".
+#'\itemize {
+#'  \item \code{optimise}: Default. Uses an optimiser to efficiently find the offset 
+#'  with the minimal EMD. However, this is not guaranteed to find the global 
+#'  minimum if multiple local minima EMDs exist. See \code{\link{min_emd_optimise}}
+#'  for any method-specific arguments.
+#'  \item Exhaustively evaluate the EMD between the histograms at all offsets that
+#'  are candidates for the minimal EMD.See \code{\link{min_emd_exhaustive}}
+#'  for any method-specific arguments.
+#'  \item Evaluate the EMD between the histograms at a series of offsets separated
+#'  by a fixed step and spanning the range of overalap of the two histograms. See 
+#'  \code{\link{min_emd_fixed_step}} for any method-specific arguments.
+#'} 
+#' to use
 #' R's built-in \code{stats::optimise} method to efficiently find the offset 
 #' with the minimal EMD. However, this is not guaranteed to find the global 
 #' minimum if multiple local minima EMDs exist. You can alternatively specify the 
 #' "exhaustive" method, which will exhaustively evaluate the EMD between the 
 #' histograms at all offsets that are candidates for the minimal EMD.
+#' @param ... Method-specific arguments to be passed to the specific
+#' method used to calculate the minimum EMD
 #' @return Earth Mover's Distance between the two discrete histograms
 #' @export
-min_emd <- function(dhist1, dhist2, method = "optimise") {
+min_emd <- function(dhist1, dhist2, method = "optimise", ...) {
   # Require input to be a pair of "dhist" discrete histograms 
   if(!(is_dhist(dhist1) && is_dhist(dhist2))) {
     stop("All inputs must be 'dhist' discrete histogram objects")
   }
   if(method == "optimise") {
-    return(min_emd_optimise(dhist1, dhist2))
+    return(min_emd_optimise(dhist1, dhist2, ...))
   } else if(method == "exhaustive"){
-    return(min_emd_exhaustive(dhist1, dhist2))
+    return(min_emd_exhaustive(dhist1, dhist2, ...))
+  } else if(method == "fixed_step"){
+    return(min_emd_fixed_step(dhist1, dhist2, ...))
   } else {
-    stop("Method not recognised. Must be 'exhaustive' or ' optimise'")
+    stop("Method not recognised. Must be 'exhaustive', ' optimise' or 'fixed_step'")
   }
 }
 
@@ -92,7 +109,7 @@ min_emd_optimise <- function(dhist1, dhist2) {
 #' @param dhist2 A \code{dhist} discrete histogram object
 #' @return Earth Mover's Distance between the two discrete histograms
 #' @export
-min_emd_exhaustive <- function(dhist1, dhist2) {
+min_emd_exhaustive <- function(dhist1, dhist2, step = 0.001) {
   # Determine initial offset for histogram1, based on sliding histogram1
   # over histogram 2 from left to right
   step_shift <- min(dhist2$locations) - max(dhist1$locations)
@@ -116,6 +133,45 @@ min_emd_exhaustive <- function(dhist1, dhist2) {
     step_shift <- res$shift
     distance_matrix <- res$distance_matrix
   }
+  return(list(min_emd = min_emd, min_offset = min_offset))
+}
+
+min_emd_fixed_step <- function(dhist1, dhist2, step_size = default_step()) {
+  # Determine minimum and maximum offset of range in which histograms overlap,
+  # based on sliding histogram 1 over histogram 2 from left to right
+  min_offset <- min(dhist2$locations) - max(dhist1$locations)
+  max_offset <- max(dhist2$locations) - min(dhist1$locations)
+  
+  # Function to set default step size to a fraction of minimum distance
+  # between locations on wither histogram
+  default_step <- function() {
+    step_fraction <- 0.01
+    # Set default step_size for "fixed_step" method if step_size not provided
+    location_spacing <- function(l) {
+      l <- sort(l)
+      utils::tail(l, length(l)-1) - utils::head(l, length(l)-1)
+    }
+    min_location_sep1 <- min(location_spacing(dhist1$locations))
+    min_location_sep2 <- min(location_spacing(dhist2$locations))
+    min_location_spacing <- min(min_location_sep1, min_location_sep2)
+    step_size <- min_location_spacing * step_fraction
+  }
+  
+  # Helper function to make mapping over all offsets simple
+  emd_offset <- function(offset) {
+    # Construct ECMFs for each normalised histogram
+    ecmf1 <- dhist_ecmf(shift_dhist(dhist1, offset))
+    ecmf2 <- dhist_ecmf(dhist2)
+    area_between_dhist_ecmfs(ecmf1, ecmf2)
+  }
+  
+  # Calculate EMD and all requested offsets
+  offsets <- seq(min_offset, max_offset, by = step_size)
+  emds <- purrr::map_dbl(offsets, emd_offset)
+  # Return minimum EMD and offset
+  min_idx <- which.min(emds)
+  min_emd <- emds[min_idx]
+  min_offset <- offsets[min_idx]
   return(list(min_emd = min_emd, min_offset = min_offset))
 }
 

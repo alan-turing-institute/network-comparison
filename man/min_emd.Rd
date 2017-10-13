@@ -4,7 +4,7 @@
 \alias{min_emd}
 \title{Minimum Earth Mover's Distance (EMD)}
 \usage{
-min_emd(dhist1, dhist2, method = "optimise")
+min_emd(dhist1, dhist2, method = "optimise", ...)
 }
 \arguments{
 \item{dhist1}{A \code{dhist} discrete histogram object}
@@ -12,12 +12,28 @@ min_emd(dhist1, dhist2, method = "optimise")
 \item{dhist2}{A \code{dhist} discrete histogram object}
 
 \item{method}{The method to use to find the minimum EMD across all potential 
-offsets for each pair of histograms. Default is "optimise" to use
+offsets for each pair of histograms. Default is "optimise".
+\itemize {
+ \item \code{optimise}: Default. Uses an optimiser to efficiently find the offset 
+ with the minimal EMD. However, this is not guaranteed to find the global 
+ minimum if multiple local minima EMDs exist. See \code{\link{min_emd_optimise}}
+ for any method-specific arguments.
+ \item Exhaustively evaluate the EMD between the histograms at all offsets that
+ are candidates for the minimal EMD.See \code{\link{min_emd_exhaustive}}
+ for any method-specific arguments.
+ \item Evaluate the EMD between the histograms at a series of offsets separated
+ by a fixed step and spanning the range of overalap of the two histograms. See 
+ \code{\link{min_emd_fixed_step}} for any method-specific arguments.
+} 
+to use
 R's built-in \code{stats::optimise} method to efficiently find the offset 
 with the minimal EMD. However, this is not guaranteed to find the global 
 minimum if multiple local minima EMDs exist. You can alternatively specify the 
 "exhaustive" method, which will exhaustively evaluate the EMD between the 
 histograms at all offsets that are candidates for the minimal EMD.}
+
+\item{...}{Method-specific arguments to be passed to the specific
+method used to calculate the minimum EMD}
 }
 \value{
 Earth Mover's Distance between the two discrete histograms
