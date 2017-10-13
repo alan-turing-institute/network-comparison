@@ -394,14 +394,12 @@ test_that("min_emd_fixed_step correct when comparing an offset 1D feature distri
   expect_equal(actual, expected)
 })
 
-test_that("min_emd_fixed_step closely matches min_emd_exhaustive with default step size",{
-  bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
-  bin_centres1 <- c(-17.65, -11.52, -10.74, -10.54, -7.56, 0.03, 0.33, 0.49, 1.74, 6.93, 12.34)
-  bin_masses2 <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-  bin_centres2 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+test_that("min_emd_fixed_step closely matches min_emd_exhaustive with default step size", {
   
   bin_masses1 <- c(2.124749, 3.453120, 5.936767, 6.228690, 8.057908, 10.463148, 11.394959, 11.602371, 11.922119)
   bin_centres1 <- c(-3.876220, -3.731132, -3.630938, -3.096881, -1.436239, -0.729344, -0.226891, 3.570451, 3.874552)
+  bin_masses2 <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+  bin_centres2 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
   
   dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
