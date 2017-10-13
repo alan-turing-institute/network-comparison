@@ -132,15 +132,26 @@ min_emd_exhaustive <- function(dhist1, dhist2) {
   return(list(min_emd = min_emd, min_offset = min_offset))
 }
 
-min_emd_fixed_step <- function(dhist1, dhist2, step_size = default_step()) {
+#' Minimum Earth Mover's Distance (EMD) using fixed step search
+#' 
+#' Calculates the minimum Earth Mover's Distance (EMD) between two discrete 
+#' histograms using a fixed step search.
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
+#' @param step_size The size of the fixed step at which to evaluate 
+#' candidate offsets for the minimum EMD between the two histograms. Default is
+#' to use a small fraction of the minimum spacing between adjacent locations
+#' for either histogram
+#' @return Earth Mover's Distance between the two discrete histograms
+#' @export
+min_emd_fixed_step <- function(dhist1, dhist2, step_size = 0.01 * min_location_spacing()) {
   # Determine minimum and maximum offset of range in which histograms overlap,
   # based on sliding histogram 1 over histogram 2 from left to right
   min_offset <- min(dhist2$locations) - max(dhist1$locations)
   max_offset <- max(dhist2$locations) - min(dhist1$locations)
   
-  # Function to set default step size to a fraction of minimum distance
-  # between locations on wither histogram
-  default_step <- function() {
+  # Helper function used to set default sateop size
+  min_location_spacing <- function() {
     step_fraction <- 0.01
     # Set default step_size for "fixed_step" method if step_size not provided
     location_spacing <- function(l) {
@@ -150,7 +161,7 @@ min_emd_fixed_step <- function(dhist1, dhist2, step_size = default_step()) {
     min_location_sep1 <- min(location_spacing(dhist1$locations))
     min_location_sep2 <- min(location_spacing(dhist2$locations))
     min_location_spacing <- min(min_location_sep1, min_location_sep2)
-    step_size <- min_location_spacing * step_fraction
+    return(min_location_spacing)
   }
   
   # Helper function to make mapping over all offsets simple
