@@ -4,7 +4,7 @@
 \alias{min_emd_exhaustive}
 \title{Minimum Earth Mover's Distance (EMD) using exhaustive search}
 \usage{
-min_emd_exhaustive(dhist1, dhist2, step = 0.001)
+min_emd_exhaustive(dhist1, dhist2)
 }
 \arguments{
 \item{dhist1}{A \code{dhist} discrete histogram object}

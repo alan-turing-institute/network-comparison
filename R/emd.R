@@ -103,7 +103,7 @@ min_emd_optimise <- function(dhist1, dhist2) {
 #' @param dhist2 A \code{dhist} discrete histogram object
 #' @return Earth Mover's Distance between the two discrete histograms
 #' @export
-min_emd_exhaustive <- function(dhist1, dhist2, step = 0.001) {
+min_emd_exhaustive <- function(dhist1, dhist2) {
   # Determine initial offset for histogram1, based on sliding histogram1
   # over histogram 2 from left to right
   step_shift <- min(dhist2$locations) - max(dhist1$locations)
