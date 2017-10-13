@@ -8,17 +8,20 @@ net_emd(dhists1, dhists2, method = "optimise", return_details = FALSE,
   smoothing_window_width = 0)
 }
 \arguments{
-\item{dhists1}{A \code{dhist} discrete histogram object or a list of such objects}
-
-\item{dhists2}{A \code{dhist} discrete histogram object or a list of such objects}
-
 \item{method}{The method to use to find the minimum EMD across all potential 
-offsets for each pair of histograms. Default is "optimise" to use
-R's built-in \code{stats::optimise} method to efficiently find the offset 
-with the minimal EMD. However, this is not guaranteed to find the global 
-minimum if multiple local minima EMDs exist. You can alternatively specify the 
-"exhaustive" method, which will exhaustively evaluate the EMD between the 
-histograms at all offsets that are candidates for the minimal EMD.}
+offsets for each pair of histograms. Default is "optimise".
+\itemize {
+ \item \code{optimise}: Default. Uses an optimiser to efficiently find the offset 
+ with the minimal EMD. However, this is not guaranteed to find the global 
+ minimum if multiple local minima EMDs exist. See \code{min_emd_optimise}
+ for any method-specific arguments.
+ \item Exhaustively evaluate the EMD between the histograms at all offsets that
+ are candidates for the minimal EMD.See \code{min_emd_exhaustive}
+ for any method-specific arguments.
+ \item Evaluate the EMD between the histograms at a series of offsets separated
+ by a fixed step and spanning the range of overalap of the two histograms. See 
+ \code{min_emd_fixed_step} for any method-specific arguments.
+}}
 
 \item{return_details}{Logical indicating whether to return the individual
 minimal EMDs and associated offsets for all pairs of histograms}
@@ -28,6 +31,13 @@ minimal EMDs and associated offsets for all pairs of histograms}
 which  results in no smoothing. Care should be taken to select a 
 \code{smoothing_window_width} that is appropriate for the discrete domain 
 (e.g.for the integer domain a width of 1 is the natural choice)}
+
+\item{dhist1}{A \code{dhist} discrete histogram object}
+
+\item{dhist2}{A \code{dhist} discrete histogram object}
+
+\item{...}{Method-specific arguments to be passed to the specific
+method used to calculate the minimum EMD}
 }
 \value{
 NetEMD measure for the two sets of discrete histograms 

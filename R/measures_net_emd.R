@@ -68,15 +68,22 @@ net_emds_for_all_graphs <- function(
 #'   1. Normalise each histogram to have unit mass and unit variance
 #'   2. Find the minimum EMD between each pair of histograms
 #'   3. Take the average minimum EMD across all histogram pairs
-#' @param dhists1 A \code{dhist} discrete histogram object or a list of such objects
-#' @param dhists2 A \code{dhist} discrete histogram object or a list of such objects
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
 #' @param method The method to use to find the minimum EMD across all potential 
-#' offsets for each pair of histograms. Default is "optimise" to use
-#' R's built-in \code{stats::optimise} method to efficiently find the offset 
-#' with the minimal EMD. However, this is not guaranteed to find the global 
-#' minimum if multiple local minima EMDs exist. You can alternatively specify the 
-#' "exhaustive" method, which will exhaustively evaluate the EMD between the 
-#' histograms at all offsets that are candidates for the minimal EMD.
+#' offsets for each pair of histograms. Default is "optimise".
+#'\itemize {
+#'  \item \code{optimise}: Default. Uses an optimiser to efficiently find the offset 
+#'  with the minimal EMD. However, this is not guaranteed to find the global 
+#'  minimum if multiple local minima EMDs exist. See \code{min_emd_optimise}
+#'  for any method-specific arguments.
+#'  \item Exhaustively evaluate the EMD between the histograms at all offsets that
+#'  are candidates for the minimal EMD.See \code{min_emd_exhaustive}
+#'  for any method-specific arguments.
+#'  \item Evaluate the EMD between the histograms at a series of offsets separated
+#'  by a fixed step and spanning the range of overalap of the two histograms. See 
+#'  \code{min_emd_fixed_step} for any method-specific arguments.
+#'}
 #' @param return_details Logical indicating whether to return the individual
 #' minimal EMDs and associated offsets for all pairs of histograms
 #' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
@@ -84,6 +91,8 @@ net_emds_for_all_graphs <- function(
 #' which  results in no smoothing. Care should be taken to select a 
 #' \code{smoothing_window_width} that is appropriate for the discrete domain 
 #' (e.g.for the integer domain a width of 1 is the natural choice)
+#' @param ... Method-specific arguments to be passed to the specific
+#' method used to calculate the minimum EMD
 #' @return NetEMD measure for the two sets of discrete histograms 
 #' (\code{return_details = FALSE}) or a list with the following named elements
 #' \code{net_emd}: the NetEMD for the set of histogram pairs, \code{min_emds}:  

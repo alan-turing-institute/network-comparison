@@ -16,21 +16,15 @@ offsets for each pair of histograms. Default is "optimise".
 \itemize {
  \item \code{optimise}: Default. Uses an optimiser to efficiently find the offset 
  with the minimal EMD. However, this is not guaranteed to find the global 
- minimum if multiple local minima EMDs exist. See \code{\link{min_emd_optimise}}
+ minimum if multiple local minima EMDs exist. See \code{min_emd_optimise}
  for any method-specific arguments.
  \item Exhaustively evaluate the EMD between the histograms at all offsets that
- are candidates for the minimal EMD.See \code{\link{min_emd_exhaustive}}
+ are candidates for the minimal EMD.See \code{min_emd_exhaustive}
  for any method-specific arguments.
  \item Evaluate the EMD between the histograms at a series of offsets separated
  by a fixed step and spanning the range of overalap of the two histograms. See 
- \code{\link{min_emd_fixed_step}} for any method-specific arguments.
-} 
-to use
-R's built-in \code{stats::optimise} method to efficiently find the offset 
-with the minimal EMD. However, this is not guaranteed to find the global 
-minimum if multiple local minima EMDs exist. You can alternatively specify the 
-"exhaustive" method, which will exhaustively evaluate the EMD between the 
-histograms at all offsets that are candidates for the minimal EMD.}
+ \code{min_emd_fixed_step} for any method-specific arguments.
+}}
 
 \item{...}{Method-specific arguments to be passed to the specific
 method used to calculate the minimum EMD}
