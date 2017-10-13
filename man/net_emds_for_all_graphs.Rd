@@ -7,19 +7,26 @@ Distributions}
 \usage{
 net_emds_for_all_graphs(gdds, method = "optimise",
   smoothing_window_width = 0, return_details = FALSE,
-  mc.cores = getOption("mc.cores", 2L))
+  mc.cores = getOption("mc.cores", 2L), ...)
 }
 \arguments{
 \item{gdds}{List containing sets of Graphlet-based Degree Distributions for 
 all graphs being compared}
 
 \item{method}{The method to use to find the minimum EMD across all potential 
-offsets for each pair of histograms. Default is "optimise" to use
-R's built-in \code{stats::optimise} method to efficiently find the offset 
-with the minimal EMD. However, this is not guaranteed to find the global 
-minimum if multiple local minima EMDs exist. You can alternatively specify the 
-"exhaustive" method, which will exhaustively evaluate the EMD between the 
-histograms at all offsets that are candidates for the minimal EMD.}
+offsets for each pair of histograms. Default is "optimise".
+\itemize {
+ \item \code{optimise}: Default. Uses an optimiser to efficiently find the offset 
+ with the minimal EMD. However, this is not guaranteed to find the global 
+ minimum if multiple local minima EMDs exist. See \code{min_emd_optimise}
+ for any method-specific arguments.
+ \item Exhaustively evaluate the EMD between the histograms at all offsets that
+ are candidates for the minimal EMD.See \code{min_emd_exhaustive}
+ for any method-specific arguments.
+ \item Evaluate the EMD between the histograms at a series of offsets separated
+ by a fixed step and spanning the range of overalap of the two histograms. See 
+ \code{min_emd_fixed_step} for any method-specific arguments.
+}}
 
 \item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
 "smear" point masses across a finite width in the real domain. Default is 0, 
@@ -32,6 +39,9 @@ minimal EMDs and associated offsets for all pairs of histograms}
 
 \item{mc.cores}{Number of cores to use for parallel processing. Defaults to
 the \code{mc.cores} option set in the R environment.}
+
+\item{...}{Method-specific arguments to be passed to the specific
+method used to calculate the minimum EMD}
 }
 \value{
 NetEMD measures between all pairs of graphs for which GDDs 

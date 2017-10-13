@@ -5,7 +5,7 @@
 \title{NetEMD Network Earth Mover's Distance}
 \usage{
 net_emd(dhists1, dhists2, method = "optimise", return_details = FALSE,
-  smoothing_window_width = 0)
+  smoothing_window_width = 0, ...)
 }
 \arguments{
 \item{method}{The method to use to find the minimum EMD across all potential 
@@ -32,12 +32,12 @@ which  results in no smoothing. Care should be taken to select a
 \code{smoothing_window_width} that is appropriate for the discrete domain 
 (e.g.for the integer domain a width of 1 is the natural choice)}
 
+\item{...}{Method-specific arguments to be passed to the specific
+method used to calculate the minimum EMD}
+
 \item{dhist1}{A \code{dhist} discrete histogram object}
 
 \item{dhist2}{A \code{dhist} discrete histogram object}
-
-\item{...}{Method-specific arguments to be passed to the specific
-method used to calculate the minimum EMD}
 }
 \value{
 NetEMD measure for the two sets of discrete histograms 
