@@ -505,7 +505,6 @@ test_that("Features to Histograms Test", {
 	#negative multiple
 	c1<-matrix(c(0.1,-0.1,0.3,-0.4,0.5,-0.4),nrow=6)
 	res<-graph_features_to_histogram(c1)
-	print(res[[1]]$masses)
 	expect_equal(res[[1]]$locations,c(-0.4,-0.1,0.1,0.3,0.5))
 	expect_equal(res[[1]]$masses,c(2,1,1,1,1))
 	#small (testing machine precision)
