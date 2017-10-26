@@ -177,17 +177,16 @@ simplify_graph <- function(graph, as_undirected = TRUE, remove_loops = TRUE,
   return(graph)
 }
 
-
-
-
-#' Matrix of node level features to a histogram for each feature
+#' Convert a matrix of node level features to a discrete histogram for each feature
 #' 
-#' Converts a matrix of node level features (e.g. ORCA output - counts of each
-#' graphlet or orbit at each graph vertex) to 
-#' a set of histograms (a histogram of counts across all graph 
-#' vertices for each feature) 
-#' @param A number of nodes (rows) by number of features (columns) matrix, where the ij entry is the score of node i on feature j. orca_counts ORCA output: Counts of each graphlet or orbit 
-#' @return Feature histograms: List of degree histograms for each 
+#' Converts a matrix of node level features (e.g. for ORCA output this is counts 
+#' of each graphlet or orbit at each graph vertex) to 
+#' a set of discrete histograms (a histogram of counts for each distinct value
+#' across all graph vertices for each feature with no binning) 
+#' @param A number of nodes (rows) by number of features (columns) matrix, where 
+#' the ij entry is the score of node i on feature j (e.g. for ORCA output this is
+#' counts of each graphlet or orbit at each graph vertex)
+#' @return Feature histograms: List of discrete histograms for each 
 #' feature 
 #' @export
 graph_features_to_histograms <- function(featuresMatrix) {
@@ -227,7 +226,7 @@ gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4,
   else {
     stop('gdd: unrecognised feature_type')
   }
-  graph_features_to_histogram(out)
+  graph_features_to_histograms(out)
 }
 
 #' Count graphlet orbits for each node in a graph
