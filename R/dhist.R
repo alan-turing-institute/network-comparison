@@ -44,6 +44,19 @@ dhist <- function(locations, masses, smoothing_window_width = 0, sorted = TRUE) 
   return(dhist)
 }
 
+#' Compare dhists
+#' 
+#' Compares all fields of the dhist and only returns treu if they are all the
+#' same in both dhists
+#' @param dhist1 A discrete histogram as a \code{dhist} object
+#' @param dhist2 A discrete histogram as a \code{dhist} object
+`==.dhist` <- function(dhist1, dhist2) {
+  class(dhist1) == class(dhist2) &&
+    all(mapply(`==`, dhist1$locations, dhist2$locations)) &&
+    all(mapply(`==`, dhist1$masses, dhist2$masses)) && 
+    dhist1$smoothing_window_width == dhist2$smoothing_window_width
+}
+
 update_dhist <- 
   function(dhist, locations = dhist$locations, masses = dhist$masses,
            smoothing_window_width = dhist$smoothing_window_width) {
