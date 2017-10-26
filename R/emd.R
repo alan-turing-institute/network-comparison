@@ -64,7 +64,8 @@ min_emd_optimise <- function(dhist1, dhist2) {
   }
   
   # Get solution from optimiser
-  soln <- stats::optimise(emd_offset, lower = min_offset, upper = max_offset)
+  soln <- stats::optimise(emd_offset, lower = min_offset, upper = max_offset, 
+                          tol = .Machine$double.eps*1000)
   
   # Return mnimum EMD and associated offset
   min_emd <- soln$objective

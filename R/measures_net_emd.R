@@ -42,7 +42,7 @@ net_emds_for_all_graphs <- function(
     # forking
     mc.cores = 1
   }
-  num_features <- length(gdds)
+  num_features <- length(gdds[[1]])
   out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {net_emd(
     gdds[[index_a]], gdds[[index_b]], method = method, return_details = return_details,
     smoothing_window_width = smoothing_window_width)
