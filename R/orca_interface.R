@@ -190,7 +190,7 @@ simplify_graph <- function(graph, as_undirected = TRUE, remove_loops = TRUE,
 #' @return Feature histograms: List of degree histograms for each 
 #' feature 
 #' @export
-graph_features_to_histogram <- function(featuresMatrix) {
+graph_features_to_histograms <- function(featuresMatrix) {
   apply(featuresMatrix, 2, dhist_from_obs)
 }
 
