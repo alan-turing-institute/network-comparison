@@ -57,7 +57,7 @@ test_that("discrete_hist generates correct discrete histograms for random intege
   }
 })
 
-context("dhist: constructor and as_* transformation functions")
+context("dhist: constructor, equality operator and as_* transformation functions")
 test_that("dhist constuctor has correct locations and masses (default smoothing, unsorted)", {
   locations1 = c(7, 42, 1, 21, 101, 9)
   masses1 = c(15, 12, 16, 13, 11, 14)
@@ -238,6 +238,40 @@ test_that("as_unsmoothed_dhist sets smoothing_window_width correctly", {
   dhist_post <- as_smoothed_dhist(dhist_pre, expected_smoothing_window_width_post)
   expect_equal(dhist_post$smoothing_window_width, 
                expected_smoothing_window_width_post)
+})
+
+test_that("Identical dhists are considered equal", {
+  dhist1 <- dhist(locations <- c(7, 42, 1, 21, 101, 9), 
+                  masses = c(15, 12, 16, 13, 11, 14),
+                  smoothing_window = 0)
+  dhist2 <- dhist1
+  expect_true(dhist1 == dhist2)
+})
+
+test_that("Non-identical dhists are NOT considered equal", {
+  dhist1 <- dhist(locations <- c(7, 42, 1, 21, 101, 9), 
+                  masses = c(15, 12, 16, 13, 11, 14),
+                  smoothing_window = 0)
+  
+  # Change a single element of the locations field
+  dhist2_one_location_mismatch <- dhist1
+  dhist2_one_location_mismatch$locations[3] <- dhist2_one_location_mismatch$locations[1] + 1
+  expect_false(dhist1 == dhist2_one_location_mismatch)
+  
+  # Change a single element of the masses field
+  dhist2_one_mass_mismatch <- dhist1
+  dhist2_one_mass_mismatch$masses[2] <- dhist2_one_mass_mismatch$masses[1] + 1
+  expect_false(dhist1 == dhist2_one_mass_mismatch)
+  
+  # Change the smoothing window field
+  dhist2_smoothing_mismatch <- dhist1
+  dhist2_smoothing_mismatch$smoothing_window_width <- 1
+  expect_false(dhist1 == dhist2_smoothing_mismatch)
+  
+  # Change class
+  dhist2_class_mismatch <- dhist1
+  attr(dhist2_class_mismatch, "class") <- "mismatch"
+  expect_false(dhist1 == dhist2_class_mismatch)
 })
 
 context("dhist: Discrete histogram variance")
