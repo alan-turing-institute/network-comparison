@@ -217,6 +217,44 @@ test_that("net_emd returns analytically derived non-zero solutions for distribut
    
 })
 
+test_that("net_emd gives same results as underlying min_emd_* methods", {
+  
+  bin_masses1 <- c(2.124749, 3.453120, 5.936767, 6.228690, 8.057908, 10.463148, 11.394959, 11.602371, 11.922119)
+  bin_centres1 <- c(-3.876220, -3.731132, -3.630938, -3.096881, -1.436239, -0.729344, -0.226891, 3.570451, 3.874552)
+  bin_masses2 <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+  bin_centres2 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+  
+  # NetEMD normalises histograms to unit mas and variance, so we must do this in advance if we are to expect
+  # the min_emd_* methods to give the same results
+  dhist1 <- normalise_dhist_variance(normalise_dhist_mass(dhist(masses = bin_masses1, locations = bin_centres1)))
+  dhist2 <- normalise_dhist_variance(normalise_dhist_mass(dhist(masses = bin_masses2, locations = bin_centres2)))
+  
+  # Helper function for comparing NetEMD and MinEMD output
+  expect_equivalent <- function(net_emd, min_emd) {
+    expect_equal(length(net_emd$min_emds), 1)
+    expect_equal(length(net_emd$min_offsets), 1)
+    expect_equal(net_emd$min_emds[[1]], min_emd$min_emd)
+    expect_equal(net_emd$min_offsets[[1]], min_emd$min_offset)
+  }
+  
+  # No method specific argments (use defaults from specific methods)
+  expect_equivalent(net_emd(dhist1, dhist2, method = "exhaustive", return_details = TRUE), min_emd_exhaustive(dhist1, dhist2))
+  expect_equivalent(net_emd(dhist1, dhist2, method = "optimise", return_details = TRUE), min_emd_optimise(dhist1, dhist2))
+  expect_equivalent(net_emd(dhist1, dhist2, method = "fixed_step", return_details = TRUE), min_emd_fixed_step(dhist1, dhist2))
+  
+  # Providing all method-specific arguments
+  # Exhaustive: No method-specific arguments to provide
+  # Optimise: Vary "tolerance" parameter
+  expect_equivalent(net_emd(dhist1, dhist2, method = "optimise", tolerance = 0.1, return_details = TRUE), min_emd_optimise(dhist1, dhist2, tolerance = 0.1))
+  expect_equivalent(net_emd(dhist1, dhist2, method = "optimise", tolerance = 0.01, return_details = TRUE), min_emd_optimise(dhist1, dhist2, tolerance = 0.01))
+  expect_equivalent(net_emd(dhist1, dhist2, method = "optimise", tolerance = 0.001, return_details = TRUE), min_emd_optimise(dhist1, dhist2, tolerance = 0.001))
+  # Fixed step: Vary "step size" parameter
+  expect_equivalent(net_emd(dhist1, dhist2, method = "fixed_step", step_size = 0.1, return_details = TRUE), min_emd_fixed_step(dhist1, dhist2, step_size = 0.1))
+  expect_equivalent(net_emd(dhist1, dhist2, method = "fixed_step", step_size = 0.01, return_details = TRUE), min_emd_fixed_step(dhist1, dhist2, step_size = 0.01))
+  expect_equivalent(net_emd(dhist1, dhist2, method = "fixed_step", step_size = 0.001, return_details = TRUE), min_emd_fixed_step(dhist1, dhist2, step_size = 0.001))
+  
+})
+
 context("Measures NetEMD: Virus PPI (EMD)")
 # EMD and NET_EMD: Virus PPI datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of

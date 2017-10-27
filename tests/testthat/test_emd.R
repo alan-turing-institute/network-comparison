@@ -352,3 +352,92 @@ test_that("min_emd_exhaustive correct when comparing an offset 1D feature distri
   actual <- min_emd_exhaustive(dhist1, dhist2)
   expect_equal(actual, expected)
 })
+
+context("EMD: MinEMD fixed step")
+test_that("min_emd_fixed_step returns 0 when comparing a 1D feature distribution to itself",{
+  bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
+  bin_masses2 <- bin_masses1
+  bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+  bin_centres2 <- bin_centres1
+  dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
+  
+  expected <- list(min_emd = 0, min_offset = 0)
+  actual <- min_emd_fixed_step(dhist1, dhist2)
+  expect_equal(actual, expected)
+})
+
+test_that("min_emd_fixed_step correct comparing a non-offset 1D feature distribution to itself",{
+  bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
+  bin_masses2 <- bin_masses1
+  bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+  bin_centres2 <- bin_centres1
+  dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
+  
+  expected <- list(min_emd = 0, min_offset = 0)
+  actual <- min_emd_fixed_step(dhist1, dhist2)
+  expect_equal(actual, expected)
+})
+
+test_that("min_emd_fixed_step correct when comparing an offset 1D feature distribution to itself",{
+  offset = 10
+  bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
+  bin_masses2 <- bin_masses1
+  bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+  bin_centres2 <- bin_centres1 + offset
+  dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
+  
+  expected <- list(min_emd = 0, min_offset = offset)
+  actual <- min_emd_fixed_step(dhist1, dhist2)
+  expect_equal(actual, expected)
+})
+
+test_that("min_emd_fixed_step closely matches min_emd_exhaustive with default step size", {
+  
+  bin_masses1 <- c(2.124749, 3.453120, 5.936767, 6.228690, 8.057908, 10.463148, 11.394959, 11.602371, 11.922119)
+  bin_centres1 <- c(-3.876220, -3.731132, -3.630938, -3.096881, -1.436239, -0.729344, -0.226891, 3.570451, 3.874552)
+  bin_masses2 <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+  bin_centres2 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+  
+  dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
+  
+  expected <- min_emd_exhaustive(dhist1, dhist2)
+  actual <- min_emd_fixed_step(dhist1, dhist2)
+  # NOTE: Tolerance is mean *relative* tolerance
+  expect_equal(actual, expected, tolerance = 1e-4)
+})
+
+
+context("EMD: MinEMD wrapper")
+test_that("min_emd gives same results as underlying min_emd_* methods", {
+  
+  bin_masses1 <- c(2.124749, 3.453120, 5.936767, 6.228690, 8.057908, 10.463148, 11.394959, 11.602371, 11.922119)
+  bin_centres1 <- c(-3.876220, -3.731132, -3.630938, -3.096881, -1.436239, -0.729344, -0.226891, 3.570451, 3.874552)
+  bin_masses2 <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+  bin_centres2 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+  
+  dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
+  dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
+  
+  # No method specific argments (use defaults from specific methods)
+  expect_equal(min_emd(dhist1, dhist2, method = "exhaustive"), min_emd_exhaustive(dhist1, dhist2))
+  expect_equal(min_emd(dhist1, dhist2, method = "optimise"), min_emd_optimise(dhist1, dhist2))
+  expect_equal(min_emd(dhist1, dhist2, method = "fixed_step"), min_emd_fixed_step(dhist1, dhist2))
+  
+  # Providing all method-specific arguments
+  # Exhaustive: No method-specific arguments to provide
+  # Optimise: Vary "tolerance" parameter
+  expect_equal(min_emd(dhist1, dhist2, method = "optimise", tolerance = 0.1), min_emd_optimise(dhist1, dhist2, tolerance = 0.1))
+  expect_equal(min_emd(dhist1, dhist2, method = "optimise", tolerance = 0.01), min_emd_optimise(dhist1, dhist2, tolerance = 0.01))
+  expect_equal(min_emd(dhist1, dhist2, method = "optimise", tolerance = 0.001), min_emd_optimise(dhist1, dhist2, tolerance = 0.001))
+  # Fixed step: Vary "step size" parameter
+  expect_equal(min_emd(dhist1, dhist2, method = "fixed_step", step_size = 0.1), min_emd_fixed_step(dhist1, dhist2, step_size = 0.1))
+  expect_equal(min_emd(dhist1, dhist2, method = "fixed_step", step_size = 0.01), min_emd_fixed_step(dhist1, dhist2, step_size = 0.01))
+  expect_equal(min_emd(dhist1, dhist2, method = "fixed_step", step_size = 0.001), min_emd_fixed_step(dhist1, dhist2, step_size = 0.001))
+  
+})
+
+

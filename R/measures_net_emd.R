@@ -3,12 +3,19 @@
 #' @param gdds List containing sets of Graphlet-based Degree Distributions for 
 #' all graphs being compared
 #' @param method The method to use to find the minimum EMD across all potential 
-#' offsets for each pair of histograms. Default is "optimise" to use
-#' R's built-in \code{stats::optimise} method to efficiently find the offset 
-#' with the minimal EMD. However, this is not guaranteed to find the global 
-#' minimum if multiple local minima EMDs exist. You can alternatively specify the 
-#' "exhaustive" method, which will exhaustively evaluate the EMD between the 
-#' histograms at all offsets that are candidates for the minimal EMD.
+#' offsets for each pair of histograms. Default is "optimise".
+#'\itemize {
+#'  \item \code{optimise}: Default. Uses an optimiser to efficiently find the offset 
+#'  with the minimal EMD. However, this is not guaranteed to find the global 
+#'  minimum if multiple local minima EMDs exist. See \code{min_emd_optimise}
+#'  for any method-specific arguments.
+#'  \item Exhaustively evaluate the EMD between the histograms at all offsets that
+#'  are candidates for the minimal EMD.See \code{min_emd_exhaustive}
+#'  for any method-specific arguments.
+#'  \item Evaluate the EMD between the histograms at a series of offsets separated
+#'  by a fixed step and spanning the range of overalap of the two histograms. See 
+#'  \code{min_emd_fixed_step} for any method-specific arguments.
+#'}
 #' @param return_details Logical indicating whether to return the individual
 #' minimal EMDs and associated offsets for all pairs of histograms
 #' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
@@ -18,6 +25,8 @@
 #' (e.g.for the integer domain a width of 1 is the natural choice)
 #' @param  mc.cores Number of cores to use for parallel processing. Defaults to
 #' the \code{mc.cores} option set in the R environment.
+#' @param ... Method-specific arguments to be passed to the specific
+#' method used to calculate the minimum EMD
 #' @return NetEMD measures between all pairs of graphs for which GDDs 
 #' were provided. Format of returned data depends on the \code{return_details}
 #' parameter. If set to FALSE, a list is returned with the following named
@@ -31,7 +40,7 @@
 #' @export
 net_emds_for_all_graphs <- function(
   gdds, method = "optimise", smoothing_window_width = 0, 
-  return_details = FALSE, mc.cores = getOption("mc.cores", 2L)) {
+  return_details = FALSE, mc.cores = getOption("mc.cores", 2L), ...) {
   comp_spec <- cross_comparison_spec(gdds)
   # NOTE: mcapply only works on unix-like systems with system level forking 
   # capability. This means it will work on Linux and OSX, but not Windows.
@@ -68,15 +77,22 @@ net_emds_for_all_graphs <- function(
 #'   1. Normalise each histogram to have unit mass and unit variance
 #'   2. Find the minimum EMD between each pair of histograms
 #'   3. Take the average minimum EMD across all histogram pairs
-#' @param dhists1 A \code{dhist} discrete histogram object or a list of such objects
-#' @param dhists2 A \code{dhist} discrete histogram object or a list of such objects
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
 #' @param method The method to use to find the minimum EMD across all potential 
-#' offsets for each pair of histograms. Default is "optimise" to use
-#' R's built-in \code{stats::optimise} method to efficiently find the offset 
-#' with the minimal EMD. However, this is not guaranteed to find the global 
-#' minimum if multiple local minima EMDs exist. You can alternatively specify the 
-#' "exhaustive" method, which will exhaustively evaluate the EMD between the 
-#' histograms at all offsets that are candidates for the minimal EMD.
+#' offsets for each pair of histograms. Default is "optimise".
+#'\itemize {
+#'  \item \code{optimise}: Default. Uses an optimiser to efficiently find the offset 
+#'  with the minimal EMD. However, this is not guaranteed to find the global 
+#'  minimum if multiple local minima EMDs exist. See \code{min_emd_optimise}
+#'  for any method-specific arguments.
+#'  \item Exhaustively evaluate the EMD between the histograms at all offsets that
+#'  are candidates for the minimal EMD.See \code{min_emd_exhaustive}
+#'  for any method-specific arguments.
+#'  \item Evaluate the EMD between the histograms at a series of offsets separated
+#'  by a fixed step and spanning the range of overalap of the two histograms. See 
+#'  \code{min_emd_fixed_step} for any method-specific arguments.
+#'}
 #' @param return_details Logical indicating whether to return the individual
 #' minimal EMDs and associated offsets for all pairs of histograms
 #' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
@@ -84,6 +100,8 @@ net_emds_for_all_graphs <- function(
 #' which  results in no smoothing. Care should be taken to select a 
 #' \code{smoothing_window_width} that is appropriate for the discrete domain 
 #' (e.g.for the integer domain a width of 1 is the natural choice)
+#' @param ... Method-specific arguments to be passed to the specific
+#' method used to calculate the minimum EMD
 #' @return NetEMD measure for the two sets of discrete histograms 
 #' (\code{return_details = FALSE}) or a list with the following named elements
 #' \code{net_emd}: the NetEMD for the set of histogram pairs, \code{min_emds}:  
@@ -91,7 +109,7 @@ net_emds_for_all_graphs <- function(
 #' offsets giving the minimal EMD for each pair of histograms
 #' @export
 net_emd <- function(dhists1, dhists2, method = "optimise", 
-                    return_details = FALSE, smoothing_window_width = 0) {
+                    return_details = FALSE, smoothing_window_width = 0, ...) {
   # Require either a pair of "dhist" discrete histograms or two lists of "dhist"
   # discrete histograms
   pair_of_dhist_lists <- all(purrr::map_lgl(dhists1, is_dhist)) && all(purrr::map_lgl(dhists2, is_dhist))
@@ -102,7 +120,7 @@ net_emd <- function(dhists1, dhists2, method = "optimise",
   if(pair_of_dhist_lists) {
     details <- purrr::map2(dhists1, dhists2, function(dhist1, dhist2) {
       net_emd_single_pair(dhist1, dhist2, method = method,
-                          smoothing_window_width = smoothing_window_width)
+                          smoothing_window_width = smoothing_window_width, ...)
       })
     # Collect the minimum EMDs and associated offsets for all histogram pairs
     min_emds <- purrr::simplify(purrr::transpose(details)$min_emd)
@@ -126,12 +144,12 @@ net_emd <- function(dhists1, dhists2, method = "optimise",
     # call this net_emd function. This ensures they are treated the same.
     return(net_emd(list(dhists1), list(dhists2), method = method, 
                    return_details = return_details,
-                   smoothing_window_width = smoothing_window_width))
+                   smoothing_window_width = smoothing_window_width, ...))
   }
 }
 
 net_emd_single_pair <- function(dhist1, dhist2, method = "optimise", 
-                                smoothing_window_width = 0) {
+                                smoothing_window_width = 0, ...) {
   # Present dhists as smoothed or unsmoothed histograms depending on the value 
   # of smoothing_window_width
   # NOTE: This MUST be done prior to any variance normalisation as the 
@@ -153,6 +171,5 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
   dhist1_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
   dhist2_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
   
-  return(min_emd(dhist1_norm, dhist2_norm, method = method))
+  return(min_emd(dhist1_norm, dhist2_norm, method = method, ...))
 }
-
