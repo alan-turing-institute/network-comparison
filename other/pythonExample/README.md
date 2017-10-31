@@ -17,11 +17,9 @@ relatively pain-free way of experimenting with this code.
 
 To run this code the following python packages are required:
 
-networkx - A python network library
-
-numpy -  Python matrix and array library
-
-rpy2 -  A library which allows R functions to be called from inside of python.
+* networkx - A python network library
+* numpy -  Python matrix and array library
+* rpy2 -  A library which allows R functions to be called from inside of python.
 
 Note: If you are using python 2.7, then you cannot install the current version
 of rpy2 as it is python 3 only, however the final version that is python 2.7
