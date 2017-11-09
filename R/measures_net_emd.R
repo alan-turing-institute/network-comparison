@@ -148,7 +148,9 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     dhist1 <- as_smoothed_dhist(dhist1, smoothing_window_width)
     dhist2 <- as_smoothed_dhist(dhist2, smoothing_window_width)
   }
-  
+  ## add mean centering
+  dhist1<-mean_centre_dhist(dhist1)
+  dhist2<-mean_centre_dhist(dhist2)
   # Normalise histogram to unit mass and unit variance
   dhist1_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
   dhist2_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
