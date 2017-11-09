@@ -149,12 +149,20 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     dhist2 <- as_smoothed_dhist(dhist2, smoothing_window_width)
   }
   ## add mean centering
+
+  ### Stores means to fix offset later
+  mean1 <- dhist_mean_location(dhist1)
+  mean2 <- dhist_mean_location(dhist2)
+  ### Mean centre
   dhist1<-mean_centre_dhist(dhist1)
   dhist2<-mean_centre_dhist(dhist2)
+
   # Normalise histogram to unit mass and unit variance
   dhist1_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
   dhist2_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
   
-  return(min_emd(dhist1_norm, dhist2_norm, method = method))
+  result <- min_emd(dhist1_norm, dhist2_norm, method = method)
+  result$min_offset <- result$min_offset +mean2-mean1
+  return(result)
 }
 
