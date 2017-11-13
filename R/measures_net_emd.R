@@ -157,12 +157,14 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
   dhist1<-mean_centre_dhist(dhist1)
   dhist2<-mean_centre_dhist(dhist2)
 
+  var1 <- dhist_variance(dhist1)
+  var2 <- dhist_variance(dhist2)
   # Normalise histogram to unit mass and unit variance
   dhist1_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
   dhist2_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
   
   result <- min_emd(dhist1_norm, dhist2_norm, method = method)
-  result$min_offset <- result$min_offset +mean2-mean1
+  result$min_offset <- result$min_offset +mean2/var2-mean1/var1
   return(result)
 }
 
