@@ -13,6 +13,20 @@ double abs(double x)
     {return -x;}
 }
 // [[Rcpp::export]]
+double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
+{
+    // this is an experiment if this will be faster than running the standard exhaustive search
+    std::unordered_set<double> offsets1;
+    for (i=0;i<loc1.size();i++)
+    {
+        for (j=0;j<loc2.size();j++)
+        {
+            offsets1.insert(loc1[i]-loc2[j]);
+        }
+    }
+
+}
+// [[Rcpp::export]]
 double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
 {
    double res=0;
