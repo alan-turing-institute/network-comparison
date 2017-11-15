@@ -17,11 +17,39 @@ min_emd_fast <- function(dhist1, dhist2, method = "optimise") {
   if(method == "optimise") {
     return(min_emd_optimise_fast(dhist1, dhist2))
   } else if(method == "exhaustive"){
-    return(min_emd_exhaustive(dhist1, dhist2))
+    return(min_emd_exhaustive_fast(dhist1, dhist2))
   } else {
     stop("Method not recognised. Must be 'exhaustive' or ' optimise'")
   }
 }
+
+
+
+min_emd_exhaustive_fast <- function(dhist1, dhist2) {
+      val1 <- cumsum(dhist1$masses)
+      val2 <- cumsum(dhist2$masses)
+      val1 <- val1/val1[length(val1)]
+      val2 <- val2/val2[length(val2)]
+      loc1=dhist1$locations
+      loc2=dhist2$locations
+      temp1=constantVersionExhaustive(loc1,val1,loc2,val2)
+  return(list(min_emd = temp1, min_offset = 1/0))
+}
+
+
+
+
+
+compute_emd_offset <- function(dhist1,dhist2,offset) {
+      val1 <- cumsum(dhist1$masses)
+      val2 <- cumsum(dhist2$masses)
+      val1 <- val1/val1[length(val1)]
+      val2 <- val2/val2[length(val2)]
+      loc1=dhist1$locations
+      loc2=dhist2$locations
+        temp1<- constantVersion(loc1+offset,val1,loc2,val2)
+        temp1
+      }
 
 
 #' Minimum Earth Mover's Distance (EMD) using optimiser search
@@ -33,6 +61,9 @@ min_emd_fast <- function(dhist1, dhist2, method = "optimise") {
 #' @param dhist2 A \code{dhist} discrete histogram object
 #' @return Earth Mover's Distance between the two discrete histograms
 #' @export
+
+
+
 min_emd_optimise_fast <- function(dhist1, dhist2) {
   # Determine minimum and maximum offset of range in which histograms overlap
   # (based on sliding histogram 1)

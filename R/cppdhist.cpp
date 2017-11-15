@@ -12,20 +12,8 @@ double abs(double x)
     else
     {return -x;}
 }
-// [[Rcpp::export]]
-double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
-{
-    // this is an experiment if this will be faster than running the standard exhaustive search
-    std::unordered_set<double> offsets1;
-    for (i=0;i<loc1.size();i++)
-    {
-        for (j=0;j<loc2.size();j++)
-        {
-            offsets1.insert(loc1[i]-loc2[j]);
-        }
-    }
 
-}
+
 // [[Rcpp::export]]
 double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
 {
@@ -36,7 +24,7 @@ double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,
    double temp1;
    int count;
    int i,j,k;
-   //place start of windows before 
+   //place start of windows before
    //start of histogram so we can start the loop
    if (loc1[0]<loc2[0])
    {
@@ -50,9 +38,9 @@ double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,
    curVal1=0;
    curVal2=0;
    // stores the result
-   res=0; 
+   res=0;
    //TODO be worried about adding lots of small numbers
-   
+
    // current location on hist 1 and hist 2
    i=0;
    j=0;
@@ -97,6 +85,113 @@ double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,
             curPos=loc2[k];
         }
     }
+    return res;
+}
+
+
+// [[Rcpp::export]]
+double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
+{
+    int i,j;
+    // this is an experiment if this will be faster than running the standard exhaustive search
+    std::unordered_set<double> offsets1;
+    for (i=0;i<loc2.size();i++)
+    {
+        for (j=0;j<loc1.size();j++)
+        {
+            offsets1.insert(loc2[i]-loc1[j]);
+        }
+    }
+    // probably is better way to do this.
+    std::vector<double> offsets(offsets1.begin(),offsets1.end());
+    std::sort(offsets.begin(),offsets.end());
+    double jumpValues[7];
+    jumpValues[0]=constantVersion(loc1+1,val1,loc1,val1);
+    jumpValues[1]=constantVersion(loc1+0.5,val1,loc1,val1);
+    jumpValues[2]=constantVersion(loc1+0.25,val1,loc1,val1);
+    jumpValues[3]=constantVersion(loc1+0.125,val1,loc1,val1);
+    jumpValues[4]=constantVersion(loc1+0.06125,val1,loc1,val1);
+    jumpValues[5]=constantVersion(loc1+0.03,val1,loc1,val1);
+    jumpValues[6]=constantVersion(loc1+2,val1,loc1,val1);
+
+
+    double res;
+    double bestOffset=0;
+    res=constantVersion(loc1,val1,loc2,val2);
+    double prevValue=0;
+    double prevOffset=-1000;
+    double offset;
+    double offsetDiff;
+    double tempVal;
+    int count=0;
+    for (i=0;i<offsets.size();i++)
+    {
+        offset=offsets[i];
+        offsetDiff=offset-prevOffset;
+        // could improve this step by just defining the next valid point
+        // but for now lets not do that.
+        //
+        if (offsetDiff<=0.03)
+        {
+            if (prevValue-jumpValues[5]>res)
+            {count+=1;
+                continue;
+            }
+        }
+        else if (offsetDiff<=0.06125)
+        {
+            if (prevValue-jumpValues[4]>res)
+            {count+=1;
+                continue;
+            }
+        }
+        else if (offsetDiff<=0.125)
+        {
+            if (prevValue-jumpValues[3]>res)
+            {count+=1;
+                continue;
+            }
+        }
+        else if (offsetDiff<=0.25)
+        {
+            if (prevValue-jumpValues[2]>res)
+            {count+=1;
+                continue;
+            }
+        }
+        else if (offsetDiff<=0.5)
+        {
+            if (prevValue-jumpValues[1]>res)
+            {count+=1;
+                continue;
+            }
+        }
+        else if (offsetDiff<=1)
+        {
+            if (prevValue-jumpValues[0]>res)
+            {count+=1;
+                continue;
+            }
+        }
+        else if (offsetDiff<=2)
+        {
+            if (prevValue-jumpValues[6]>res)
+            {count+=1;
+                continue;
+            }
+        }
+        // okay we have to make the expensive call
+        //
+        tempVal=constantVersion(loc1+offset,val1,loc2,val2);
+        if (tempVal<res)
+        {
+            res=tempVal;
+            bestOffset=offset;
+        }
+        prevOffset=offset;
+        prevValue=tempVal;
+    }
+    std::cout << " i saved " << count << " calls to the emd function\n";
     return res;
 }
 
