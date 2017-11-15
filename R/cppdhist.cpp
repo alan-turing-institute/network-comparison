@@ -106,6 +106,7 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
     std::vector<double> offsets(offsets1.begin(),offsets1.end());
     std::sort(offsets.begin(),offsets.end());
     double jumpValues[7];
+    double temp1;
     jumpValues[0]=constantVersion(loc1+1,val1,loc1,val1);
     jumpValues[1]=constantVersion(loc1+0.5,val1,loc1,val1);
     jumpValues[2]=constantVersion(loc1+0.25,val1,loc1,val1);
@@ -113,6 +114,7 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
     jumpValues[4]=constantVersion(loc1+0.06125,val1,loc1,val1);
     jumpValues[5]=constantVersion(loc1+0.03,val1,loc1,val1);
     jumpValues[6]=constantVersion(loc1+2,val1,loc1,val1);
+    jumpValues[5]=constantVersion(loc1+0.03,val1,loc1,val1);
 
 
     double res;
@@ -121,65 +123,30 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
     double prevValue=0;
     double prevOffset=-1000;
     double offset;
+    double offsetLimit=-100000;
     double offsetDiff;
     double tempVal;
     int count=0;
+    int count1=0;
+    double temp2;
     for (i=0;i<offsets.size();i++)
     {
         offset=offsets[i];
-        offsetDiff=offset-prevOffset;
+        if (offset<offsetLimit)
+        {
+          //  if (offset<0.01)
+           // {std::cout << offset << " skipped " << offsetLimit << "\n";}
+            count+=1;
+            continue;
+        }
+            if ((offset)<0.01)
+            {
+            }
+        offsetDiff=abs(offset-prevOffset);
         // could improve this step by just defining the next valid point
         // but for now lets not do that.
         //
-        if (offsetDiff<=0.03)
-        {
-            if (prevValue-jumpValues[5]>res)
-            {count+=1;
-                continue;
-            }
-        }
-        else if (offsetDiff<=0.06125)
-        {
-            if (prevValue-jumpValues[4]>res)
-            {count+=1;
-                continue;
-            }
-        }
-        else if (offsetDiff<=0.125)
-        {
-            if (prevValue-jumpValues[3]>res)
-            {count+=1;
-                continue;
-            }
-        }
-        else if (offsetDiff<=0.25)
-        {
-            if (prevValue-jumpValues[2]>res)
-            {count+=1;
-                continue;
-            }
-        }
-        else if (offsetDiff<=0.5)
-        {
-            if (prevValue-jumpValues[1]>res)
-            {count+=1;
-                continue;
-            }
-        }
-        else if (offsetDiff<=1)
-        {
-            if (prevValue-jumpValues[0]>res)
-            {count+=1;
-                continue;
-            }
-        }
-        else if (offsetDiff<=2)
-        {
-            if (prevValue-jumpValues[6]>res)
-            {count+=1;
-                continue;
-            }
-        }
+        count1+=1;
         // okay we have to make the expensive call
         //
         tempVal=constantVersion(loc1+offset,val1,loc2,val2);
@@ -190,8 +157,35 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
         }
         prevOffset=offset;
         prevValue=tempVal;
+// lets work out when the next valid offset will be.
+       temp1=(prevValue-res); // this is the amount we have to deal this.
+       if (temp1<jumpValues[5])
+       {continue;}
+       temp2=floor(temp1/jumpValues[6]);
+       offsetLimit=offset+temp2*2;
+       temp1-=temp2*jumpValues[6];
+       temp2=floor(temp1/jumpValues[0]);
+       offsetLimit+=temp2;
+       temp1-=temp2*jumpValues[0];
+       temp2=floor(temp1/jumpValues[1]);
+       offsetLimit+=temp2*0.5;
+       temp1-=temp2*jumpValues[1];
+       temp2=floor(temp1/jumpValues[2]);
+       offsetLimit+=temp2*0.25;
+       temp1-=temp2*jumpValues[2];
+       temp2=floor(temp1/jumpValues[3]);
+       offsetLimit+=temp2*0.125;
+       temp1-=temp2*jumpValues[3];
+       temp2=floor(temp1/jumpValues[4]);
+       offsetLimit+=temp2*0.06125;
+       temp1-=temp2*jumpValues[4];
+       temp2=floor(temp1/jumpValues[5]);
+       offsetLimit+=temp2*0.03;
+       temp1-=temp2*jumpValues[5];
+        std::cout << offset << " " << offsetLimit << " run with\n";
     }
-    std::cout << " i saved " << count << " calls to the emd function\n";
+    std::cout << " i saved " << count << " calls to the emd function out of " << count1 << "\n";
+//    std::cout << " result " << res << " offset " << bestOffset<< "\n";
     return res;
 }
 

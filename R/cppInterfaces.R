@@ -106,6 +106,7 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
   # Return mnimum EMD and associated offset
   min_emd <- soln$objective
   min_offset <- soln$minimum
+  print(c(min_emd,min_offset))
   return(list(min_emd = min_emd, min_offset = min_offset))
 }
 
