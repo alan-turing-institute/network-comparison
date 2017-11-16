@@ -107,48 +107,43 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
     std::sort(offsets.begin(),offsets.end());
     double jumpValues[7];
     double temp1;
-//    jumpValues[0]=constantVersion(loc1+1,val1,loc1,val1);
-//    jumpValues[1]=constantVersion(loc1+0.5,val1,loc1,val1);
-//    jumpValues[2]=constantVersion(loc1+0.25,val1,loc1,val1);
-//    jumpValues[3]=constantVersion(loc1+0.125,val1,loc1,val1);
-//    jumpValues[4]=constantVersion(loc1+0.06125,val1,loc1,val1);
-//    jumpValues[5]=constantVersion(loc1+0.03,val1,loc1,val1);
-//    jumpValues[6]=constantVersion(loc1+2,val1,loc1,val1);
-//    jumpValues[5]=constantVersion(loc1+0.03,val1,loc1,val1);
 
-    double jumpV1[8];
-    jumpV1[0]=2.0;
-    jumpV1[1]=1.0;
-    jumpV1[2]=0.5;
-    jumpV1[3]=0.25;
-    jumpV1[4]=0.125;
-    jumpV1[5]=0.0625;
-    jumpV1[6]=0.015625;
-    jumpV1[7]=0.0078125;
-    double jumpV2[8];
-    for (j=0;j<8;j++)
-    {jumpV2[j]=constantVersion(loc1+jumpV1[j],val1,loc1,val1);}
+    double jumpOffsets[8];
+    jumpOffsets[0]=2.0;
+    jumpOffsets[1]=1.0;
+    jumpOffsets[2]=0.5;
+    jumpOffsets[3]=0.25;
+    jumpOffsets[4]=0.125;
+    jumpOffsets[5]=0.0625;
+    jumpOffsets[6]=0.015625;
+    jumpOffsets[7]=0.0078125;
+    double jumpMinSelfEmds[8];
     for (j=0;j<8;j++)
     {
-        temp1=constantVersion(loc1+jumpV1[j],val1,loc1,val1);
-        if (temp1<jumpV2[j])
-        {jumpV2[j]=temp1;}
+      jumpMinSelfEmds[j]=constantVersion(loc1+jumpOffsets[j],val1,loc1,val1);
     }
+    // for (j=0;j<8;j++)
+    // {
+    //     temp1=constantVersion(loc1+jumpOffsets[j],val1,loc1,val1);
+    //     if (temp1<jumpMinSelfEmds[j])
+    //     {jumpMinSelfEmds[j]=temp1;}
+    // }
 
-    double res;
+    double bestEmd;
+    // Initial guess is offset zero. Dhists are min aligned, so this is actually probably
+    // a reasonable starting point
     double bestOffset=0;
-    res=constantVersion(loc1,val1,loc2,val2);
+    bestEmd=constantVersion(loc1,val1,loc2,val2);
     double prevValue=0;
-    double prevOffset=-1000;
     double offset;
-    double offsetLimit=-100000;
-    double offsetDiff;
-    double tempVal;
-    int count=0;
-    int count1=0;
+    double offsetLimit=offsets[0]-1;
+    double currentEmd;
+    double emdDifference;
+    int skippedEmdCalls=0;
+    int evaluatedEmdCalls=0;
     int count2=0;
     int count3=0;
-    double temp2;
+    double jumpQuotient;
     for (i=0;i<offsets.size();i++)
     {
         offset=offsets[i];
@@ -156,11 +151,10 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
         {
           //  if (offset<0.01)
            // {std::cout << offset << " skipped " << offsetLimit << "\n";}
-            count+=1;
-            count2+=1;
+           skippedEmdCalls+=1;
+           evaluatedEmdCalls+=1;
             continue;
         }
-        offsetDiff=abs(offset-prevOffset);
         // could improve this step by just defining the next valid point
         // but for now lets not do that.
         //
@@ -168,31 +162,29 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
         count3+=1;
         // okay we have to make the expensive call
         //
-        tempVal=constantVersion(loc1+offset,val1,loc2,val2);
-        if (tempVal<res)
+        currentEmd=constantVersion(loc1+offset,val1,loc2,val2);
+        if (currentEmd<bestEmd)
         {
-            res=tempVal;
+            bestEmd=currentEmd;
             bestOffset=offset;
         }
-        prevOffset=offset;
-        prevValue=tempVal;
-// lets work out when the next valid offset will be.
-       temp1=(prevValue-res); // this is the amount we have to deal this.
-       if (temp1<jumpV2[7])
+       // lets work out when the next valid offset will be.
+       emdDifference=(currentEmd-bestEmd); // this is the amount we have to deal this.
+       if (emdDifference<jumpMinSelfEmds[7])
        {continue;}
        offsetLimit=offset;
        for (j=0;j<8;j++)
        {
-           temp2=floor(temp1/jumpV2[j]);
-           temp1-=temp2*jumpV2[j];
-           offsetLimit+=temp2*jumpV1[j];
+           jumpQuotient=floor(emdDifference/jumpMinSelfEmds[j]);
+           emdDifference-=jumpQuotient*jumpMinSelfEmds[j];
+           offsetLimit+=jumpQuotient*jumpOffsets[j];
        }
       //  std::cout << offset << " " << offsetLimit << " " << count2 << " " << count3 <<" run with\n";
         count2=0;
         count3=0;
     }
-    std::cout << " i saved " << count << " calls to the emd function out of " << count1 << "\n";
+    std::cout << " i saved " << skippedEmdCalls << " calls to the emd function out of " << skippedEmdCalls+evaluatedEmdCalls << "(" << skippedEmdCalls / (skippedEmdCalls+evaluatedEmdCalls) << ")\n";
 //    std::cout << " result " << res << " offset " << bestOffset<< "\n";
-    return res;
+    return bestEmd;
 }
 
