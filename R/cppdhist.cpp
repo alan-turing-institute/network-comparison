@@ -187,7 +187,7 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
            temp1-=temp2*jumpV2[j];
            offsetLimit+=temp2*jumpV1[j];
        }
-        std::cout << offset << " " << offsetLimit << " " << count2 << " " << count3 <<" run with\n";
+      //  std::cout << offset << " " << offsetLimit << " " << count2 << " " << count3 <<" run with\n";
         count2=0;
         count3=0;
     }
