@@ -13,6 +13,81 @@ double abs(double x)
     {return -x;}
 }
 
+double constantVersionWithOffset(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2,double offset)
+{
+  //init
+   double res=0;
+   double curVal1,curVal2;
+   double curPos;
+   double temp1;
+   int count;
+   int i,j,k;
+   //place start of windows before
+   //start of histogram so we can start the loop
+   if (loc1[0]<loc2[0])
+   {
+       curPos=loc1[0]-1.0+offset;
+   }
+   else
+   {
+       curPos=loc2[0]-1.0;
+   }
+   // current value of histogram 1 an 2
+   curVal1=0;
+   curVal2=0;
+   // stores the result
+   res=0;
+   //TODO be worried about adding lots of small numbers
+
+   // current location on hist 1 and hist 2
+   i=0;
+   j=0;
+    while (1)
+    {
+        if (i==loc1.size())
+        {break;}
+        if (j==loc2.size())
+        {break;}
+        if (loc1[i]+offset<loc2[j])
+        {
+            temp1=(loc1[i]+offset-curPos)*abs(curVal1-curVal2);
+            res+=temp1;
+            curVal1=val1[i];
+            curPos=loc1[i]+offset;
+            i+=1;
+        }
+        else
+        {
+            temp1=(loc2[j]-curPos)*abs(curVal1-curVal2);
+            res+=temp1;
+            curVal2=val2[j];
+            curPos=loc2[j];
+            j+=1;
+        }
+    }
+    if (i<loc1.size())
+    {
+        for (k=i;k<loc1.size();k++)
+        {
+            res+=(loc1[k]+offset-curPos)*(1.0-curVal1);
+            curVal1=val1[k];
+            curPos=loc1[k]+offset;
+        }
+    }
+    else
+    {
+        for (k=j;k<loc2.size();k++)
+        {
+            res+=(loc2[k]-curPos)*(1.0-curVal2);
+            curVal2=val2[k];
+            curPos=loc2[k];
+        }
+    }
+    return res;
+}
+
+
+
 
 // [[Rcpp::export]]
 double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
@@ -87,8 +162,29 @@ double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,
     }
     return res;
 }
+/*
+// [[Rcpp::export]]
+double constantVersionOnlyCentre(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
+{
+    int i,j;
+    // this is an experiment if this will be faster than running the standard exhaustive search
+    std::unordered_set<double> offsets1;
+    for (i=0;i<loc2.size();i++)
+    {
+        for (j=0;j<loc1.size();j++)
+        {
+            offsets1.insert(loc2[i]-loc1[j]);
+        }
+    }
+    std::vector<double> offsets(offsets1.begin(),offsets1.end());
+    std::sort(offsets.begin(),offsets.end());
+    int i;
+    for (i=0;i<offsets.size();i++)
+    {
 
-
+    }
+}
+*/
 // [[Rcpp::export]]
 double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
 {
@@ -152,13 +248,14 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
           //  if (offset<0.01)
            // {std::cout << offset << " skipped " << offsetLimit << "\n";}
            skippedEmdCalls+=1;
-           evaluatedEmdCalls+=1;
+           count2+=1;
             continue;
         }
         // could improve this step by just defining the next valid point
         // but for now lets not do that.
         //
-        count1+=1;
+        //skippedEmdCalls+=1;
+       evaluatedEmdCalls+=1;
         count3+=1;
         // okay we have to make the expensive call
         //
@@ -183,7 +280,7 @@ double constantVersionExhaustive(NumericVector loc1,NumericVector val1,NumericVe
         count2=0;
         count3=0;
     }
-    std::cout << " i saved " << skippedEmdCalls << " calls to the emd function out of " << skippedEmdCalls+evaluatedEmdCalls << "(" << skippedEmdCalls / (skippedEmdCalls+evaluatedEmdCalls) << ")\n";
+    std::cout << " i saved " << skippedEmdCalls << " calls to the emd function out of " << skippedEmdCalls+evaluatedEmdCalls << " (" << (double)skippedEmdCalls / (double)(skippedEmdCalls+evaluatedEmdCalls) << ")\n";
 //    std::cout << " result " << res << " offset " << bestOffset<< "\n";
     return bestEmd;
 }
