@@ -1,5 +1,6 @@
 library('Rcpp')
 sourceCpp('cppdhist.cpp')
+sourceCpp('cppConstantUpdateVersion.cpp')
 
 min_emd_fast <- function(dhist1, dhist2, method = "optimise") {
   # Require input to be a pair of "dhist" discrete histograms 
@@ -18,6 +19,8 @@ min_emd_fast <- function(dhist1, dhist2, method = "optimise") {
     return(min_emd_optimise_fast(dhist1, dhist2))
   } else if(method == "exhaustive"){
     return(min_emd_exhaustive_fast(dhist1, dhist2))
+  } else if(method == "exhaustiveVer2"){
+    return(min_emd_exhaustive_fastVer2(dhist1, dhist2))
   } else {
     stop("Method not recognised. Must be 'exhaustive' or ' optimise'")
   }
@@ -37,6 +40,16 @@ min_emd_exhaustive_fast <- function(dhist1, dhist2) {
 }
 
 
+min_emd_exhaustive_fastVer2 <- function(dhist1, dhist2) {
+      val1 <- cumsum(dhist1$masses)
+      val2 <- cumsum(dhist2$masses)
+      val1 <- val1/val1[length(val1)]
+      val2 <- val2/val2[length(val2)]
+      loc1=dput(dhist1$locations)
+      loc2=dput(dhist2$locations)
+      temp1=constantVersionWithUpdates(loc1,val1,loc2,val2)
+  return(list(min_emd = temp1, min_offset = 1/0))
+}
 
 
 
