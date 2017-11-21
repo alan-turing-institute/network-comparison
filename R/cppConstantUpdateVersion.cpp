@@ -8,7 +8,6 @@ using namespace Rcpp;
 
 
 
-
 double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
 {
   //init
@@ -38,6 +37,8 @@ double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,
    // current location on hist 1 and hist 2
    i=0;
    j=0;
+   double c2=0;
+   double c1=0;
     while (1)
     {
         if (i==loc1.size())
@@ -48,6 +49,8 @@ double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,
         {
             temp1=(loc1[i]-curPos)*abs(curVal1-curVal2);
             res+=temp1;
+            c1+=temp1;
+            c2+=temp1;
             curVal1=val1[i];
             curPos=loc1[i];
             i+=1;
@@ -56,9 +59,13 @@ double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,
         {
             temp1=(loc2[j]-curPos)*abs(curVal1-curVal2);
             res+=temp1;
+            c1+=temp1;
+            c2+=temp1;
             curVal2=val2[j];
             curPos=loc2[j];
+//            std::cout << j << "=j c1=" << c1 << "\n";
             j+=1;
+            c1=0;
         }
     }
     if (i<loc1.size())
@@ -66,6 +73,8 @@ double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,
         for (k=i;k<loc1.size();k++)
         {
             res+=(loc1[k]-curPos)*(1.0-curVal1);
+            c1+=(loc1[k]-curPos)*(1.0-curVal1);
+            c2+=(loc1[k]-curPos)*(1.0-curVal1);
             curVal1=val1[k];
             curPos=loc1[k];
         }
@@ -75,8 +84,11 @@ double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,
         for (k=j;k<loc2.size();k++)
         {
             res+=(loc2[k]-curPos)*(1.0-curVal2);
+            c1+=(loc2[k]-curPos)*(1.0-curVal2);
+            c2+=(loc2[k]-curPos)*(1.0-curVal2);
             curVal2=val2[k];
             curPos=loc2[k];
+            c1=0;
         }
     }
     return res;
@@ -111,6 +123,23 @@ struct binInfo {
     int loc1IndexEnd;
 };
 
+
+double updateBin(struct binInfo data,NumericVector val1)
+{
+    double diff1;
+    double h1l1;
+    double v1;
+    if (data.loc1IndexEnd!=data.loc1IndexStart)
+    {
+        h1l1=data.loc1Height;
+        v1=data.loc2Height;
+        diff1=std::abs(h1l1-v1)-std::abs(val1[data.loc1IndexEnd-1]-v1);
+    }
+    else
+    {diff1=0;}
+    return diff1;
+}
+
 //def constantVersionWithAccumPythonVersion(loc1,val1,loc2,val2,offsets):
 // [[Rcpp::export]]
 double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
@@ -139,7 +168,6 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
       loc1=loc1+offsets[0].offset; // this modifies the vector in place this could be a problem
       for (i=0;i<10;i++)
       {
-          std::cout << loc1[i] << "\n";
       }
       double minOffset=offsets[0].offset;
 //    minOffset=offsets[0][0]
@@ -205,7 +233,7 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
     ls1[0].loc1IndexStart=0;
     for (i=0;i<loc1.size();i++)
     {
-        while (loc2[j]<=loc1[i])
+        while ((loc2[j]<=loc1[i]) || std::abs(loc2[j]-loc1[i])<0.0000000001)
         {
             ls1[j].loc1IndexEnd=i;
             j+=1;
@@ -221,9 +249,7 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
     }
     for (k=0;k<loc2.size()+1;k++)
     {
-        std::cout << "ls1[" << k << "]=" << ls1[k].loc1IndexStart << " " <<ls1[k].loc1IndexEnd << "\n";
     }
-    std::cout << "\n";
     ls1[j].loc1IndexEnd=i;
     ls1[loc2.size()+1-1].loc1IndexStart=i-1; // this line will be a problem maybe?
     ls1[loc2.size()+1-1].loc1IndexEnd=loc1.size()-1;
@@ -237,6 +263,12 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
     }
     ls1[0].loc1Height=0.0;
 
+
+for (i=0;i<loc2.size()+1;i++)
+{
+}
+
+
 //    ## first pass on the data.
 //    res=0
       double res=0;
@@ -244,6 +276,7 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
     std::vector<double> diffs(loc2.size()+1);
     double diff1=0;
     double s1;
+    double temp1;
     double se;
     double v1;
     double h1l1;
@@ -251,7 +284,6 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
 //    for item in ls1:
     for (i=0;i<loc2.size()+1;i++)
     {
-//        std::cout << "i=" <<i << " res=" << res <<"\n";
 //        s1=item['"loc2start']
         s1=ls1[i].loc2Start;
 //        se=item['loc2end']
@@ -268,17 +300,12 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
 //            prevH=h1l1
             prevH=h1l1;
 //            for p1 in t1['otherPoints']:
-            std::cout << "s1=" << s1 << "\n";
             for (j=ls1[i].loc1IndexStart;j<ls1[i].loc1IndexEnd;j++)
             {
-                std::cout << "j=" << j << "\n";
 //                res+=(p1[0]-s1)*abs(v1-prevH)
                 res+=(loc1[j]-s1)*std::abs(v1-prevH);
-                std::cout << "res2 update mark2 "<< j << " " << res << "\n";
                 if (res<0)
                 {
-                    std::cout << loc1[j] << " " <<  s1 << " i=" << i << " j=" << j << " loc1[0]=" << loc1[0] << "loc[1]=" << loc1[1] << "\n";
-                    std::cout << "res is less than 0 oh dear\n";
                     return -1;
                 }
 //                std::cout << "res1 update "<< res << "\n";
@@ -290,26 +317,18 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
 //            # final point
 //            res+=(se-f1[0])*abs(f1[1]-v1)
             res+=(se-loc1[ls1[i].loc1IndexEnd-1])*std::abs(val1[ls1[i].loc1IndexEnd-1]-v1); // could be an out by 1 error here.
-            std::cout << "res2 update "<< res << "\n";
-            std::cout << ls1[i].loc1IndexStart << " " << ls1[i].loc1IndexEnd << "\n";
- //           std::cout << se << " " << loc1[ls1[i].loc1IndexEnd] << " " << val1[ls1[i].loc1IndexEnd] << " " << v1 << "\n"; // could be an out by 1 error here.
  //
 //            diffs.append(-abs(f1[1]-v1)+abs(h1l1-v1))
             diffs[i]=std::abs(h1l1-v1)-std::abs(val1[ls1[i].loc1IndexEnd-1]-v1);
-            std::cout << "hello "<< i << " h1l1=" << h1l1 << " v1="<<v1<< " val1[ls1[i].loc1IndexEnd="<<val1[ls1[i].loc1IndexEnd-1] << " " << ls1[i].loc1IndexEnd<< " "<<  diffs[i] << "\n";
         }
         else
         {
 //            res+=(item['loc2end']-item['loc2start'])*abs(item['loc2Height']-item['loc1Height'])
             res+=(double)(ls1[i].loc2End-ls1[i].loc2Start)*(double)std::abs(ls1[i].loc2Height-ls1[i].loc1Height);
- //           std::cout << i << " " << j << " " << ls1[i].loc2Start << " " << ls1[i].loc2End << " " << ls1[i].loc2Height << " " << ls1[i].loc1Height << " " << res << " " << "\n";
- //           std::cout << "res3 update "<< res << "\n";
 //            diffs.append(0)
             diffs[i]=0;
         }
     }
-    std::cout << "initial res=" << res <<"\n";
-    std::cout << "initial resu check =" <<  constantVersion(loc1,val1,loc2,val2) <<"\n";
 //    return 0;
     //completed first pass, now lets continue
     double curBestEmd=res;
@@ -319,8 +338,6 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
      for (i=0;i<diffs.size();i++)
      {diffs1+=diffs[i];}
 //     for (i=0;i<4;i++)
-//     {std::cout << diffs[i]<<",";}
-//     std::cout <<"\n";
 //    oldOffset=0
     double oldOffset=0;
     double resOld;
@@ -333,152 +350,66 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
         if (offsets[i].offset!=0)
         {break;}
     }
-    std::cout << i << " "<< minOffset <<"\n";
-        std::cout << "qwertyuiop offsets=" << offsets[0].offset << " " << 0 << " " << 0 << " "<< res <<"\n";
     while (i<offsets.size())
     {
-//        std::cout << "sdfsdfsdfsdfsdfsdfsdfdsfsdfsdf " << i << " " << ls1[i].loc2Start << " " <<ls1[i].loc2End << " loc1Start=" << ls1[i].loc1IndexStart << " loc2End=" << ls1[i].loc1IndexEnd << " res=" << res << "\n";
-//        res+=(item[0]-oldOffset)*diffs1
-//
-      std::cout << "diffs=[";
-      for (k=0;k<diffs.size();k++)
-      {
-          std::cout << diffs[k] << ",";
-      }
-      std::cout << "]\n";
         res+=(double)(offsets[i].offset-oldOffset)*diffs1;
-        std::cout << "offset=" << offsets[i].offset << " res   =" << res <<"\n";
-        std::cout << "offset=" << offsets[i].offset << " check =" <<  constantVersion(loc1+offsets[i].offset,val1,loc2,val2) <<"\n";
-        std::cout << "offset=" << offsets[i].offset << " difference=" <<  res-constantVersion(loc1+offsets[i].offset,val1,loc2,val2) <<"\n";
-        if (std::abs(res-constantVersion(loc1+offsets[i].offset,val1,loc2,val2))>0.001)
-                {
-                    std::cout << "diffs1=" << diffs1 << "\n";
-        res-=(double)(offsets[i].offset-oldOffset)*diffs1;
-                    std::cout << "diffShould be " << (-res+constantVersion(loc1+offsets[i].offset,val1,loc2,val2))/(offsets[i].offset-oldOffset) << "\n";
-    for (i=0;i<loc2.size()+1;i++)
-    {
-        std::cout << i << " " << ls1[i].loc1IndexStart << " " << ls1[i].loc1IndexEnd << "\n";
-    }
-    loc1=loc1+offsets[i].offset;
-    res=0;
-    for (i=0;i<loc2.size()+1;i++)
-    {
-        s1=ls1[i].loc2Start;
-        se=ls1[i].loc2End;
-        v1=ls1[i].loc2Height;
-        h1l1=ls1[i].loc1Height;
-//
-        if (ls1[i].loc1IndexEnd!=ls1[i].loc1IndexStart)
-        {
-//            prevH=h1l1
-            prevH=h1l1;
-            for (j=ls1[i].loc1IndexStart;j<ls1[i].loc1IndexEnd;j++)
-            {
-                res+=(loc1[j]-s1)*std::abs(v1-prevH);
-                prevH=val1[j];
-                s1=loc1[j];
-            }
-            res+=(se-loc1[ls1[i].loc1IndexEnd-1])*std::abs(val1[ls1[i].loc1IndexEnd-1]-v1); // could be an out by 1 error here.
-            diffs[i]=std::abs(h1l1-v1)-std::abs(val1[ls1[i].loc1IndexEnd-1]-v1);
-        }
-        else
-        {
-            res+=(double)(ls1[i].loc2End-ls1[i].loc2Start)*(double)std::abs(ls1[i].loc2Height-ls1[i].loc1Height);
-            diffs[i]=0;
-        }
-    }
 
-      std::cout << "resMark2=" << res << "\n";
-      std::cout << "diffsMark2=[";
-      for (k=0;k<diffs.size();k++)
-      {
-          std::cout << diffs[k] << ",";
-      }
-      std::cout << "]" << "\n";
 
-                return 0;
-                }
+//      for (k=0;k<diffs.size();k++)
+//      {
+//      }
+//      temp1=constantVersion(loc1+offsets[i].offset,val1,loc2,val2);
+//        std::cout << "offset=" << offsets[i].offset << " res   =" << res <<"\n";
+//        std::cout << "offset=" << offsets[i].offset << " check =" <<  temp1  <<"\n";
+//        std::cout << "offset=" << offsets[i].offset << " difference=" <<  res- temp1 <<"\n";
+//        if (std::abs(res-temp1)>0.001)
+//                {
+//                    std::cout << "offset diff1 = " << (offsets[i].offset-oldOffset) << "\n";
+//                    std::cout << "diffs1=" << diffs1 << "\n";
+//        res-=(double)(offsets[i].offset-oldOffset)*diffs1;
+//                    std::cout << "diffShould be " << (-res+temp1)/(offsets[i].offset-oldOffset) << "\n";
+//      std::cout << "diffs=[";
+//      for (k=0;k<diffs.size();k++)
+//      {diffs[k]=updateBin(ls1[k],val1);}
+//      std::cout << "diffsReran=[";
+//      for (k=0;k<diffs.size();k++)
+//      {std::cout << diffs[k] << ",";}
+//      std::cout << "]\n";
+//    for (i=0;i<loc2.size()+1;i++)
+//    {
+//        std::cout << i << " " << ls1[i].loc1IndexStart << " " << ls1[i].loc1IndexEnd << "\n";
+//    }
+//                return 0;
+//                }
 
-    //    std::cout << "qwertyuiop offsets=" << offsets[i].offset << " " << oldOffset << " " << diffs1 << " "<< res <<"\n";
- //       std::cout << "       res=" << res << "\n";
         if (res<curBestEmd)
         {
             curBestEmd=res;
             curBestOffset=offsets[i].offset;
         }
-//        oldOffset=item[0]
-        oldOffset=offsets[i].offset;
-//        q1=[item,]
-//        if len(offsets)>0:
-//            while offsets[0][0]==item[0]:
-//                q1.append(offsets.pop(0))
-//        for item1 in q1:
-        while (offsets[i].offset==oldOffset)
-        {
-//            bin2Update=loc1toBin[item1[1]]
-            bin2Update=loc1toBin[offsets[i].loc1loc];
-            std::cout << "binUpdated" << bin2Update << " considered!\n";
-//            ## need to update this bin
-//            loc1toBin[item1[1]]+=1
-            loc1toBin[offsets[i].loc1loc]+=1;
-//            aq1=ls1[bin2Update]
-//            sd1=aq1['otherPoints'].pop()
-            ls1[bin2Update].loc1IndexEnd-=1;
-//            ls1[bin2Update+1]['otherPoints']=[sd1,]+ls1[bin2Update+1]['otherPoints']
-            ls1[bin2Update+1].loc1IndexStart-=1;
-//            t1=ls1[bin2Update+1]
-//            if len(t1['otherPoints'])>0:
-//                t1['loc1Height']=max([0,]+[x for x in val1 if x<t1['otherPoints'][0][1] ])
-//            else:
-//                t1['loc1Height']=getHeightAtPoint(loc1,val1,loc2[-1])
-            ls1[bin2Update+1].loc1Height=val1[ls1[bin2Update+1].loc1IndexStart-1]; // i think that this right??
-//            t1=ls1[bin2Update]
-//            if len(t1['otherPoints'])>0:
-//            std::cout << "diffUpdate0 " << i << " bin2update=" << bin2Update << " " << ls1[bin2Update].loc1IndexEnd << " " << ls1[bin2Update].loc1IndexStart << "\n";
-            std::cout << "number of points0 " << ls1[bin2Update].loc1IndexEnd-ls1[bin2Update].loc1IndexStart << "\n";
-            if (ls1[bin2Update].loc1IndexEnd!=ls1[bin2Update].loc1IndexStart)
-            {
-//                f1=t1['otherPoints'][-1]
-//                f0=t1['otherPoints'][0]
-//                h1l1=t1['loc1Height']
-                  h1l1=ls1[bin2Update].loc1Height;
-//                v1=t1['loc2Height']
-                v1=ls1[bin2Update].loc2Height;
-//                diff1=-abs(f1[1]-v1)+abs(h1l1-v1)
-                diff1=std::abs(h1l1-v1)-std::abs(val1[ls1[bin2Update].loc1IndexEnd-1]-v1);
- //               std::cout << "diffupdateInternal h1l1=" <<h1l1 << " v1=" << v1 << " val1End=" << val1[ls1[bin2Update].loc1IndexEnd-1] << " v1=" << v1 << "\n";
-            }
-//            else:
-//                diff1=0
-            else
-            {diff1=0;}
 
-//            diffs1+=diff1-diffs[bin2Update]
-  //          std::cout << "diffUpdate1 " << i << " diff1=" << diff1 << " diffs[bin2Update]=" << diffs[bin2Update] << "\n";
+        oldOffset=offsets[i].offset;
+
+        while (std::abs(offsets[i].offset-oldOffset)<0.000000001) // not massively happy with this tbh
+        {
+            bin2Update=loc1toBin[offsets[i].loc1loc];
+
+//            ## need to update this bin
+            loc1toBin[offsets[i].loc1loc]+=1;
+            ls1[bin2Update].loc1IndexEnd-=1;
+            ls1[bin2Update+1].loc1IndexStart-=1;
+            ls1[bin2Update+1].loc1Height=val1[ls1[bin2Update+1].loc1IndexStart-1]; // i think that this right??
+
+            diff1=updateBin(ls1[bin2Update],val1);
             diffs1+=diff1-diffs[bin2Update];
-//            diffs[bin2Update]=diff1
             diffs[bin2Update]=diff1;
 
-            std::cout << "number of points1 " << ls1[bin2Update+1].loc1IndexEnd-ls1[bin2Update+1].loc1IndexStart << "\n";
-
-            if (ls1[bin2Update+1].loc1IndexEnd!=ls1[bin2Update+1].loc1IndexStart)
-            {
-//                f1=t1['otherPoints'][-1]
-//                f0=t1['otherPoints'][0]
-//                h1l1=t1['loc1Height']
-                  h1l1=ls1[bin2Update+1].loc1Height;
-//                v1=t1['loc2Height']
-                v1=ls1[bin2Update+1].loc2Height;
-//                diff1=-abs(f1[1]-v1)+abs(h1l1-v1)
-                diff1=std::abs(h1l1-v1)-std::abs(val1[ls1[bin2Update+1].loc1IndexEnd-1]-v1);
-            }
-//            else:
-//                diff1=0
-            else
-            {diff1=0;}
-            i+=1;
+            //update the bin afterwards
+            diff1=updateBin(ls1[bin2Update+1],val1);
             diffs1+=diff1-diffs[bin2Update+1];
             diffs[bin2Update+1]=diff1;
+
+            i+=1;
         }
     }
     std::cout << curBestEmd << " " << curBestEmd <<"\n";
