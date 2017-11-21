@@ -5,13 +5,13 @@
 #include <algorithm>
 using namespace Rcpp;
 
-double abs(double x)
-{
-    if (x>0)
-    {return x;}
-    else
-    {return -x;}
-}
+//double abs(double x)
+//{
+//    if (x>0)
+//    {return x;}
+//    else
+//    {return -x;}
+//}
 
 double constantVersionWithOffset(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2,double offset)
 {
@@ -50,7 +50,7 @@ double constantVersionWithOffset(NumericVector loc1,NumericVector val1,NumericVe
         {break;}
         if (loc1[i]+offset<loc2[j])
         {
-            temp1=(loc1[i]+offset-curPos)*abs(curVal1-curVal2);
+            temp1=(loc1[i]+offset-curPos)*std::abs(curVal1-curVal2);
             res+=temp1;
             curVal1=val1[i];
             curPos=loc1[i]+offset;
@@ -58,7 +58,7 @@ double constantVersionWithOffset(NumericVector loc1,NumericVector val1,NumericVe
         }
         else
         {
-            temp1=(loc2[j]-curPos)*abs(curVal1-curVal2);
+            temp1=(loc2[j]-curPos)*std::abs(curVal1-curVal2);
             res+=temp1;
             curVal2=val2[j];
             curPos=loc2[j];

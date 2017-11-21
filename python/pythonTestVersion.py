@@ -74,9 +74,9 @@ def constantVersionWithAccumPythonVersion(loc1,val1,loc2,val2,offsets):
     diffs=[]
     count=0
     for item in ls1:
+        print 'res',count,res
         count+=1
         t1=item
-        print '1',count,res
         s1=item['loc2start']
         se=item['loc2end']
         v1=item['loc2Height']
@@ -86,13 +86,14 @@ def constantVersionWithAccumPythonVersion(loc1,val1,loc2,val2,offsets):
             prevH=h1l1
             for p1 in t1['otherPoints']:
                 res+=(p1[0]-s1)*abs(v1-prevH)
+                print 'res update mark2 ',res
                 prevH=p1[1]
                 s1=p1[0]
             f1=t1['otherPoints'][-1]
-            print '2.5',count,res
             f0=t1['otherPoints'][0]
             # final point
             res+=(se-f1[0])*abs(f1[1]-v1)
+            print '2.5',count,res
             diffs.append(-abs(f1[1]-v1)+abs(h1l1-v1))
         else:
             res+=(item['loc2end']-item['loc2start'])*abs(item['loc2Height']-item['loc1Height'])
