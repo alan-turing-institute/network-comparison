@@ -1,5 +1,8 @@
-library(tictoc)
 library(igraph)
+source('emd.R')
+source('measures_net_emd.R')
+source('dhist.R')
+source('orca_interface.R')
 source('cppInterfaces.R')
 
 a0l=c()
@@ -11,7 +14,7 @@ t1l=c()
 t2l=c()
 t3l=c()
 
-xs=(1:20)*100
+xs=(1:25)*100
 for (i in xs)
 {
     G1=erdos.renyi.game(i,0.05)
