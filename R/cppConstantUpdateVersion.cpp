@@ -6,94 +6,12 @@
 using namespace Rcpp;
 
 
-
-
-double constantVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
-{
-  //init
-   double res=0;
-   double curVal1,curVal2;
-   double curPos;
-   double temp1;
-   int count;
-   int i,j,k;
-   //place start of windows before
-   //start of histogram so we can start the loop
-   if (loc1[0]<loc2[0])
-   {
-       curPos=loc1[0]-1.0;
-   }
-   else
-   {
-       curPos=loc2[0]-1.0;
-   }
-   // current value of histogram 1 an 2
-   curVal1=0;
-   curVal2=0;
-   // stores the result
-   res=0;
-   //TODO be worried about adding lots of small numbers
-
-   // current location on hist 1 and hist 2
-   i=0;
-   j=0;
-   double c2=0;
-   double c1=0;
-    while (1)
-    {
-        if (i==loc1.size())
-        {break;}
-        if (j==loc2.size())
-        {break;}
-        if (loc1[i]<loc2[j])
-        {
-            temp1=(loc1[i]-curPos)*abs(curVal1-curVal2);
-            res+=temp1;
-            c1+=temp1;
-            c2+=temp1;
-            curVal1=val1[i];
-            curPos=loc1[i];
-            i+=1;
-        }
-        else
-        {
-            temp1=(loc2[j]-curPos)*abs(curVal1-curVal2);
-            res+=temp1;
-            c1+=temp1;
-            c2+=temp1;
-            curVal2=val2[j];
-            curPos=loc2[j];
-//            std::cout << j << "=j c1=" << c1 << "\n";
-            j+=1;
-            c1=0;
-        }
-    }
-    if (i<loc1.size())
-    {
-        for (k=i;k<loc1.size();k++)
-        {
-            res+=(loc1[k]-curPos)*(1.0-curVal1);
-            c1+=(loc1[k]-curPos)*(1.0-curVal1);
-            c2+=(loc1[k]-curPos)*(1.0-curVal1);
-            curVal1=val1[k];
-            curPos=loc1[k];
-        }
-    }
-    else
-    {
-        for (k=j;k<loc2.size();k++)
-        {
-            res+=(loc2[k]-curPos)*(1.0-curVal2);
-            c1+=(loc2[k]-curPos)*(1.0-curVal2);
-            c2+=(loc2[k]-curPos)*(1.0-curVal2);
-            curVal2=val2[k];
-            curPos=loc2[k];
-            c1=0;
-        }
-    }
-    return res;
-}
-
+// stores the offset information
+// could swap this to be a different data structure
+// perhaps a array of vectors
+// would then pay a small amount of reallocation
+// but would replace while loop - therefore O(num_offsets)
+// if statements with a for loop.
 struct offsetInfo{
     double offset;
     int loc1loc;
@@ -114,21 +32,34 @@ struct offsetInfo{
     }
 };
 
+// stores the current state of each bin
 struct binInfo {
+    // starting location
     double loc2Start;
+    // end location
     double loc2End;
+    // starting height loc2
     double loc2Height;
+    // starting height loc1
     double loc1Height;
+    // starting index loc1
     int loc1IndexStart;
+    // ending index loc1
     int loc1IndexEnd;
 };
 
 
 double updateBin(struct binInfo data,NumericVector val1)
 {
+    // computes the new emd difference
+    // per unit offset
+    // for a given bin
     double diff1;
     double h1l1;
     double v1;
+    // if there is points in the bin
+    // compute the difference between the
+    // beginning and end bin
     if (data.loc1IndexEnd!=data.loc1IndexStart)
     {
         h1l1=data.loc1Height;
@@ -140,17 +71,13 @@ double updateBin(struct binInfo data,NumericVector val1)
     return diff1;
 }
 
-//def constantVersionWithAccumPythonVersion(loc1,val1,loc2,val2,offsets):
 // [[Rcpp::export]]
 double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
 {
     int i,j,k;
     NumericVector result;
     std::vector<struct offsetInfo> offsets;
-//    for i in range(len(loc1)):
-//        for j in range(len(loc2)):
-//            offsets.append([loc2[j]-loc1[i],i,j])
-//
+    //Constructing the offsets
     for (i=0;i<loc1.size();i++)
     {
         for (j=0;j<loc2.size();j++)
@@ -161,80 +88,79 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
             offsets.push_back(product2);
         }
     }
-//    offsets.sort()
-    std::sort(offsets.begin(),offsets.end()); // We need this to sort first by offset and then by the bin id (this is important as it is needed for the ordering)
-//    for i in range(len(loc1)):
-//        loc1[i]+=offsets[0][0]
+    // We need this to sort first by offset and then by the bin id
+    // (this is important as it is needed for the updating)
+    std::sort(offsets.begin(),offsets.end());
+
+    // changes the position of loc1 to place it at the
+    // smallest offset
+    // Could remove this with the cost of adding the offset to different places.
       loc1=loc1+offsets[0].offset; // this modifies the vector in place this could be a problem
-      for (i=0;i<10;i++)
-      {
-      }
+
+      //The smallest offset
       double minOffset=offsets[0].offset;
-//    minOffset=offsets[0][0]
-//    for item in offsets:offset
-//        item[0]-=temp1
+
+      // Update the offset vector with the new offsets
+      // again could replace this with a lot of minOffset addition.
       for (i=0;i<offsets.size();i++)
       {
         offsets[i].offset-=minOffset; //update the offsets
       }
-//    loc1toBin={}
+
+      // A vector which store which bin each point
+      // on loc1 is in.
       std::vector<int> loc1toBin(loc1.size());
-//    ls1=[]
+
+
+      //A arrays of structs which stores all
+      //of the information for each bin
      struct binInfo ls1[loc2.size()+1];
+
+     //initial the locations on the struct
+     //Could replace with this a default value.
      for (i=0;i<loc2.size()+1;i++)
      {
          ls1[i].loc1IndexStart=-1;
          ls1[i].loc1IndexEnd=-1;
      }
-//
-//    t1['loc2start']=-10000
+     // Currently a magic constant should replace with with one that is data dependent
       ls1[0].loc2Start=-10000;
-//    t1['loc2end']=loc2[0]
+      //the end of the 0th bin
       ls1[0].loc2End=loc2[0];
-//    t1['loc2Height']=0
+      //loc2 height at the beginning of the 0th bin
       ls1[0].loc2Height=0;
-//    t1['loc1Height']=getHeightAtPoint(loc1,val1,-10000)
+      //loc1 height at the beginning of the 0th bin
       ls1[0].loc1Height=0;
-//    t1['otherPoints'],temp1=getOtherPoints(loc1,val1,-10000,loc2[0])
+      // index of the first element in this bin
     ls1[0].loc1IndexStart=0;
-//    for j in temp1:
-//        loc1toBin[j]=0
-
-
 
 //    for i in range(len(loc2)-1):
     for (i=0;i<loc2.size()-1;i++)
     {
-//        t1['loc2start']=loc2[i]
+//        set the start location of the bin
           ls1[i+1].loc2Start=loc2[i];
-//        t1['loc2end']=loc2[i+1]
+//        set the end location of the bin
           ls1[i+1].loc2End=loc2[i+1];
-//        t1['loc2Height']=val2[i]
+//        set the height of the bin
           ls1[i+1].loc2Height=val2[i];
     }
-
-//        t1['otherPoints'],temp1=getOtherPoints(loc1,val1,loc2[i],loc2[i+1])
-//        if len(t1['otherPoints'])>0:
-//            t1['loc1Height']=max([x for x in val1 if x<t1['otherPoints'][0][1] ])
-//        else:
-//            t1['loc1Height']=getHeightAtPoint(loc1,val1,loc2[i])
-//        for j in temp1:
-//            loc1toBin[j]=len(ls1)
-//        ls1.append(t1)
-//    t1['loc2start']=loc2[-1]
+    // Setup the final bin
       ls1[loc2.size()].loc2Start=loc2[loc2.size()-1];
-//    t1['loc2end']=1000
+      // magic constant for end of the bin
+      // should be changed to something data dependent
       ls1[loc2.size()].loc2End=1000;
-//    t1['loc2Height']=val2[-1]
+      // set the height of the final bin
       ls1[loc2.size()].loc2Height=val2[val2.size()-1];
 
-// okay lets add the remaining fields to the data structure.
+    // okay lets add the remaining fields to the data structure.
     j=0;
     ls1[0].loc1IndexStart=0;
     for (i=0;i<loc1.size();i++)
     {
+        // Swap to next bin when the offseted bin aligns
         while ((loc2[j]<=loc1[i]) || std::abs(loc2[j]-loc1[i])<0.0000000001)
         {
+            //move to the next bin
             ls1[j].loc1IndexEnd=i;
             j+=1;
             if (j==loc2.size())
@@ -242,37 +168,46 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
             ls1[j].loc1IndexStart=i;
             ls1[j].loc1Height=val1[i-1];
         }
+        // set the bin for loc1 i
         loc1toBin[i]=j;
-        //this is annoying could do with a goto here!
+        //annoying pattern
+        //could do with a goto here!
+        //Shouldnt use that much time but would
+        //be good to know the better pattern
         if (j==loc2.size())
         {break;}
     }
-    for (k=0;k<loc2.size()+1;k++)
-    {
-    }
+    // need to deal with the remaining bins
     ls1[j].loc1IndexEnd=i;
+
+    // this is setting the final bin.
     ls1[loc2.size()+1-1].loc1IndexStart=i-1; // this line will be a problem maybe?
     ls1[loc2.size()+1-1].loc1IndexEnd=loc1.size()-1;
+
+    // adding the loc1 locs for each bin
     for (k=i;k<loc1.size()-1;i++)
     {loc1toBin[k]=loc2.size()+1-1;}
+
+    // fill the details of the remaining bins
     for (k=j+1;k<loc2.size()+1;k++)
     {
         ls1[k].loc1IndexStart=loc1.size();
         ls1[k].loc1IndexEnd=loc1.size();
         ls1[k].loc1Height=1.0;
     }
+
+    // fix the first bins height
+    // in theory we should be able to
+    // remove this?
     ls1[0].loc1Height=0.0;
 
-
-for (i=0;i<loc2.size()+1;i++)
-{
-}
-
-
 //    ## first pass on the data.
-//    res=0
-      double res=0;
-//    diffs=[]
+//
+//    Store the current result
+    double res=0;
+
+    // vector which stores the diffs for each
+    // bin to speed up updates
     std::vector<double> diffs(loc2.size()+1);
     double diff1=0;
     double s1;
@@ -281,134 +216,112 @@ for (i=0;i<loc2.size()+1;i++)
     double v1;
     double h1l1;
     double prevH;
-//    for item in ls1:
+    // loop over bins
+    // this constructs the first res
+    // and constructs the diff vector
     for (i=0;i<loc2.size()+1;i++)
     {
-//        s1=item['"loc2start']
         s1=ls1[i].loc2Start;
-//        se=item['loc2end']
         se=ls1[i].loc2End;
-//        t1=item
-//        v1=item['loc2Height']
         v1=ls1[i].loc2Height;
-//        h1l1=item['loc1Height']
         h1l1=ls1[i].loc1Height;
-//        if len(t1['otherPoints'])>0:
-//
+        // if there is multiple points in the bin
         if (ls1[i].loc1IndexEnd!=ls1[i].loc1IndexStart)
         {
-//            prevH=h1l1
             prevH=h1l1;
-//            for p1 in t1['otherPoints']:
+            // iterate over the multiple point
             for (j=ls1[i].loc1IndexStart;j<ls1[i].loc1IndexEnd;j++)
             {
-//                res+=(p1[0]-s1)*abs(v1-prevH)
+
+                // add this to the bin
                 res+=(loc1[j]-s1)*std::abs(v1-prevH);
                 if (res<0)
                 {
+                    std::cout << "The routine has failed, please submit a bug report" << "\n";
                     return -1;
                 }
-//                std::cout << "res1 update "<< res << "\n";
-//                prevH=p1[1]
+                // update to the end of the previous bin
                 prevH=val1[j];
-//                s1=p1[0]
                 s1=loc1[j];
             }
 //            # final point
-//            res+=(se-f1[0])*abs(f1[1]-v1)
             res+=(se-loc1[ls1[i].loc1IndexEnd-1])*std::abs(val1[ls1[i].loc1IndexEnd-1]-v1); // could be an out by 1 error here.
- //
-//            diffs.append(-abs(f1[1]-v1)+abs(h1l1-v1))
             diffs[i]=std::abs(h1l1-v1)-std::abs(val1[ls1[i].loc1IndexEnd-1]-v1);
         }
         else
         {
-//            res+=(item['loc2end']-item['loc2start'])*abs(item['loc2Height']-item['loc1Height'])
+            // case where there no points in the bin
             res+=(double)(ls1[i].loc2End-ls1[i].loc2Start)*(double)std::abs(ls1[i].loc2Height-ls1[i].loc1Height);
-//            diffs.append(0)
             diffs[i]=0;
         }
     }
-//    return 0;
+
     //completed first pass, now lets continue
+    //
+    //
+    // Best res and offset
     double curBestEmd=res;
     double curBestOffset=minOffset;
-//    diffs1=sum(diffs)
-     double diffs1=0;
-     for (i=0;i<diffs.size();i++)
-     {diffs1+=diffs[i];}
-//     for (i=0;i<4;i++)
-//    oldOffset=0
+    // variable which holds the current
+    // diff per unit offset
+    double diffs1=0;
+    for (i=0;i<diffs.size();i++)
+    {diffs1+=diffs[i];}
+    // The old offset
+    // need to compute the offset difference
     double oldOffset=0;
-    double resOld;
+    // the bin that
+    // needs to be updated
     int bin2Update;
-//    while len(offsets)>0:
-//        if item[0]==0:
-//            continue
+    // increase i
+    // to that we start with an offset
+    // that is not the first one
+    // (we have already computed the first offset)
     for (i=0;i<offsets.size();i++)
     {
         if (offsets[i].offset!=0)
         {break;}
     }
+    // iterate over the remaining bins
+    // TODO Should this be less than or equal to?
     while (i<offsets.size())
     {
+        // update res with the new offset
         res+=(double)(offsets[i].offset-oldOffset)*diffs1;
 
-
-//      for (k=0;k<diffs.size();k++)
-//      {
-//      }
-//      temp1=constantVersion(loc1+offsets[i].offset,val1,loc2,val2);
-//        std::cout << "offset=" << offsets[i].offset << " res   =" << res <<"\n";
-//        std::cout << "offset=" << offsets[i].offset << " check =" <<  temp1  <<"\n";
-//        std::cout << "offset=" << offsets[i].offset << " difference=" <<  res- temp1 <<"\n";
-//        if (std::abs(res-temp1)>0.001)
-//                {
-//                    std::cout << "offset diff1 = " << (offsets[i].offset-oldOffset) << "\n";
-//                    std::cout << "diffs1=" << diffs1 << "\n";
-//        res-=(double)(offsets[i].offset-oldOffset)*diffs1;
-//                    std::cout << "diffShould be " << (-res+temp1)/(offsets[i].offset-oldOffset) << "\n";
-//      std::cout << "diffs=[";
-//      for (k=0;k<diffs.size();k++)
-//      {diffs[k]=updateBin(ls1[k],val1);}
-//      std::cout << "diffsReran=[";
-//      for (k=0;k<diffs.size();k++)
-//      {std::cout << diffs[k] << ",";}
-//      std::cout << "]\n";
-//    for (i=0;i<loc2.size()+1;i++)
-//    {
-//        std::cout << i << " " << ls1[i].loc1IndexStart << " " << ls1[i].loc1IndexEnd << "\n";
-//    }
-//                return 0;
-//                }
-
+        // update best res
+        // if better
         if (res<curBestEmd)
         {
             curBestEmd=res;
             curBestOffset=offsets[i].offset;
         }
 
+        //update old offset
         oldOffset=offsets[i].offset;
 
+        // Iterate over locations that move bin with this offset
         while (std::abs(offsets[i].offset-oldOffset)<0.000000001) // not massively happy with this tbh
         {
+            // The bin that needs to update
             bin2Update=loc1toBin[offsets[i].loc1loc];
-
-//            ## need to update this bin
-            loc1toBin[offsets[i].loc1loc]+=1;
+            // move the node (assumed to be the last node)
+            // to the next bin
             ls1[bin2Update].loc1IndexEnd-=1;
             ls1[bin2Update+1].loc1IndexStart-=1;
             ls1[bin2Update+1].loc1Height=val1[ls1[bin2Update+1].loc1IndexStart-1]; // i think that this right??
 
+            // update the diffs for the new bin
             diff1=updateBin(ls1[bin2Update],val1);
             diffs1+=diff1-diffs[bin2Update];
             diffs[bin2Update]=diff1;
 
-            //update the bin afterwards
+            //update the diffs for the following bin
             diff1=updateBin(ls1[bin2Update+1],val1);
             diffs1+=diff1-diffs[bin2Update+1];
             diffs[bin2Update+1]=diff1;
 
+            // increase the offset considered
             i+=1;
         }
     }
