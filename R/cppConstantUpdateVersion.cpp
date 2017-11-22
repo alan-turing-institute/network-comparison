@@ -305,6 +305,9 @@ double constantVersionWithUpdates(NumericVector loc1,NumericVector val1,NumericV
         {
             // The bin that needs to update
             bin2Update=loc1toBin[offsets[i].loc1loc];
+
+            // update the bin that this node is in
+            loc1toBin[bin2Update]+=1;
             // move the node (assumed to be the last node)
             // to the next bin
             ls1[bin2Update].loc1IndexEnd-=1;
