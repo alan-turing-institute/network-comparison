@@ -10,8 +10,8 @@ t0l=c()
 t1l=c()
 t2l=c()
 t3l=c()
-
-xs=(1:20)*100
+t3l=c()
+xs=(1:35)*100
 for (i in xs)
 {
     G1=erdos.renyi.game(i,0.05)
