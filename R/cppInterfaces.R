@@ -1,6 +1,7 @@
 library('Rcpp')
 sourceCpp('cppdhist.cpp')
-sourceCpp('cppConstantUpdateVersion.cpp')
+#sourceCpp('cppConstantUpdateVersion.cpp')
+#sourceCpp('constantExhaustiveCombined.cpp')
 
 min_emd_fast <- function(dhist1, dhist2, method = "optimise") {
   # Require input to be a pair of "dhist" discrete histograms 
@@ -21,12 +22,121 @@ min_emd_fast <- function(dhist1, dhist2, method = "optimise") {
     return(min_emd_exhaustive_fast(dhist1, dhist2))
   } else if(method == "exhaustiveVer2"){
     return(min_emd_exhaustive_fastVer2(dhist1, dhist2))
+  } else if(method == "exhaustiveVer3"){
+    return(min_emd_exhaustive_fastVer3(dhist1, dhist2))
+  } else if(method == "exhaust"){
+    return(min_emd_exhaustive_fastVerTest(dhist1, dhist2))
   } else {
     stop("Method not recognised. Must be 'exhaustive' or ' optimise'")
   }
 }
 
 
+min_emd_exhaustive_fastVerTest <- function(dhist1, dhist2) {
+    print("hi")
+      val1 <- cumsum(dhist1$masses)
+      val2 <- cumsum(dhist2$masses)
+      val1 <- val1/val1[length(val1)]
+      val2 <- val2/val2[length(val2)]
+      loc1=dhist1$locations
+      loc2=dhist2$locations
+      offsets=matrix(nrow=length(loc1)*length(loc2),ncol=1)
+      count=1
+      for (i in 1:length(loc1))
+      {
+          for (j in 1:length(loc2))
+          {
+              offsets[count]=loc2[j]-loc1[i]
+              count=count+1
+          }
+          print(count)
+      }
+      print("bye")
+      offsets=unique(offsets)
+      offsets=sort(offsets)
+      print(length(offsets))
+      curBest=constantVersion(loc1+min(abs(offsets)),val1,loc2,val2)
+      curLimit=-10000
+      count=0
+      l0=list()
+      l1=matrix(nrow=10000,ncol=2)
+      l1Count=0
+      print(curBest)
+      offsets=c(max(offsets),offsets)
+      countSkip=0
+      count0=0
+      for (i in 1:length(offsets))
+      {
+          if (offsets[i]<curLimit)
+          {
+              count0=count0+1
+              next
+          }
+          h=1
+          if (l1Count>0)
+          {
+              for (j in 1:l1Count)
+              {
+                  if (offsets[i]<l1[j,2])
+                  {
+                      if (offsets[i]>l1[j,1])
+                      {
+                          h=0
+                      }
+                  }
+              }
+          }
+          if (h==0)
+          {
+              countSkip=countSkip+1
+          }
+          if (h==1) #(offsets[i]>=curLimit)
+          {
+              countSkip=0
+              count=count+1
+              temp1=constantVersion(loc1+offsets[i],val1,loc2,val2)
+              if (temp1<curBest)
+              {
+                  curBest=temp1
+              ##    for (j in 1:length(l0))
+              ##    {
+              ##        t1=l0[j,1]/fg1
+              ##        t2=l0[j,2]/fg1-curBest
+              ##        l1[[length(l1)+1]]=c(t1-t2,t1+t2)
+              ##    }
+              }
+              t5=temp1/curBest
+              t6=offsets[i]/t5 
+                  for (j in 1:10)
+                  {
+                      fg1=2*j+1
+              if (temp1/fg1>curBest)
+              {
+                      t1=offsets[i]/fg1
+                      t2=(temp1/fg1-curBest)
+                      l1[l1Count+1,]=c(t1-t2,t1+t2)
+                      l1Count=l1Count+1
+                      if (l1Count>nrow(l1)-1)
+                      {
+                          l1=rbind(l1,matrix(nrow=10000,ncol=2))
+                      }
+              ##        l1= l1[!(l1[,1]>t1-t2 & l1[,2]<t1+t2),]
+                  }
+              }
+              if (i>1)
+              {
+              t1=offsets[i]
+              t2=temp1-curBest
+              l1[l1Count+1,]=c(t1-t2,t1+t2)
+              curLimit=t1+t2
+              if (t6>curLimit)
+              {curLimit=t6}
+              }
+          }
+      }
+      print(c(count,count0,length(offsets)))
+  return(list(min_emd = curBest, min_offset = 1/0))
+}
 
 min_emd_exhaustive_fast <- function(dhist1, dhist2) {
       val1 <- cumsum(dhist1$masses)
@@ -52,6 +162,16 @@ min_emd_exhaustive_fastVer2 <- function(dhist1, dhist2) {
 }
 
 
+min_emd_exhaustive_fastVer3 <- function(dhist1, dhist2) {
+      val1 <- cumsum(dhist1$masses)
+      val2 <- cumsum(dhist2$masses)
+      val1 <- val1/val1[length(val1)]
+      val2 <- val2/val2[length(val2)]
+      loc1=dput(dhist1$locations)
+      loc2=dput(dhist2$locations)
+      temp1=constantVersionExhaustiveCombined(loc1,val1,loc2,val2)
+  return(list(min_emd = temp1, min_offset = 1/0))
+}
 
 compute_emd_offset <- function(dhist1,dhist2,offset) {
       val1 <- cumsum(dhist1$masses)
@@ -103,12 +223,18 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
       val2 <- val2/val2[length(val2)]
       loc1=dhist1$locations
       loc2=dhist2$locations
+      count=0
       emd_offset <- function(offset) {
+          print(offset)
+          print(count)
+          count=count+1
         temp1<- constantVersion(loc1+offset,val1,loc2,val2)
         temp1
       }
       soln <- stats::optimise(emd_offset, lower = min_offset, upper = max_offset, 
                               tol = .Machine$double.eps*1000)
+      print("number of runs")
+      print(count)
   }
   else
   {

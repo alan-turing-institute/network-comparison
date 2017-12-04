@@ -60,9 +60,9 @@ min_emd_optimise <- function(dhist1, dhist2) {
     # Construct ECMFs for each normalised histogram
     ecmf1 <- dhist_ecmf(shift_dhist(dhist1, offset))
     ecmf2 <- dhist_ecmf(dhist2)
-    area_between_dhist_ecmfs(ecmf1, ecmf2)
+    temp1 <- area_between_dhist_ecmfs(ecmf1, ecmf2)
+    temp1
   }
-  
   # Get solution from optimiser
   soln <- stats::optimise(emd_offset, lower = min_offset, upper = max_offset, 
                           tol = .Machine$double.eps*1000)
@@ -116,6 +116,14 @@ min_emd_exhaustive <- function(dhist1, dhist2) {
     step_shift <- res$shift
     distance_matrix <- res$distance_matrix
   }
+  emd_offset <- function(offset) {
+    # Construct ECMFs for each normalised histogram
+    ecmf1 <- dhist_ecmf(shift_dhist(dhist1, offset))
+    ecmf2 <- dhist_ecmf(dhist2)
+    temp1 <- area_between_dhist_ecmfs(ecmf1, ecmf2)
+    temp1
+  }
+dhist1 <- shift_dhist(dhist1, -cur_offset)
   return(list(min_emd = min_emd, min_offset = min_offset))
 }
 
