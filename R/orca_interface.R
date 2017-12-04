@@ -193,41 +193,6 @@ graph_features_to_histograms <- function(featuresMatrix) {
   apply(featuresMatrix, 2, dhist_from_obs)
 }
 
-#' Graphlet-based degree distributions (GDDs)
-#' 
-#' Generates graphlet-based degree distributions from \code{igraph} graph object,
-#' using the ORCA fast graphlet orbit counting package.
-#' @param graph A connected, undirected, simple graph as an \code{igraph} object. 
-#' @param feature_type Type of graphlet-based feature to count: "graphlet"
-#' counts the number of graphlets each node participates in; "orbit" calculates
-#' the number of graphlet orbits each node participates in.
-#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
-#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
-#' @param ego_neighbourhood_size The number of steps from the source node to include
-#' nodes for each ego-network.
-#' @return List of graphlet-based degree distributions, with each distribution
-#' represented as a \code{dhist} discrete histogram object.
-#' @export
-gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4, 
-                ego_neighbourhood_size = 0){
-  graph <- simplify_graph(graph)
-  if(ego_neighbourhood_size > 0) {
-    if(feature_type != 'graphlet') {
-      stop("Feature type not supported for ego-networks")
-    } else {
-      out <- count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
-                                 neighbourhood_size = ego_neighbourhood_size)
-    }
-  } else  if(feature_type == "orbit") {
-    out <- count_orbits_per_node(graph, max_graphlet_size = max_graphlet_size)
-  } else if(feature_type == "graphlet") {
-    out <- count_graphlets_per_node(graph, max_graphlet_size = max_graphlet_size)
-  }
-  else {
-    stop('gdd: unrecognised feature_type')
-  }
-  graph_features_to_histograms(out)
-}
 
 #' Count graphlet orbits for each node in a graph
 #' 
@@ -481,52 +446,6 @@ graphlet_ids_for_size <- function(graphlet_size) {
   graphlet_key$id[graphlet_key$node_count==graphlet_size]
 }
 
-#' Load all graphs in a directory and calculates their Graphlet-based Degree
-#' Distributions (GDDs)
-#' 
-#' Loads graphs from all files matching the given pattern in the given directory,
-#' converts them to indexed edge lists compatible with the ORCA fast orbit 
-#' counting package and calculates the specified set of graphlet-based degree 
-#' distributions usingthe ORCA package.
-#' @param source_dir Path to graph directory
-#' @param format Format of graph files
-#' @param pattern Filename pattern to match graph files
-#' @param feature_type Type of graphlet-based degree distributions. Can be 
-#' \code{graphlet} to count graphlets or \code{orbit} to count orbits.
-#' @return A named list where each element contains a set of GDDs for a single
-#' @param max_graphlet_size Maximum size of graphlets to use when generating GDD
-#' @param ego_neighbourhood_size The number of steps from the source node to 
-#' include nodes for each ego-network. If set to 0, ego-networks will not be 
-#' used
-#' @param  mc.cores Number of cores to use for parallel processing. Defaults to
-#' the \code{mc.cores} option set in the R environment.
-#' @return A named list where each element contains a set of GDDs for a single
-#' graph from the source directory. Each set of GDDs is itself a named list,  
-#' where each GDD element is a \code{dhist} discrete histogram object.
-#' @export
-gdd_for_all_graphs <- function(
-  source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit", 
-  max_graphlet_size = 4, ego_neighbourhood_size = 0,
-  mc.cores = getOption("mc.cores", 2L)) {
-  # Create function to read graph from file and generate GDD
-  graphs <- read_simple_graphs(
-    source_dir = source_dir, format = format, pattern = pattern)
-  # Calculate specified GDDs for each graph
-  # NOTE: mcapply only works on unix-like systems with system level forking 
-  # capability. This means it will work on Linux and OSX, but not Windows.
-  # For now, we just revert to single threaded operation on Windows
-  # TODO: Look into using the parLappy function on Windows
-  if(.Platform$OS.type != "unix") {
-    # Force cores to 1 if system is not unix-like as it will not support 
-    # forking
-    mc.cores = 1
-  }
-  parallel::mcmapply(gdd, graphs, MoreArgs = 
-                       list(feature_type = feature_type, 
-                            max_graphlet_size = max_graphlet_size,
-                            ego_neighbourhood_size = ego_neighbourhood_size), 
-                     SIMPLIFY = FALSE, mc.cores = mc.cores)
-}
 
 #' Generate a cross-comparison specification
 #' 
