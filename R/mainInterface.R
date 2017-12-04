@@ -1,13 +1,13 @@
 
 
-graph_To_dhist <- function(G,max_graphlet_size=4,feature_type=')orbit')
+graph_To_dhist <- function(G,max_graphlet_size=4,feature_type='orbit',ego_neighbourhood_size=0)
 {
     counts1 <- graph_to_graphletCount(G,feature_type,max_graphlet_size,ego_neighbourhood_size)
     dhist1 <- graph_features_to_histograms(counts1)
-
+    dhist1
 }
 
-graph_Pair_To_NetEMD <- function(G1,G2,feature_type = 'orbit',max_graphlet_size = 4)
+graph_Pair_To_NetEMD <- function(G1,G2,feature_type = 'orbit',max_graphlet_size = 4,ego_neighbourhood_size=0)
 {
     ## Construct histograms for each of the counts
     counts1 <- graph_to_graphletCount(G1,feature_type,max_graphlet_size,ego_neighbourhood_size)
@@ -19,14 +19,14 @@ graph_Pair_To_NetEMD <- function(G1,G2,feature_type = 'orbit',max_graphlet_size 
     dhist_Pair_To_NetEMD(dhist1,dhist2)
 }
 
-multiple_graphs_To_NetEMD <- function(graphs,feature_type = 'orbit',max_graphlet_size = 4)
+multiple_graphs_To_NetEMD <- function(graphs,feature_type = 'orbit',max_graphlet_size = 4,ego_neighbourhood_size=0)
 {
-    dhists <- multiple_graphs_To_dhists(graphs)
+    dhists <- multiple_graphs_to_dhists(graphs)
     ## Compute the netemd on these dhists
     multiple_dhists_To_netEMD(dhist1,dhist2)
 }
 
-features_Pair_To_NetEMD <- function(features1,features2,feature_type = 'orbit',max_graphlet_size = 4)
+features_Pair_To_NetEMD <- function(features1,features2,feature_type = 'orbit',max_graphlet_size = 4,ego_neighbourhood_size=0)
 {
     ## Make discrete histograms (dhists) from the features
     dhist1 <- graph_features_to_histograms(features1)
@@ -68,7 +68,7 @@ graph_to_graphletCount<- function(graph, feature_type = 'orbit', max_graphlet_si
   else {
     stop('gdd: unrecognised feature_type')
   }
-  graph_features_to_histograms(out)
+  out
 }
 
 #' NetEMDs between all graph pairs using provided Graphlet-based Degree 
@@ -234,13 +234,13 @@ graphFolder_To_dhists <- function(
   # Create function to read graph from file and generate GDD
   graphs <- read_simple_graphs( source_dir = source_dir, format = format,
                                pattern = pattern)
-    multiple_graphs_To_dhists(graphs, feature_type = feature_type,
+    multiple_graphs_to_dhists(graphs, feature_type = feature_type,
                             max_graphlet_size = max_graphlet_size,
                             ego_neighbourhood_size = ego_neighbourhood_size,
                             mc.cores = mc.cores)
 }
 
-multiple_graphs_To_dhists <- function(graphs,
+multiple_graphs_to_dhists <- function(graphs,
   feature_type = "orbit", 
   max_graphlet_size = 4, ego_neighbourhood_size = 0,
   mc.cores = getOption("mc.cores", 2L)) {
