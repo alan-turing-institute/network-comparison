@@ -341,138 +341,160 @@ test_that("gdd simplifies works", {
     adj_mat <- adj_mat[keep_nodes, keep_nodes]
     return(adj_mat)
   }
+
+  checkAllElements <- function(dhist1,dhist2)
+  {
+      expect_equal(length(dhist1),length(dhist2))
+      for (i in 1:length(dhist1))
+      {
+          expect_equal(dhist1[[i]],dhist2[[i]])
+      }
+  }
   
   # Check "do nothing" option works
-  t1<-gdd(igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed"))
-  t2<-gdd(simplify_graph(
+  t1<-graph_To_dhist(igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed"))
+  t2<-graph_To_dhist(simplify_graph(
       graph, as_undirected = FALSE, remove_loops = FALSE, 
       remove_multiple = FALSE, remove_isolates = FALSE))
   expect_equal(t1,t2)
   # Check directed -> undirected works
   expect_equal(
-    gdd(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(adj_mat, mode = "plus")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = TRUE, remove_loops = FALSE, 
       remove_multiple = FALSE, remove_isolates = FALSE))
   )
   
   # 1: Check DIRECTED simplifications
   # 1a. Loop removal
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "directed")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = FALSE, remove_loops = TRUE, 
       remove_multiple = FALSE, remove_isolates = FALSE))
   )
+qw1 <- graph_To_dhist(
+      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "directed"))
+    qw2 <- graph_To_dhist(simplify_graph(
+      graph, as_undirected = FALSE, remove_loops = FALSE, 
+      remove_multiple = TRUE, remove_isolates = FALSE))
+browser()
   # 1b. Multiple edge removal
-  expect_equal(
-gdd(
+  checkAllElements(
+graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "directed")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = FALSE, remove_loops = FALSE, 
       remove_multiple = TRUE, remove_isolates = FALSE))
   )
   # 1c. Isolate edge removal
-  expect_equal(
-    gdd(
+
+    qw1 <- graph_To_dhist(
+      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "directed"))
+
+    qw2 <- graph_To_dhist(simplify_graph(
+      graph, as_undirected = FALSE, remove_loops = FALSE, 
+      remove_multiple = FALSE, remove_isolates = TRUE))
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "directed")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = FALSE, remove_loops = FALSE, 
       remove_multiple = FALSE, remove_isolates = TRUE))
   )
   # 1ab. Loop + multiple edge removal
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "directed")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = FALSE, remove_loops = TRUE, 
       remove_multiple = TRUE, remove_isolates = FALSE))
   )
   # 1ac. Loop + isolate removal
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "directed")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = FALSE, remove_loops = TRUE, 
       remove_multiple = FALSE, remove_isolates = TRUE))
   )
   # 1bc. Multiple + isolate removal
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "directed")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = FALSE, remove_loops = FALSE, 
       remove_multiple = TRUE, remove_isolates = TRUE))
   )
   # 1abc. Loop + multiple + isolate removal
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "directed")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = FALSE, remove_loops = TRUE, 
       remove_multiple = TRUE, remove_isolates = TRUE))
   )
   
   # 2: Check UNDIRECTED simplifications individually
   # 2a. Loop removal
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "plus")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = TRUE, remove_loops = TRUE, 
       remove_multiple = FALSE, remove_isolates = FALSE))
   )
   # 2b. Multiple edge removal (use mode = "max" to avoid generating multiple 
   # edges where nodes are mutually connected in adjacency matrix)
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "max")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = TRUE, remove_loops = FALSE, 
       remove_multiple = TRUE, remove_isolates = FALSE))
   )
   # 2c. Isolate edge removal
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "plus")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = TRUE, remove_loops = FALSE, 
       remove_multiple = FALSE, remove_isolates = TRUE))
   )
   # 2ab. Loop + multiple edge removal (use mode = "max" to avoid generating multiple 
   # edges where nodes are mutually connected in adjacency matrix)
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "max")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = TRUE, remove_loops = TRUE, 
       remove_multiple = TRUE, remove_isolates = FALSE))
   )
   # 2ac. Loop + isolate removal
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "plus")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = TRUE, remove_loops = TRUE, 
       remove_multiple = FALSE, remove_isolates = TRUE))
   )
   # 2bc. Multiple + isolate removal (use mode = "max" to avoid generating multiple 
   # edges where nodes are mutually connected in adjacency matrix)
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "max")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = TRUE, remove_loops = FALSE, 
       remove_multiple = TRUE, remove_isolates = TRUE))
   )
   # 2abc. Loop + multiple + isolate removal (use mode = "max" to avoid generating multiple 
   # edges where nodes are mutually connected in adjacency matrix)
-  expect_equal(
-    gdd(
+  checkAllElements(
+    graph_To_dhist(
       igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "max")),
-    gdd(simplify_graph(
+    graph_To_dhist(simplify_graph(
       graph, as_undirected = TRUE, remove_loops = TRUE, 
       remove_multiple = TRUE, remove_isolates = TRUE))
   )  
