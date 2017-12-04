@@ -226,7 +226,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
             data_names <- attr(virusppi, "name")
 
             # Calculate graphlet-based degree distributions up to graphlet order 4
-            virus_gdd <- purrr::map(virusppi, gdd)
+            virus_gdd <- purrr::map(virusppi, graph_To_dhist)
 
             # Map over virus PPI networks
             purrr::walk(virus_gdd, function(gdd) {
@@ -244,7 +244,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
   data_names <- attr(virusppi, "name")
 
   # Calculate graphlet-based degree distributions up to graphlet order 4
-  virus_gdd <- purrr::map(virusppi, gdd)
+  virus_gdd <- purrr::map(virusppi, graph_To_dhist)
 
   expect_equalish <- function(actual, expected) {
     diff <- abs(actual - expected)
@@ -322,28 +322,28 @@ test_that("net_emds_for_all_graphs works", {
   num_threads = getOption("mc.cores", 2L)
 
   # Use previously tested GDD code to generate inputs to function under test
-  gdds_orbits_g4 <- gdd_for_all_graphs(
+  gdds_orbits_g4 <- graph_folder_to_dhists(
     source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "orbit", max_graphlet_size = 4)
-  gdds_orbits_g5 <- gdd_for_all_graphs(
+  gdds_orbits_g5 <- graph_folder_to_dhists(
     source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "orbit", max_graphlet_size = 5)
-  gdds_graphlets_g4 <- gdd_for_all_graphs(
+  gdds_graphlets_g4 <- graph_folder_to_dhists(
     source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 4)
-  gdds_graphlets_g5 <- gdd_for_all_graphs(
+  gdds_graphlets_g5 <- graph_folder_to_dhists(
     source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 5)
-  gdds_graphlets_g4_e1 <- gdd_for_all_graphs(
+  gdds_graphlets_g4_e1 <- graph_folder_to_dhists(
     source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 1)
-  gdds_graphlets_g5_e1 <- gdd_for_all_graphs(
+  gdds_graphlets_g5_e1 <- graph_folder_to_dhists(
     source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 1)
-  gdds_graphlets_g4_e2 <- gdd_for_all_graphs(
+  gdds_graphlets_g4_e2 <- graph_folder_to_dhists(
     source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 4, ego_neighbourhood_size = 2)
-  gdds_graphlets_g5_e2 <- gdd_for_all_graphs(
+  gdds_graphlets_g5_e2 <- graph_folder_to_dhists(
     source_dir = source_dir, format = edge_format, pattern = file_pattern,
     feature_type = "graphlet", max_graphlet_size = 5, ego_neighbourhood_size = 2)
 
@@ -360,7 +360,7 @@ test_that("net_emds_for_all_graphs works", {
 
   # Comparison function for clarity
   compare_fn <- function(gdds) {
-    expect_equal(net_emds_for_all_graphs(gdds), expected_net_emd_fn(gdds))
+    expect_equal(multiple_dhists_To_netEMD(gdds), expected_net_emd_fn(gdds))
   }
 
   # Map over test parameters, comparing actual gdds to expected

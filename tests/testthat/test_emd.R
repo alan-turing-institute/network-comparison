@@ -1,4 +1,57 @@
 context("EMD: Cost matrix")
+
+### Helper function
+#' Earth Mover's Distance (EMD) using linear programming (LP)
+#' 
+#' Takes two sets of histogram bin masses and bin centres and calculates the 
+#' Earth Mover's Distance between the two histograms by solving the Transport
+#' Problem using linear programming.
+#' 
+#' WARNING: Linear Programming solution will only give a correct answer if all
+#' masses and distances between bin centres are integers.
+#' @param bin_masses1 Bin masses for histogram 1
+#' @param bin_masses2 Bin masses for histogram 2
+#' @param bin_centres1 Bin centres for histogram 1
+#' @param bin_centres2 Bin centres for histogram 2
+#' @return Earth Mover's Distance between the two input histograms
+#' @export
+emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
+  num_bins1 <- length(bin_masses1)
+  num_bins2 <- length(bin_masses2)
+  
+  # Check inputs: All bins in each histogram must have a mass and centre, so
+  # the bin_mass and bin_centre vectors for each histogram must have the same
+  # length.
+  if(length(bin_centres1) != num_bins1) {
+    stop("Number of bin masses and bin centres provided for histogram 1 must be equal")
+  }
+  if(length(bin_centres2) != num_bins2) {
+    stop("Number of bin masses and bin centres provided for histogram 2 must be equal")
+  }
+  
+  # Generate cost matrix
+  cost_mat <- cost_matrix(bin_centres1, bin_centres2)
+  
+  # Linear Programming solver requires all bin masses and transportation costs 
+  # to be integers to generate correct answer
+  if(!isTRUE(all.equal(bin_masses1, floor(bin_masses1)))) {
+    stop("All bin masses for histogram 1 must be integers for accurate Linear Programming solution")
+  }
+  if(!isTRUE(all.equal(bin_masses2, floor(bin_masses2)))) {
+    stop("All bin masses for histogram 2 must be integers for accurate Linear Programming solution")
+  }
+  if(!isTRUE(all.equal(cost_mat, floor(cost_mat)))) {
+    stop("All costs must be integers for accurate Linear Programming solution")
+  } 
+  row_signs <- rep("==", num_bins1)
+  col_signs <- rep("<=", num_bins2)
+  s <- lpSolve::lp.transport(cost.mat = cost_mat, row.signs = row_signs, 
+                             col.signs = col_signs, row.rhs = bin_masses1, 
+                             col.rhs = bin_masses2)
+  return(s$objval)
+}
+
+
 # COST_MATRIX: Property-based tests
 test_that("cost_matrix returns all zeros when all bin locations are identical",{
   bin_centres1 <- c(1, 1, 1, 1, 1, 1, 1)
