@@ -1,13 +1,13 @@
 
 
-graph_To_dhist <- function(G,max_graphlet_size=4,feature_type='orbit')
+graph_To_dhist <- function(G,max_graphlet_size=4,feature_type=')orbit')
 {
     counts1 <- graph_to_graphletCount(G,feature_type,max_graphlet_size,ego_neighbourhood_size)
     dhist1 <- graph_features_to_histograms(counts1)
 
 }
 
-graphPair_To_NetEMD <- function(G1,G2,feature_type = 'orbit',max_graphlet_size = 4)
+graph_Pair_To_NetEMD <- function(G1,G2,feature_type = 'orbit',max_graphlet_size = 4)
 {
     ## Construct histograms for each of the counts
     counts1 <- graph_to_graphletCount(G1,feature_type,max_graphlet_size,ego_neighbourhood_size)
@@ -16,17 +16,23 @@ graphPair_To_NetEMD <- function(G1,G2,feature_type = 'orbit',max_graphlet_size =
     dhist1 <- graph_features_to_histograms(counts1)
     dhist2 <- graph_features_to_histograms(counts2)
     ## Compute the netemd on these dhists
-    dhistPair_To_NetEMD(dhist1,dhist2)
+    dhist_Pair_To_NetEMD(dhist1,dhist2)
 }
 
+multiple_graphs_To_NetEMD <- function(graphs,feature_type = 'orbit',max_graphlet_size = 4)
+{
+    dhists <- multiple_graphs_To_dhists(graphs)
+    ## Compute the netemd on these dhists
+    multiple_dhists_To_netEMD(dhist1,dhist2)
+}
 
-featuresPair_To_NetEMD <- function(features1,features2,feature_type = 'orbit',max_graphlet_size = 4)
+features_Pair_To_NetEMD <- function(features1,features2,feature_type = 'orbit',max_graphlet_size = 4)
 {
     ## Make discrete histograms (dhists) from the features
     dhist1 <- graph_features_to_histograms(features1)
     dhist2 <- graph_features_to_histograms(features2)
     ## Compute the netemd on these dhists
-    dhistPair_To_NetEMD(dhist1,dhist2)
+    dhist_Pair_To_NetEMD(dhist1,dhist2)
 }
 
 #' Graphlet-based counts
@@ -96,7 +102,7 @@ graph_to_graphletCount<- function(graph, feature_type = 'orbit', max_graphlet_si
 #' used to compute the NetEMD, \code{min_offsets}: the associated offsets giving
 #' the minimal EMD for each GDD
 #' @export
-multiple_dhists_to_netEMD <- function(
+multiple_dhists_To_netEMD <- function(
   gdds, method = "optimise", smoothing_window_width = 0, 
   return_details = FALSE, mc.cores = getOption("mc.cores", 2L)) {
   comp_spec <- cross_comparison_spec(gdds)
@@ -158,7 +164,7 @@ multiple_dhists_to_netEMD <- function(
 #' the minimal EMD for each pair of histograms, \code{min_offsets}: the associated
 #' offsets giving the minimal EMD for each pair of histograms
 #' @export
-dhistPair_To_NetEMD <- function(dhists1, dhists2, method = "optimise", 
+dhist_Pair_To_NetEMD <- function(dhists1, dhists2, method = "optimise", 
                     return_details = FALSE, smoothing_window_width = 0) {
   # Require either a pair of "dhist" discrete histograms or two lists of "dhist"
   # discrete histograms
@@ -192,7 +198,7 @@ dhistPair_To_NetEMD <- function(dhists1, dhists2, method = "optimise",
   else {
     # Wrap each member of a single pair of histograms is a list and recursively
     # call this net_emd function. This ensures they are treated the same.
-    return(dhistPair_To_NetEMD (list(dhists1), list(dhists2), method = method, 
+    return(dhist_Pair_To_NetEMD (list(dhists1), list(dhists2), method = method, 
                    return_details = return_details,
                    smoothing_window_width = smoothing_window_width))
   }
@@ -226,8 +232,18 @@ graphFolder_To_dhists <- function(
   max_graphlet_size = 4, ego_neighbourhood_size = 0,
   mc.cores = getOption("mc.cores", 2L)) {
   # Create function to read graph from file and generate GDD
-  graphs <- read_simple_graphs(
-    source_dir = source_dir, format = format, pattern = pattern)
+  graphs <- read_simple_graphs( source_dir = source_dir, format = format,
+                               pattern = pattern)
+    multiple_graphs_To_dhists(graphs, feature_type = feature_type,
+                            max_graphlet_size = max_graphlet_size,
+                            ego_neighbourhood_size = ego_neighbourhood_size,
+                            mc.cores = mc.cores)
+}
+
+multiple_graphs_To_dhists <- function(graphs,
+  feature_type = "orbit", 
+  max_graphlet_size = 4, ego_neighbourhood_size = 0,
+  mc.cores = getOption("mc.cores", 2L)) {
   # Calculate specified GDDs for each graph
   # NOTE: mcapply only works on unix-like systems with system level forking 
   # capability. This means it will work on Linux and OSX, but not Windows.
@@ -238,7 +254,7 @@ graphFolder_To_dhists <- function(
     # forking
     mc.cores = 1
   }
-  parallel::mcmapply(gdd, graphs, MoreArgs = 
+  parallel::mcmapply(graph_To_dhist, graphs, MoreArgs = 
                        list(feature_type = feature_type, 
                             max_graphlet_size = max_graphlet_size,
                             ego_neighbourhood_size = ego_neighbourhood_size), 
@@ -246,3 +262,17 @@ graphFolder_To_dhists <- function(
 }
 
 
+multiple_features_To_dhists <- function(features,
+  mc.cores = getOption("mc.cores", 2L)) {
+  # Calculate specified GDDs for each graph
+  # NOTE: mcapply only works on unix-like systems with system level forking 
+  # capability. This means it will work on Linux and OSX, but not Windows.
+  # For now, we just revert to single threaded operation on Windows
+  # TODO: Look into using the parLappy function on Windows
+  if(.Platform$OS.type != "unix") {
+    # Force cores to 1 if system is not unix-like as it will not support 
+    # forking
+    mc.cores = 1
+  }
+  parallel::mcmapply(graph_features_to_histograms, features,mc.cores = mc.cores)
+}
