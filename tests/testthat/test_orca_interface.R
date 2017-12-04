@@ -375,12 +375,6 @@ test_that("gdd simplifies works", {
       graph, as_undirected = FALSE, remove_loops = TRUE, 
       remove_multiple = FALSE, remove_isolates = FALSE))
   )
-qw1 <- graph_To_dhist(
-      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "directed"))
-    qw2 <- graph_To_dhist(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = FALSE, 
-      remove_multiple = TRUE, remove_isolates = FALSE))
-browser()
   # 1b. Multiple edge removal
   checkAllElements(
 graph_To_dhist(
