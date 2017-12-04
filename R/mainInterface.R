@@ -23,7 +23,7 @@ multiple_graphs_To_NetEMD <- function(graphs,feature_type = 'orbit',max_graphlet
 {
     dhists <- multiple_graphs_to_dhists(graphs)
     ## Compute the netemd on these dhists
-    multiple_dhists_To_netEMD(dhist1,dhist2)
+    multiple_dhists_To_netEMD(dhists)
 }
 
 features_Pair_To_NetEMD <- function(features1,features2,feature_type = 'orbit',max_graphlet_size = 4,ego_neighbourhood_size=0)
@@ -227,7 +227,7 @@ dhist_Pair_To_NetEMD <- function(dhists1, dhists2, method = "optimise",
 #' graph from the source directory. Each set of GDDs is itself a named list,  
 #' where each GDD element is a \code{dhist} discrete histogram object.
 #' @export
-graphFolder_To_dhists <- function(
+graph_folder_to_dhists <- function(
   source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit", 
   max_graphlet_size = 4, ego_neighbourhood_size = 0,
   mc.cores = getOption("mc.cores", 2L)) {
