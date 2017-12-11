@@ -3,6 +3,127 @@ sourceCpp('cppdhist.cpp')
 #sourceCpp('cppConstantUpdateVersion.cpp')
 #sourceCpp('constantExhaustiveCombined.cpp')
 
+giveMeHist <-function(i)
+{
+    d1=graph_features_to_histograms(matrix(1:10000000,nrow=i,ncol=2))
+    d1=d1[[1]]
+    d1=normalise_dhist_mass(d1)
+    d1=normalise_dhist_variance(d1)
+    d1=shift_dhist(d1,-dhist_mean_location(d1))
+d1
+}
+
+runTest <- function(lim)
+{
+    res=c()
+    for (i in 5:lim)
+    {
+        print('values of i')
+        print(c(i))
+        d1=graph_features_to_histograms(matrix(1:10000,nrow=i,ncol=2))
+        d2=graph_features_to_histograms(matrix(1:10000,nrow=i-1,ncol=2))
+res1=net_emd_fast(d1,d2,method='exhaust')
+res=append(res,res1)
+    }
+    res
+}
+
+runTest2 <- function(lim)
+{
+    res=c()
+    for (i in 5:lim)
+    {
+        print('values of i')
+        print(c(i))
+        d1=graph_features_to_histograms(matrix(sample.int(10000,size=i*2+1),nrow=i,ncol=2))
+        d2=graph_features_to_histograms(matrix(sample.int(10000,size=2*i+2),nrow=i-1,ncol=2))
+res1=net_emd_fast(d1,d2,method='exhaust')
+res=append(res,res1)
+    }
+    res
+}
+
+
+emdOpt <- function( x )
+{
+    x1=x[1:(length(x)/2)]
+    x2=x[(1+length(x)/2):length(x)]
+    m1=matrix(x1,nrow=length(x1),ncol=1)
+    m1=cbind(m1,m1)
+    m2=matrix(x2,nrow=length(x2),ncol=1)
+    m2=cbind(m2,m2)
+
+
+    d1=graph_features_to_histograms(m1)
+    d2=graph_features_to_histograms(m2)
+    d1=d1[[1]]
+    d2=d2[[1]]
+    d1=normalise_dhist_mass(d1)
+    d1=normalise_dhist_variance(d1)
+    d1=shift_dhist(d1,-dhist_mean_location(d1))
+    d2=normalise_dhist_mass(d2)
+    d2=normalise_dhist_variance(d2)
+    d2=shift_dhist(d2,-dhist_mean_location(d2))
+    res=emd(d1,d2)
+    -res
+}
+
+runTest4 <- function()
+{
+    result=c()
+    for (i in 5:100)
+    {
+        curBest=0
+        for (rep in 1:10)
+        {
+            qw1=sample.int(1000,2*i)
+    res=optim(qw1,emdOpt)
+            if (res$value<curBest)
+            {
+                curBest=res$value
+            }
+        }
+        print(c(i,-curBest))
+    result=append(result,-curBest)
+    }
+    result
+}
+
+
+runTest3 <- function(lim)
+{
+    i=10
+    result=c()
+    print('values of i')
+    print(c(i))
+    curBest=0;
+    for (i in 5:1000)
+    {
+        curBest=0
+for (rep in 1:100)
+{
+    print(c(i,rep,curBest))
+    d1=graph_features_to_histograms(matrix(sample.int(10000,size=i*2+1),nrow=i,ncol=2))
+    d2=graph_features_to_histograms(matrix(sample.int(10000,size=2*i+2),nrow=i-1,ncol=2))
+    d1=d1[[1]]
+    d2=d2[[1]]
+    d1=normalise_dhist_mass(d1)
+    d1=normalise_dhist_variance(d1)
+    d1=shift_dhist(d1,-dhist_mean_location(d1))
+    d2=normalise_dhist_mass(d2)
+    d2=normalise_dhist_variance(d2)
+    d2=shift_dhist(d2,-dhist_mean_location(d2))
+    res=emd(d1,d2)
+    if (res>curBest)
+    {
+        curBest=res
+    }
+  }  
+   result=append(result,curBest) 
+    }
+    result
+}
+
 min_emd_fast <- function(dhist1, dhist2, method = "optimise") {
   # Require input to be a pair of "dhist" discrete histograms 
   if(!(is_dhist(dhist1) && is_dhist(dhist2))) {
@@ -32,6 +153,7 @@ min_emd_fast <- function(dhist1, dhist2, method = "optimise") {
 }
 
 
+
 min_emd_exhaustive_fastVerTest <- function(dhist1, dhist2) {
     print("hi")
       val1 <- cumsum(dhist1$masses)
@@ -49,19 +171,17 @@ min_emd_exhaustive_fastVerTest <- function(dhist1, dhist2) {
               offsets[count]=loc2[j]-loc1[i]
               count=count+1
           }
-          print(count)
       }
       print("bye")
       offsets=unique(offsets)
       offsets=sort(offsets)
-      print(length(offsets))
-      curBest=constantVersion(loc1+min(abs(offsets)),val1,loc2,val2)
+      curBest=0.0001+emd( shift_dhist(dhist1,min(abs(offsets))),dhist2) 
+      print(curBest)
       curLimit=-10000
       count=0
       l0=list()
       l1=matrix(nrow=10000,ncol=2)
       l1Count=0
-      print(curBest)
       offsets=c(max(offsets),offsets)
       countSkip=0
       count0=0
@@ -94,7 +214,7 @@ min_emd_exhaustive_fastVerTest <- function(dhist1, dhist2) {
           {
               countSkip=0
               count=count+1
-              temp1=constantVersion(loc1+offsets[i],val1,loc2,val2)
+          temp1=emd( shift_dhist(dhist1,offsets[i]),dhist2) 
               if (temp1<curBest)
               {
                   curBest=temp1
@@ -110,32 +230,33 @@ min_emd_exhaustive_fastVerTest <- function(dhist1, dhist2) {
                   for (j in 1:10)
                   {
                       fg1=2*j+1
-              if (temp1/fg1>curBest)
-              {
-                      t1=offsets[i]/fg1
-                      t2=(temp1/fg1-curBest)
-                      l1[l1Count+1,]=c(t1-t2,t1+t2)
-                      l1Count=l1Count+1
-                      if (l1Count>nrow(l1)-1)
-                      {
-                          l1=rbind(l1,matrix(nrow=10000,ncol=2))
-                      }
-              ##        l1= l1[!(l1[,1]>t1-t2 & l1[,2]<t1+t2),]
-                  }
+     #         if (temp1/fg1>curBest)
+     #         {
+     #                 t1=offsets[i]/fg1
+     #                 t2=(temp1/fg1-curBest)
+     #                 l1[l1Count+1,]=c(t1-t2,t1+t2)
+     #                 l1Count=l1Count+1
+     #                 if (l1Count>nrow(l1)-1)
+     #                 {
+     #                     l1=rbind(l1,matrix(nrow=10000,ncol=2))
+     #                 }
+     #         ##        l1= l1[!(l1[,1]>t1-t2 & l1[,2]<t1+t2),]
+     #             }
               }
               if (i>1)
               {
               t1=offsets[i]
               t2=temp1-curBest
-              l1[l1Count+1,]=c(t1-t2,t1+t2)
+#              l1[l1Count+1,]=c(t1-t2,t1+t2)
               curLimit=t1+t2
-              if (t6>curLimit)
-              {curLimit=t6}
+    #          if (t6>curLimit)
+    #          {curLimit=t6}
               }
           }
       }
       print(c(count,count0,length(offsets)))
-  return(list(min_emd = curBest, min_offset = 1/0))
+      curBest <- (count/(count+count0))
+  return(list(min_emd = count, min_offset = 1/0))
 }
 
 min_emd_exhaustive_fast <- function(dhist1, dhist2) {
@@ -284,7 +405,6 @@ net_emd_single_pair_fast <- function(dhist1, dhist2, method = "optimise",
   dhist2_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
   
   result <- min_emd_fast(dhist1_norm, dhist2_norm, method = method)
-  result$min_offset <- result$min_offset +mean2/var2-mean1/var1
   return(result)
 }
 
