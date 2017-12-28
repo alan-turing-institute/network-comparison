@@ -227,6 +227,137 @@ struct Interval
 };
 
 
+struct emdDualResult
+{
+    double leftAlignment;
+    double rightAlignment;
+    double leftValue;
+    double rightValue;
+};
+
+struct emdDualResult emdDualAlignments(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
+{
+  //init
+   double res=0;
+   double curVal1,curVal2;
+   double curPos;
+   double temp1;
+   int count;
+   int i,j,k;
+   //place start of windows before
+   //start of histogram so we can start the loop
+   if (loc1[0]<loc2[0])
+   {
+       curPos=loc1[0]-1.0;
+   }
+   else
+   {
+       curPos=loc2[0]-1.0;
+   }
+   curVal1=0;
+   curVal2=0;
+   // stores the result
+   res=0;
+
+   // current location on hist 1 and hist 2
+   i=0;
+   j=0;
+    double diffs=0;
+    double minDiffLeft=1000;
+    double minDiffRight=1000;
+    double tempDouble;
+    // deal with the start diff.
+    while (loc1[i]<loc2[j])
+    {
+        temp1=(loc1[i]-curPos)*std::abs(curVal1-curVal2);
+        res+=temp1;
+        curVal1=val1[i];
+        curPos=loc1[i];
+        i+=1;
+    }
+    while (1)
+    {
+        if (i==loc1.size())
+        {break;}
+        if (j==loc2.size())
+        {break;}
+        if (loc1[i]<loc2[j])
+        {
+            temp1=(loc1[i]-curPos)*std::abs(curVal1-curVal2);
+            res+=temp1;
+            curVal1=val1[i];
+            curPos=loc1[i];
+            i+=1;
+        }
+        else
+        {
+            // so we have a j update so we need to compute the differences.
+            if (i>1)
+            {
+                tempDouble=loc2[j]-loc1[i-1];
+                if (tempDouble<minDiffLeft)
+                {
+                    minDiffLeft=tempDouble;
+                }
+            }
+            tempDouble=loc1[i]-loc2[j];
+            if (tempDouble<minDiffRight)
+            {
+                minDiffRight=tempDouble;
+            }
+            temp1=(loc2[j]-curPos)*std::abs(curVal1-curVal2);
+            res+=temp1;
+            diffs+=std::abs(curVal1-val2[j])-std::abs(curVal1-curVal2);
+//            std::cout << "i=" << i;
+//            std::cout << " j=" << j;
+//            std::cout << " diffs=" << diffs;
+//            std::cout << " curVal1=" << curVal1;
+//            std::cout << " val2[j]=" << val2[j];
+//            std::cout << " curVal2=" << curVal2;
+//            std::cout << "\n";
+            curVal2=val2[j];
+            curPos=loc2[j];
+ //p           << "\tj=" << j << "\tdiffs=" << diffs <<  "\t " << std::abs(curVal1-val2[j+1])-std::abs(curVal1-val2[j]) << "\n";
+            j+=1;
+        }
+    }
+    std::cout << "gap j=" << j << "\n\n";
+    if (i<loc1.size())
+    {
+        for (k=i;k<loc1.size();k++)
+        {
+            res+=(loc1[k]-curPos)*(1.0-curVal1);
+            curVal1=val1[k];
+            curPos=loc1[k];
+        }
+    }
+    else
+    {
+        for (k=j;k<loc2.size();k++)
+        {
+            res+=(loc2[k]-curPos)*(1.0-curVal2);
+//            diffs+=std::abs(curVal1-val2[k])-std::abs(curVal1-curVal2);
+//            std::cout << "i=" << i;
+//            std::cout << " j=" << k;
+//            std::cout << " diffs=" << diffs;
+//            std::cout << " curVal1=" << curVal1;
+//            std::cout << " val2[j]=" << val2[k];
+//            std::cout << " curVal2=" << curVal2;
+//            std::cout << "\n";
+            curVal2=val2[k];
+            curPos=loc2[k];
+ //           std::cout << "i=" << i << "\tj=" << k << "\tdiffs=" << diffs <<  "\t " << std::abs(curVal1-val2[k+1])-std::abs(curVal1-val2[k]) << "\n";
+        }
+    }
+    std::cout << res << " \n\n";
+    struct emdDualResult returnObject;
+    returnObject.leftAlignment=minDiffLeft;
+    returnObject.rightAlignment=minDiffRight;
+    returnObject.leftAlignment=res+diffs*minDiffLeft;
+    returnObject.rightAlignment=res-diffs*minDiffRight;
+    return returnObject;
+}
+
 
 
 // [[Rcpp::export]]
@@ -255,7 +386,6 @@ double constantVersionExhaustiveHalf(NumericVector loc1,NumericVector val1,Numer
 
 
 
-    std::vector<double> offsets1(loc1.size()*loc2.size());
     std::time_t mediumTime = std::time(nullptr);
     std::priority_queue<Interval> priorityQ1;
 
@@ -374,3 +504,141 @@ double constantVersionExhaustiveHalf(NumericVector loc1,NumericVector val1,Numer
     return curBest;
 }
 
+
+struct IntervalNoOffset
+{
+    double minValue;
+    double start;
+    double end;
+    double startVal;
+    double endVal;
+    bool operator < (const IntervalNoOffset& s1) const
+    {
+        if (minValue<s1.minValue)
+        {
+            return 1;
+        }
+        else if (minValue==s1.minValue)
+        {
+            return (start<s1.start);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+};
+
+// [[Rcpp::export]]
+double constantVersionExhaustiveHalfNoOffsetCalc(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
+{
+//    ProfilerStart("./eigen-prof.log");
+    std::time_t startTime = std::time(nullptr);
+
+    int i,j;
+    // probably is better way to do this.
+    std::time_t setTime = std::time(nullptr);
+    std::time_t vectTime = std::time(nullptr);
+
+
+    std::time_t mediumTime = std::time(nullptr);
+    std::priority_queue<IntervalNoOffset> priorityQ1;
+
+    double jumpValues[7];
+    double temp1;
+
+    struct IntervalNoOffset inter1;
+    inter1.start=loc2[1]-loc1[loc1.size()];
+    inter1.end=loc2[loc2.size()]-loc1[1];
+    inter1.startVal=loc1[loc1.size()]-loc2[1];
+    inter1.endVal=loc2[loc2.size()]-loc1[1];
+    inter1.minValue=0;
+    priorityQ1.push(inter1);
+
+    double prevValue=0;
+    double offset;
+    double currentEmd;
+    double emdDifference;
+    int skippedEmdCalls=0;
+    int evaluatedEmdCalls=0;
+    int count2=0;
+    int count3=0;
+    double jumpQuotient;
+    struct IntervalNoOffset currentItem;
+    double midPoint;
+    double leftPoint,leftValue,rightPoint,rightValue;
+    double t1;
+    double midIndex;
+    double curBest=loc1[loc1.size()]-loc2[1];
+    int count=0;
+    int emdCalls=0;
+    struct emdDualResult emdDualStructureStore;
+    while (priorityQ1.size()>0)
+    {
+        count+=1;
+        currentItem=priorityQ1.top();
+        priorityQ1.pop();
+        if (-currentItem.minValue>curBest)
+        {
+            break;
+        }
+//        if (count==100)
+//        {break;}
+        midPoint=currentItem.start+(currentItem.end-currentItem.start)/2;
+        emdDualStructureStore=emdDualAlignments(loc1+midPoint,val1,loc2,val2);
+        return emdDualStructureStore.leftValue;
+        emdCalls+=1;
+        if (emdDualStructureStore.rightValue < curBest)
+        {
+            curBest=emdDualStructureStore.rightValue;
+        }
+        if (emdDualStructureStore.leftValue < curBest)
+        {
+            curBest=emdDualStructureStore.leftValue;
+        }
+
+
+        leftPoint=currentItem.start;
+        rightPoint=midPoint-emdDualStructureStore.leftAlignment;
+        if ((leftPoint-rightPoint)>10^(-10))
+        {
+            leftValue=currentItem.startVal;
+            rightValue=emdDualStructureStore.leftValue;
+            t1=(leftValue+rightValue)/2.0+(leftPoint-rightPoint)/2.0;
+            struct IntervalNoOffset newInterval1;
+            newInterval1.minValue=-t1;
+            newInterval1.start=leftPoint;
+            newInterval1.end=rightPoint;
+            newInterval1.startVal=leftValue;
+            newInterval1.endVal=rightValue;
+            priorityQ1.push(newInterval1);
+        }
+//        std::cout << "t1=" << t1 << "\n";
+
+        leftPoint=midPoint+emdDualStructureStore.rightAlignment;
+        rightPoint=currentItem.end;
+        leftValue=emdDualStructureStore.rightValue;
+        rightValue=currentItem.endVal;
+        if ((leftPoint-rightPoint)>10^(-10))
+        {
+            t1=(leftValue+rightValue)/2.0+(leftPoint-rightPoint)/2.0;
+            struct IntervalNoOffset newInterval2;
+            newInterval2.minValue=-t1;
+            newInterval2.start=leftPoint;
+            newInterval2.end=rightPoint;
+            newInterval2.startVal=leftValue;
+            newInterval2.endVal=rightValue;
+            priorityQ1.push(newInterval2);
+        }
+    }
+    std::cout << "i made " << emdCalls << "\n";
+//    std::cout << " result " << res << " offset " << bestOffset<< "\n";
+//        ProfilerStop();
+//
+    std::cout << "set step: " << setTime-startTime << "\n";
+    std::cout << "vec step: " << vectTime-setTime << "\n";
+    std::cout << "sort step: " << mediumTime-vectTime<< "\n";
+    std::cout << "remaining time: " << std::time(nullptr) - mediumTime << "\n";
+
+    return curBest;
+}

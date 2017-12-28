@@ -141,6 +141,10 @@ min_emd_fast <- function(dhist1, dhist2, method = "optimise") {
     return(min_emd_optimise_fast(dhist1, dhist2))
   } else if(method == "exhaustive"){
     return(min_emd_exhaustive_fast(dhist1, dhist2))
+  } else if(method == "exhaustiveHalf"){
+    return(min_emd_exhaustive_fastHalf(dhist1, dhist2))
+  } else if(method == "exhaustiveHalfNoOffset"){
+    return(min_emd_exhaustive_fastHalfNoOffset(dhist1, dhist2))
   } else if(method == "exhaustiveVer2"){
     return(min_emd_exhaustive_fastVer2(dhist1, dhist2))
   } else if(method == "exhaustiveVer3"){
@@ -267,6 +271,29 @@ min_emd_exhaustive_fast <- function(dhist1, dhist2) {
       loc1=dhist1$locations
       loc2=dhist2$locations
       temp1=constantVersionExhaustive(loc1,val1,loc2,val2)
+  return(list(min_emd = temp1, min_offset = 1/0))
+}
+
+min_emd_exhaustive_fastHalf <- function(dhist1, dhist2) {
+      val1 <- cumsum(dhist1$masses)
+      val2 <- cumsum(dhist2$masses)
+      val1 <- val1/val1[length(val1)]
+      val2 <- val2/val2[length(val2)]
+      loc1=dhist1$locations
+      loc2=dhist2$locations
+      temp1=constantVersionExhaustiveHalf(loc1,val1,loc2,val2)
+  return(list(min_emd = temp1, min_offset = 1/0))
+}
+
+
+min_emd_exhaustive_fastHalfNoOffset <- function(dhist1, dhist2) {
+      val1 <- cumsum(dhist1$masses)
+      val2 <- cumsum(dhist2$masses)
+      val1 <- val1/val1[length(val1)]
+      val2 <- val2/val2[length(val2)]
+      loc1=dhist1$locations
+      loc2=dhist2$locations
+      temp1=constantVersionExhaustiveHalfNoOffsetCalc(loc1,val1,loc2,val2)
   return(list(min_emd = temp1, min_offset = 1/0))
 }
 
