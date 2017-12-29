@@ -4,7 +4,6 @@
 #include <unordered_set>
 #include <algorithm>
 #include <queue>
-#include <gperftools/profiler.h>
 #include <ctime>
 
 using namespace Rcpp;
@@ -235,6 +234,10 @@ struct emdDualResult
     double rightValue;
 };
 
+
+//NumericVector emdDualAlignments(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
+
+
 struct emdDualResult emdDualAlignments(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
 {
   //init
@@ -267,16 +270,12 @@ struct emdDualResult emdDualAlignments(NumericVector loc1,NumericVector val1,Num
     double minDiffRight=1000;
     double tempDouble;
     // deal with the start diff.
-    while (loc1[i]<loc2[j])
-    {
-        temp1=(loc1[i]-curPos)*std::abs(curVal1-curVal2);
-        res+=temp1;
-        curVal1=val1[i];
-        curPos=loc1[i];
-        i+=1;
-    }
     while (1)
     {
+    //        std::cout << "i=" << i;
+    //        std::cout << " j=" << j;
+    //        std::cout << " res=" << res;
+    //        std::cout << "\n";
         if (i==loc1.size())
         {break;}
         if (j==loc2.size())
@@ -310,6 +309,7 @@ struct emdDualResult emdDualAlignments(NumericVector loc1,NumericVector val1,Num
             diffs+=std::abs(curVal1-val2[j])-std::abs(curVal1-curVal2);
 //            std::cout << "i=" << i;
 //            std::cout << " j=" << j;
+//            std::cout << " diff=" << std::abs(curVal1-val2[j])-std::abs(curVal1-curVal2);
 //            std::cout << " diffs=" << diffs;
 //            std::cout << " curVal1=" << curVal1;
 //            std::cout << " val2[j]=" << val2[j];
@@ -321,7 +321,8 @@ struct emdDualResult emdDualAlignments(NumericVector loc1,NumericVector val1,Num
             j+=1;
         }
     }
-    std::cout << "gap j=" << j << "\n\n";
+//    std::cout << "res=" << res << " \n\n";
+//    std::cout << "gap j=" << j << "\n\n";
     if (i<loc1.size())
     {
         for (k=i;k<loc1.size();k++)
@@ -336,9 +337,10 @@ struct emdDualResult emdDualAlignments(NumericVector loc1,NumericVector val1,Num
         for (k=j;k<loc2.size();k++)
         {
             res+=(loc2[k]-curPos)*(1.0-curVal2);
-//            diffs+=std::abs(curVal1-val2[k])-std::abs(curVal1-curVal2);
+            diffs+=std::abs(curVal1-val2[k])-std::abs(curVal1-curVal2);
 //            std::cout << "i=" << i;
 //            std::cout << " j=" << k;
+//            std::cout << " diff=" << std::abs(curVal1-val2[j])-std::abs(curVal1-curVal2);
 //            std::cout << " diffs=" << diffs;
 //            std::cout << " curVal1=" << curVal1;
 //            std::cout << " val2[j]=" << val2[k];
@@ -349,12 +351,19 @@ struct emdDualResult emdDualAlignments(NumericVector loc1,NumericVector val1,Num
  //           std::cout << "i=" << i << "\tj=" << k << "\tdiffs=" << diffs <<  "\t " << std::abs(curVal1-val2[k+1])-std::abs(curVal1-val2[k]) << "\n";
         }
     }
-    std::cout << res << " \n\n";
+//    std::cout << "res=" << res << " \n\n";
+//    NumericVector xx(5);
+//    xx(0)=diffs;
+//    xx(1)=minDiffLeft;
+//    xx(2)=minDiffRight;
+//    xx(3)=res+diffs*minDiffLeft;
+//    xx(4)=res-diffs*minDiffRight;
+//    return xx;
     struct emdDualResult returnObject;
     returnObject.leftAlignment=minDiffLeft;
     returnObject.rightAlignment=minDiffRight;
-    returnObject.leftAlignment=res+diffs*minDiffLeft;
-    returnObject.rightAlignment=res-diffs*minDiffRight;
+    returnObject.leftValue=res+diffs*minDiffLeft;
+    returnObject.rightValue=res-diffs*minDiffRight;
     return returnObject;
 }
 
@@ -532,10 +541,20 @@ struct IntervalNoOffset
 // [[Rcpp::export]]
 double constantVersionExhaustiveHalfNoOffsetCalc(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
 {
-//    ProfilerStart("./eigen-prof.log");
+    //std::unordered_set<double> offsets1;
+    //int i,j;
+    //for (i=0;i<loc2.size();i++)
+    //{
+    //    for (j=0;j<loc1.size();j++)
+    //    {
+    //        offsets1.insert(loc2[i]-loc1[j]);
+    //    }
+    //}
+    //std::vector<double> offsets(offsets1.begin(),offsets1.end());
+    //std::sort(offsets.begin(),offsets.end());
+    std::cout << "im starting\n";
     std::time_t startTime = std::time(nullptr);
 
-    int i,j;
     // probably is better way to do this.
     std::time_t setTime = std::time(nullptr);
     std::time_t vectTime = std::time(nullptr);
@@ -548,10 +567,10 @@ double constantVersionExhaustiveHalfNoOffsetCalc(NumericVector loc1,NumericVecto
     double temp1;
 
     struct IntervalNoOffset inter1;
-    inter1.start=loc2[1]-loc1[loc1.size()];
-    inter1.end=loc2[loc2.size()]-loc1[1];
-    inter1.startVal=loc1[loc1.size()]-loc2[1];
-    inter1.endVal=loc2[loc2.size()]-loc1[1];
+    inter1.start=loc2[0]-loc1[loc1.size()-1];
+    inter1.end=loc2[loc2.size()-1]-loc1[0];
+    inter1.startVal=loc1[loc1.size()-1]-loc2[0];
+    inter1.endVal=loc2[loc2.size()-1]-loc1[0];
     inter1.minValue=0;
     priorityQ1.push(inter1);
 
@@ -569,7 +588,7 @@ double constantVersionExhaustiveHalfNoOffsetCalc(NumericVector loc1,NumericVecto
     double leftPoint,leftValue,rightPoint,rightValue;
     double t1;
     double midIndex;
-    double curBest=loc1[loc1.size()]-loc2[1];
+    double curBest=loc1[loc1.size()-1]-loc2[0];
     int count=0;
     int emdCalls=0;
     struct emdDualResult emdDualStructureStore;
@@ -580,13 +599,62 @@ double constantVersionExhaustiveHalfNoOffsetCalc(NumericVector loc1,NumericVecto
         priorityQ1.pop();
         if (-currentItem.minValue>curBest)
         {
+            std::cout << "currentItemMinValue=" << currentItem.minValue;
+            std::cout << " curBest=" << curBest;
+            std::cout << "\ni hit the break\n";
             break;
         }
 //        if (count==100)
 //        {break;}
         midPoint=currentItem.start+(currentItem.end-currentItem.start)/2;
+//        std::cout << "midPoint=";
+//        std::cout << midPoint;
+//        std::cout << " start=";
+//        std::cout << currentItem.start;
+//        std::cout << " end=";
+//        std::cout << currentItem.end;
+//        std::cout << "\n";
         emdDualStructureStore=emdDualAlignments(loc1+midPoint,val1,loc2,val2);
-        return emdDualStructureStore.leftValue;
+    //    double leftClose=1000;
+    //    double rightClose=1000;
+    //    for (i=0;i<offsets.size();i++)
+    //    {
+    //        if (offsets[i]<midPoint)
+    //        {
+    //            leftClose=offsets[i];
+    //        }
+    //        else
+    //        {
+    //            rightClose=offsets[i];
+    //            break;
+    //        }
+    //    }
+    //    std::cout << "leftClose=";
+    //    std::cout << leftClose;
+    //    std::cout << "rightClose=";
+    //    std::cout << rightClose;
+    //    std::cout << "\n";
+    //    std::cout << " leftValue=";
+    //    std::cout << emdDualStructureStore.leftValue;
+    //    std::cout << " ";
+    //    std::cout << " rightValue=";
+    //    std::cout << emdDualStructureStore.rightValue;
+    //    std::cout << " ";
+    //    std::cout << " leftAlignment=";
+    //    std::cout << emdDualStructureStore.leftAlignment;
+    //    std::cout << " ";
+    //    std::cout << " rightAlignment=";
+    //    std::cout << emdDualStructureStore.rightAlignment;
+    //    std::cout << "\n";
+    //    std::cout << constantVersion(loc1+midPoint+emdDualStructureStore.leftAlignment,val1,loc2,val2);
+    //    std::cout << "\n";
+    //    std::cout << constantVersion(loc1+midPoint-emdDualStructureStore.rightAlignment,val1,loc2,val2);
+    //    std::cout << "\n";
+    ////    if (emdCalls==2)
+    //    {
+
+    //    return emdDualStructureStore.leftValue;
+    //    }
         emdCalls+=1;
         if (emdDualStructureStore.rightValue < curBest)
         {
@@ -599,36 +667,42 @@ double constantVersionExhaustiveHalfNoOffsetCalc(NumericVector loc1,NumericVecto
 
 
         leftPoint=currentItem.start;
-        rightPoint=midPoint-emdDualStructureStore.leftAlignment;
-        if ((leftPoint-rightPoint)>10^(-10))
+        rightPoint=midPoint-emdDualStructureStore.rightAlignment;
+        if ((rightPoint-leftPoint)>0.000000000001)
         {
             leftValue=currentItem.startVal;
-            rightValue=emdDualStructureStore.leftValue;
+            rightValue=emdDualStructureStore.rightValue;
             t1=(leftValue+rightValue)/2.0+(leftPoint-rightPoint)/2.0;
-            struct IntervalNoOffset newInterval1;
-            newInterval1.minValue=-t1;
-            newInterval1.start=leftPoint;
-            newInterval1.end=rightPoint;
-            newInterval1.startVal=leftValue;
-            newInterval1.endVal=rightValue;
-            priorityQ1.push(newInterval1);
+            if (t1<curBest)
+            {
+                struct IntervalNoOffset newInterval1;
+                newInterval1.minValue=-t1;
+                newInterval1.start=leftPoint;
+                newInterval1.end=rightPoint;
+                newInterval1.startVal=leftValue;
+                newInterval1.endVal=rightValue;
+                priorityQ1.push(newInterval1);
+            }
         }
 //        std::cout << "t1=" << t1 << "\n";
 
-        leftPoint=midPoint+emdDualStructureStore.rightAlignment;
+        leftPoint=midPoint+emdDualStructureStore.leftAlignment;
         rightPoint=currentItem.end;
-        leftValue=emdDualStructureStore.rightValue;
+        leftValue=emdDualStructureStore.leftValue;
         rightValue=currentItem.endVal;
-        if ((leftPoint-rightPoint)>10^(-10))
+        if ((rightPoint-leftPoint)>0.000000000001)
         {
             t1=(leftValue+rightValue)/2.0+(leftPoint-rightPoint)/2.0;
-            struct IntervalNoOffset newInterval2;
-            newInterval2.minValue=-t1;
-            newInterval2.start=leftPoint;
-            newInterval2.end=rightPoint;
-            newInterval2.startVal=leftValue;
-            newInterval2.endVal=rightValue;
-            priorityQ1.push(newInterval2);
+            if (t1<curBest)
+            {
+                struct IntervalNoOffset newInterval2;
+                newInterval2.minValue=-t1;
+                newInterval2.start=leftPoint;
+                newInterval2.end=rightPoint;
+                newInterval2.startVal=leftValue;
+                newInterval2.endVal=rightValue;
+                priorityQ1.push(newInterval2);
+            }
         }
     }
     std::cout << "i made " << emdCalls << "\n";

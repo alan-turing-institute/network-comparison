@@ -31,7 +31,7 @@ for (i in xs)
     a2=net_emd_fast(dhist1,dhist2,method='exhaustive');
     t2=Sys.time()-ts;
     ts=Sys.time();
-    a3=net_emd_fast(dhist1,dhist2,method='exhaustiveVer2');
+    a3=net_emd_fast(dhist1,dhist2,method='exhaustiveHalfNoOffset');
     t3=Sys.time()-ts;
     a0l<-c(a0l,a0)
     a1l<-c(a1l,a1)
