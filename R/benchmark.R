@@ -14,12 +14,13 @@ t1l=c()
 t2l=c()
 t3l=c()
 xs=(1:35)*100
+xs=(1:30)*500
 
 for (i in xs)
 {
     G1=erdos.renyi.game(i,0.05)
     dhist1=gdd(G1)
-    G2=erdos.renyi.game(i,0.05)
+    G2=barabasi.game(i,5)
     dhist2=gdd(G2)
     ts=Sys.time();
     a0=net_emd(dhist1,dhist2,method='optimise');
@@ -31,8 +32,10 @@ for (i in xs)
     a2=net_emd_fast(dhist1,dhist2,method='exhaustive');
     t2=Sys.time()-ts;
     ts=Sys.time();
-    a3=net_emd_fast(dhist1,dhist2,method='exhaustiveVer2');
-    t3=Sys.time()-ts;
+#    a3=net_emd_fast(dhist1,dhist2,method='exhaustiveVer2');
+#    t3=Sys.time()-ts;
+    a3=0
+    t3=0
     a0l<-c(a0l,a0)
     a1l<-c(a1l,a1)
     a2l<-c(a2l,a2)
