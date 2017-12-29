@@ -1,0 +1,6 @@
+[submodule "network-comparison-Cpp-Extension"]
+	path = network-comparison-Cpp-Extension
+	url = https://github.com/alan-turing-institute/network-comparison-Cpp-Extension
+[submodule "src"]
+	path = src
+	url = https://github.com/alan-turing-institute/network-comparison-Cpp-Extension
