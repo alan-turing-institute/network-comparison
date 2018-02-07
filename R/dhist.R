@@ -155,8 +155,6 @@ dhist_from_obsSLOW <- function(observations) {
   return(hist)
 }
 
-library("Rcpp")
-sourceCpp("countsHelper.cpp")
 #' Discrete histogram from observations
 #' 
 #' Generate a sparse discrete histogram from a set of discrete numeric observations
@@ -173,7 +171,9 @@ dhist_from_obs <- function(observations) {
   if(!is_numeric_vector_1d(observations)) {
     stop("Observations must be provided as a 1D numeric vector")
   }
-
+    if (any(is.na(observations))) {
+        stop("NA observed in features")
+    }
   results=countsToDhist(matrix(observations))
   # Construct histogram object
   hist <- dhist(locations = results[,1], masses = results[,2])
