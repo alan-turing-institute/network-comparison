@@ -19,7 +19,7 @@ Imports:
     purrr,
     lpSolve,
     plyr,
-    dplyr
+    dplyr,
     Rcpp
 Suggests:
     testthat,
