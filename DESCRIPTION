@@ -11,6 +11,8 @@ Depends:
     R (>= 3.1.0)
 LazyData: true
 License: MIT + file LICENSE
+LinkingTo:
+    Rcpp
 Imports:
     igraph,
     orca,
@@ -18,6 +20,7 @@ Imports:
     lpSolve,
     plyr,
     dplyr
+    Rcpp
 Suggests:
     testthat,
     knitr,
