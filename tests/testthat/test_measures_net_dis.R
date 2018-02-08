@@ -434,9 +434,14 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
                max_graphlet_size = max_graphlet_size, 
                density_breaks = density_breaks, 
                density_binned_reference_counts = scaled_reference_counts)
-  # Map over each graph and compare expected with actual
-  purrr::map2(actual_expected_graphlet_counts,
-              expected_expected_graphlet_counts, expect_equal)
+  # Loop over each graph and compare expected with actual
+  # NOTE: v2.0.0 of testthat library made a breaking change that means using
+  # map, mapply etc can cause failures under certain conditions
+  # See: https://github.com/r-lib/testthat/releases/tag/v2.0.0
+  for(i in 1:length(actual_expected_graphlet_counts)) {
+    expect_equal(actual_expected_graphlet_counts[i],
+                 expected_expected_graphlet_counts[i])
+  }
 })
 
 test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes", {
