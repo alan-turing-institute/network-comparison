@@ -78,7 +78,7 @@ NumericVector NetEmdExhaustiveMedian(NumericVector loc1,NumericVector val1,Numer
             else
             { value=curloc1ValEnd-curloc1ValStart;}
             offset=loc2[j]-loc1[i];
-            if (value>0.0000000000001)
+            if (value>0.0000000000001) // need to discuss this constant
             {
                 std::pair<double,double> temp1;
                 temp1.first=offset;
@@ -155,17 +155,7 @@ NumericVector NetEmdExhaustiveMedian(NumericVector loc1,NumericVector val1,Numer
     duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
   //  std::cout<<"largeLoop: "<< duration <<'\n';
-//    double t1=0;
-//    for (i=0;i<offsetsWeights.size();i++)
-//    {
-//        t1+=offsetsWeights[i].second;
-////        std::cout << offsetsWeights[i].first << "," << offsetsWeights[i].second << "\n";
-//    }
-//    std::cout << t1 << "\n";
     NumericVector result(2);
-//    result(0)=0;
-//    result(1)=0;
-//    return result;
 
     start = std::clock();
 
