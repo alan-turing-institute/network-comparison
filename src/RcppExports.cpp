@@ -44,11 +44,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// NetEmdExhaustiveMedian
+NumericVector NetEmdExhaustiveMedian(NumericVector loc1, NumericVector val1, NumericVector loc2, NumericVector val2);
+RcppExport SEXP _netdist_NetEmdExhaustiveMedian(SEXP loc1SEXP, SEXP val1SEXP, SEXP loc2SEXP, SEXP val2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type loc1(loc1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type val1(val1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type loc2(loc2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type val2(val2SEXP);
+    rcpp_result_gen = Rcpp::wrap(NetEmdExhaustiveMedian(loc1, val1, loc2, val2));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_netdist_countsToDhist", (DL_FUNC) &_netdist_countsToDhist, 1},
     {"_netdist_NetEmdConstant", (DL_FUNC) &_netdist_NetEmdConstant, 4},
     {"_netdist_NetEmdFullExhaustiveNoSmooth", (DL_FUNC) &_netdist_NetEmdFullExhaustiveNoSmooth, 4},
+    {"_netdist_NetEmdExhaustiveMedian", (DL_FUNC) &_netdist_NetEmdExhaustiveMedian, 4},
     {NULL, NULL, 0}
 };
 
