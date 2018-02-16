@@ -2,5 +2,5 @@
 .Rhistory
 .RData
 .Rapp.history
-*.o
+
 vignettes/.build.timestamp
