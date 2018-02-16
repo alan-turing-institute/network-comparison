@@ -53,7 +53,9 @@ net_emds_for_all_graphs <- function(
     colnames(min_emds) <- purrr::simplify(purrr::map(1:num_features, ~paste("MinEMD_O", .-1, sep = "")))
     min_offsets <- matrix(purrr::simplify(purrr::map(out, ~.$min_offsets)), ncol = num_features, byrow = TRUE)
     colnames(min_offsets) <- purrr::simplify(purrr::map(1:num_features, ~paste("MinOffsets_O", .-1, sep = "")))
-    ret <- list(net_emds = net_emds, comp_spec = comp_spec, min_emds = min_emds, min_offsets = min_offsets)
+    min_offsets_std <- matrix(purrr::simplify(purrr::map(out, ~.$min_offsets_std)), ncol = num_features, byrow = TRUE)
+    colnames(min_offsets_std) <- purrr::simplify(purrr::map(1:num_features, ~paste("MinOffsetsStd_O", .-1, sep = "")))
+    ret <- list(net_emds = net_emds, comp_spec = comp_spec, min_emds = min_emds, min_offsets = min_offsets,min_offsets_std = min_offsets_std)
   } else {
     net_emds <- out
     ret <- list(net_emds = net_emds, comp_spec = comp_spec)
@@ -107,6 +109,7 @@ net_emd <- function(dhists1, dhists2, method = "optimise",
     # Collect the minimum EMDs and associated offsets for all histogram pairs
     min_emds <- purrr::simplify(purrr::transpose(details)$min_emd)
     min_offsets <- purrr::simplify(purrr::transpose(details)$min_offset)
+    min_offsets_std <- purrr::simplify(purrr::transpose(details)$min_offset_std)
     # The NetEMD is the arithmetic mean of the minimum EMDs for each pair of 
     # histograms
     arithmetic_mean <- sum(min_emds) / length(min_emds)
@@ -116,7 +119,7 @@ net_emd <- function(dhists1, dhists2, method = "optimise",
     # Note that the offsets represent shifts after the histograms have been
     # scaled to unit variance
     if(return_details) {
-      return(list(net_emd = net_emd, min_emds = min_emds, min_offsets = min_offsets))
+      return(list(net_emd = net_emd, min_emds = min_emds, min_offsets = min_offsets,min_offsets_std=min_offsets_std))
     } else {
       return(arithmetic_mean)
     }
@@ -172,7 +175,8 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
   # Calculate minimal EMD
   result <- min_emd(dhist1_norm, dhist2_norm, method = method)
   # Correct offset to remove effect of earlier mean-centering
-  result$min_offset <- result$min_offset + (mean2/var2) - (mean1/var1)
+  result$min_offset_std <- result$min_offset 
+  result$min_offset <- result$min_offset + mean2 - mean1
   return(result)
 }
 
