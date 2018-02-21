@@ -312,8 +312,9 @@ test_that("next_step gives correct shift for random x1, x2", {
   purrr::walk(1:100, test_fn)
 })
 
-context("EMD: MinEMD exhaustive")
-test_that("min_emd_exhaustive returns 0 when comparing a 1D feature distribution to itself",{
+context("EMD: MinEMD")
+test_that("min_emd_<method> methods correctly compare a non-offset 1D feature
+          distribution to itself",{
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- bin_masses1
   bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
@@ -322,33 +323,33 @@ test_that("min_emd_exhaustive returns 0 when comparing a 1D feature distribution
   dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   
   expected <- list(min_emd = 0, min_offset = 0)
-  actual <- min_emd_exhaustive(dhist1, dhist2)
-  expect_equal(actual, expected)
+  # Check min_emd_optimise
+  actual_optimise <- min_emd_exhaustive(dhist1, dhist2)
+  expect_equal(actual_optimise, expected)
+  # Check min_emd_exhaustive
+  actual_exhaustive <- min_emd_exhaustive(dhist1, dhist2)
+  expect_equal(actual_optimise, expected)
 })
 
-test_that("min_emd_exhaustive correct comparing a non-offset 1D feature distribution to itself",{
-  bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
-  bin_masses2 <- bin_masses1
-  bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
-  bin_centres2 <- bin_centres1
-  dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
-  dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
-  
-  expected <- list(min_emd = 0, min_offset = 0)
-  actual <- min_emd_exhaustive(dhist1, dhist2)
-  expect_equal(actual, expected)
-})
-
-test_that("min_emd_exhaustive correct when comparing an offset 1D feature distribution to itself",{
+test_that("min_emd_<method> methods correctly compare an offset 1D feature 
+          distribution to itself",{
   offset = 10
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- bin_masses1
   bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
+  # The offset returned by min_emd is how much must be added to all dhist1
+  # locations to minimise the emd. If we want this to be equal to our specified
+  # offset, then the locations of dhist2 must be the locations of dhist2 + our
+  # specififed offset
   bin_centres2 <- bin_centres1 + offset
   dhist1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   dhist2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   
   expected <- list(min_emd = 0, min_offset = offset)
-  actual <- min_emd_exhaustive(dhist1, dhist2)
-  expect_equal(actual, expected)
+  # Check min_emd_optimise
+  actual_optimise <- min_emd_exhaustive(dhist1, dhist2)
+  expect_equal(actual_optimise, expected)
+  # Check min_emd_exhaustive
+  actual_exhaustive <- min_emd_exhaustive(dhist1, dhist2)
+  expect_equal(actual_optimise, expected)
 })
