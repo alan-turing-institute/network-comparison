@@ -28,14 +28,14 @@
     loc=histogram$locations
     mass=histogram$masses
     var=sum(loc*loc*mass)/sum(mass)-(sum(loc*mass)/sum(mass))^2
-    expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift/var)
+    expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift, 
+                     min_offsets_std = 0)
     expect_equal(self_net_emd, expected)
   }
 
   locations <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
   masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   histogram <- dhist(locations = locations, masses = masses)
-
   expect_self_net_emd_correct(histogram, shift = 1, "optimise",
                               return_details = TRUE)
   expect_self_net_emd_correct(histogram, shift = 1, "exhaustive",
