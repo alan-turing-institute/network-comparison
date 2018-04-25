@@ -19,6 +19,7 @@ bool pairComp(std::pair<double,double> v1,std::pair<double,double> v2)
     return 0;
 }
 
+
 //' @title
 //' Compute EMD
 ////'
