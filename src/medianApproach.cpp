@@ -12,7 +12,7 @@ using namespace Rcpp;
 
 
 
-double NetEmdConstant(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
+double NetEmdConstantMedianVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
 {
   //init
    double res=0;
@@ -259,7 +259,7 @@ NumericVector NetEmdExhaustiveMedian(NumericVector loc1,NumericVector val1,Numer
             currentWeight+=value;
             loc0=loc1+offsetsWeights[i].first;
             NumericVector result(2);
-            result(0)=NetEmdConstant(loc0,val1,loc2,val2);
+            result(0)=NetEmdConstantMedianVersion(loc0,val1,loc2,val2);
             result(1)=offsetsWeights[i].first;
             duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
