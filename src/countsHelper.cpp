@@ -4,7 +4,7 @@
 using namespace Rcpp;
 
 //' @title
-//' Count number of occurences
+//' Count number of co-occurences
 //'
 //' @param features a Matrix with doubles.
 //'
