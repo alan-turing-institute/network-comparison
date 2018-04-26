@@ -3,6 +3,8 @@
 #include <vector>
 using namespace Rcpp;
 
+// [[Rcpp::plugins("cpp11")]]
+
 //' @title
 //' Count number of co-occurences
 //'

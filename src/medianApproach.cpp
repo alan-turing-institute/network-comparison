@@ -10,7 +10,7 @@
 #include <ctime>
 using namespace Rcpp;
 
-
+// [[Rcpp::plugins("cpp11")]]
 
 double NetEmdConstantMedianVersion(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
 {
