@@ -174,8 +174,12 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
   
   # Calculate minimal EMD
   result <- min_emd(dhist1_norm, dhist2_norm, method = method)
-  # Correct offset to remove effect of earlier mean-centering
+  # As we mean-centred the histograms prior to passing to min_emd(), the offset
+  # returned is not the "true" offset for the supplied histograms. We report 
+  # this as the "standardised" offset.
   result$min_offset_std <- result$min_offset 
+  # We report the "true" offset as the offset with no mean-centring, so need to 
+  # adjust to reverse the earlier mean-centring
   result$min_offset <- result$min_offset + mean2 - mean1
   return(result)
 }
