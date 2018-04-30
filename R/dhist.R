@@ -174,7 +174,7 @@ dhist_from_obs <- function(observations) {
     if (any(is.na(observations))) {
         stop("NA observed in features")
     }
-  results=countsToDhist(matrix(observations))
+  results <- counts_from_observations(matrix(observations))
   # Construct histogram object
   hist <- dhist(locations = results[,1], masses = results[,2])
   return(hist)

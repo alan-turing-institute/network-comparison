@@ -10,7 +10,7 @@ using namespace Rcpp;
 //'
 //' @export
 // [[Rcpp::export]]
-NumericMatrix  countsToDhist(NumericMatrix features)
+NumericMatrix  counts_from_observations(NumericMatrix features)
 {
     std::unordered_map<double,int> counter;
     int i;
