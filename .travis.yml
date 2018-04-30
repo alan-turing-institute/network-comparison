@@ -17,11 +17,8 @@ addons:
       - gcc-4.9
       - g++-4.9
 
-before_install: |
-  mkdir ~/.R
-  cat <<EOF > ~/.R/Makevars
-  CXX1X=g++-4.9
-  CXX1XSTD=-std=c++11
+before_install:
+  - eval("CC=gcc-4.9 && CXX=g++-4.9")
 
 after_success:
 - Rscript -e 'library(covr); codecov()'
