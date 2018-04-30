@@ -193,6 +193,11 @@ graph_features_to_histograms <- function(featuresMatrix) {
   apply(featuresMatrix, 2, dhist_from_obs)
 }
 
+
+graph_features_to_histogramsSLOW <- function(featuresMatrix) {
+  apply(featuresMatrix, 2, dhist_from_obsSLOW)
+}
+
 #' Graphlet-based degree distributions (GDDs)
 #' 
 #' Generates graphlet-based degree distributions from \code{igraph} graph object,

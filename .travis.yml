@@ -2,12 +2,26 @@ language: r
 cache: packages
 sudo: false
 warnings_are_errors: false
+
 r_packages:
 - covr
+
 os:
 - linux
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-4.9
+      - g++-4.9
+env:
+  - CC=gcc-4.9 CXX=g++-4.9
+
 after_success:
 - Rscript -e 'library(covr); codecov()'
+
 notifications:
   slack:
     on_success: change

@@ -28,6 +28,8 @@ min_emd <- function(dhist1, dhist2, method = "optimise") {
   }
 }
 
+
+
 #' Minimum Earth Mover's Distance (EMD) using optimiser search
 #' 
 #' Calculates the minimum Earth Mover's Distance (EMD) between two discrete 

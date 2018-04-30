@@ -183,4 +183,3 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
   result$min_offset <- result$min_offset + mean2 - mean1
   return(result)
 }
-
