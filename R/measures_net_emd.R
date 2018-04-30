@@ -53,7 +53,9 @@ net_emds_for_all_graphs <- function(
     colnames(min_emds) <- purrr::simplify(purrr::map(1:num_features, ~paste("MinEMD_O", .-1, sep = "")))
     min_offsets <- matrix(purrr::simplify(purrr::map(out, ~.$min_offsets)), ncol = num_features, byrow = TRUE)
     colnames(min_offsets) <- purrr::simplify(purrr::map(1:num_features, ~paste("MinOffsets_O", .-1, sep = "")))
-    ret <- list(net_emds = net_emds, comp_spec = comp_spec, min_emds = min_emds, min_offsets = min_offsets)
+    min_offsets_std <- matrix(purrr::simplify(purrr::map(out, ~.$min_offsets_std)), ncol = num_features, byrow = TRUE)
+    colnames(min_offsets_std) <- purrr::simplify(purrr::map(1:num_features, ~paste("MinOffsetsStd_O", .-1, sep = "")))
+    ret <- list(net_emds = net_emds, comp_spec = comp_spec, min_emds = min_emds, min_offsets = min_offsets,min_offsets_std = min_offsets_std)
   } else {
     net_emds <- out
     ret <- list(net_emds = net_emds, comp_spec = comp_spec)
@@ -107,6 +109,7 @@ net_emd <- function(dhists1, dhists2, method = "optimise",
     # Collect the minimum EMDs and associated offsets for all histogram pairs
     min_emds <- purrr::simplify(purrr::transpose(details)$min_emd)
     min_offsets <- purrr::simplify(purrr::transpose(details)$min_offset)
+    min_offsets_std <- purrr::simplify(purrr::transpose(details)$min_offset_std)
     # The NetEMD is the arithmetic mean of the minimum EMDs for each pair of 
     # histograms
     arithmetic_mean <- sum(min_emds) / length(min_emds)
@@ -116,7 +119,7 @@ net_emd <- function(dhists1, dhists2, method = "optimise",
     # Note that the offsets represent shifts after the histograms have been
     # scaled to unit variance
     if(return_details) {
-      return(list(net_emd = net_emd, min_emds = min_emds, min_offsets = min_offsets))
+      return(list(net_emd = net_emd, min_emds = min_emds, min_offsets = min_offsets,min_offsets_std=min_offsets_std))
     } else {
       return(arithmetic_mean)
     }
@@ -148,12 +151,20 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
     dhist1 <- as_smoothed_dhist(dhist1, smoothing_window_width)
     dhist2 <- as_smoothed_dhist(dhist2, smoothing_window_width)
   }
-  ## add mean centering
-
-  ### Stores means to fix offset later
+  
+  # Store means and variances to calculate offset later
   mean1 <- dhist_mean_location(dhist1)
   mean2 <- dhist_mean_location(dhist2)
-  ### Mean centre
+  
+  var1 <- dhist_variance(dhist1)
+  var2 <- dhist_variance(dhist2)
+  
+  # Mean centre histograms. This helps with numerical stability as, after 
+  # variance normalisation, the differences between locations are often small.
+  # We want to avoid calculating small differences between large numbers as
+  # floating point precision issues can result in accumulating inaccuracies.
+  # Mean-centering histograms results in variance normalised locations being
+  # clustered around zero, rather than some potentially large mean location.
   dhist1<-mean_centre_dhist(dhist1)
   dhist2<-mean_centre_dhist(dhist2)
 
@@ -161,8 +172,15 @@ net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
   dhist1_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
   dhist2_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
   
+  # Calculate minimal EMD
   result <- min_emd(dhist1_norm, dhist2_norm, method = method)
-  result$min_offset <- result$min_offset +mean2-mean1
+  # As we mean-centred the histograms prior to passing to min_emd(), the offset
+  # returned is not the "true" offset for the supplied histograms. We report 
+  # this as the "standardised" offset.
+  result$min_offset_std <- result$min_offset 
+  # We report the "true" offset as the offset with no mean-centring, so need to 
+  # adjust to reverse the earlier mean-centring
+  result$min_offset <- result$min_offset + mean2 - mean1
   return(result)
 }
 
