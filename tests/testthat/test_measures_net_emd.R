@@ -168,7 +168,8 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
     loc=histogram$locations
     mass=histogram$masses
     var=sum(loc*loc*mass)/sum(mass)-(sum(loc*mass)/sum(mass))^2
-    expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift/var)
+    expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift,
+                     min_offsets_std = 0)
     expect_equal(self_net_emd, expected)
   }
 
