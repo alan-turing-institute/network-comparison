@@ -7,6 +7,8 @@
 #include <math.h>
 using namespace Rcpp;
 
+// [[Rcpp::plugins("cpp11")]]
+
 //' @title
 //' Compute EMD
 ////'
