@@ -1,7 +1,3 @@
-context("Measures NetEMD: NetEMD")
-# NetEMD: Property-based tests
-test_that("net_emd returns 0 when comparing an integer location histogram offset
-          against itself", {
 
   self_net_emd <- function(histogram, shift, method) {
     net_emd(histogram, shift_dhist(histogram, shift), method = method)
@@ -24,23 +20,22 @@ test_that("net_emd returns 0 when comparing an integer location histogram offset
   expect_equal(self_net_emd(histogram, shift = 0.01, "exhaustive"), expected)
   expect_equal(self_net_emd(histogram, shift = 0, "optimise"), expected)
   expect_equal(self_net_emd(histogram, shift = 0, "exhaustive"), expected)
-})
-
-test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing an
-          integer location histogram offset against itself", {
 
   expect_self_net_emd_correct <- function(histogram, shift, method,
                                           return_details = FALSE) {
     self_net_emd <- net_emd(histogram, shift_dhist(histogram, shift),
                             method = method, return_details = return_details)
-    expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift)
+    loc=histogram$locations
+    mass=histogram$masses
+    var=sum(loc*loc*mass)/sum(mass)-(sum(loc*mass)/sum(mass))^2
+    expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift, 
+                     min_offsets_std = 0)
     expect_equal(self_net_emd, expected)
   }
 
   locations <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
   masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   histogram <- dhist(locations = locations, masses = masses)
-
   expect_self_net_emd_correct(histogram, shift = 1, "optimise",
                               return_details = TRUE)
   expect_self_net_emd_correct(histogram, shift = 1, "exhaustive",
@@ -65,7 +60,6 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing an
                               return_details = TRUE)
   expect_self_net_emd_correct(histogram, shift = 0, "exhaustive",
                               return_details = TRUE)
-})
 
 test_that("net_emd returns 0 when comparing any normal histogram against itself (no offset)", {
   num_hists <- 5
@@ -171,7 +165,11 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
     function(histogram, shift, method, return_details = FALSE) {
     self_net_emd <- net_emd(histogram, shift_dhist(histogram, shift),
                             method, return_details)
-    expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift)
+    loc=histogram$locations
+    mass=histogram$masses
+    var=sum(loc*loc*mass)/sum(mass)-(sum(loc*mass)/sum(mass))^2
+    expected <- list(net_emd = 0, min_emds = 0, min_offsets = shift,
+                     min_offsets_std = 0)
     expect_equal(self_net_emd, expected)
   }
 
