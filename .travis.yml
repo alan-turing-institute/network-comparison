@@ -17,8 +17,7 @@ addons:
       - gcc-4.9
       - g++-4.9
 env:
-  - CC=gcc-4.9
-  - CXX=g++-4.9
+  - CC=gcc-4.9 CXX=g++-4.9
 
 after_success:
 - Rscript -e 'library(covr); codecov()'
