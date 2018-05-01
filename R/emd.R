@@ -20,7 +20,7 @@ min_emd <- function(dhist1, dhist2, method = "optimise") {
     stop("All inputs must be 'dhist' discrete histogram objects")
   }
   if(method == "optimise") {
-    return(min_emd_optimise_fast(dhist1, dhist2))
+    return(min_emd_median(dhist1, dhist2))
   } else if(method == "optimiseRonly"){
     return(min_emd_optimise(dhist1, dhist2))
   } else if(method == "exhaustive"){
