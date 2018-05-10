@@ -24,8 +24,6 @@ min_emd <- function(dhist1, dhist2, method = "optimise") {
   } else if(method == "optimiseRonly"){
     return(min_emd_optimise(dhist1, dhist2))
   } else if(method == "exhaustive"){
-    return(min_emd_exhaustive_fast(dhist1, dhist2))
-  } else if(method == "exhaustiveRonly"){
     return(min_emd_exhaustive(dhist1, dhist2))
   } else {
     stop("Method not recognised. Must be 'exhaustive' or ' optimise'")
@@ -136,8 +134,6 @@ min_emd_optimise <- function(dhist1, dhist2) {
   min_offset <- soln$minimum
   return(list(min_emd = min_emd, min_offset = min_offset))
 }
-
-
 
 #' Minimum Earth Mover's Distance (EMD) using exhaustive search
 #' 

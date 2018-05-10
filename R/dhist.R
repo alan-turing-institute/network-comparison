@@ -129,6 +129,33 @@ is_dhist <- function(x, fast_check = TRUE) {
          && is_numeric_vector_1d(x$masses))
 }
 
+#' Discrete histogram from observations (Pure R slow version)
+#' 
+#' Generate a sparse discrete histogram from a set of discrete numeric observations
+#' @param observations A vector of discrete numeric observations
+#' @return A sparse discrete histogram. Format is a \code{dhist} object, which
+#' is a list of class \code{dhist} with the following named elements:
+#' \itemize{
+#'   \item \code{locations}: A 1D numeric vector of discrete locations
+#'   \item \code{masses}: A 1D numeric vector of the mass present at each location
+#' }
+#' @export
+dhist_from_obs_slow <- function(observations) {
+  # Require 1D numeric vector
+  if(!is_numeric_vector_1d(observations)) {
+    stop("Observations must be provided as a 1D numeric vector")
+  }
+
+  # Identify unique observations
+  locations <- sort(unique(observations))
+  # Count occurences of each unique obervation
+  counts <- sapply(locations, function(location) {sum(observations == location)})
+  # Construct histogram object
+  hist <- dhist(locations = locations, masses = counts)
+  return(hist)
+}
+
+
 #' Discrete histogram from observations
 #' 
 #' Generate a sparse discrete histogram from a set of discrete numeric observations
@@ -145,15 +172,15 @@ dhist_from_obs <- function(observations) {
   if(!is_numeric_vector_1d(observations)) {
     stop("Observations must be provided as a 1D numeric vector")
   }
-
-  # Identify unique observations
-  locations <- sort(unique(observations))
-  # Count occurences of each unique obervation
-  counts <- sapply(locations, function(location) {sum(observations == location)})
+    if (any(is.na(observations))) {
+        stop("NA observed in features")
+    }
+  results <- counts_from_observations(matrix(observations))
   # Construct histogram object
-  hist <- dhist(locations = locations, masses = counts)
+  hist <- dhist(locations = results[,1], masses = results[,2])
   return(hist)
 }
+
 
 #' Generate interpolating empirical cumulative mass function (ECMF) for 
 #' a discrete histogram
