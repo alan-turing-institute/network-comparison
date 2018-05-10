@@ -19,7 +19,7 @@ using namespace Rcpp;
 //'
 //' @export
 // [[Rcpp::export]]
-double NetEmdConstant(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
+double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,NumericVector loc2,NumericVector val2,double binWidth2)
 {
   //init
    double res=0;
@@ -30,17 +30,6 @@ double NetEmdConstant(NumericVector loc1,NumericVector val1,NumericVector loc2,N
    int i,j,k;
    //place start of windows before
    //start of histogram so we can start the loop
-   if (loc1[0]<loc2[0])
-   {
-       curPos=loc1[0]-1.0;
-   }
-   else
-   {
-       curPos=loc2[0]-1.0;
-   }
-   // current value of histogram 1 an 2
-   curVal1=0;
-   curVal2=0;
    // stores the result
    res=0;
    //TODO be worried about adding lots of small numbers
@@ -48,65 +37,112 @@ double NetEmdConstant(NumericVector loc1,NumericVector val1,NumericVector loc2,N
    // current location on hist 1 and hist 2
    i=0;
    j=0;
-    while (1)
-    {
-        if (i==loc1.size())
-        {break;}
-        if (j==loc2.size())
-        {break;}
-        if (loc1[i]<loc2[j])
+   double cdfLower=0;
+   double loc1SegStart=loc1[0];
+   double loc1SegEnd=loc1[0]+binWidth1;
+   double loc1SegValStart=0;
+   double loc1SegValEnd=val1[0];
+   double loc2SegStart=loc2[0];
+   double loc2SegEnd=loc2[0]+binWidth2;
+   double loc2SegValStart=0;
+   double loc2SegValEnd=val2[0];
+   double curStartVal;
+   double curEndVal;
+   res=0;
+   while (1)
+   {
+        // lets compute the area for these segments
+        if (loc1SegValStart<loc2SegValStart)
         {
-            temp1=(loc1[i]-curPos)*std::abs(curVal1-curVal2);
-            res+=temp1;
-            curVal1=val1[i];
-            curPos=loc1[i];
-            i+=1;
+            curStartVal=loc2SegValStart;
+            loc2Start=loc2SegStart
+            loc1Start=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValStart-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart)
         }
         else
         {
-            temp1=(loc2[j]-curPos)*std::abs(curVal1-curVal2);
-            res+=temp1;
-            curVal2=val2[j];
-            curPos=loc2[j];
-            j+=1;
+            curStartVal=loc1SegValStart;
+            loc1Start=loc1SegStart
+            loc2Start=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart)
         }
-    }
-    if (i<loc1.size())
-    {
-        for (k=i;k<loc1.size();k++)
+        if (loc1SegValEnd<loc2SegValEnd)
         {
-            res+=(loc1[k]-curPos)*(1.0-curVal1);
-            curVal1=val1[k];
-            curPos=loc1[k];
+            curEndVal=loc1CurValEnd;
+            loc1End=loc1SegEnd
+            loc2End=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValEnd-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart)
         }
-    }
-    else
-    {
-        for (k=j;k<loc2.size();k++)
+        else
         {
-            res+=(loc2[k]-curPos)*(1.0-curVal2);
-            curVal2=val2[k];
-            curPos=loc2[k];
+            curEndVal=loc2CurValEnd;
+            loc2End=loc2SegEnd
+            loc1End=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValEnd-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart)
         }
-    }
+        // okay so we now have our bounds
+        h=curEndVal-curStartVal;
+        if (loc1Start<loc2Start)
+        {
+            //case1 they is no overlap
+            if (loc1End<=loc2End)
+            {
+                res+=(h/2.0)*(loc2Start+loc2End-loc1Start-loc1End)
+            }
+            else // we have a bowtie
+            {
+                res+=(h/2.0)*((loc2Start-loc1Start)*(loc2Start-loc1Start)+(loc1End-loc2End)*(loc1End-loc2End))/(loc1End-loc2End+loc2Start-loc1Start)
+            }
+        }
+        else
+        {
+            //case1 they is no overlap
+            if (loc2End<=loc1End)
+            {
+                res+=(h/2.0)*(loc1Start+loc1End-loc2Start-loc2End)
+            }
+            else // we have a bowtie
+            {
+                res+=(h/2.0)*((loc1Start-loc2Start)*(loc1Start-loc2Start)+(loc2End-loc1End)*(loc2End-loc1End))/(loc2End-loc1End+loc1Start-loc2Start)
+            }
+        }
+        // update the segment under consideration
+        if (i==val1.size()-1)
+        {
+            if (j==val2.size()-1)
+            {
+                break;
+            }
+            else
+            {
+               j+=1;
+               loc2SegStart=loc2[j];
+               loc2SegEnd=loc2[j]+binWidth2;
+               loc2SegValStart=loc2CurValEnd;
+               loc2SegValEnd=val2[j];
+            }
+        }
+        else if (j==val2.size()-1)
+        {
+           loc1SegStart=loc1[i];
+           loc1SegEnd=loc1[i]+binWidth1;
+           loc1SegValStart=loc1CurValEnd;
+           loc1SegValEnd=val1[i];
+        }
+        else if (val1[i+1]<val2[j+1])
+        {
+            i+=1;
+            // update the i segment
+           loc1SegStart=loc1[i];
+           loc1SegEnd=loc1[i]+binWidth1;
+           loc1SegValStart=loc1CurValEnd;
+           loc1SegValEnd=val1[i];
+        }
+        else
+        {
+           j+=1;
+           loc2SegStart=loc2[j];
+           loc2SegEnd=loc2[j]+binWidth2;
+           loc2SegValStart=loc2CurValEnd;
+           loc2SegValEnd=val2[j];
+        }
+   }
     return res;
-}
-
-// this can be speed up massively
-std::vector<double> makeAllOffsets(NumericVector  loc1,NumericVector   loc2)
-{
-    int i,j;
-    std::unordered_set<double> offsets1;
-    for (i=0;i<loc2.size();i++)
-    {
-        for (j=0;j<loc1.size();j++)
-        {
-            offsets1.insert(loc2[i]-loc1[j]);
-        }
-    }
-    // probably is better way to do this.
-    std::vector<double> offsets(offsets1.begin(),offsets1.end());
-    std::sort(offsets.begin(),offsets.end());
-    return offsets;
 }
 
