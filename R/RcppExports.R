@@ -12,12 +12,13 @@ counts_from_observations <- function(features) {
 }
 
 #' @title
-#' Compute EMD
+#' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative Mass
+#' Functions (ECMFs)
 NULL
 
 #'
 #' @export
-NetEmdConstant <- function(loc1, val1, loc2, val2) {
-    .Call('_netdist_NetEmdConstant', PACKAGE = 'netdist', loc1, val1, loc2, val2)
+NetEmdConstant <- function(locations1, values1, locations2, values2) {
+    .Call('_netdist_NetEmdConstant', PACKAGE = 'netdist', locations1, values1, locations2, values2)
 }
 

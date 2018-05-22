@@ -10,103 +10,95 @@ using namespace Rcpp;
 // [[Rcpp::plugins("cpp11")]]
 
 //' @title
-//' Compute EMD
+//' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative Mass
+//' Functions (ECMFs)
 ////'
-////' @param loc1 numeric vector.
-////' @param val1 numeric vector.
-////' @param loc2 numeric vector.
-////' @param val2 numeric vector.
+////' @param locations1 Locations for ECMF 1
+////' @param values1 Cumulative masses for ECMF 1
+////' @param locations2 Locations for ECMF 2
+////' @param values2 Cumulative masses for ECMF 2
 //'
 //' @export
 // [[Rcpp::export]]
-double NetEmdConstant(NumericVector loc1,NumericVector val1,NumericVector loc2,NumericVector val2)
+double NetEmdConstant(NumericVector locations1, NumericVector values1, 
+                      NumericVector locations2, NumericVector values2)
 {
-  //init
-   double res=0;
-   double curVal1,curVal2;
-   double curPos;
-   double temp1;
-   int count;
-   int i,j,k;
-   //place start of windows before
-   //start of histogram so we can start the loop
-   if (loc1[0]<loc2[0])
-   {
-       curPos=loc1[0]-1.0;
-   }
-   else
-   {
-       curPos=loc2[0]-1.0;
-   }
-   // current value of histogram 1 an 2
-   curVal1=0;
-   curVal2=0;
-   // stores the result
-   res=0;
-   //TODO be worried about adding lots of small numbers
-
-   // current location on hist 1 and hist 2
-   i=0;
-   j=0;
-    while (1)
+  double currentLocation;
+  double segmentArea;
+  int i, j, k;
+  // Set start location of sweep below the minimum location across both ECMFs so
+  // that we accumulate the full area between the two ECMFs
+  if (locations1[0] < locations2[0])
+  {
+    currentLocation = locations1[0] - 1.0;
+  }
+  else
+  {
+    currentLocation = locations2[0] - 1.0;
+  }
+  double currentMass1 = 0;
+  double currentMass2 = 0;
+  int locationIndex1 = 0;
+  int locationIndex2 = 0;
+  double emd = 0;
+  // We scan across all locations in both ECMFs, calculting the area of
+  // each rectangular segment between the two ECMFs.
+  // NOTE: We stop when we hit the last location on either ECMF and handle the
+  // "tail" beyond this as a special case
+  // TODO: be worried about adding lots of small numbers
+  while (1)
+  {
+    // Stop if we reach the end of either ECMF
+    if (locationIndex1 == locations1.size())
     {
-        if (i==loc1.size())
-        {break;}
-        if (j==loc2.size())
-        {break;}
-        if (loc1[i]<loc2[j])
-        {
-            temp1=(loc1[i]-curPos)*std::abs(curVal1-curVal2);
-            res+=temp1;
-            curVal1=val1[i];
-            curPos=loc1[i];
-            i+=1;
-        }
-        else
-        {
-            temp1=(loc2[j]-curPos)*std::abs(curVal1-curVal2);
-            res+=temp1;
-            curVal2=val2[j];
-            curPos=loc2[j];
-            j+=1;
-        }
+      break;
     }
-    if (i<loc1.size())
+    if (locationIndex2 == locations2.size())
     {
-        for (k=i;k<loc1.size();k++)
-        {
-            res+=(loc1[k]-curPos)*(1.0-curVal1);
-            curVal1=val1[k];
-            curPos=loc1[k];
-        }
+      break;
+    }
+    // Calculate the area of the next rectangular segment...
+    if (locations1[locationIndex1] < locations2[locationIndex2])
+    {
+      // ...when next location is in ECMF 1
+      segmentArea = (locations1[locationIndex1] - currentLocation)
+                    * std::abs(currentMass1 - currentMass2);
+      emd += segmentArea;
+      currentMass1 = values1[locationIndex1];
+      currentLocation = locations1[locationIndex1];
+      locationIndex1 += 1;
     }
     else
     {
-        for (k=j;k<loc2.size();k++)
-        {
-            res+=(loc2[k]-curPos)*(1.0-curVal2);
-            curVal2=val2[k];
-            curPos=loc2[k];
-        }
+      // ...when next location is in ECMF 2
+      segmentArea = (locations2[locationIndex2] - currentLocation) 
+                    * std::abs(currentMass1 - currentMass2);
+      emd += segmentArea;
+      currentMass2 = values2[locationIndex2];
+      currentLocation = locations2[locationIndex2];
+      locationIndex2 += 1;
     }
-    return res;
-}
-
-// this can be speed up massively
-std::vector<double> makeAllOffsets(NumericVector  loc1,NumericVector   loc2)
-{
-    int i,j;
-    std::unordered_set<double> offsets1;
-    for (i=0;i<loc2.size();i++)
+  }
+  // Handle the "tail" region where only one ECMF has locations present (we
+  // stop the main sweep when we hit the last location in *either* ECMF)
+  if (locationIndex1 < locations1.size())
+  {
+    // We are beyond the last location of ECMF 2
+    for (k=locationIndex1;k<locations1.size();k++)
     {
-        for (j=0;j<loc1.size();j++)
-        {
-            offsets1.insert(loc2[i]-loc1[j]);
-        }
+      emd+=(locations1[k]-currentLocation)*(1.0-currentMass1);
+      currentMass1=values1[k];
+      currentLocation=locations1[k];
     }
-    // probably is better way to do this.
-    std::vector<double> offsets(offsets1.begin(),offsets1.end());
-    std::sort(offsets.begin(),offsets.end());
-    return offsets;
+  }
+  else
+  {
+    for (k=locationIndex2;k<locations2.size();k++)
+    {
+      emd+=(locations2[k]-currentLocation)*(1.0-currentMass2);
+      currentMass2=values2[k];
+      currentLocation=locations2[k];
+    }
+  }
+  return emd;
 }
-

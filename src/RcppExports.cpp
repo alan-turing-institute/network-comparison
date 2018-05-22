@@ -17,16 +17,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // NetEmdConstant
-double NetEmdConstant(NumericVector loc1, NumericVector val1, NumericVector loc2, NumericVector val2);
-RcppExport SEXP _netdist_NetEmdConstant(SEXP loc1SEXP, SEXP val1SEXP, SEXP loc2SEXP, SEXP val2SEXP) {
+double NetEmdConstant(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2);
+RcppExport SEXP _netdist_NetEmdConstant(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type loc1(loc1SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type val1(val1SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type loc2(loc2SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type val2(val2SEXP);
-    rcpp_result_gen = Rcpp::wrap(NetEmdConstant(loc1, val1, loc2, val2));
+    Rcpp::traits::input_parameter< NumericVector >::type locations1(locations1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values1(values1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type locations2(locations2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values2(values2SEXP);
+    rcpp_result_gen = Rcpp::wrap(NetEmdConstant(locations1, values1, locations2, values2));
     return rcpp_result_gen;
 END_RCPP
 }
