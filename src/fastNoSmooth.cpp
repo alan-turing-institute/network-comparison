@@ -36,8 +36,8 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
   {
     currentLocation = locations2[0] - 1.0;
   }
-  double currentMass1 = 0;
-  double currentMass2 = 0;
+  double currentValue1 = 0;
+  double currentValue2 = 0;
   int locationIndex1 = 0;
   int locationIndex2 = 0;
   double emd = 0;
@@ -62,9 +62,9 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
     {
       // ...when next location is in ECMF 1
       segmentArea = (locations1[locationIndex1] - currentLocation)
-                    * std::abs(currentMass1 - currentMass2);
+                    * std::abs(currentValue1 - currentValue2);
       emd += segmentArea;
-      currentMass1 = values1[locationIndex1];
+      currentValue1 = values1[locationIndex1];
       currentLocation = locations1[locationIndex1];
       locationIndex1 += 1;
     }
@@ -72,9 +72,9 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
     {
       // ...when next location is in ECMF 2
       segmentArea = (locations2[locationIndex2] - currentLocation) 
-                    * std::abs(currentMass1 - currentMass2);
+                    * std::abs(currentValue1 - currentValue2);
       emd += segmentArea;
-      currentMass2 = values2[locationIndex2];
+      currentValue2 = values2[locationIndex2];
       currentLocation = locations2[locationIndex2];
       locationIndex2 += 1;
     }
@@ -86,8 +86,8 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
     // We are beyond the last location of ECMF 2
     for (k=locationIndex1;k<locations1.size();k++)
     {
-      emd+=(locations1[k]-currentLocation)*(1.0-currentMass1);
-      currentMass1=values1[k];
+      emd+=(locations1[k]-currentLocation)*(1.0-currentValue1);
+      currentValue1=values1[k];
       currentLocation=locations1[k];
     }
   }
@@ -95,8 +95,8 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
   {
     for (k=locationIndex2;k<locations2.size();k++)
     {
-      emd+=(locations2[k]-currentLocation)*(1.0-currentMass2);
-      currentMass2=values2[k];
+      emd+=(locations2[k]-currentLocation)*(1.0-currentValue2);
+      currentValue2=values2[k];
       currentLocation=locations2[k];
     }
   }
