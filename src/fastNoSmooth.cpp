@@ -45,7 +45,8 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
   // NOTE: We stop when we hit the last location on either ECMF and handle the
   // "tail" beyond this as a special case
   // TODO: be worried about adding lots of small numbers
-  while (1)
+  while (locationIndex1 < locations1.size() ||
+         locationIndex2 < locations2.size())
   {
     // Stop if we reach the end of either ECMF
     if (locationIndex1 == locations1.size())
