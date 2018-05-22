@@ -54,7 +54,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       break;
     }
     if (locationIndex2 == locations2.size())
-    {
+  {
       break;
     }
     // Calculate the area of the next rectangular segment...
@@ -86,7 +86,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
     // We are beyond the last location of ECMF 2
     for (k=locationIndex1;k<locations1.size();k++)
     {
-      emd+=(locations1[k]-currentLocation)*(1.0-currentValue1);
+      emd+=(locations1[k]-currentLocation)*std::abs(currentValue2-currentValue1);
       currentValue1=values1[k];
       currentLocation=locations1[k];
     }
@@ -95,7 +95,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
   {
     for (k=locationIndex2;k<locations2.size();k++)
     {
-      emd+=(locations2[k]-currentLocation)*(1.0-currentValue2);
+      emd+=(locations2[k]-currentLocation)*std::abs(currentValue1-currentValue2);
       currentValue2=values2[k];
       currentLocation=locations2[k];
     }
