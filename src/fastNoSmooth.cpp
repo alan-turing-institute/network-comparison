@@ -25,7 +25,6 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
 {
   double currentLocation;
   double segmentArea;
-  int i, j, k;
   // Set start location of sweep below the minimum location across both ECMFs so
   // that we accumulate the full area between the two ECMFs
   if (locations1[0] < locations2[0])
@@ -84,20 +83,20 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
   if (locationIndex1 < locations1.size())
   {
     // We are beyond the last location of ECMF 2
-    for (k=locationIndex1;k<locations1.size();k++)
+    for (locationIndex1=locationIndex1;locationIndex1<locations1.size();locationIndex1++)
     {
-      emd+=(locations1[k]-currentLocation)*std::abs(currentValue2-currentValue1);
-      currentValue1=values1[k];
-      currentLocation=locations1[k];
+      emd+=(locations1[locationIndex1]-currentLocation)*std::abs(currentValue2-currentValue1);
+      currentValue1=values1[locationIndex1];
+      currentLocation=locations1[locationIndex1];
     }
   }
   else
   {
-    for (k=locationIndex2;k<locations2.size();k++)
+    for (locationIndex2=locationIndex2;locationIndex2<locations2.size();locationIndex2++)
     {
-      emd+=(locations2[k]-currentLocation)*std::abs(currentValue1-currentValue2);
-      currentValue2=values2[k];
-      currentLocation=locations2[k];
+      emd+=(locations2[locationIndex2]-currentLocation)*std::abs(currentValue1-currentValue2);
+      currentValue2=values2[locationIndex2];
+      currentLocation=locations2[locationIndex2];
     }
   }
   return emd;
