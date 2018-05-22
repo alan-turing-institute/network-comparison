@@ -51,14 +51,22 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
     // Stop if we reach the end of either ECMF
     if (locationIndex1 == locations1.size())
     {
-      break;
+      // We are beyond the last location of ECMF 1
+      emd+=(locations2[locationIndex2]-currentLocation)*std::abs(currentValue1-currentValue2);
+      currentValue2=values2[locationIndex2];
+      currentLocation=locations2[locationIndex2];
+      locationIndex2 += 1;
     }
-    if (locationIndex2 == locations2.size())
-  {
-      break;
+    else if (locationIndex2 == locations2.size())
+    {
+      // We are beyond the last location of ECMF 2
+      emd+=(locations1[locationIndex1]-currentLocation)*std::abs(currentValue2-currentValue1);
+      currentValue1=values1[locationIndex1];
+      currentLocation=locations1[locationIndex1];
+      locationIndex1 += 1;
     }
     // Calculate the area of the next rectangular segment...
-    if (locations1[locationIndex1] < locations2[locationIndex2])
+    else if (locations1[locationIndex1] < locations2[locationIndex2])
     {
       // ...when next location is in ECMF 1
       segmentArea = (locations1[locationIndex1] - currentLocation)
@@ -77,27 +85,6 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       currentValue2 = values2[locationIndex2];
       currentLocation = locations2[locationIndex2];
       locationIndex2 += 1;
-    }
-  }
-  // Handle the "tail" region where only one ECMF has locations present (we
-  // stop the main sweep when we hit the last location in *either* ECMF)
-  if (locationIndex1 < locations1.size())
-  {
-    // We are beyond the last location of ECMF 2
-    for (locationIndex1=locationIndex1;locationIndex1<locations1.size();locationIndex1++)
-    {
-      emd+=(locations1[locationIndex1]-currentLocation)*std::abs(currentValue2-currentValue1);
-      currentValue1=values1[locationIndex1];
-      currentLocation=locations1[locationIndex1];
-    }
-  }
-  else
-  {
-    for (locationIndex2=locationIndex2;locationIndex2<locations2.size();locationIndex2++)
-    {
-      emd+=(locations2[locationIndex2]-currentLocation)*std::abs(currentValue1-currentValue2);
-      currentValue2=values2[locationIndex2];
-      currentLocation=locations2[locationIndex2];
     }
   }
   return emd;
