@@ -23,20 +23,20 @@ using namespace Rcpp;
 double NetEmdConstant(NumericVector locations1, NumericVector values1, 
                       NumericVector locations2, NumericVector values2)
 {
-  double currentLocation;
+  double segmentStartLocation;
   double segmentArea;
   // Set start location of sweep below the minimum location across both ECMFs so
   // that we accumulate the full area between the two ECMFs
   if (locations1[0] < locations2[0])
   {
-    currentLocation = locations1[0] - 1.0;
+    segmentStartLocation = locations1[0] - 1.0;
   }
   else
   {
-    currentLocation = locations2[0] - 1.0;
+    segmentStartLocation = locations2[0] - 1.0;
   }
-  double currentValue1 = 0;
-  double currentValue2 = 0;
+  double segmentValue1 = 0;
+  double segmentValue2 = 0;
   int locationIndex1 = 0;
   int locationIndex2 = 0;
   double emd = 0;
@@ -52,42 +52,42 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
     if (locationIndex1 == locations1.size())
     {
       // We are beyond the last location of ECMF 1
-      segmentArea = (locations2[locationIndex2] - currentLocation) 
-                    * std::abs(currentValue1 - currentValue2);
+      segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
+                    * std::abs(segmentValue1 - segmentValue2);
       emd += segmentArea;
-      currentValue2 = values2[locationIndex2];
-      currentLocation = locations2[locationIndex2];
+      segmentValue2 = values2[locationIndex2];
+      segmentStartLocation = locations2[locationIndex2];
       locationIndex2 += 1;
     }
     else if (locationIndex2 == locations2.size())
     {
       // We are beyond the last location of ECMF 2
-      segmentArea = (locations1[locationIndex1] - currentLocation)
-                    * std::abs(currentValue1 - currentValue2);
+      segmentArea = (locations1[locationIndex1] - segmentStartLocation)
+                    * std::abs(segmentValue1 - segmentValue2);
       emd += segmentArea;
-      currentValue1 = values1[locationIndex1];
-      currentLocation = locations1[locationIndex1];
+      segmentValue1 = values1[locationIndex1];
+      segmentStartLocation = locations1[locationIndex1];
       locationIndex1 += 1;
     }
     // Calculate the area of the next rectangular segment...
     else if (locations1[locationIndex1] < locations2[locationIndex2])
     {
       // ...when next location is in ECMF 1
-      segmentArea = (locations1[locationIndex1] - currentLocation)
-                    * std::abs(currentValue1 - currentValue2);
+      segmentArea = (locations1[locationIndex1] - segmentStartLocation)
+                    * std::abs(segmentValue1 - segmentValue2);
       emd += segmentArea;
-      currentValue1 = values1[locationIndex1];
-      currentLocation = locations1[locationIndex1];
+      segmentValue1 = values1[locationIndex1];
+      segmentStartLocation = locations1[locationIndex1];
       locationIndex1 += 1;
     }
     else
     {
       // ...when next location is in ECMF 2
-      segmentArea = (locations2[locationIndex2] - currentLocation) 
-                    * std::abs(currentValue1 - currentValue2);
+      segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
+                    * std::abs(segmentValue1 - segmentValue2);
       emd += segmentArea;
-      currentValue2 = values2[locationIndex2];
-      currentLocation = locations2[locationIndex2];
+      segmentValue2 = values2[locationIndex2];
+      segmentStartLocation = locations2[locationIndex2];
       locationIndex2 += 1;
     }
   }
