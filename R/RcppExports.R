@@ -12,8 +12,8 @@ counts_from_observations <- function(features) {
 }
 
 #' @title
-#' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative Mass
-#' Functions (ECMFs)
+#' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
+#' Density Functions (ECDFs)
 NULL
 
 #'
