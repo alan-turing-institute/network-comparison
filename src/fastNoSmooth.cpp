@@ -43,45 +43,11 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
   double maxValEcdf = 1.0;
   // We scan across all locations in both ECDFs, calculting the area of
   // each rectangular segment between the two ECDFs.
-  // NOTE: We stop when we hit the last location on either ECDF and handle the
-  // "tail" beyond this as a special case
   // TODO: be worried about adding lots of small numbers
   while (true)
   {
-    // If we've reached the end of either ECDF, "short-circuit" the calculation
-    // by stepping through the ECDF with remaining data points and then break
-    if (locationIndex1 == locations1.size())
-    {
-      // We are beyond the last location of ECDF 1, short circuit by stepping
-      // through ECDF 2
-      while(locationIndex2 < locations2.size())
-      {
-        segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
-        * std::abs(maxValEcdf - segmentValue2);
-        emd += segmentArea;
-        segmentValue2 = values2[locationIndex2];
-        segmentStartLocation = locations2[locationIndex2];
-        locationIndex2 += 1;
-      }
-      break;
-    }
-    else if (locationIndex2 == locations2.size())
-    {
-      // We are beyond the last location of ECDF 2, short circuit by stepping
-      // through ECDF 1
-      while(locationIndex1 < locations1.size())
-      {
-        segmentArea = (locations1[locationIndex1] - segmentStartLocation)
-                      * std::abs(maxValEcdf - segmentValue1);
-        emd += segmentArea;
-        segmentValue1 = values1[locationIndex1];
-        segmentStartLocation = locations1[locationIndex1];
-        locationIndex1 += 1;
-      }
-      break;
-    }
     // Calculate the area of the next rectangular segment...
-    else if (locations1[locationIndex1] < locations2[locationIndex2])
+    if (locations1[locationIndex1] < locations2[locationIndex2])
     {
       // ...when next location is in ECDF 1
       segmentArea = (locations1[locationIndex1] - segmentStartLocation)
@@ -90,6 +56,21 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       segmentValue1 = values1[locationIndex1];
       segmentStartLocation = locations1[locationIndex1];
       locationIndex1 += 1;
+      // If we've reached the end of ECDF 1, "short-circuit" the calculation
+      // by stepping through the remaining points of ECDF 1 and then break
+      if (locationIndex1 == locations1.size())
+      {
+        while(locationIndex2 < locations2.size())
+        {
+          segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
+                        * std::abs(maxValEcdf - segmentValue2);
+          emd += segmentArea;
+          segmentValue2 = values2[locationIndex2];
+          segmentStartLocation = locations2[locationIndex2];
+          locationIndex2 += 1;
+        }
+        break;
+      }
     }
     else
     {
@@ -100,6 +81,21 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       segmentValue2 = values2[locationIndex2];
       segmentStartLocation = locations2[locationIndex2];
       locationIndex2 += 1;
+      // If we've reached the end of ECDF 2, "short-circuit" the calculation
+      // by stepping through the remaining points of ECDF 2 and then break
+      if (locationIndex2 == locations2.size())
+      {
+        while(locationIndex1 < locations1.size())
+        {
+          segmentArea = (locations1[locationIndex1] - segmentStartLocation)
+                        * std::abs(maxValEcdf - segmentValue1);
+          emd += segmentArea;
+          segmentValue1 = values1[locationIndex1];
+          segmentStartLocation = locations1[locationIndex1];
+          locationIndex1 += 1;
+        }
+        break;
+      }
     }
   }
   return emd;
