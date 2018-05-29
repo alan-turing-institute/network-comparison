@@ -62,8 +62,10 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       {
         while(locationIndex2 < locations2.size())
         {
+          // No abs() in segment area calculation as we know max value will 
+          // always be >= segment value for ECDF we are stepping through
           segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
-                        * std::abs(maxValEcdf - segmentValue2);
+                        * (maxValEcdf - segmentValue2);
           emd += segmentArea;
           segmentValue2 = values2[locationIndex2];
           segmentStartLocation = locations2[locationIndex2];
@@ -87,8 +89,10 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       {
         while(locationIndex1 < locations1.size())
         {
+          // No abs() in segment area calculation as we know max value will 
+          // always be >= segment value for ECDF we are stepping through
           segmentArea = (locations1[locationIndex1] - segmentStartLocation)
-                        * std::abs(maxValEcdf - segmentValue1);
+                        * (maxValEcdf - segmentValue1);
           emd += segmentArea;
           segmentValue1 = values1[locationIndex1];
           segmentStartLocation = locations1[locationIndex1];
