@@ -1,6 +1,3 @@
-library(calibrate)
-
-
 netEMDSpeedTest <- function()
 {
   ##load the data
