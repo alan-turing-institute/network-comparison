@@ -45,29 +45,39 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
   // NOTE: We stop when we hit the last location on either ECMF and handle the
   // "tail" beyond this as a special case
   // TODO: be worried about adding lots of small numbers
-  while (locationIndex1 < locations1.size() ||
-         locationIndex2 < locations2.size())
+  while (true)
   {
-    // Stop if we reach the end of either ECMF
+    // If we've reached the end of either ECMF, "short-circuit" the calculation
+    // by stepping through the ECMF with remaining data points and then break
     if (locationIndex1 == locations1.size())
     {
-      // We are beyond the last location of ECMF 1
-      segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
-                    * std::abs(segmentValue1 - segmentValue2);
-      emd += segmentArea;
-      segmentValue2 = values2[locationIndex2];
-      segmentStartLocation = locations2[locationIndex2];
-      locationIndex2 += 1;
+      // We are beyond the last location of ECMF 1, short circuit by stepping
+      // through ECMF 2
+      while(locationIndex2 < locations2.size())
+      {
+        segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
+        * std::abs(segmentValue1 - segmentValue2);
+        emd += segmentArea;
+        segmentValue2 = values2[locationIndex2];
+        segmentStartLocation = locations2[locationIndex2];
+        locationIndex2 += 1;
+      }
+      break;
     }
     else if (locationIndex2 == locations2.size())
     {
-      // We are beyond the last location of ECMF 2
-      segmentArea = (locations1[locationIndex1] - segmentStartLocation)
-                    * std::abs(segmentValue1 - segmentValue2);
-      emd += segmentArea;
-      segmentValue1 = values1[locationIndex1];
-      segmentStartLocation = locations1[locationIndex1];
-      locationIndex1 += 1;
+      // We are beyond the last location of ECMF 2, short circuit by stepping
+      // through ECMF 1
+      while(locationIndex1 < locations1.size())
+      {
+        segmentArea = (locations1[locationIndex1] - segmentStartLocation)
+                      * std::abs(segmentValue1 - segmentValue2);
+        emd += segmentArea;
+        segmentValue1 = values1[locationIndex1];
+        segmentStartLocation = locations1[locationIndex1];
+        locationIndex1 += 1;
+      }
+      break;
     }
     // Calculate the area of the next rectangular segment...
     else if (locations1[locationIndex1] < locations2[locationIndex2])
