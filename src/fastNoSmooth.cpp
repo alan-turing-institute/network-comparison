@@ -57,7 +57,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       segmentStartLocation = locations1[locationIndex1];
       locationIndex1 += 1;
       // If we've reached the end of ECDF 1, "short-circuit" the calculation
-      // by stepping through the remaining points of ECDF 1 and then break
+      // by stepping through the remaining points of ECDF 1 and then return
       if (locationIndex1 == locations1.size())
       {
         while(locationIndex2 < locations2.size())
@@ -71,7 +71,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
           segmentStartLocation = locations2[locationIndex2];
           locationIndex2 += 1;
         }
-        break;
+        return emd;
       }
     }
     else
@@ -84,7 +84,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       segmentStartLocation = locations2[locationIndex2];
       locationIndex2 += 1;
       // If we've reached the end of ECDF 2, "short-circuit" the calculation
-      // by stepping through the remaining points of ECDF 2 and then break
+      // by stepping through the remaining points of ECDF 2 and then return
       if (locationIndex2 == locations2.size())
       {
         while(locationIndex1 < locations1.size())
@@ -98,9 +98,8 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
           segmentStartLocation = locations1[locationIndex1];
           locationIndex1 += 1;
         }
-        break;
+        return emd;
       }
     }
   }
-  return emd;
 }
