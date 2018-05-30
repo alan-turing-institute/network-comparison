@@ -55,22 +55,29 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       emd += segmentArea;
       segmentValue1 = values1[locationIndex1];
       segmentStartLocation = locations1[locationIndex1];
-      locationIndex1 += 1;
+      locationIndex1++;
       // If we've reached the end of ECDF 1, "short-circuit" the calculation
       // by stepping through the remaining points of ECDF 1 and then return
       if (locationIndex1 == locations1.size())
       {
+        // Special first case as initial segmentStartLocation could be from
+        // either ECDF. This lets us optimise the rest of the "short-circuit"
+        // loop.
+        segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
+                      * (maxValEcdf - segmentValue2);
+        emd += segmentArea;
+        locationIndex2++;
         // Skip initialisation of loop variable as it is already set to correct
         // starting value
         for(; locationIndex2 < locations2.size(); locationIndex2++)
         {
           // No abs() in segment area calculation as we know max value will 
           // always be >= segment value for ECDF we are stepping through
-          segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
-                        * (maxValEcdf - segmentValue2);
+          // We stop using segmentStartLocation as, after initial case, this 
+          // will always be the previous location in ECDF 2
+          segmentArea = (locations2[locationIndex2] - locations2[locationIndex2-1]) 
+                        * (maxValEcdf - values2[locationIndex2-1]);
           emd += segmentArea;
-          segmentValue2 = values2[locationIndex2];
-          segmentStartLocation = locations2[locationIndex2];
         }
         return emd;
       }
@@ -83,22 +90,29 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       emd += segmentArea;
       segmentValue2 = values2[locationIndex2];
       segmentStartLocation = locations2[locationIndex2];
-      locationIndex2 += 1;
+      locationIndex2++;
       // If we've reached the end of ECDF 2, "short-circuit" the calculation
       // by stepping through the remaining points of ECDF 2 and then return
       if (locationIndex2 == locations2.size())
       {
+        // Special first case as initial segmentStartLocation could be from
+        // either ECDF. This lets us optimise the rest of the "short-circuit"
+        // loop.
+        segmentArea = (locations1[locationIndex1] - segmentStartLocation)
+                      * (maxValEcdf - segmentValue1);
+        emd += segmentArea;
+        locationIndex1++;
         // Skip initialisation of loop variable as it is already set to correct
         // starting value
         for(; locationIndex1 < locations1.size(); locationIndex1++)
         {
           // No abs() in segment area calculation as we know max value will 
           // always be >= segment value for ECDF we are stepping through
-          segmentArea = (locations1[locationIndex1] - segmentStartLocation)
-                        * (maxValEcdf - segmentValue1);
+          // We stop using segmentStartLocation as, after initial case, this 
+          // will always be the previous location in ECDF 1
+          segmentArea = (locations1[locationIndex1] - locations1[locationIndex1-1])
+                        * (maxValEcdf - values1[locationIndex1-1]);
           emd += segmentArea;
-          segmentValue1 = values1[locationIndex1];
-          segmentStartLocation = locations1[locationIndex1];
         }
         return emd;
       }
