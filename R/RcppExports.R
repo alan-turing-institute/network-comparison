@@ -12,9 +12,19 @@ counts_from_observations <- function(features) {
 }
 
 #' @title
+#' Numerically safe addition using Kahan summation
+NULL
+
+#' @title
 #' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
 #' Density Functions (ECDFs)
 NULL
+
+#'
+#' @export
+addElementKahan <- function(sum, element, compensation) {
+    invisible(.Call('_netdist_addElementKahan', PACKAGE = 'netdist', sum, element, compensation))
+}
 
 #'
 #' @export

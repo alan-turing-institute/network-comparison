@@ -9,6 +9,35 @@ using namespace Rcpp;
 
 // [[Rcpp::plugins("cpp11")]]
 
+
+//' @title
+//' Numerically safe addition using Kahan summation
+////'
+////' @param &sum Current accumulated sum. Updated by function.
+////' @param &element Element to add to the accumulated sum
+////' @param &compensation Current adjustment to compensate for floating point
+////' summation error. Updated by function.
+//'
+//' @export
+// [[Rcpp::export]]
+void addElementKahan(double &sum, double element, double &compensation)
+{
+  // Uses Kahan summation algorithm to limit numerical error caused by adding
+  // lots of very small things to a big thing to O(1) rather than O(N)
+  // See: https://en.wikipedia.org/wiki/Kahan_summation_algorithm
+  // Our implementation is the same as the Boost library implementation, with
+  // the exception of any preventative measures taken to avoid unsafe math 
+  // optimisations. The key compiler flag appears to be -ffast-math, which
+  // allows the compiler to make optimisations that are not compliant with the
+  // IEEE or ISO rules fdor math functions. We think that this must be set
+  // esxplicitly, but in any case, we attempt to ensure it is uset by adding the
+  // -fno-fast-math flag to PKG_CPPFLAGS in the Makevars file for the package.
+  double compensatedElement = (element - compensation);
+  double compensatedSum = sum + compensatedElement;
+  compensation = ((compensatedSum - sum) - compensatedElement);
+  sum = compensatedSum;
+}
+
 //' @title
 //' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
 //' Density Functions (ECDFs)
@@ -41,6 +70,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
   int locationIndex2 = 0;
   double emd = 0;
   double maxValEcdf = 1.0;
+  double compensation = 0.0;
   // We scan across all locations in both ECDFs, calculting the area of
   // each rectangular segment between the two ECDFs.
   // TODO: be worried about adding lots of small numbers
@@ -52,7 +82,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       // ...when next location is in ECDF 1
       segmentArea = (locations1[locationIndex1] - segmentStartLocation)
                     * std::abs(segmentValue1 - segmentValue2);
-      emd += segmentArea;
+      addElementKahan(emd, segmentArea, compensation);
       segmentValue1 = values1[locationIndex1];
       segmentStartLocation = locations1[locationIndex1];
       locationIndex1 += 1;
@@ -68,7 +98,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
           // always be >= segment value for ECDF we are stepping through
           segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
                         * (maxValEcdf - segmentValue2);
-          emd += segmentArea;
+          addElementKahan(emd, segmentArea, compensation);
           segmentValue2 = values2[locationIndex2];
           segmentStartLocation = locations2[locationIndex2];
         }
@@ -80,7 +110,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       // ...when next location is in ECDF 2
       segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
                     * std::abs(segmentValue1 - segmentValue2);
-      emd += segmentArea;
+      addElementKahan(emd, segmentArea, compensation);
       segmentValue2 = values2[locationIndex2];
       segmentStartLocation = locations2[locationIndex2];
       locationIndex2 += 1;
@@ -96,7 +126,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
           // always be >= segment value for ECDF we are stepping through
           segmentArea = (locations1[locationIndex1] - segmentStartLocation)
                         * (maxValEcdf - segmentValue1);
-          emd += segmentArea;
+          addElementKahan(emd, segmentArea, compensation);
           segmentValue1 = values1[locationIndex1];
           segmentStartLocation = locations1[locationIndex1];
         }
