@@ -1,14 +1,7 @@
 // Enable C++11
 // [[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
-#include <unordered_set>
-#include <algorithm>
-#include <numeric>
-#include <math.h>
 using namespace Rcpp;
-
-// [[Rcpp::plugins("cpp11")]]
-
 
 //' @title
 //' Numerically safe addition using Kahan summation
