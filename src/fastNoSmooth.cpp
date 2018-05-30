@@ -60,7 +60,9 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       // by stepping through the remaining points of ECDF 1 and then return
       if (locationIndex1 == locations1.size())
       {
-        while(locationIndex2 < locations2.size())
+        // Skip initialisation of loop variable as it is already set to correct
+        // starting value
+        for(; locationIndex2 < locations2.size(); locationIndex2++)
         {
           // No abs() in segment area calculation as we know max value will 
           // always be >= segment value for ECDF we are stepping through
@@ -69,7 +71,6 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
           emd += segmentArea;
           segmentValue2 = values2[locationIndex2];
           segmentStartLocation = locations2[locationIndex2];
-          locationIndex2 += 1;
         }
         return emd;
       }
@@ -87,7 +88,9 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       // by stepping through the remaining points of ECDF 2 and then return
       if (locationIndex2 == locations2.size())
       {
-        while(locationIndex1 < locations1.size())
+        // Skip initialisation of loop variable as it is already set to correct
+        // starting value
+        for(; locationIndex1 < locations1.size(); locationIndex1++)
         {
           // No abs() in segment area calculation as we know max value will 
           // always be >= segment value for ECDF we are stepping through
@@ -96,7 +99,6 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
           emd += segmentArea;
           segmentValue1 = values1[locationIndex1];
           segmentStartLocation = locations1[locationIndex1];
-          locationIndex1 += 1;
         }
         return emd;
       }
