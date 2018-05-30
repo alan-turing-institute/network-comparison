@@ -16,21 +16,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// addElementKahan
-void addElementKahan(double& sum, double element, double& compensation);
-RcppExport SEXP _netdist_addElementKahan(SEXP sumSEXP, SEXP elementSEXP, SEXP compensationSEXP) {
+// add_element_kahan
+void add_element_kahan(double& sum, double element, double& compensation);
+RcppExport SEXP _netdist_add_element_kahan(SEXP sumSEXP, SEXP elementSEXP, SEXP compensationSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double& >::type sum(sumSEXP);
     Rcpp::traits::input_parameter< double >::type element(elementSEXP);
     Rcpp::traits::input_parameter< double& >::type compensation(compensationSEXP);
-    addElementKahan(sum, element, compensation);
+    add_element_kahan(sum, element, compensation);
     return R_NilValue;
 END_RCPP
 }
-// NetEmdConstant
-double NetEmdConstant(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2);
-RcppExport SEXP _netdist_NetEmdConstant(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP) {
+// emd_fast_no_smoothing
+double emd_fast_no_smoothing(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2);
+RcppExport SEXP _netdist_emd_fast_no_smoothing(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -38,15 +38,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type values1(values1SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type locations2(locations2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type values2(values2SEXP);
-    rcpp_result_gen = Rcpp::wrap(NetEmdConstant(locations1, values1, locations2, values2));
+    rcpp_result_gen = Rcpp::wrap(emd_fast_no_smoothing(locations1, values1, locations2, values2));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_netdist_counts_from_observations", (DL_FUNC) &_netdist_counts_from_observations, 1},
-    {"_netdist_addElementKahan", (DL_FUNC) &_netdist_addElementKahan, 3},
-    {"_netdist_NetEmdConstant", (DL_FUNC) &_netdist_NetEmdConstant, 4},
+    {"_netdist_add_element_kahan", (DL_FUNC) &_netdist_add_element_kahan, 3},
+    {"_netdist_emd_fast_no_smoothing", (DL_FUNC) &_netdist_emd_fast_no_smoothing, 4},
     {NULL, NULL, 0}
 };
 

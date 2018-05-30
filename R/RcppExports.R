@@ -29,8 +29,8 @@ counts_from_observations <- function(features) {
 #' summation error. Updated by function.
 #'
 #' @export
-addElementKahan <- function(sum, element, compensation) {
-    invisible(.Call('_netdist_addElementKahan', PACKAGE = 'netdist', sum, element, compensation))
+add_element_kahan <- function(sum, element, compensation) {
+    invisible(.Call('_netdist_add_element_kahan', PACKAGE = 'netdist', sum, element, compensation))
 }
 
 #' @title
@@ -43,7 +43,7 @@ addElementKahan <- function(sum, element, compensation) {
 #' @param values2 Cumulative masses for ECDF 2
 #'
 #' @export
-NetEmdConstant <- function(locations1, values1, locations2, values2) {
-    .Call('_netdist_NetEmdConstant', PACKAGE = 'netdist', locations1, values1, locations2, values2)
+emd_fast_no_smoothing <- function(locations1, values1, locations2, values2) {
+    .Call('_netdist_emd_fast_no_smoothing', PACKAGE = 'netdist', locations1, values1, locations2, values2)
 }
 

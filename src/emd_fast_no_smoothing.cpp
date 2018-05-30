@@ -29,7 +29,7 @@ using namespace Rcpp;
 //'
 //' @export
 // [[Rcpp::export]]
-void addElementKahan(double &sum, double element, double &compensation)
+void add_element_kahan(double &sum, double element, double &compensation)
 {
   double compensatedElement = (element - compensation);
   double compensatedSum = sum + compensatedElement;
@@ -48,7 +48,7 @@ void addElementKahan(double &sum, double element, double &compensation)
 //'
 //' @export
 // [[Rcpp::export]]
-double NetEmdConstant(NumericVector locations1, NumericVector values1, 
+double emd_fast_no_smoothing(NumericVector locations1, NumericVector values1, 
                       NumericVector locations2, NumericVector values2)
 {
   double segmentStartLocation;
@@ -81,7 +81,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       // ...when next location is in ECDF 1
       segmentArea = (locations1[locationIndex1] - segmentStartLocation)
                     * std::abs(segmentValue1 - segmentValue2);
-      addElementKahan(emd, segmentArea, compensation);
+      add_element_kahan(emd, segmentArea, compensation);
       segmentValue1 = values1[locationIndex1];
       segmentStartLocation = locations1[locationIndex1];
       locationIndex1 += 1;
@@ -97,7 +97,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
           // always be >= segment value for ECDF we are stepping through
           segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
                         * (maxValEcdf - segmentValue2);
-          addElementKahan(emd, segmentArea, compensation);
+          add_element_kahan(emd, segmentArea, compensation);
           segmentValue2 = values2[locationIndex2];
           segmentStartLocation = locations2[locationIndex2];
         }
@@ -109,7 +109,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
       // ...when next location is in ECDF 2
       segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
                     * std::abs(segmentValue1 - segmentValue2);
-      addElementKahan(emd, segmentArea, compensation);
+      add_element_kahan(emd, segmentArea, compensation);
       segmentValue2 = values2[locationIndex2];
       segmentStartLocation = locations2[locationIndex2];
       locationIndex2 += 1;
@@ -125,7 +125,7 @@ double NetEmdConstant(NumericVector locations1, NumericVector values1,
           // always be >= segment value for ECDF we are stepping through
           segmentArea = (locations1[locationIndex1] - segmentStartLocation)
                         * (maxValEcdf - segmentValue1);
-          addElementKahan(emd, segmentArea, compensation);
+          add_element_kahan(emd, segmentArea, compensation);
           segmentValue1 = values1[locationIndex1];
           segmentStartLocation = locations1[locationIndex1];
         }
