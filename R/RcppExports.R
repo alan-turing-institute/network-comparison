@@ -24,7 +24,7 @@ counts_from_observations <- function(features) {
 #' to override any local setting for this flag by adding the -fno-fast-math 
 #' flag to PKG_CPPFLAGS in src/Makevars.
 #' @param &sum Current accumulated sum. Updated by function.
-#' @param &element Element to add to the accumulated sum. Not updated.
+#' @param element Element to add to the accumulated sum. Not updated.
 #' @param &compensation Current adjustment to compensate for floating point
 #' summation error. Updated by function.
 #'

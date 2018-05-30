@@ -23,7 +23,7 @@ using namespace Rcpp;
 //' to override any local setting for this flag by adding the -fno-fast-math 
 //' flag to PKG_CPPFLAGS in src/Makevars.
 //' @param &sum Current accumulated sum. Updated by function.
-//' @param &element Element to add to the accumulated sum. Not updated.
+//' @param element Element to add to the accumulated sum. Not updated.
 //' @param &compensation Current adjustment to compensate for floating point
 //' summation error. Updated by function.
 //'
@@ -31,10 +31,10 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 void add_element_kahan(double &sum, double element, double &compensation)
 {
-  double compensatedElement = (element - compensation);
-  double compensatedSum = sum + compensatedElement;
-  compensation = ((compensatedSum - sum) - compensatedElement);
-  sum = compensatedSum;
+  double compensated_element = (element - compensation);
+  double compensated_sum = sum + compensated_element;
+  compensation = ((compensated_sum - sum) - compensated_element);
+  sum = compensated_sum;
 }
 
 //' @title
@@ -51,55 +51,54 @@ void add_element_kahan(double &sum, double element, double &compensation)
 double emd_fast_no_smoothing(NumericVector locations1, NumericVector values1, 
                       NumericVector locations2, NumericVector values2)
 {
-  double segmentStartLocation;
-  double segmentArea;
+  double segment_start_location;
+  double segment_area;
   // Set start location of sweep below the minimum location across both ECDFs so
   // that we accumulate the full area between the two ECDFs
   if (locations1[0] < locations2[0])
   {
-    segmentStartLocation = locations1[0] - 1.0;
+    segment_start_location = locations1[0] - 1.0;
   }
   else
   {
-    segmentStartLocation = locations2[0] - 1.0;
+    segment_start_location = locations2[0] - 1.0;
   }
-  double segmentValue1 = 0;
-  double segmentValue2 = 0;
-  int locationIndex1 = 0;
-  int locationIndex2 = 0;
+  double segment_value1 = 0;
+  double segment_value2 = 0;
+  int index1 = 0;
+  int index2 = 0;
   double emd = 0;
-  double maxValEcdf = 1.0;
+  double max_value_ecdf = 1.0;
   double compensation = 0.0;
   // We scan across all locations in both ECDFs, calculting the area of
   // each rectangular segment between the two ECDFs.
-  // TODO: be worried about adding lots of small numbers
   while (true)
   {
     // Calculate the area of the next rectangular segment...
-    if (locations1[locationIndex1] < locations2[locationIndex2])
+    if (locations1[index1] < locations2[index2])
     {
       // ...when next location is in ECDF 1
-      segmentArea = (locations1[locationIndex1] - segmentStartLocation)
-                    * std::abs(segmentValue1 - segmentValue2);
-      add_element_kahan(emd, segmentArea, compensation);
-      segmentValue1 = values1[locationIndex1];
-      segmentStartLocation = locations1[locationIndex1];
-      locationIndex1 += 1;
+      segment_area = (locations1[index1] - segment_start_location)
+                    * std::abs(segment_value1 - segment_value2);
+      add_element_kahan(emd, segment_area, compensation);
+      segment_value1 = values1[index1];
+      segment_start_location = locations1[index1];
+      index1 += 1;
       // If we've reached the end of ECDF 1, "short-circuit" the calculation
       // by stepping through the remaining points of ECDF 1 and then return
-      if (locationIndex1 == locations1.size())
+      if (index1 == locations1.size())
       {
         // Skip initialisation of loop variable as it is already set to correct
         // starting value
-        for(; locationIndex2 < locations2.size(); locationIndex2++)
+        for(; index2 < locations2.size(); index2++)
         {
           // No abs() in segment area calculation as we know max value will 
           // always be >= segment value for ECDF we are stepping through
-          segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
-                        * (maxValEcdf - segmentValue2);
-          add_element_kahan(emd, segmentArea, compensation);
-          segmentValue2 = values2[locationIndex2];
-          segmentStartLocation = locations2[locationIndex2];
+          segment_area = (locations2[index2] - segment_start_location) 
+                        * (max_value_ecdf - segment_value2);
+          add_element_kahan(emd, segment_area, compensation);
+          segment_value2 = values2[index2];
+          segment_start_location = locations2[index2];
         }
         return emd;
       }
@@ -107,27 +106,27 @@ double emd_fast_no_smoothing(NumericVector locations1, NumericVector values1,
     else
     {
       // ...when next location is in ECDF 2
-      segmentArea = (locations2[locationIndex2] - segmentStartLocation) 
-                    * std::abs(segmentValue1 - segmentValue2);
-      add_element_kahan(emd, segmentArea, compensation);
-      segmentValue2 = values2[locationIndex2];
-      segmentStartLocation = locations2[locationIndex2];
-      locationIndex2 += 1;
+      segment_area = (locations2[index2] - segment_start_location) 
+                    * std::abs(segment_value1 - segment_value2);
+      add_element_kahan(emd, segment_area, compensation);
+      segment_value2 = values2[index2];
+      segment_start_location = locations2[index2];
+      index2 += 1;
       // If we've reached the end of ECDF 2, "short-circuit" the calculation
       // by stepping through the remaining points of ECDF 2 and then return
-      if (locationIndex2 == locations2.size())
+      if (index2 == locations2.size())
       {
         // Skip initialisation of loop variable as it is already set to correct
         // starting value
-        for(; locationIndex1 < locations1.size(); locationIndex1++)
+        for(; index1 < locations1.size(); index1++)
         {
           // No abs() in segment area calculation as we know max value will 
           // always be >= segment value for ECDF we are stepping through
-          segmentArea = (locations1[locationIndex1] - segmentStartLocation)
-                        * (maxValEcdf - segmentValue1);
-          add_element_kahan(emd, segmentArea, compensation);
-          segmentValue1 = values1[locationIndex1];
-          segmentStartLocation = locations1[locationIndex1];
+          segment_area = (locations1[index1] - segment_start_location)
+                        * (max_value_ecdf - segment_value1);
+          add_element_kahan(emd, segment_area, compensation);
+          segment_value1 = values1[index1];
+          segment_start_location = locations1[index1];
         }
         return emd;
       }
