@@ -13,19 +13,34 @@ counts_from_observations <- function(features) {
 
 #' @title
 #' Numerically safe addition using Kahan summation
-NULL
-
-#' @title
-#' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
-#' Density Functions (ECDFs)
-NULL
-
+#' @description
+#' Uses Kahan summation algorithm to limit numerical error caused by adding
+#' lots of very small things to a big thing to O(1) rather than O(N)
+#' See: https://en.wikipedia.org/wiki/Kahan_summation_algorithm
+#' 
+#' Note that particularly agressive compiler optimisations can result in the
+#' Kahan compensation being optimised away. We believe that this requires the
+#' -ffast-math compiler flag to be explicitly set, and we attempt to ensure it
+#' to override any local setting for this flag by adding the -fno-fast-math 
+#' flag to PKG_CPPFLAGS in src/Makevars.
+#' @param &sum Current accumulated sum. Updated by function.
+#' @param &element Element to add to the accumulated sum. Not updated.
+#' @param &compensation Current adjustment to compensate for floating point
+#' summation error. Updated by function.
 #'
 #' @export
 addElementKahan <- function(sum, element, compensation) {
     invisible(.Call('_netdist_addElementKahan', PACKAGE = 'netdist', sum, element, compensation))
 }
 
+#' @title
+#' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
+#' Density Functions (ECDFs)
+#'
+#' @param locations1 Locations for ECDF 1
+#' @param values1 Cumulative masses for ECDF 1
+#' @param locations2 Locations for ECDF 2
+#' @param values2 Cumulative masses for ECDF 2
 #'
 #' @export
 NetEmdConstant <- function(locations1, values1, locations2, values2) {
