@@ -20,8 +20,6 @@ using namespace Rcpp;
 //' @param &compensation Current adjustment to compensate for floating point
 //' summation error. Updated by function.
 //'
-//' @export
-// [[Rcpp::export]]
 void add_element_kahan(double &sum, double element, double &compensation)
 {
   double compensated_element = (element - compensation);

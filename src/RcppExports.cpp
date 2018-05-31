@@ -16,18 +16,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// add_element_kahan
-void add_element_kahan(double& sum, double element, double& compensation);
-RcppExport SEXP _netdist_add_element_kahan(SEXP sumSEXP, SEXP elementSEXP, SEXP compensationSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double& >::type sum(sumSEXP);
-    Rcpp::traits::input_parameter< double >::type element(elementSEXP);
-    Rcpp::traits::input_parameter< double& >::type compensation(compensationSEXP);
-    add_element_kahan(sum, element, compensation);
-    return R_NilValue;
-END_RCPP
-}
 // emd_fast_no_smoothing
 double emd_fast_no_smoothing(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2);
 RcppExport SEXP _netdist_emd_fast_no_smoothing(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP) {
@@ -45,7 +33,6 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_netdist_counts_from_observations", (DL_FUNC) &_netdist_counts_from_observations, 1},
-    {"_netdist_add_element_kahan", (DL_FUNC) &_netdist_add_element_kahan, 3},
     {"_netdist_emd_fast_no_smoothing", (DL_FUNC) &_netdist_emd_fast_no_smoothing, 4},
     {NULL, NULL, 0}
 };

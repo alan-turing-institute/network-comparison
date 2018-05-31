@@ -28,10 +28,7 @@ counts_from_observations <- function(features) {
 #' @param &compensation Current adjustment to compensate for floating point
 #' summation error. Updated by function.
 #'
-#' @export
-add_element_kahan <- function(sum, element, compensation) {
-    invisible(.Call('_netdist_add_element_kahan', PACKAGE = 'netdist', sum, element, compensation))
-}
+NULL
 
 #' @title
 #' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
