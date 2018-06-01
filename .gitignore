@@ -3,4 +3,6 @@
 .RData
 .Rapp.history
 *.o
+*.so
+*.dll
 vignettes/.build.timestamp

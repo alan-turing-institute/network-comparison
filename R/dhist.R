@@ -155,6 +155,34 @@ dhist_from_obs <- function(observations) {
   return(hist)
 }
 
+<<<<<<< HEAD
+=======
+#' Discrete histogram from observations
+#' 
+#' Generate a sparse discrete histogram from a set of discrete numeric observations
+#' @param observations A vector of discrete numeric observations
+#' @return A sparse discrete histogram. Format is a \code{dhist} object, which
+#' is a list of class \code{dhist} with the following named elements:
+#' \itemize{
+#'   \item \code{locations}: A 1D numeric vector of discrete locations
+#'   \item \code{masses}: A 1D numeric vector of the mass present at each location
+#' }
+#' @export
+dhist_from_obs <- function(observations) {
+  # Require 1D numeric vector
+  if(!is_numeric_vector_1d(observations)) {
+    stop("Observations must be provided as a 1D numeric vector")
+  }
+    if (any(is.na(observations))) {
+        stop("NA observed in features")
+    }
+  results <- counts_from_observations(matrix(observations))
+  # Construct histogram object
+  hist <- dhist(locations = results[,1], masses = results[,2])
+  return(hist)
+}
+
+>>>>>>> 34b1c85e5e05233a532031b293262ef84c76293d
 #' Generate interpolating empirical cumulative mass function (ECMF) for 
 #' a discrete histogram
 #' 

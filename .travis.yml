@@ -1,12 +1,17 @@
 language: r
 cache: packages
+sudo: false
 warnings_are_errors: false
+
 r_packages:
 - covr
+
 os:
 - linux
+
 after_success:
 - Rscript -e 'library(covr); codecov()'
+
 notifications:
   slack:
     on_success: change
