@@ -48,6 +48,11 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
    double loc2SegValEnd=val2[0];
    double curStartVal;
    double curEndVal;
+   double loc1Start;
+   double loc2Start;
+   double loc1End;
+   double loc2End;
+   double h;
    res=0;
    while (1)
    {
@@ -55,26 +60,26 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         if (loc1SegValStart<loc2SegValStart)
         {
             curStartVal=loc2SegValStart;
-            loc2Start=loc2SegStart
-            loc1Start=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValStart-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart)
+            loc2Start=loc2SegStart;
+            loc1Start=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValStart-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
         }
         else
         {
             curStartVal=loc1SegValStart;
-            loc1Start=loc1SegStart
-            loc2Start=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart)
+            loc1Start=loc1SegStart;
+            loc2Start=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
         }
         if (loc1SegValEnd<loc2SegValEnd)
         {
-            curEndVal=loc1CurValEnd;
-            loc1End=loc1SegEnd
-            loc2End=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValEnd-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart)
+            curEndVal=loc1SegValEnd;
+            loc1End=loc1SegEnd;
+            loc2End=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValEnd-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
         }
         else
         {
-            curEndVal=loc2CurValEnd;
-            loc2End=loc2SegEnd
-            loc1End=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValEnd-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart)
+            curEndVal=loc2SegValEnd;
+            loc2End=loc2SegEnd;
+            loc1End=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValEnd-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
         }
         // okay so we now have our bounds
         h=curEndVal-curStartVal;
@@ -83,11 +88,11 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
             //case1 they is no overlap
             if (loc1End<=loc2End)
             {
-                res+=(h/2.0)*(loc2Start+loc2End-loc1Start-loc1End)
+                res+=(h/2.0)*(loc2Start+loc2End-loc1Start-loc1End);
             }
             else // we have a bowtie
             {
-                res+=(h/2.0)*((loc2Start-loc1Start)*(loc2Start-loc1Start)+(loc1End-loc2End)*(loc1End-loc2End))/(loc1End-loc2End+loc2Start-loc1Start)
+                res+=(h/2.0)*((loc2Start-loc1Start)*(loc2Start-loc1Start)+(loc1End-loc2End)*(loc1End-loc2End))/(loc1End-loc2End+loc2Start-loc1Start);
             }
         }
         else
@@ -95,11 +100,11 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
             //case1 they is no overlap
             if (loc2End<=loc1End)
             {
-                res+=(h/2.0)*(loc1Start+loc1End-loc2Start-loc2End)
+                res+=(h/2.0)*(loc1Start+loc1End-loc2Start-loc2End);
             }
             else // we have a bowtie
             {
-                res+=(h/2.0)*((loc1Start-loc2Start)*(loc1Start-loc2Start)+(loc2End-loc1End)*(loc2End-loc1End))/(loc2End-loc1End+loc1Start-loc2Start)
+                res+=(h/2.0)*((loc1Start-loc2Start)*(loc1Start-loc2Start)+(loc2End-loc1End)*(loc2End-loc1End))/(loc2End-loc1End+loc1Start-loc2Start);
             }
         }
         // update the segment under consideration
@@ -114,7 +119,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
                j+=1;
                loc2SegStart=loc2[j];
                loc2SegEnd=loc2[j]+binWidth2;
-               loc2SegValStart=loc2CurValEnd;
+               loc2SegValStart=loc2SegValEnd;
                loc2SegValEnd=val2[j];
             }
         }
@@ -122,7 +127,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         {
            loc1SegStart=loc1[i];
            loc1SegEnd=loc1[i]+binWidth1;
-           loc1SegValStart=loc1CurValEnd;
+           loc1SegValStart=loc1SegValEnd;
            loc1SegValEnd=val1[i];
         }
         else if (val1[i+1]<val2[j+1])
@@ -131,7 +136,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
             // update the i segment
            loc1SegStart=loc1[i];
            loc1SegEnd=loc1[i]+binWidth1;
-           loc1SegValStart=loc1CurValEnd;
+           loc1SegValStart=loc1SegValEnd;
            loc1SegValEnd=val1[i];
         }
         else
@@ -139,7 +144,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
            j+=1;
            loc2SegStart=loc2[j];
            loc2SegEnd=loc2[j]+binWidth2;
-           loc2SegValStart=loc2CurValEnd;
+           loc2SegValStart=loc2SegValEnd;
            loc2SegValEnd=val2[j];
         }
    }
