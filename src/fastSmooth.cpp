@@ -54,6 +54,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
    double loc2End;
    double h;
    res=0;
+   int count123=0;
    while (1)
    {
         // lets compute the area for these segments
@@ -61,38 +62,37 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         {
             curStartVal=loc2SegValStart;
             loc2Start=loc2SegStart;
-            loc1Start=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValStart-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
+            loc1Start=loc1SegStart+(loc1SegEnd-loc1SegStart)*(loc2SegValStart-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
         }
         else
         {
             curStartVal=loc1SegValStart;
             loc1Start=loc1SegStart;
-            loc2Start=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
+            loc2Start=loc2SegStart+(loc2SegEnd-loc2SegStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
         }
         if (loc1SegValEnd<loc2SegValEnd)
         {
             curEndVal=loc1SegValEnd;
             loc1End=loc1SegEnd;
-            loc2End=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValEnd-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
+            loc2End=loc2SegStart+(loc2SegEnd-loc2SegStart)*(loc1SegValEnd-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
         }
         else
         {
             curEndVal=loc2SegValEnd;
             loc2End=loc2SegEnd;
-            loc1End=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValEnd-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
+            loc1End=loc1SegStart+(loc1SegEnd-loc1SegStart)*(loc2SegValEnd-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
         }
-        // okay so we now have our bounds
-        h=curEndVal-curStartVal;
+        h=(curEndVal-curStartVal)/2.0;
         if (loc1Start<loc2Start)
         {
             //case1 they is no overlap
             if (loc1End<=loc2End)
             {
-                res+=(h/2.0)*(loc2Start+loc2End-loc1Start-loc1End);
+                res+=(h)*(loc2Start+loc2End-loc1Start-loc1End);
             }
             else // we have a bowtie
             {
-                res+=(h/2.0)*((loc2Start-loc1Start)*(loc2Start-loc1Start)+(loc1End-loc2End)*(loc1End-loc2End))/(loc1End-loc2End+loc2Start-loc1Start);
+              res+=(h)*((loc2Start-loc1Start)*(loc2Start-loc1Start)+(loc1End-loc2End)*(loc1End-loc2End))/(loc1End-loc2End+loc2Start-loc1Start);
             }
         }
         else
@@ -100,11 +100,11 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
             //case1 they is no overlap
             if (loc2End<=loc1End)
             {
-                res+=(h/2.0)*(loc1Start+loc1End-loc2Start-loc2End);
+                res+=(h)*(loc1Start+loc1End-loc2Start-loc2End);
             }
             else // we have a bowtie
             {
-                res+=(h/2.0)*((loc1Start-loc2Start)*(loc1Start-loc2Start)+(loc2End-loc1End)*(loc2End-loc1End))/(loc2End-loc1End+loc1Start-loc2Start);
+                res+=(h)*((loc1Start-loc2Start)*(loc1Start-loc2Start)+(loc2End-loc1End)*(loc2End-loc1End))/(loc2End-loc1End+loc1Start-loc2Start);
             }
         }
         // update the segment under consideration
@@ -112,6 +112,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         {
             if (j==val2.size()-1)
             {
+            //    std::cout << " i hit the break\n";
                 break;
             }
             else
@@ -123,17 +124,9 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
                loc2SegValEnd=val2[j];
             }
         }
-        else if (j==val2.size()-1)
+        else if ((j==val2.size()-1) || (val1[i+1]<val2[j+1]))
         {
-           loc1SegStart=loc1[i];
-           loc1SegEnd=loc1[i]+binWidth1;
-           loc1SegValStart=loc1SegValEnd;
-           loc1SegValEnd=val1[i];
-        }
-        else if (val1[i+1]<val2[j+1])
-        {
-            i+=1;
-            // update the i segment
+          i+=1;
            loc1SegStart=loc1[i];
            loc1SegEnd=loc1[i]+binWidth1;
            loc1SegValStart=loc1SegValEnd;
