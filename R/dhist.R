@@ -155,6 +155,11 @@ dhist_from_obs <- function(observations) {
   return(hist)
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> fastOptimise
 #' Discrete histogram from observations
 #' 
 #' Generate a sparse discrete histogram from a set of discrete numeric observations
@@ -180,6 +185,10 @@ dhist_from_obs <- function(observations) {
   return(hist)
 }
 
+<<<<<<< HEAD
+=======
+>>>>>>> 34b1c85e5e05233a532031b293262ef84c76293d
+>>>>>>> fastOptimise
 #' Generate interpolating empirical cumulative mass function (ECMF) for 
 #' a discrete histogram
 #' 

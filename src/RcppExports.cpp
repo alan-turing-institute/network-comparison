@@ -7,7 +7,11 @@ using namespace Rcpp;
 
 // counts_from_observations
 NumericMatrix counts_from_observations(NumericMatrix features);
+<<<<<<< HEAD
 RcppExport SEXP _netdist_counts_from_observations(SEXP featuresSEXP) {
+=======
+RcppExport SEXP netdist_counts_from_observations(SEXP featuresSEXP) {
+>>>>>>> fastOptimise
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,6 +20,7 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+<<<<<<< HEAD
 // NetEmdConstant
 double NetEmdConstant(NumericVector loc1, NumericVector val1, NumericVector loc2, NumericVector val2);
 RcppExport SEXP _netdist_NetEmdConstant(SEXP loc1SEXP, SEXP val1SEXP, SEXP loc2SEXP, SEXP val2SEXP) {
@@ -58,3 +63,5 @@ RcppExport void R_init_netdist(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
+=======
+>>>>>>> fastOptimise
