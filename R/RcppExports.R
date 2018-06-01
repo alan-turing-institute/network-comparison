@@ -8,6 +8,26 @@
 #'
 #' @export
 counts_from_observations <- function(features) {
-    .Call('netdist_counts_from_observations', PACKAGE = 'netdist', features)
+    .Call('_netdist_counts_from_observations', PACKAGE = 'netdist', features)
+}
+
+#' @title
+#' Compute EMD
+NULL
+
+#'
+#' @export
+NetEmdConstant <- function(loc1, val1, loc2, val2) {
+    .Call('_netdist_NetEmdConstant', PACKAGE = 'netdist', loc1, val1, loc2, val2)
+}
+
+#' @title
+#' Compute EMD
+NULL
+
+#'
+#' @export
+NetEmdSmooth <- function(loc1, val1, binWidth1, loc2, val2, binWidth2) {
+    .Call('_netdist_NetEmdSmooth', PACKAGE = 'netdist', loc1, val1, binWidth1, loc2, val2, binWidth2)
 }
 
