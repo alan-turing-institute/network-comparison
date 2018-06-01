@@ -140,7 +140,7 @@ is_dhist <- function(x, fast_check = TRUE) {
 #'   \item \code{masses}: A 1D numeric vector of the mass present at each location
 #' }
 #' @export
-dhist_from_obsSLOW <- function(observations) {
+dhist_from_obs <- function(observations) {
   # Require 1D numeric vector
   if(!is_numeric_vector_1d(observations)) {
     stop("Observations must be provided as a 1D numeric vector")
