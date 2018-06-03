@@ -30,10 +30,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// NetEmdSmooth
+double NetEmdSmooth(NumericVector loc1, NumericVector val1, double binWidth1, NumericVector loc2, NumericVector val2, double binWidth2);
+RcppExport SEXP _netdist_NetEmdSmooth(SEXP loc1SEXP, SEXP val1SEXP, SEXP binWidth1SEXP, SEXP loc2SEXP, SEXP val2SEXP, SEXP binWidth2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type loc1(loc1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type val1(val1SEXP);
+    Rcpp::traits::input_parameter< double >::type binWidth1(binWidth1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type loc2(loc2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type val2(val2SEXP);
+    Rcpp::traits::input_parameter< double >::type binWidth2(binWidth2SEXP);
+    rcpp_result_gen = Rcpp::wrap(NetEmdSmooth(loc1, val1, binWidth1, loc2, val2, binWidth2));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_netdist_counts_from_observations", (DL_FUNC) &_netdist_counts_from_observations, 1},
     {"_netdist_emd_fast_no_smoothing", (DL_FUNC) &_netdist_emd_fast_no_smoothing, 4},
+    {"_netdist_NetEmdSmooth", (DL_FUNC) &_netdist_NetEmdSmooth, 6},
     {NULL, NULL, 0}
 };
 

@@ -44,3 +44,13 @@ emd_fast_no_smoothing <- function(locations1, values1, locations2, values2) {
     .Call('_netdist_emd_fast_no_smoothing', PACKAGE = 'netdist', locations1, values1, locations2, values2)
 }
 
+#' @title
+#' Compute EMD
+NULL
+
+#'
+#' @export
+NetEmdSmooth <- function(loc1, val1, binWidth1, loc2, val2, binWidth2) {
+    .Call('_netdist_NetEmdSmooth', PACKAGE = 'netdist', loc1, val1, binWidth1, loc2, val2, binWidth2)
+}
+

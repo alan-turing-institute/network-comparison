@@ -55,18 +55,17 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
    double h;
    res=0;
    int count123=0;
+   curStartVal=0;
    while (1)
    {
         // lets compute the area for these segments
         if (loc1SegValStart<loc2SegValStart)
         {
-            curStartVal=loc2SegValStart;
             loc2Start=loc2SegStart;
             loc1Start=loc1SegStart+(loc1SegEnd-loc1SegStart)*(loc2SegValStart-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
         }
         else
         {
-            curStartVal=loc1SegValStart;
             loc1Start=loc1SegStart;
             loc2Start=loc2SegStart+(loc2SegEnd-loc2SegStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
         }
@@ -112,7 +111,6 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         {
             if (j==val2.size()-1)
             {
-            //    std::cout << " i hit the break\n";
                 break;
             }
             else
@@ -140,6 +138,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
            loc2SegValStart=loc2SegValEnd;
            loc2SegValEnd=val2[j];
         }
+        curStartVal=curEndVal;
    }
     return res;
 }
