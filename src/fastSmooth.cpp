@@ -56,19 +56,20 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
    res=0;
    int count123=0;
    curStartVal=0;
+   if (loc1SegValStart<loc2SegValStart)
+   {
+     loc2Start=loc2SegStart;
+     loc1Start=loc1SegStart+(loc1SegEnd-loc1SegStart)*(loc2SegValStart-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
+   }
+   else
+   {
+     loc1Start=loc1SegStart;
+     loc2Start=loc2SegStart+(loc2SegEnd-loc2SegStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
+   }
+   
    while (1)
    {
         // lets compute the area for these segments
-        if (loc1SegValStart<loc2SegValStart)
-        {
-            loc2Start=loc2SegStart;
-            loc1Start=loc1SegStart+(loc1SegEnd-loc1SegStart)*(loc2SegValStart-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
-        }
-        else
-        {
-            loc1Start=loc1SegStart;
-            loc2Start=loc2SegStart+(loc2SegEnd-loc2SegStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
-        }
         if (loc1SegValEnd<loc2SegValEnd)
         {
             curEndVal=loc1SegValEnd;
@@ -139,6 +140,8 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
            loc2SegValEnd=val2[j];
         }
         curStartVal=curEndVal;
+        loc2Start=loc2End;
+        loc1Start=loc1End;
    }
     return res;
 }
