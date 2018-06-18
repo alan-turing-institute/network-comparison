@@ -42,9 +42,6 @@ min_emd <- function(dhist1, dhist2, method = "optimise") {
 #' @return Earth Mover's Distance between the two discrete histograms
 #' @export
 min_emd_optimise_fast <- function(dhist1, dhist2) {
-  print("there is me")
-  print(dhist1$smoothing_window_width)
-  print(dhist2$smoothing_window_width)
   # Can we run the C++ fast implementation (only works with no smoothing)?
   if ((dhist1$smoothing_window_width==0) && (dhist2$smoothing_window_width==0))
   {
@@ -85,7 +82,6 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
   }
   else #if ((dhist1$smoothing_window_width==1) && (dhist2$smoothing_window_width==1))
   {
-    print("hi im here")
     # Determine minimum and maximum offset of range in which histograms overlap
     # (based on sliding histogram 1)
     min_offset <- min(dhist2$locations) - max(dhist1$locations)
