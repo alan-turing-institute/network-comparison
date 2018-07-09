@@ -29,6 +29,8 @@ min_emd <- function(dhist1, dhist2, method = "optimise") {
     return(min_emd_exhaustive(dhist1, dhist2))
   } else if(method == "median"){
     return(min_emd_median(dhist1, dhist2))
+  } else if(method == "medianMk2"){
+    return(min_emd_medianMk2(dhist1, dhist2))
   } else {
     stop("Method not recognised. Must be 'exhaustive' or ' optimise'")
   }
@@ -170,6 +172,45 @@ min_emd_exhaustive_fast <- function(dhist1, dhist2) {
     loc1=dhist1$locations
     loc2=dhist2$locations
     result=NetEmdFullExhaustiveNoSmooth(loc1,val1,loc2,val2)
+    return(list(min_emd = result[1], min_offset = result[2]))
+  }
+  else
+  {
+    return(min_emd_exhaustive(dhist1, dhist2))
+  }
+}
+
+
+#' Minimum Earth Mover's Distance (EMD) using median with fast evaluation
+#' 
+#' Calculates the minimum Earth Mover's Distance (EMD) between two discrete 
+#' histograms using an exhaustive search.
+#' 
+#' When "sliding" two piecewise-linear empirical cumulative mass functions 
+#' (ECMFs) across each other to minimise the EMD between them, it is sufficient 
+#' to calculate the EMD at all offsets where any knots from the two ECMFs align 
+#' to ensure that the offset with the global minimum EMD is found.
+#'
+#'This is because of the piece-wise linear nature of the two ECMFs. Between any 
+#'two offsets where knots from the two ECMFs align, EMD will be either constant,
+#'or uniformly increasing or decreasing. Therefore, there the EMD between two 
+#'sets of aligned knots cannot be smaller than the EMD at one or other of the 
+#'bounding offsets.
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
+#' @return Earth Mover's Distance between the two discrete histograms
+#' @export
+min_emd_medianMk2 <- function(dhist1, dhist2) {
+  #Can we use the fast version?
+  if ((dhist1$smoothing_window_width==0) && (dhist2$smoothing_window_width==0))
+  {
+    val1 <- cumsum(dhist1$masses)
+    val2 <- cumsum(dhist2$masses)
+    val1 <- val1/val1[length(val1)]
+    val2 <- val2/val2[length(val2)]
+    loc1=dhist1$locations
+    loc2=dhist2$locations
+    result=NetEmdExhaustiveMedianMk2(loc1,val1,loc2,val2,-0.001,0.001)
     return(list(min_emd = result[1], min_offset = result[2]))
   }
   else

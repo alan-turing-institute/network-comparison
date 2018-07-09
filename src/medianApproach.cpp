@@ -230,7 +230,7 @@ NumericVector NetEmdExhaustiveMedian(NumericVector loc1,NumericVector val1,Numer
     }
     duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
-  //  std::cout<<"largeLoop: "<< duration <<'\n';
+    std::cout<<"largeLoop: "<< duration <<'\n';
     NumericVector result(2);
 
     start = std::clock();
@@ -239,7 +239,7 @@ NumericVector NetEmdExhaustiveMedian(NumericVector loc1,NumericVector val1,Numer
 
     duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
-//    std::cout<<"printf: "<< duration <<'\n';
+    std::cout<< " sort: "<< duration <<'\n';
 
     start = std::clock();
 
@@ -259,11 +259,14 @@ NumericVector NetEmdExhaustiveMedian(NumericVector loc1,NumericVector val1,Numer
             currentWeight+=value;
             loc0=loc1+offsetsWeights[i].first;
             NumericVector result(2);
+            duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+            std::cout<<"find location:  "<< duration <<'\n';
+	    start = std::clock();
             result(0)=NetEmdConstantMedianVersion(loc0,val1,loc2,val2);
             result(1)=offsetsWeights[i].first;
             duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
-     //       std::cout<<"smallLoop: "<< duration <<'\n';
+            std::cout<<"emd call: "<< duration <<'\n';
             return result;
         }
         else
@@ -327,6 +330,7 @@ NumericVector NetEmdExhaustiveMedianMk2(NumericVector loc1,NumericVector val1,Nu
    std::clock_t start;
    double duration;
    start = std::clock();
+   int numberOfSegments=0;
    while (1)
     {
         if (curloc1ValEnd<curloc2ValEnd)
@@ -343,13 +347,21 @@ NumericVector NetEmdExhaustiveMedianMk2(NumericVector loc1,NumericVector val1,Nu
                 temp1.second=value;
                 if (offset<0)
                 {
-                    offsetsWeightsLower.push_back(temp1);
+		    if (lowerLimit<offset)
+		    {
+			    offsetsWeightsLower.push_back(temp1);
+		    }
                     lowerSum+=value;
+		    numberOfSegments+=1;
                 }
                 else
                 {
-                    offsetsWeightsUpper.push_back(temp1);
+		    if (upperLimit>offset)
+		    {
+			    offsetsWeightsUpper.push_back(temp1);
+		    }
                     upperSum+=value;
+		    numberOfSegments+=1;
                 }
             }
             i+=1;
@@ -372,13 +384,21 @@ NumericVector NetEmdExhaustiveMedianMk2(NumericVector loc1,NumericVector val1,Nu
                 temp1.second=value;
                 if (offset<0)
                 {
-                    offsetsWeightsLower.push_back(temp1);
+		    if (lowerLimit<offset)
+		    {
+			    offsetsWeightsLower.push_back(temp1);
+		    }
                     lowerSum+=value;
+		    numberOfSegments+=1;
                 }
                 else
                 {
-                    offsetsWeightsUpper.push_back(temp1);
+		    if (upperLimit>offset)
+		    {
+			    offsetsWeightsUpper.push_back(temp1);
+		    }
                     upperSum+=value;
+		    numberOfSegments+=1;
                 }
             }
             j+=1;
@@ -404,13 +424,21 @@ NumericVector NetEmdExhaustiveMedianMk2(NumericVector loc1,NumericVector val1,Nu
                 temp1.second=value;
                 if (offset<0)
                 {
-                    offsetsWeightsLower.push_back(temp1);
+		    if (lowerLimit<offset)
+		    {
+			    offsetsWeightsLower.push_back(temp1);
+		    }
                     lowerSum+=value;
+		    numberOfSegments+=1;
                 }
                 else
                 {
-                    offsetsWeightsUpper.push_back(temp1);
+		    if (upperLimit>offset)
+		    {
+			    offsetsWeightsUpper.push_back(temp1);
+		    }
                     upperSum+=value;
+		    numberOfSegments+=1;
                 }
             }
             curloc1ValStart=curloc1ValEnd;
@@ -433,13 +461,21 @@ NumericVector NetEmdExhaustiveMedianMk2(NumericVector loc1,NumericVector val1,Nu
                 temp1.second=value;
                 if (offset<0)
                 {
-                    offsetsWeightsLower.push_back(temp1);
+		    if (lowerLimit<offset)
+		    {
+			    offsetsWeightsLower.push_back(temp1);
+		    }
                     lowerSum+=value;
+		    numberOfSegments+=1;
                 }
                 else
                 {
-                    offsetsWeightsUpper.push_back(temp1);
+		    if (upperLimit>offset)
+		    {
+			    offsetsWeightsUpper.push_back(temp1);
+		    }
                     upperSum+=value;
+		    numberOfSegments+=1;
                 }
             }
             curloc2ValStart=curloc2ValEnd;
@@ -448,21 +484,23 @@ NumericVector NetEmdExhaustiveMedianMk2(NumericVector loc1,NumericVector val1,Nu
     }
     duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
-  //  std::cout<<"largeLoop: "<< duration <<'\n';
+    std::cout<<"largeLoop: "<< duration <<'\n';
     NumericVector result(2);
 
     start = std::clock();
 
+double currentWeight;
     double curBest;
     NumericVector loc0;
     if (lowerSum>upperSum)
     {
         std::sort(offsetsWeightsLower.begin(),offsetsWeightsLower.end(),pairComp);
         duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-        double currentWeight=lowerSum;
+        std::cout<<"sorting: "<< duration <<'\n';
+        std::cout<<"filter: "<< offsetsWeightsLower.size() << " " << numberOfSegments <<'\n';
+        currentWeight=lowerSum;
         start = std::clock();
-        for (i=0;i<offsetsWeights.size();i++)
-        for (i=offsetsWeights.size()-1,i>=0;i--)
+        for (i=offsetsWeightsLower.size()-1;i>=0;i--)
         {
             value=offsetsWeightsLower[i].second;
             currentWeight-=value;
@@ -470,9 +508,13 @@ NumericVector NetEmdExhaustiveMedianMk2(NumericVector loc1,NumericVector val1,Nu
             {
                 loc0=loc1+offsetsWeightsLower[i].first;
                 NumericVector result(2);
-                result(0)=NetEmdConstantMedianVersion(loc0,val1,loc2,val2);
-                result(1)=offsetsWeights[i].first;
                 duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+		    std::cout<<"searching: "<< duration <<'\n';
+		start = std::clock();
+                result(0)=NetEmdConstantMedianVersion(loc0,val1,loc2,val2);
+                duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+		    std::cout<<"emdComputation: "<< duration <<'\n';
+                result(1)=offsetsWeightsLower[i].first;
                 return result;
             }
         }
@@ -480,10 +522,12 @@ NumericVector NetEmdExhaustiveMedianMk2(NumericVector loc1,NumericVector val1,Nu
     else
     {
         std::sort(offsetsWeightsUpper.begin(),offsetsWeightsUpper.end(),pairComp);
+        std::cout<<"filter: "<< offsetsWeightsUpper.size() << " " << numberOfSegments <<'\n';
         duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-        double currentWeight=UpperSum;
+        std::cout<<"sorting: "<< duration <<'\n';
+        currentWeight=upperSum;
         start = std::clock();
-        for (i=0;i<offsetsWeights.size();i++)
+        for (i=0;i<offsetsWeightsUpper.size();i++)
         {
             value=offsetsWeightsUpper[i].second;
             currentWeight-=value;
@@ -491,9 +535,13 @@ NumericVector NetEmdExhaustiveMedianMk2(NumericVector loc1,NumericVector val1,Nu
             {
                 loc0=loc1+offsetsWeightsUpper[i].first;
                 NumericVector result(2);
+		duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+		std::cout<<"searching: "<< duration <<'\n';
+		start = std::clock();
                 result(0)=NetEmdConstantMedianVersion(loc0,val1,loc2,val2);
-                result(1)=offsetsWeights[i].first;
                 duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+		std::cout<<"EmdCall: "<< duration <<'\n';
+                result(1)=offsetsWeightsUpper[i].first;
                 return result;
             }
         }
