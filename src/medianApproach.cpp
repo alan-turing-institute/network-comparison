@@ -274,7 +274,7 @@ NumericVector NetEmdExhaustiveMedian(NumericVector loc1,NumericVector val1,Numer
     }
 }
 
-
+/*
 //' @title
 //' Compute EMD
 ////'
@@ -546,5 +546,6 @@ double currentWeight;
             }
         }
     }
+  
 }
-
+*/
