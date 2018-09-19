@@ -12,9 +12,9 @@ using namespace Rcpp;
 //' 
 //' Note that particularly agressive compiler optimisations can result in the
 //' Kahan compensation being optimised away. We believe that this requires the
-//' -ffast-math compiler flag to be explicitly set, and we attempt to ensure it
-//' to override any local setting for this flag by adding the -fno-fast-math 
-//' flag to PKG_CPPFLAGS in src/Makevars.
+//' -ffast-math compiler flag to be explicitly set, and we attempt to override 
+//' any local setting for this flag by adding the -fno-fast-math flag to 
+//' PKG_CPPFLAGS in src/Makevars.
 //' @param &sum Current accumulated sum. Updated by function.
 //' @param element Element to add to the accumulated sum. Not updated.
 //' @param &compensation Current adjustment to compensate for floating point
