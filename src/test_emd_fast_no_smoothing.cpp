@@ -61,7 +61,7 @@ context("emd_fast_no_smoothing") {
     double power_elment_value = -12.0;
     // 2. Set up test data
     double start_num = pow(shared_base, power_start_num);
-    long num_elements = pow(shared_base, power_num_elements);
+    int_fast64_t num_elements = pow(shared_base, power_num_elements);
     double element_value = pow(shared_base, power_elment_value);
     std::vector<double> input(num_elements, element_value);
     // 3. Calculate expected total
