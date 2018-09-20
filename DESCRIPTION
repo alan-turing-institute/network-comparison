@@ -12,7 +12,8 @@ Depends:
 LazyData: true
 License: MIT + file LICENSE
 LinkingTo:
-    Rcpp
+    Rcpp,
+    testthat
 Imports:
     igraph,
     orca,
