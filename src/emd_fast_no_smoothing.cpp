@@ -3,23 +3,31 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' @title
-//' Numerically safe addition using Kahan summation
-//' @description
-//' Uses Kahan summation algorithm to limit numerical error caused by adding
-//' lots of very small things to a big thing to O(1) rather than O(N)
-//' See: https://en.wikipedia.org/wiki/Kahan_summation_algorithm
-//' 
-//' Note that particularly agressive compiler optimisations can result in the
-//' Kahan compensation being optimised away. We believe that this requires the
-//' -ffast-math compiler flag to be explicitly set, and we attempt to override 
-//' any local setting for this flag by adding the -fno-fast-math flag to 
-//' PKG_CPPFLAGS in src/Makevars.
-//' @param &sum Current accumulated sum. Updated by function.
-//' @param element Element to add to the accumulated sum. Not updated.
-//' @param &compensation Current adjustment to compensate for floating point
-//' summation error. Updated by function.
-//'
+// NOTE: We don't use Doxygen //' comments here, otherwise the function  
+// docstring is added to RcppExports.R with NULL content and this generates a
+// "missing name" error when Doxygen generated documentation. The two fixes 
+// for this seem to be (1) Add an @name annotation, which allows Doxygen to
+// generate and .Rd file from the docstring in RcppExports.R or (2) Do not
+// provide a Doxygen docstring for functions like this that we are not exporting
+//
+// @title
+// Numerically safe addition using Kahan summation
+//
+// @description
+// Uses Kahan summation algorithm to limit numerical error caused by adding
+// lots of very small things to a big thing to O(1) rather than O(N)
+// See: https://en.wikipedia.org/wiki/Kahan_summation_algorithm
+// 
+// Note that particularly agressive compiler optimisations can result in the
+// Kahan compensation being optimised away. We believe that this requires the
+// -ffast-math compiler flag to be explicitly set, and we attempt to override 
+// any local setting for this flag by adding the -fno-fast-math flag to 
+// PKG_CPPFLAGS in src/Makevars.
+// 
+// @param &sum Current accumulated sum. Updated by function.
+// @param element Element to add to the accumulated sum. Not updated.
+// @param &compensation Current adjustment to compensate for floating point
+// summation error. Updated by function.
 void add_element_kahan(double &sum, double element, double &compensation)
 {
   double compensated_element = (element - compensation);
