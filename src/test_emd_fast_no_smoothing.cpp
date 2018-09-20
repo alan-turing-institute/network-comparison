@@ -5,6 +5,8 @@
  * This file should begin with `test` and be in the  `src/` folder.
  * `LinkingTo: testthat` must also be within the DESCRIPTION file.
  */
+// Enable C++11
+// [[Rcpp::plugins(cpp11)]]
 
 // All test files should include the <testthat.h>
 // header file.
