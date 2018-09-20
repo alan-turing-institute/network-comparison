@@ -69,11 +69,11 @@ context("emd_fast_no_smoothing") {
     double expected_element_sum = pow(shared_base, power_expected_total);
     double expected_total = start_num + expected_element_sum;
     
-    /* Uncomment me if debugging test failure
+    // Uncomment me if debugging test failure
     Rcerr << "Num elements: " << num_elements << "; Element value: " 
           << element_value << "; Exp. elment sum: " << expected_element_sum 
           << "\n";
-    */
+    
     
     // Define acceptable tolerance
     double tolerance = element_value;
@@ -90,12 +90,12 @@ context("emd_fast_no_smoothing") {
     double naiive_diff = (expected_total - naiive_total);
     double kahan_diff = (expected_total - kahan_total);
     
-    /* Uncomment me if debugging test failure
+    // Uncomment me if debugging test failure
     Rcerr << "Expected: " << expected_total << "; " << "Naiive: " << naiive_total
           << "; Kahan: " << kahan_total << "; Naiive diff: " << naiive_diff
           << "; Kahan diff: " << kahan_diff << "; Tolerance: " << tolerance 
           << "\n";
-    */
+    
     
     // Check naiive summation has unacceptable error
     expect_false(within_tolerance(naiive_total, expected_total, tolerance));
