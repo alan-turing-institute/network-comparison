@@ -62,23 +62,16 @@ context("emd_fast_no_smoothing") {
     // 1. Define all test data components as powers of a common base to make
     // it easy to accurately calculate the expected sum without adding any small
     // numbers together
-    double shared_base = 2.0;
-    double power_start_num = 27.0;
-    double power_num_elements = 12.0;
-    double power_elment_value = -26.0;
-    // 2. Set up test data
-    double start_num = pow(shared_base, power_start_num);
-    int_fast64_t num_elements = pow(shared_base, power_num_elements);
-    double element_value = pow(shared_base, power_elment_value);
+    double start_num = 1125899906842624.0; // 2^50 = 1125899906842624
+    double element_value = 0.03125; // 2^-5 = 0.03125
+    double num_elements = 4096; // 2^12 = 4096
+    double expected_total = 1125899906842752.0; // 2^50 + 2^7
+    
     std::vector<double> input(num_elements, element_value);
-    // 3. Calculate expected total
-    double power_expected_total = (power_elment_value + power_num_elements);
-    double expected_element_sum = pow(shared_base, power_expected_total);
-    double expected_total = start_num + expected_element_sum;
     
     // Uncomment me if debugging test failure
     Rcerr << "Num elements: " << num_elements << "; Element value: " 
-          << element_value << "; Exp. elment sum: " << expected_element_sum 
+          << element_value << "; Exp. total: " << expected_total 
           << "; Sizeof(double): " << sizeof(double) << "\n";
     
     

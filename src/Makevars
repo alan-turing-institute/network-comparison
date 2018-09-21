@@ -1,2 +1,2 @@
 CXX_STD = CXX11
-PKG_CPPFLAGS += -fno-fast-math -msse2 -O0 -S -fverbose-asm
+PKG_CPPFLAGS += -fno-fast-math
