@@ -8,6 +8,20 @@
 #'
 #' @export
 counts_from_observations <- function(features) {
-    .Call('netdist_counts_from_observations', PACKAGE = 'netdist', features)
+    .Call(`_netdist_counts_from_observations`, features)
+}
+
+#' @title
+#' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
+#' Density Functions (ECDFs)
+#'
+#' @param locations1 Locations for ECDF 1
+#' @param values1 Cumulative masses for ECDF 1
+#' @param locations2 Locations for ECDF 2
+#' @param values2 Cumulative masses for ECDF 2
+#'
+#' @export
+emd_fast_no_smoothing <- function(locations1, values1, locations2, values2) {
+    .Call(`_netdist_emd_fast_no_smoothing`, locations1, values1, locations2, values2)
 }
 

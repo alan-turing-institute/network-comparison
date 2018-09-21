@@ -129,7 +129,7 @@ is_dhist <- function(x, fast_check = TRUE) {
          && is_numeric_vector_1d(x$masses))
 }
 
-#' Discrete histogram from observations
+#' Discrete histogram from observations (Pure R slow version)
 #' 
 #' Generate a sparse discrete histogram from a set of discrete numeric observations
 #' @param observations A vector of discrete numeric observations
@@ -140,7 +140,7 @@ is_dhist <- function(x, fast_check = TRUE) {
 #'   \item \code{masses}: A 1D numeric vector of the mass present at each location
 #' }
 #' @export
-dhist_from_obsSLOW <- function(observations) {
+dhist_from_obs_slow <- function(observations) {
   # Require 1D numeric vector
   if(!is_numeric_vector_1d(observations)) {
     stop("Observations must be provided as a 1D numeric vector")
@@ -154,6 +154,7 @@ dhist_from_obsSLOW <- function(observations) {
   hist <- dhist(locations = locations, masses = counts)
   return(hist)
 }
+
 
 #' Discrete histogram from observations
 #' 
@@ -179,6 +180,7 @@ dhist_from_obs <- function(observations) {
   hist <- dhist(locations = results[,1], masses = results[,2])
   return(hist)
 }
+
 
 #' Generate interpolating empirical cumulative mass function (ECMF) for 
 #' a discrete histogram

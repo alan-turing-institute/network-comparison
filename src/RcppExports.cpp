@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // counts_from_observations
 NumericMatrix counts_from_observations(NumericMatrix features);
-RcppExport SEXP netdist_counts_from_observations(SEXP featuresSEXP) {
+RcppExport SEXP _netdist_counts_from_observations(SEXP featuresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -15,4 +15,32 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(counts_from_observations(features));
     return rcpp_result_gen;
 END_RCPP
+}
+// emd_fast_no_smoothing
+double emd_fast_no_smoothing(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2);
+RcppExport SEXP _netdist_emd_fast_no_smoothing(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type locations1(locations1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values1(values1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type locations2(locations2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values2(values2SEXP);
+    rcpp_result_gen = Rcpp::wrap(emd_fast_no_smoothing(locations1, values1, locations2, values2));
+    return rcpp_result_gen;
+END_RCPP
+}
+
+RcppExport SEXP run_testthat_tests();
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_netdist_counts_from_observations", (DL_FUNC) &_netdist_counts_from_observations, 1},
+    {"_netdist_emd_fast_no_smoothing", (DL_FUNC) &_netdist_emd_fast_no_smoothing, 4},
+    {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 0},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_netdist(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }
