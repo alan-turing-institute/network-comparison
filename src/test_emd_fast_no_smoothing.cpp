@@ -70,7 +70,7 @@ context("emd_fast_no_smoothing") {
     std::vector<double> input(num_elements, element_value);
     
     // Uncomment me if debugging test failure
-    Rcerr << "Num elements: " << num_elements << "; Element value: " 
+    Rcerr << std::fixed << "Num elements: " << num_elements << "; Element value: " 
           << element_value << "; Exp. total: " << expected_total 
           << "; Sizeof(double): " << sizeof(double) << "\n";
     
@@ -91,7 +91,8 @@ context("emd_fast_no_smoothing") {
     double kahan_diff = (expected_total - kahan_total);
     
     // Uncomment me if debugging test failure
-    Rcerr << "Expected: " << expected_total << "; " << "Naiive: " << naiive_total
+    Rcerr << std::fixed << "Expected: " << expected_total << "; " << "Naiive: " 
+          << naiive_total
           << "; Kahan: " << kahan_total << "; Naiive diff: " << naiive_diff
           << "; Kahan diff: " << kahan_diff << "; Tolerance: " << tolerance 
           << "\n";
