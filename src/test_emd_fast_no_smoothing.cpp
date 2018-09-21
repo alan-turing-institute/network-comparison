@@ -53,14 +53,16 @@ context("emd_fast_no_smoothing") {
     // (B) If the start number is too small in comparison to the elements in the
     //     small number vector, we don't run into the floating point 
     //     representation issue when we add each element to the running total.
+    // NOTE: Values selected here are those used in the section on the "Kahan 
+    //       summation formula" at https://benjaminjurke.com/content/articles/2015/loss-of-significance-in-floating-point-computations/
     // =========================
     // 1. Define all test data components as powers of a common base to make
     // it easy to accurately calculate the expected sum without adding any small
     // numbers together
-    double shared_base = 10.0;
-    double power_start_num = 10.0;
+    double shared_base = 2.0;
+    double power_start_num = 0.0;
     double power_num_elements = 8.0;
-    double power_elment_value = -12.0;
+    double power_elment_value = -53.0;
     // 2. Set up test data
     double start_num = pow(shared_base, power_start_num);
     int_fast64_t num_elements = pow(shared_base, power_num_elements);
