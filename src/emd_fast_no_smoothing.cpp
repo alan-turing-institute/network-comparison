@@ -1,15 +1,6 @@
 // Enable C++11
 // [[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
-// Force calculations to  use precision of variable types for intermediate
-// calculations. Ensures that Kahan compensation works as expected. If 
-// intermediate calculations can be evaluated at higher precision, the
-// value of sum after adding an element is not necessarily the same as the 
-// value persisted to memory after the call to add_kahan_element() exits. This
-// means that the error accumulated in the compensation value is wrong.
-// See https://en.cppreference.com/w/cpp/types/climits/FLT_EVAL_METHOD
-// and "Update" section of https://randomascii.wordpress.com/2012/03/21/intermediate-floating-point-precision/
-#define FLT_EVAL_METHOD 0
 using namespace Rcpp;
 
 // NOTE: We don't use Doxygen //' comments here, otherwise the function  
