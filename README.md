@@ -30,7 +30,7 @@ on CRAN, the package can be installed from Github using the `devtools` package.
 
 ### Installing package and core dependencies needed to use it
 Core dependencies are listed in the `Imports` section of the package
-`DEPENDENDCIES` file and will be automatically installed when installing /
+`DEPENDENCIES` file and will be automatically installed when installing /
 updating the package using `devtools` as described below.
 
 Install the latest package from GitHub using:
