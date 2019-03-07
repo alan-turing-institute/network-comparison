@@ -30,13 +30,44 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// emd_fast_no_smoothingYdir
+double emd_fast_no_smoothingYdir(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2);
+RcppExport SEXP _netdist_emd_fast_no_smoothingYdir(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type locations1(locations1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values1(values1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type locations2(locations2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values2(values2SEXP);
+    rcpp_result_gen = Rcpp::wrap(emd_fast_no_smoothingYdir(locations1, values1, locations2, values2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// median_fast_no_smoothing
+double median_fast_no_smoothing(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2, double limit);
+RcppExport SEXP _netdist_median_fast_no_smoothing(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP, SEXP limitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type locations1(locations1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values1(values1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type locations2(locations2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values2(values2SEXP);
+    Rcpp::traits::input_parameter< double >::type limit(limitSEXP);
+    rcpp_result_gen = Rcpp::wrap(median_fast_no_smoothing(locations1, values1, locations2, values2, limit));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_netdist_counts_from_observations", (DL_FUNC) &_netdist_counts_from_observations, 1},
     {"_netdist_emd_fast_no_smoothing", (DL_FUNC) &_netdist_emd_fast_no_smoothing, 4},
-    {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 0},
+    {"_netdist_emd_fast_no_smoothingYdir", (DL_FUNC) &_netdist_emd_fast_no_smoothingYdir, 4},
+    {"_netdist_median_fast_no_smoothing", (DL_FUNC) &_netdist_median_fast_no_smoothing, 5},
+    {"run_testthat_tests",                 (DL_FUNC) &run_testthat_tests,                 0},
     {NULL, NULL, 0}
 };
 
