@@ -57,7 +57,7 @@ test_that("Big small and big small", {
   {
       for (j in 1:8)
       {
-        expect_true(result[[i]]==result[[j]])
+        expect_true(abs(result[[i]]-result[[j]])<0.000000001)
       }
   }
 })
@@ -66,11 +66,13 @@ test_that("Big small and big small", {
 context("Big Number Normalisation - 3 Big Numbers")
 test_that("Big small and big small", {
   result <- computeNetEMDs(c(1,2,3,10000000000,-10000000000,2,3,100000000000))
+  t1 <- function(x) (abs(4/sqrt(323)+x) +2*abs(x) + abs(4/sqrt(3) -40/sqrt(323)+x))/4
   for (i in 1:8)
   {
+      expect_true(abs(result[[i]]-t1(0))<0.000000001)
       for (j in 1:8)
       {
-        expect_true(result[[i]]==result[[j]])
+        expect_true(abs(result[[i]]-result[[j]])<0.000000001)
       }
   }
 })
@@ -79,11 +81,14 @@ test_that("Big small and big small", {
 context("Big Number Normalisation - 1 Big Numbers")
 test_that("One big Number", {
   result <- computeNetEMDs(c(1,2,3,10000000000,1,2,3,4))
+  cf1 <- function(x) (abs(2/sqrt(5)+x)+abs(2*2/sqrt(5)+x)+abs(3*2/sqrt(5)+x)+abs(4*2/sqrt(5) -8/(2*sqrt(3))+x))/4
+  
   for (i in 1:8)
   {
+      expect_true(abs(result[[i]]-cf1(-(4*2/sqrt(5) -8/(2*sqrt(3)))))<0.000000001)
       for (j in 1:8)
       {
-        expect_true(results[[i]]==results[[j]])
+        expect_true(abs(result[[i]]-result[[j]])<0.000000001)
       }
   }
 })
@@ -95,7 +100,7 @@ test_that("Two big Numbers", {
   {
       for (j in 1:8)
       {
-        expect_true(result[[i]]==result[[j]])
+        expect_true(abs(result[[i]]-result[[j]])<0.000000001)
       }
   }
 })
