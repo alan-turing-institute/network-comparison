@@ -50,6 +50,19 @@ computeNetEMDs <- function(x)
 }
 
 
+context("Big Number Normalisation - 0 Big Numbers")
+test_that("Big small and big small", {
+  result <- computeNetEMDs(c(1,2,3,5,1,2,3,4))
+  for (i in 1:8)
+  {
+      for (j in 1:8)
+      {
+        expect_true(results[[i]]==results[[j]])
+      }
+  }
+})
+
+
 context("Big Number Normalisation - 3 Big Numbers")
 test_that("Big small and big small", {
   result <- computeNetEMDs(c(1,2,3,10000000000,-10000000000,2,3,100000000000))
