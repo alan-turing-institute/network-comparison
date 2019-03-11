@@ -57,7 +57,7 @@ test_that("Big small and big small", {
   {
       for (j in 1:8)
       {
-        expect_true(results[[i]]==results[[j]])
+        expect_true(result[[i]]==result[[j]])
       }
   }
 })
@@ -70,7 +70,7 @@ test_that("Big small and big small", {
   {
       for (j in 1:8)
       {
-        expect_true(results[[i]]==results[[j]])
+        expect_true(result[[i]]==result[[j]])
       }
   }
 })
@@ -95,7 +95,7 @@ test_that("Two big Numbers", {
   {
       for (j in 1:8)
       {
-        expect_true(results[[i]]==results[[j]])
+        expect_true(result[[i]]==result[[j]])
       }
   }
 })
