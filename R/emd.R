@@ -23,12 +23,262 @@ min_emd <- function(dhist1, dhist2, method = "optimise") {
     return(min_emd_optimise_fast(dhist1, dhist2))
   } else if(method == "medianFast"){
     return(min_emd_optimise_medianfast(dhist1, dhist2))
+  } else if(method == "medianFastLimit"){
+    return(min_emd_optimise_medianfastLimit(dhist1, dhist2,0.001))
   } else if(method == "optimiseRonly"){
     return(min_emd_optimise(dhist1, dhist2))
   } else if(method == "exhaustive"){
     return(min_emd_exhaustive(dhist1, dhist2))
   } else {
     stop("Method not recognised. Must be 'exhaustive' or ' optimise'")
+  }
+}
+
+#' Minimum Earth Mover's Distance (EMD) using fast optimiser search
+#' 
+#' Calculates the minimum Earth Mover's Distance (EMD) between two discrete 
+#' histograms by minimising the offset parameter of the \code{emd} function 
+#' using the built-in \code{stats::optimise} method.
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
+#' @return Earth Mover's Distance between the two discrete histograms
+#' @export
+min_emd_optimise_fast3 <- function(dhist1, dhist2,dhist3) {
+  # Can we run the C++ fast implementation (only works with no smoothing)?
+  if ((dhist1$smoothing_window_width==0) && (dhist2$smoothing_window_width==0)  && (dhist3$smoothing_window_width==0))
+  {
+    # Determine minimum and maximum offset of range in which histograms overlap
+    # (based on sliding histogram 1)
+    min_offset <- min(dhist2$locations) - max(dhist1$locations)
+    max_offset <- max(dhist2$locations) - min(dhist1$locations)
+    # Set lower and upper range for optimise algorithm to be somewhat wider than
+    # range defined by the minimum and maximum offset. This guards against a
+    # couple of issues that arise if the optimise range is exactly min_offset 
+    # to max_offset
+    # 1) If lower and upper are equal, the optimise method will throw an error
+    # 2) It seems that optimise is not guaranteed to explore its lower and upper
+    #    bounds, even in the case where one of them is the offset with minimum
+    #    EMD
+    dhist1 <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
+    dhist2 <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
+    dhist3 <- normalise_dhist_variance(normalise_dhist_mass(dhist3))
+    
+    buffer <- 0.1
+    min_offset <- min_offset - buffer
+    max_offset <- max_offset + buffer
+    # Define a single parameter function to minimise emd as a function of offset
+    val1 <- cumsum(dhist1$masses)
+    val2 <- cumsum(dhist2$masses)
+    val3 <- cumsum(dhist3$masses)
+    val1 <- val1/val1[length(val1)]
+    val2 <- val2/val2[length(val2)]
+    val3 <- val3/val3[length(val3)]
+    loc1=dhist1$locations
+    loc2=dhist2$locations
+    loc3=dhist3$locations
+    count=0
+    emd_offset12 <- function(offset) {
+      temp1<- emd_fast_no_smoothing(loc1+offset,val1,loc2,val2)
+      temp1
+    }
+    emd_offset13 <- function(offset) {
+      temp1<- emd_fast_no_smoothing(loc1+offset,val1,loc3,val3)
+      temp1
+    }
+    emd_offset23 <- function(offset) {
+      temp1<- emd_fast_no_smoothing(loc2+offset,val2,loc3,val3)
+      temp1
+    }
+    # Get solution from optimiser
+    soln12 <- stats::optimise(emd_offset12, lower = min_offset, upper = max_offset, 
+                            tol = .Machine$double.eps*1000)
+    soln23 <- stats::optimise(emd_offset23, lower = min_offset, upper = max_offset, 
+                            tol = .Machine$double.eps*1000)
+    soln13 <- stats::optimise(emd_offset13, lower = min_offset, upper = max_offset, 
+                            tol = .Machine$double.eps*1000)
+    # Return mnimum EMD and associated offset
+    min_emd12 <- soln12$objective
+    min_emd13 <- soln13$objective
+    min_emd23 <- soln23$objective
+    return(list(min_emd12,min_emd13,min_emd23))
+  }
+  else
+  {
+    # Fall back on other version if either dhist is smoothed
+    return(min_emd_optimise(dhist1, dhist2));
+  }
+}
+
+#' Minimum Earth Mover's Distance (EMD) using fast optimiser search
+#' 
+#' Calculates the minimum Earth Mover's Distance (EMD) between two discrete 
+#' histograms by minimising the offset parameter of the \code{emd} function 
+#' using the built-in \code{stats::optimise} method.
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
+#' @return Earth Mover's Distance between the two discrete histograms
+#' @export
+min_emd_median_fast3 <- function(dhist1, dhist2,dhist3) {
+  # Can we run the C++ fast implementation (only works with no smoothing)?
+  if ((dhist1$smoothing_window_width==0) && (dhist2$smoothing_window_width==0)  && (dhist3$smoothing_window_width==0))
+  {
+    # Determine minimum and maximum offset of range in which histograms overlap
+    # (based on sliding histogram 1)
+    min_offset <- min(dhist2$locations) - max(dhist1$locations)
+    max_offset <- max(dhist2$locations) - min(dhist1$locations)
+    # Set lower and upper range for optimise algorithm to be somewhat wider than
+    # range defined by the minimum and maximum offset. This guards against a
+    # couple of issues that arise if the optimise range is exactly min_offset 
+    # to max_offset
+    # 1) If lower and upper are equal, the optimise method will throw an error
+    # 2) It seems that optimise is not guaranteed to explore its lower and upper
+    #    bounds, even in the case where one of them is the offset with minimum
+    #    EMD
+    dhist1 <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
+    dhist2 <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
+    dhist3 <- normalise_dhist_variance(normalise_dhist_mass(dhist3))
+    
+    buffer <- 0.1
+    min_offset <- min_offset - buffer
+    max_offset <- max_offset + buffer
+    # Define a single parameter function to minimise emd as a function of offset
+    val1 <- cumsum(dhist1$masses)
+    val2 <- cumsum(dhist2$masses)
+    val3 <- cumsum(dhist3$masses)
+    val1 <- val1/val1[length(val1)]
+    val2 <- val2/val2[length(val2)]
+    val3 <- val3/val3[length(val3)]
+    loc1=dhist1$locations
+    loc2=dhist2$locations
+    loc3=dhist3$locations
+    # Get solution from optimiser
+    soln12 <- median_fast_no_smoothing(loc1,val1,loc2,val2)
+    soln13 <- median_fast_no_smoothing(loc1,val1,loc3,val3)
+    soln23 <- median_fast_no_smoothing(loc2,val2,loc3,val3)
+    # Return mnimum EMD and associated offset
+    min_emd12 <- soln12
+    min_emd13 <- soln13
+    min_emd23 <- soln23
+    return(list(min_emd12,min_emd13,min_emd23))
+  }
+  else
+  {
+    # Fall back on other version if either dhist is smoothed
+    return(min_emd_optimise(dhist1, dhist2));
+  }
+}
+
+#' Minimum Earth Mover's Distance (EMD) using fast optimiser search
+#' 
+#' Calculates the minimum Earth Mover's Distance (EMD) between two discrete 
+#' histograms by minimising the offset parameter of the \code{emd} function 
+#' using the built-in \code{stats::optimise} method.
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
+#' @return Earth Mover's Distance between the two discrete histograms
+#' @export
+min_emd_median_fastComb3 <- function(dhist1, dhist2,dhist3) {
+  # Can we run the C++ fast implementation (only works with no smoothing)?
+  if ((dhist1$smoothing_window_width==0) && (dhist2$smoothing_window_width==0)  && (dhist3$smoothing_window_width==0))
+  {
+    # Determine minimum and maximum offset of range in which histograms overlap
+    # (based on sliding histogram 1)
+    min_offset <- min(dhist2$locations) - max(dhist1$locations)
+    max_offset <- max(dhist2$locations) - min(dhist1$locations)
+    # Set lower and upper range for optimise algorithm to be somewhat wider than
+    # range defined by the minimum and maximum offset. This guards against a
+    # couple of issues that arise if the optimise range is exactly min_offset 
+    # to max_offset
+    # 1) If lower and upper are equal, the optimise method will throw an error
+    # 2) It seems that optimise is not guaranteed to explore its lower and upper
+    #    bounds, even in the case where one of them is the offset with minimum
+    #    EMD
+    dhist1 <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
+    dhist2 <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
+    dhist3 <- normalise_dhist_variance(normalise_dhist_mass(dhist3))
+    
+    buffer <- 0.1
+    min_offset <- min_offset - buffer
+    max_offset <- max_offset + buffer
+    # Define a single parameter function to minimise emd as a function of offset
+    val1 <- cumsum(dhist1$masses)
+    val2 <- cumsum(dhist2$masses)
+    val3 <- cumsum(dhist3$masses)
+    val1 <- val1/val1[length(val1)]
+    val2 <- val2/val2[length(val2)]
+    val3 <- val3/val3[length(val3)]
+    loc1=dhist1$locations
+    loc2=dhist2$locations
+    loc3=dhist3$locations
+    # Get solution from optimiser
+    soln <- median_fast_no_smoothingSlow3(loc1,val1,loc2,val2,loc3,val3)
+    # Return mnimum EMD and associated offset
+    min_emd12 <- soln[1]
+    min_emd13 <- soln[2]
+    min_emd23 <- soln[3]
+    return(list(min_emd12,min_emd13,min_emd23))
+  }
+  else
+  {
+    # Fall back on other version if either dhist is smoothed
+    return(min_emd_optimise(dhist1, dhist2));
+  }
+}
+
+#' Minimum Earth Mover's Distance (EMD) using fast optimiser search
+#' 
+#' Calculates the minimum Earth Mover's Distance (EMD) between two discrete 
+#' histograms by minimising the offset parameter of the \code{emd} function 
+#' using the built-in \code{stats::optimise} method.
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
+#' @return Earth Mover's Distance between the two discrete histograms
+#' @export
+min_emd_median_fastCombComb3 <- function(dhist1, dhist2,dhist3) {
+  # Can we run the C++ fast implementation (only works with no smoothing)?
+  if ((dhist1$smoothing_window_width==0) && (dhist2$smoothing_window_width==0)  && (dhist3$smoothing_window_width==0))
+  {
+    # Determine minimum and maximum offset of range in which histograms overlap
+    # (based on sliding histogram 1)
+    min_offset <- min(dhist2$locations) - max(dhist1$locations)
+    max_offset <- max(dhist2$locations) - min(dhist1$locations)
+    # Set lower and upper range for optimise algorithm to be somewhat wider than
+    # range defined by the minimum and maximum offset. This guards against a
+    # couple of issues that arise if the optimise range is exactly min_offset 
+    # to max_offset
+    # 1) If lower and upper are equal, the optimise method will throw an error
+    # 2) It seems that optimise is not guaranteed to explore its lower and upper
+    #    bounds, even in the case where one of them is the offset with minimum
+    #    EMD
+    dhist1 <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
+    dhist2 <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
+    dhist3 <- normalise_dhist_variance(normalise_dhist_mass(dhist3))
+    
+    buffer <- 0.1
+    min_offset <- min_offset - buffer
+    max_offset <- max_offset + buffer
+    # Define a single parameter function to minimise emd as a function of offset
+    val1 <- cumsum(dhist1$masses)
+    val2 <- cumsum(dhist2$masses)
+    val3 <- cumsum(dhist3$masses)
+    val1 <- val1/val1[length(val1)]
+    val2 <- val2/val2[length(val2)]
+    val3 <- val3/val3[length(val3)]
+    loc1=dhist1$locations
+    loc2=dhist2$locations
+    loc3=dhist3$locations
+    # Get solution from optimiser
+    soln <- median_fast_no_smoothing3(loc1,val1,loc2,val2,loc3,val3)
+    # Return mnimum EMD and associated offset
+    min_emd12 <- soln[1]
+    min_emd13 <- soln[2]
+    min_emd23 <- soln[3]
+    return(list(min_emd12,min_emd13,min_emd23))
+  }
+  else
+  {
+    # Fall back on other version if either dhist is smoothed
+    return(min_emd_optimise(dhist1, dhist2));
   }
 }
 
@@ -99,6 +349,54 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
 #' @param dhist2 A \code{dhist} discrete histogram object
 #' @return Earth Mover's Distance between the two discrete histograms
 #' @export
+min_emd_optimise_medianfastLimit <- function(dhist1, dhist2, limit1) {
+  # Can we run the C++ fast implementation (only works with no smoothing)?
+  if ((dhist1$smoothing_window_width==0) && (dhist2$smoothing_window_width==0))
+  {
+    # Determine minimum and maximum offset of range in which histograms overlap
+    # (based on sliding histogram 1)
+    min_offset <- min(dhist2$locations) - max(dhist1$locations)
+    max_offset <- max(dhist2$locations) - min(dhist1$locations)
+    # Set lower and upper range for optimise algorithm to be somewhat wider than
+    # range defined by the minimum and maximum offset. This guards against a
+    # couple of issues that arise if the optimise range is exactly min_offset 
+    # to max_offset
+    # 1) If lower and upper are equal, the optimise method will throw an error
+    # 2) It seems that optimise is not guaranteed to explore its lower and upper
+    #    bounds, even in the case where one of them is the offset with minimum
+    #    EMD
+    buffer <- 0.1
+    min_offset <- min_offset - buffer
+    max_offset <- max_offset + buffer
+    # Define a single parameter function to minimise emd as a function of offset
+    val1 <- cumsum(dhist1$masses)
+    val2 <- cumsum(dhist2$masses)
+    val1 <- val1/val1[length(val1)]
+    val2 <- val2/val2[length(val2)]
+    loc1=dhist1$locations
+    loc2=dhist2$locations
+    min_emd <- median_fast_no_smoothingLimit(loc1,val1,loc2,val2,limit1);
+    min_offset <- 0;
+    return(list(min_emd = min_emd, min_offset = min_offset))
+  }
+  else
+  {
+    # Fall back on other version if either dhist is smoothed
+    return(min_emd_optimise(dhist1, dhist2));
+  }
+}
+
+
+
+#' Minimum Earth Mover's Distance (EMD) using fast optimiser search
+#' 
+#' Calculates the minimum Earth Mover's Distance (EMD) between two discrete 
+#' histograms by minimising the offset parameter of the \code{emd} function 
+#' using the built-in \code{stats::optimise} method.
+#' @param dhist1 A \code{dhist} discrete histogram object
+#' @param dhist2 A \code{dhist} discrete histogram object
+#' @return Earth Mover's Distance between the two discrete histograms
+#' @export
 min_emd_optimise_medianfast <- function(dhist1, dhist2) {
   # Can we run the C++ fast implementation (only works with no smoothing)?
   if ((dhist1$smoothing_window_width==0) && (dhist2$smoothing_window_width==0))
@@ -125,7 +423,7 @@ min_emd_optimise_medianfast <- function(dhist1, dhist2) {
     val2 <- val2/val2[length(val2)]
     loc1=dhist1$locations
     loc2=dhist2$locations
-    min_emd <- median_fast_no_smoothing(loc1,val1,loc2,val2,0);
+    min_emd <- median_fast_no_smoothing(loc1,val1,loc2,val2);
     min_offset <- 0;
     return(list(min_emd = min_emd, min_offset = min_offset))
   }

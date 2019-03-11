@@ -45,8 +45,22 @@ BEGIN_RCPP
 END_RCPP
 }
 // median_fast_no_smoothing
-double median_fast_no_smoothing(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2, double limit);
-RcppExport SEXP _netdist_median_fast_no_smoothing(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP, SEXP limitSEXP) {
+double median_fast_no_smoothing(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2);
+RcppExport SEXP _netdist_median_fast_no_smoothing(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type locations1(locations1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values1(values1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type locations2(locations2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values2(values2SEXP);
+    rcpp_result_gen = Rcpp::wrap(median_fast_no_smoothing(locations1, values1, locations2, values2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// median_fast_no_smoothingLimit
+double median_fast_no_smoothingLimit(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2, double limit);
+RcppExport SEXP _netdist_median_fast_no_smoothingLimit(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP, SEXP limitSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -55,7 +69,39 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type locations2(locations2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type values2(values2SEXP);
     Rcpp::traits::input_parameter< double >::type limit(limitSEXP);
-    rcpp_result_gen = Rcpp::wrap(median_fast_no_smoothing(locations1, values1, locations2, values2, limit));
+    rcpp_result_gen = Rcpp::wrap(median_fast_no_smoothingLimit(locations1, values1, locations2, values2, limit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// median_fast_no_smoothingSlow3
+NumericVector median_fast_no_smoothingSlow3(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2, NumericVector locations3, NumericVector values3);
+RcppExport SEXP _netdist_median_fast_no_smoothingSlow3(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP, SEXP locations3SEXP, SEXP values3SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type locations1(locations1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values1(values1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type locations2(locations2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values2(values2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type locations3(locations3SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values3(values3SEXP);
+    rcpp_result_gen = Rcpp::wrap(median_fast_no_smoothingSlow3(locations1, values1, locations2, values2, locations3, values3));
+    return rcpp_result_gen;
+END_RCPP
+}
+// median_fast_no_smoothing3
+NumericVector median_fast_no_smoothing3(NumericVector locations1, NumericVector values1, NumericVector locations2, NumericVector values2, NumericVector locations3, NumericVector values3);
+RcppExport SEXP _netdist_median_fast_no_smoothing3(SEXP locations1SEXP, SEXP values1SEXP, SEXP locations2SEXP, SEXP values2SEXP, SEXP locations3SEXP, SEXP values3SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type locations1(locations1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values1(values1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type locations2(locations2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values2(values2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type locations3(locations3SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type values3(values3SEXP);
+    rcpp_result_gen = Rcpp::wrap(median_fast_no_smoothing3(locations1, values1, locations2, values2, locations3, values3));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -66,8 +112,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_netdist_counts_from_observations", (DL_FUNC) &_netdist_counts_from_observations, 1},
     {"_netdist_emd_fast_no_smoothing", (DL_FUNC) &_netdist_emd_fast_no_smoothing, 4},
     {"_netdist_emd_fast_no_smoothingYdir", (DL_FUNC) &_netdist_emd_fast_no_smoothingYdir, 4},
-    {"_netdist_median_fast_no_smoothing", (DL_FUNC) &_netdist_median_fast_no_smoothing, 5},
-    {"run_testthat_tests",                 (DL_FUNC) &run_testthat_tests,                 0},
+    {"_netdist_median_fast_no_smoothing", (DL_FUNC) &_netdist_median_fast_no_smoothing, 4},
+    {"_netdist_median_fast_no_smoothingLimit", (DL_FUNC) &_netdist_median_fast_no_smoothingLimit, 5},
+    {"_netdist_median_fast_no_smoothingSlow3", (DL_FUNC) &_netdist_median_fast_no_smoothingSlow3, 6},
+    {"_netdist_median_fast_no_smoothing3", (DL_FUNC) &_netdist_median_fast_no_smoothing3, 6},
+    {"run_testthat_tests",                     (DL_FUNC) &run_testthat_tests,                     0},
     {NULL, NULL, 0}
 };
 
