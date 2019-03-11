@@ -2,7 +2,7 @@ computeNetEMDs <- function(x)
 {
   x1=x[1:(length(x)/2)]
   x2=x[(length(x)/2+1):length(x)]
-  
+   
   dhist1 = dhist(x1,rep(1,length(x1)))
   dhist2 = dhist(x2,rep(1,length(x2)))
   
@@ -95,7 +95,7 @@ test_that("One big Number", {
 
 context("Big Number Normalisation - 2 Big Numbers")
 test_that("Two big Numbers", {
-  result <- computeNetEMDs(c(1,2,3,10000000000,100000000000,2,3,4))
+  result <- computeNetEMDs(c(1,2,3,10000000000,-100000000000,2,3,4))
   for (i in 1:8)
   {
       for (j in 1:8)
