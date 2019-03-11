@@ -530,7 +530,7 @@ normalise_dhist_variance <- function(dhist) {
     std_dev <- dhist_std(dhist)
     centred_locations <- (dhist$locations - dhist_mean_location(dhist))
     normalised_centred_locations <- centred_locations / std_dev
-    normalised_locations <- normalised_centred_locations + dhist_mean_location(dhist)
+    normalised_locations <- normalised_centred_locations  # + dhist_mean_location(dhist)
     dhist <- update_dhist(dhist, locations = normalised_locations)
     # If smoothing_window_width not zero, then update it to reflect the variance
     # normalisation
