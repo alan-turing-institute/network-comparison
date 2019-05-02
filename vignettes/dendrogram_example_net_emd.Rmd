@@ -1,10 +1,10 @@
 ---
-title: "Quick start guide for NetEMD"
+title: "Dendrogram example for NetEMD"
 author: "Martin O'Reilly"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Quick start for NetEMD}
+  %\VignetteIndexEntry{Dendrogram example for NetEMD}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
