@@ -43,3 +43,24 @@ res <- net_emds_for_all_graphs(virus_gdds, smoothing_window_width = 0)
 netemd_mat <- cross_comp_to_matrix(res$net_emds, res$comp_spec)
 netemd_mat
 
+## ------------------------------------------------------------------------
+cex=1
+title = paste("NetEMD: max graphlet size = ", 4, sep = "")
+plot(phangorn::upgma(as.dist(netemd_mat), method="average"), use.edge.length=FALSE, 
+     edge.width=cex*2, main=title, cex.lab=cex, cex.axis=cex, cex.main=cex, 
+     cex.sub=cex, cex=cex)
+
+# The gdd_for_all_graphs and net_emds_for_all_graphs functions will run in 
+# parallel using multiple threads where supported. The number of threads
+# used is determined by the global R option "mc.cores". You can inspect the 
+# current value of this using options("mc.cores") and set it with 
+# options("mc.cores" = <num_cores>). To fully utilise a modern consumer
+# processor, this should be set to 2x the number of available processor 
+# cores as each core supports two threads.
+
+## ------------------------------------------------------------------------
+cex=1.5
+col <- colorRampPalette(colors = c("blue","white"))(100)
+title = paste("NetEMD: max graphlet size = ", 4, sep = "")
+heatmap(netemd_mat, Rowv = NULL, Colv = NULL, col = col, main = title, cexRow = cex, cexCol = cex, symm = TRUE)
+
