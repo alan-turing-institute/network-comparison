@@ -26,8 +26,8 @@ Suggests:
     testthat,
     knitr,
     phangorn,
-RoxygenNote: 6.0.1
     rmarkdown,
     roxygen2
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 Encoding: UTF-8

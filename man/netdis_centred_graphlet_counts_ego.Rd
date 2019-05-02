@@ -4,8 +4,9 @@
 \alias{netdis_centred_graphlet_counts_ego}
 \title{TODO: Remove @export prior to publishing}
 \usage{
-netdis_centred_graphlet_counts_ego(graph, max_graphlet_size, neighbourhood_size,
-  expected_ego_count_fn = NULL, min_ego_nodes = 3, min_ego_edges = 1)
+netdis_centred_graphlet_counts_ego(graph, max_graphlet_size,
+  neighbourhood_size, expected_ego_count_fn = NULL, min_ego_nodes = 3,
+  min_ego_edges = 1)
 }
 \description{
 TODO: Remove @export prior to publishing
