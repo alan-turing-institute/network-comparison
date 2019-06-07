@@ -56,9 +56,31 @@ Here we generate these from a reference graph.
 file <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
                     package = "netdist")
 ref_graph <- read_simple_graph(file, format = "ncol")
+
 # Generate ego networks for reference graph
 ref_ego_networks <- make_named_ego_graph(ref_graph, order = neighbourhood_size)
+
 # Count graphlets for ego networks in reference graph
 ref_ego_graphlet_counts <- purrr::map(ref_ego_networks, count_graphlets_for_graph,
                               max_graphlet_size = max_graphlet_size)
+```
+
+## Centre counts according to size and density of ego network
+```{r}
+#query_ego_centred_graphlet_counts <- CENTRED_COUNTS(query_ego_subraph_counts, REF_COUNTS)
+```
+
+## Sum centred counts across all ego networks
+```{r}
+#query_sum_centred_graphlet_counts <- SUM_SUBGRAPH_COUNTS(query_ego_centred_subgraph_counts)
+```
+
+## Calculate netdis statistics
+```{r}
+#NETDIS_STATISTIC(query_sum_centred_graphlet_counts)
+```
+
+## Display results
+```{r}
+
 ```

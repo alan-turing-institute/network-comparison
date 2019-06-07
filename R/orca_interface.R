@@ -78,6 +78,8 @@ read_simple_graphs <- function(source_dir, format = "ncol", pattern = "*",
                       remove_isolates = remove_isolates)
   })
   # Perform any requested simplifications
+  # JACK: I don't think this is needed here - 
+  # simplifications are already applied in read_simple_graph call above
   graphs <- purrr::map(
     graphs, simplify_graph, as_undirected = as_undirected,
     remove_loops = remove_loops, remove_multiple = remove_multiple,
