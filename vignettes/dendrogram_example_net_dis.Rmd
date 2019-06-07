@@ -8,8 +8,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-TEST
-
 
 ## Virus PPI example for Netdis
 
