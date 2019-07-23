@@ -205,6 +205,7 @@ netdis_expected_graphlet_counts_ego_fn <- function(
   ego_networks <- res$ego_networks
   
   # Drop ego-networks that don't have the minimum number of nodes or edges
+  # JACK  - why not put this in make_named_ego_graph? i.e. when generating ego networks in first place
   drop_index <- purrr::simplify(purrr::map(ego_networks, function(g) { 
     (igraph::vcount(g) < min_ego_nodes) | (igraph::ecount(g) < min_ego_edges)
   }))

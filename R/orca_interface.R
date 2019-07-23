@@ -344,12 +344,41 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
   # Reshape the list of per node single row graphlet count matrices to a single
   # ORCA format graphlet count matrix with one row per node
   ego_graphlet_counts <- t(simplify2array(ego_graphlet_counts))
+  
   # Return either graphlet counts, or graphlet counts and ego_networks
   if(return_ego_networks) {
     return(list(graphlet_counts = ego_graphlet_counts, ego_networks = ego_networks))
   } else {
     return(ego_graphlet_counts)
   }
+}
+
+#' ego_to_graphlet_counts
+#' JACK To follow through logic of paper steps, wanted to pass
+#' ego networks to the function for generating graphlet counts,
+#' not the input query graph directly (as in count_graphlets_ego above).
+#' 
+#' Calculates graphlet counts for previously generated ego networks.
+#' @param ego_networks Named list of ego networks for a graph. 
+#' @param max_graphlet_size Determines the maximum size of graphlets to count. 
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' @return returns an RxC matrix 
+#' containing counts of each graphlet (columns, C) for each ego-network (rows, R). 
+#' Columns are labelled with graphlet IDs and rows are 
+#' labelled with the ID of the central node in each ego-network. 
+#' @export
+ego_to_graphlet_counts <- function(ego_networks, max_graphlet_size = 4) {
+  # Generate graphlet counts for each node in each ego network (returns an ORCA
+  # format graphlet count matrix for each ego network)
+  ego_graphlet_counts <- purrr::map(ego_networks, count_graphlets_for_graph, 
+                                    max_graphlet_size = max_graphlet_size)
+  
+  # Reshape the list of per node single row graphlet count matrices to a single
+  # ORCA format graphlet count matrix with one row per node
+  ego_graphlet_counts <- t(simplify2array(ego_graphlet_counts))
+  
+  # Return graphlet counts
+  return(ego_graphlet_counts)
 }
 
 #' Get ego-networks for a graph as a named list

@@ -1,0 +1,108 @@
+---
+title: "Quick start guide for Netdis - 2 graphs"
+author: "Martin O'Reilly"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick start for Netdis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Load required libraries
+```{r}
+# Load libraries
+library("netdist")
+library("purrr")
+```
+
+## Set Netdis parameters
+```{r}
+# Maximum graphlet size to calculate counts for.
+# We choose the specific graphlet size for the Netdis metric later.
+max_graphlet_size = 4
+```
+
+## Load graphs
+
+```{r}
+# Set source directory for Virus PPI graph edge files
+source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+
+# Load query graphs
+graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
+                             format = "ncol")
+
+graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
+                             format = "ncol")
+
+# Load reference graph
+ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
+                        package = "netdist")
+ref_graph <- read_simple_graph(ref_path, format = "ncol")
+```
+
+## Generate ego networks
+```{r}
+
+# Set ego network neighbourhood size
+neighbourhood_size = 2
+
+# Get ego networks for both query graphs
+ego_1 <- make_named_ego_graph(graph_1, order = neighbourhood_size)
+ego_2 <- make_named_ego_graph(graph_2, order = neighbourhood_size)
+```
+
+## Count graphlets in ego networks
+```{r}
+graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
+graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
+```
+
+
+## Define function for mapping ego networks to density bins
+```{r}
+
+```
+
+### Generate scaled graphlet counts for reference graph.
+```{r}
+# Generate ego networks for reference graph
+ego_ref <- make_named_ego_graph(ref_graph, order = neighbourhood_size)
+
+# Count graphlets for ego networks in reference graph
+graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_graphlet_size)
+
+# Scale ego-network graphlet counts by dividing by total number of k-tuples in
+  # ego-network (where k is graphlet size)
+ref_ego_graphlet_tuples <- 
+    count_graphlet_tuples_ego(ego_ref, max_graphlet_size = max_graphlet_size)
+
+ref_ego_graphlet_counts <- scale_graphlet_count(graphlet_counts_ref, ref_ego_graphlet_tuples)
+```
+
+## Calculate average count of each graphlet type per ego network in each density bin of reference graph
+```{r}
+
+```
+
+
+## Centre and scale graphlet counts of query graphs based on statistics of reference graph
+```{r}
+#query_ego_centred_graphlet_counts <- CENTRED_COUNTS(query_ego_subraph_counts, REF_COUNTS)
+```
+
+## Sum centred counts across all ego networks
+```{r}
+#query_sum_centred_graphlet_counts <- SUM_SUBGRAPH_COUNTS(query_ego_centred_subgraph_counts)
+```
+
+## Calculate netdis statistics
+```{r}
+#NETDIS_STATISTIC(query_sum_centred_graphlet_counts)
+```
+
+## Display results
+```{r}
+
+```
