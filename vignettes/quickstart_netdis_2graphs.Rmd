@@ -1,10 +1,10 @@
 ---
 title: "Quick start guide for Netdis - 2 graphs"
-author: "Martin O'Reilly"
+author: "Martin O'Reilly, Jack Roberts"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Quick start for Netdis}
+  %\VignetteIndexEntry{Quick start for Netdis - 2 graphs}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
