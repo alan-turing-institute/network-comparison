@@ -68,6 +68,10 @@ netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2,
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
 #' @param neighbourhood_size The number of steps from the source node to include
 #' nodes for each ego-network.
+#' @param min_ego_nodes Only ego networks with at least \code{min_ego_nodes} 
+#' nodes are returned.
+#' @param min_ego_edges Only ego networks with at least \code{min_ego_edges} 
+#' edges are returned.
 #' @param return_ego_networks If \code{TRUE}, return ego-networks alongside 
 #' graphlet counts to enable further processing. 
 #' @return If \code{return_ego_networks = FALSE}, returns an RxC matrix 
@@ -83,20 +87,26 @@ netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2,
 #' }
 #' @export
 count_graphlets_ego_scaled <- function(
-  graph, max_graphlet_size, neighbourhood_size, return_ego_networks = FALSE) {
+  graph, max_graphlet_size, neighbourhood_size, 
+  min_ego_nodes = 3, min_ego_edges = 1, return_ego_networks = FALSE) {
+  
   # Calculate ego-network graphlet counts, also returning the ego networks for
   # use later in function
   ego_data <- 
     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = neighbourhood_size, 
+                        neighbourhood_size = neighbourhood_size,
+                        min_ego_nodes = min_ego_nodes, 
+                        min_ego_edges = min_ego_edges, 
                         return_ego_networks = TRUE)
   ego_graphlet_counts <- ego_data$graphlet_counts
   ego_networks <- ego_data$ego_networks
+  
   # Scale ego-network graphlet counts by dividing by total number of k-tuples in
   # ego-network (where k is graphlet size)
   ego_graphlet_tuples <- 
     count_graphlet_tuples_ego(ego_networks, max_graphlet_size = max_graphlet_size)
   ego_graphlet_counts <- scale_graphlet_count(ego_graphlet_counts, ego_graphlet_tuples)
+  
   # Return either graphlet counts, or graphlet counts and ego_networks
   if(return_ego_networks) {
     return(list(graphlet_counts = ego_graphlet_counts, 
@@ -141,16 +151,13 @@ netdis_centred_graphlet_counts_ego <- function(
     # Get unscaled ego-network graphlet counts
     res <- count_graphlets_ego(
       graph, max_graphlet_size = max_graphlet_size,
-      neighbourhood_size = neighbourhood_size, return_ego_networks = TRUE)
+      neighbourhood_size = neighbourhood_size, 
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      return_ego_networks = TRUE)
+    
     actual_counts = res$graphlet_counts
     ego_networks <- res$ego_networks
-    
-    # Drop ego-networks that don't have the minimum number of nodes or edges
-    drop_index <- purrr::simplify(purrr::map(ego_networks, function(g) { 
-      (igraph::vcount(g) < min_ego_nodes) | (igraph::ecount(g) < min_ego_edges)
-    }))
-    actual_counts <- actual_counts[!drop_index,]
-    ego_networks <- ego_networks[!drop_index]
     
     # Centre these counts by subtracting the expected counts
     if(is.null(expected_ego_count_fn)) {
@@ -200,17 +207,12 @@ netdis_expected_graphlet_counts_ego_fn <- function(
   # graph, also returning the ego networks themselves in order to calculate
   # their densities
   res <- count_graphlets_ego_scaled(
-    graph, max_graphlet_size, neighbourhood_size, return_ego_networks = TRUE)
+    graph, max_graphlet_size, neighbourhood_size, 
+    min_ego_nodes = min_ego_nodes, min_ego_edges = min_ego_edges, 
+    return_ego_networks = TRUE)
+  
   scaled_graphlet_counts = res$graphlet_counts
   ego_networks <- res$ego_networks
-  
-  # Drop ego-networks that don't have the minimum number of nodes or edges
-  # JACK  - why not put this in make_named_ego_graph? i.e. when generating ego networks in first place
-  drop_index <- purrr::simplify(purrr::map(ego_networks, function(g) { 
-    (igraph::vcount(g) < min_ego_nodes) | (igraph::ecount(g) < min_ego_edges)
-  }))
-  scaled_graphlet_counts <- scaled_graphlet_counts[!drop_index,]
-  ego_networks <- ego_networks[!drop_index]
   
   # Get ego-network densities
   densities <- purrr::simplify(purrr::map_dbl(ego_networks, igraph::edge_density))

@@ -77,13 +77,7 @@ read_simple_graphs <- function(source_dir, format = "ncol", pattern = "*",
                       remove_multiple = remove_multiple, 
                       remove_isolates = remove_isolates)
   })
-  # Perform any requested simplifications
-  # JACK: I don't think this is needed here - 
-  # simplifications are already applied in read_simple_graph call above
-  graphs <- purrr::map(
-    graphs, simplify_graph, as_undirected = as_undirected,
-    remove_loops = remove_loops, remove_multiple = remove_multiple,
-    remove_isolates = remove_isolates)
+  
   # Name each graph with the name of the file it was read from (with any
   # extension moved)
   names <- purrr::simplify(purrr::map(strsplit(file_names, "\\."), 
@@ -318,6 +312,10 @@ count_graphlets_for_graph <- function(graph, max_graphlet_size) {
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
 #' @param neighbourhood_size The number of steps from the source node to include
 #' nodes for each ego-network.
+#' @param min_ego_nodes Only ego networks with at least \code{min_ego_nodes} 
+#' nodes are returned.
+#' @param min_ego_edges Only ego networks with at least \code{min_ego_edges} 
+#' edges are returned.
 #' @param return_ego_networks If \code{TRUE}, return ego-networks alongside 
 #' graphlet counts to enable further processing. 
 #' @return If \code{return_ego_networks = FALSE}, returns an RxC matrix 
@@ -332,11 +330,14 @@ count_graphlets_for_graph <- function(graph, max_graphlet_size) {
 #'   \item \code{ego_networks}: The ego-networks of the query graph.
 #' }
 #' @export
-count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size, 
+count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size,
+                                min_ego_nodes = 3, min_ego_edges = 1,
                                 return_ego_networks = FALSE) {
   # Extract ego network for each node in original graph, naming each ego network
   # in the list with the name of the node the ego network is generated for
-  ego_networks <- make_named_ego_graph(graph, order = neighbourhood_size)
+  ego_networks <- make_named_ego_graph(graph, order = neighbourhood_size,
+                                       min_ego_nodes = min_ego_nodes, 
+                                       min_ego_edges = min_ego_edges)
   # Generate graphlet counts for each node in each ego network (returns an ORCA
   # format graphlet count matrix for each ego network)
   ego_graphlet_counts <- purrr::map(ego_networks, count_graphlets_for_graph, 
@@ -389,13 +390,26 @@ ego_to_graphlet_counts <- function(ego_networks, max_graphlet_size = 4) {
 #' @param graph An \code{igraph} object
 #' @param order The number of steps from the source node to include
 #' nodes for each ego-network.
+#' @param min_ego_nodes Only ego networks with at least \code{min_ego_nodes} 
+#' nodes are returned.
+#' @param min_ego_edges Only ego networks with at least \code{min_ego_edges} 
+#' edges are returned.
 #' @param ... Additional parameters to be passed to the underlying 
 #' \code{igraph::make_ego_graph} function used.
 #' @export
-make_named_ego_graph <- function(graph, order, ...) {
+make_named_ego_graph <- function(graph, order, min_ego_nodes=3, 
+                                 min_ego_edges=1, ...) {
+  
   ego_networks <- igraph::make_ego_graph(graph, order, ...)
   names(ego_networks) <- igraph::V(graph)$name
-  ego_networks
+  
+  # Drop ego-networks that don't have the minimum number of nodes or edges
+  drop_index <- purrr::simplify(purrr::map(ego_networks, function(g) { 
+    (igraph::vcount(g) < min_ego_nodes) | (igraph::ecount(g) < min_ego_edges)
+  }))
+  ego_networks <- ego_networks[!drop_index]
+  
+  return(ego_networks)
 }
 
 #' Orbit to graphlet counts
