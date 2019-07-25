@@ -144,12 +144,20 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
   
   # Count graphlets in each ego network of the graph with neighbourhood sizes of 1 and 2
   max_graphlet_size <- 4
+  min_ego_edges <- 0
+  min_ego_nodes <- 0
+  
   actual_counts_order_1 <- 
-    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = 1)
+    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size,
+                               min_ego_edges = min_ego_edges,
+                               min_ego_nodes = min_ego_nodes, 
+                               neighbourhood_size = 1)
   actual_counts_order_2 <- 
-    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = 2)
+    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size,
+                               min_ego_edges = min_ego_edges,
+                               min_ego_nodes = min_ego_nodes,                                
+                               neighbourhood_size = 2)
+  
   graphlet_key <- graphlet_key(max_graphlet_size)
   k <- graphlet_key$node_count
   # Set manually verified counts
@@ -190,8 +198,12 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
   
   # Test that actual counts and returned ego networks match expected
   # 1. Define expected
-  expected_ego_networks_order_1 <- make_named_ego_graph(graph, order = 1)
-  expected_ego_networks_order_2 <- make_named_ego_graph(graph, order = 2)
+  expected_ego_networks_order_1 <- make_named_ego_graph(graph, order = 1,                                
+                                                        min_ego_edges = min_ego_edges,
+                                                        min_ego_nodes = min_ego_nodes)
+  expected_ego_networks_order_2 <- make_named_ego_graph(graph, order = 2,                                
+                                                        min_ego_edges = min_ego_edges,
+                                                        min_ego_nodes = min_ego_nodes)
   expected_counts_with_networks_order_1 <-
     list(graphlet_counts = expected_counts_order_1,
          ego_networks = expected_ego_networks_order_1)
@@ -201,10 +213,15 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals",{
   # 2. Calculate actual
   actual_counts_with_networks_order_1 <- 
     count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = 1, return_ego_networks = TRUE)
+                        neighbourhood_size = 1, 
+                        min_ego_edges = min_ego_edges,
+                        min_ego_nodes = min_ego_nodes,
+                        return_ego_networks = TRUE)
   actual_counts_with_networks_order_2 <- 
-    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = 2, return_ego_networks = TRUE)
+    count_graphlets_ego_scaled(graph, max_graphlet_size = max_graphlet_size,
+                               min_ego_edges = min_ego_edges,
+                               min_ego_nodes = min_ego_nodes,
+                               neighbourhood_size = 2, return_ego_networks = TRUE)
   
   # 3. Compare
   # Comparison is not implemented for igraph objects, so convert all igraphs to 
@@ -469,9 +486,16 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
   graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
   graphlet_sizes <- c(2, 3, 3, 4, 4, 4, 4, 4, 4)
   max_graphlet_size = 4
+  min_ego_edges <- 0
+  min_ego_nodes <- 0
+  
   # Make graph ego networks
-  ego_networks_o1 <- make_named_ego_graph(graph, order = 1)
-  ego_networks_o2 <- make_named_ego_graph(graph, order = 2)
+  ego_networks_o1 <- make_named_ego_graph(graph, order = 1,
+                                          min_ego_edges = min_ego_edges,
+                                          min_ego_nodes = min_ego_nodes)
+  ego_networks_o2 <- make_named_ego_graph(graph, order = 2,
+                                          min_ego_edges = min_ego_edges,
+                                          min_ego_nodes = min_ego_nodes)
   # Set manually-verified node counts and densities
   # 1. Ego-networks of order 1
   num_nodes_o1 <- c(5, 5, 2, 4, 2, 4, 5, 5, 4, 4)
@@ -587,8 +611,14 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
   names(graphlet_sizes) <- graphlet_labels
   max_graphlet_size = 4
   # Make graph ego networks
-  ego_networks_o1 <- make_named_ego_graph(graph, order = 1)
-  ego_networks_o2 <- make_named_ego_graph(graph, order = 2)
+  min_ego_nodes <- 0
+  min_edgo_edges <- 0
+  ego_networks_o1 <- make_named_ego_graph(graph, order = 1,
+                                          min_ego_nodes = min_ego_nodes, 
+                                          min_ego_edges = min_edgo_edges)
+  ego_networks_o2 <- make_named_ego_graph(graph, order = 2,
+                                          min_ego_nodes = min_ego_nodes, 
+                                          min_ego_edges = min_edgo_edges)
   # Set manually-verified node counts and densities
   # 1. Ego-networks of order 1
   num_nodes_o1 <- c(5, 5, 2, 4, 2, 4, 5, 5, 4, 4)
@@ -662,8 +692,8 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
     c( 9,  8, 4,  4, 0, 1,  6, 0, 1) / zeros_to_ones(choose(6 , k)),
     c( 9,  8, 4,  4, 0, 1,  6, 0, 1) / zeros_to_ones(choose(6 , k))
   )
-  min_ego_nodes = 3
-  min_ego_edges = 1
+  min_ego_nodes <- 3
+  min_ego_edges <- 1
   # Drop rows for nodes with ewer than minumum required nodes and edges in ego 
   # network
   scaled_reference_counts_o1 <-
@@ -731,7 +761,8 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
                  neighbourhood_size = 1,
                  density_breaks = breaks_o1, 
                  density_binned_reference_counts_o1,
-                 min_ego_nodes = min_ego_nodes, min_ego_edges = min_ego_edges
+                 min_ego_nodes = min_ego_nodes, 
+                 min_ego_edges = min_ego_edges
                ))
   expect_equal(expected_expected_graphlet_counts_ego_o2, 
                netdis_expected_graphlet_counts_ego(
@@ -739,18 +770,28 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
                  neighbourhood_size = 2,
                  density_breaks = breaks_o2, 
                  density_binned_reference_counts_o2,
-                 min_ego_nodes = min_ego_nodes, min_ego_edges = min_ego_edges
+                 min_ego_nodes = min_ego_nodes, 
+                 min_ego_edges = min_ego_edges
                ))
   
   # Generate partially applied functions using function under test
   actual_expected_graphlet_counts_ego_fn_o1 <- 
     netdis_expected_graphlet_counts_ego_fn(
-      graph, max_graphlet_size = max_graphlet_size, neighbourhood_size = 1, 
-      min_bin_count = min_bin_count, num_bins = num_bins)
+      graph, max_graphlet_size = max_graphlet_size, 
+      neighbourhood_size = 1, 
+      min_bin_count = min_bin_count, 
+      num_bins = num_bins,
+      min_ego_nodes = min_ego_nodes, 
+      min_ego_edges = min_ego_edges
+      )
   actual_expected_graphlet_counts_ego_fn_o2 <- 
     netdis_expected_graphlet_counts_ego_fn(
-      graph, max_graphlet_size = max_graphlet_size, neighbourhood_size = 2, 
-      min_bin_count = min_bin_count, num_bins = num_bins)
+      graph, max_graphlet_size = max_graphlet_size, 
+      neighbourhood_size = 2, 
+      min_bin_count = min_bin_count, 
+      num_bins = num_bins,
+      min_ego_nodes = min_ego_nodes, 
+      min_ego_edges = min_ego_edges)
   # Generate actual expected accounts by applying generated functions to test
   # graph
   actual_expected_graphlet_counts_ego_o1 <- 
