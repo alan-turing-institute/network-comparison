@@ -131,14 +131,14 @@ density_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
 
   # Map over query graph ego-networks, using reference graph statistics to 
   # calculate expected graphlet counts for each ego-network.
-  expected_graphlet_counts <- 
-    purrr::map(ego_networks, netdis_expected_graphlet_counts,
-               max_graphlet_size = max_graphlet_size,
-               density_breaks = density_breaks,
-               density_binned_reference_counts = density_binned_reference_counts)
-  names(expected_graphlet_counts) <- names(ego_networks)
-  # Simplify list to array
-  t(simplify2array(expected_graphlet_counts))
+#  expected_graphlet_counts <- 
+#    purrr::map(ego_networks, netdis_expected_graphlet_counts,
+#               max_graphlet_size = max_graphlet_size,
+#               density_breaks = density_breaks,
+#               density_binned_reference_counts = density_binned_reference_counts)
+#  names(expected_graphlet_counts) <- names(ego_networks)
+#  # Simplify list to array
+#  t(simplify2array(expected_graphlet_counts))
 ```
 
 ## Centre and scale graphlet counts of query graphs based on statistics of reference graph
