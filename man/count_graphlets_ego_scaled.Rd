@@ -5,7 +5,7 @@
 \title{Scaled graphlet count for ego-networks}
 \usage{
 count_graphlets_ego_scaled(graph, max_graphlet_size, neighbourhood_size,
-  return_ego_networks = FALSE)
+  min_ego_nodes = 3, min_ego_edges = 1, return_ego_networks = FALSE)
 }
 \arguments{
 \item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
@@ -15,6 +15,12 @@ Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
 
 \item{neighbourhood_size}{The number of steps from the source node to include
 nodes for each ego-network.}
+
+\item{min_ego_nodes}{Only ego networks with at least \code{min_ego_nodes} 
+nodes are returned.}
+
+\item{min_ego_edges}{Only ego networks with at least \code{min_ego_edges} 
+edges are returned.}
 
 \item{return_ego_networks}{If \code{TRUE}, return ego-networks alongside 
 graphlet counts to enable further processing.}

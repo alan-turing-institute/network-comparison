@@ -956,6 +956,9 @@ test_that("make_named_ego_graph labels each ego-network with the correct node na
   # Test ego-networks of order 1.
   # We compare edgelists as igraphs do not implement comparison
   order <- 1
+  min_ego_nodes <- 0
+  min_ego_edges <- 0
+  
   expected_ego_elists_o1 <- list(
     n1 =  dplyr::arrange(data.frame(expected_ego_elist_n1_o1), X1, X2),
     n2 =  dplyr::arrange(data.frame(expected_ego_elist_n2_o1), X1, X2),
@@ -970,9 +973,13 @@ test_that("make_named_ego_graph labels each ego-network with the correct node na
   )
   # Generate actual ego-networks and convert to edge lists for comparison
   actual_ego_elists_o1 <- 
-    purrr::map(make_named_ego_graph(graph, order), function(g) {
-      dplyr::arrange(data.frame(igraph::as_edgelist(g)), X1, X2)
-      })
+    purrr::map(make_named_ego_graph(graph, order, 
+                                    min_ego_nodes = min_ego_nodes, 
+                                    min_ego_edges = min_ego_edges), 
+               function(g) {
+                dplyr::arrange(data.frame(igraph::as_edgelist(g)), X1, X2)
+               }
+              )
   expect_equal(actual_ego_elists_o1, expected_ego_elists_o1)
 })
 
@@ -1074,12 +1081,19 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
   colnames(expected_counts_order_2) <- graphlet_labels
   
   # Count graphlets in each ego network of the graph with only counts requested
+  min_ego_nodes <- 0
+  min_ego_edges <- 0
+  
   actual_counts_order_1 <- 
-    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = 1)
+    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size,
+                        neighbourhood_size = 1,
+                        min_ego_nodes = min_ego_nodes,
+                        min_ego_edges = min_ego_edges)
   actual_counts_order_2 <- 
     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = 2)
+                        neighbourhood_size = 2,
+                        min_ego_nodes = min_ego_nodes,
+                        min_ego_edges = min_ego_edges)
 
   # Test that actual counts match expected with only counts requested (default)
   expect_equal(actual_counts_order_1, expected_counts_order_1)
@@ -1087,8 +1101,12 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
   
   # Test that actual and returned ego networks match expected
   # 1. Define expected
-  expected_ego_networks_order_1 <- make_named_ego_graph(graph, order = 1)
-  expected_ego_networks_order_2 <- make_named_ego_graph(graph, order = 2)
+  expected_ego_networks_order_1 <- make_named_ego_graph(graph, order = 1, 
+                                                        min_ego_nodes = min_ego_nodes,
+                                                        min_ego_edges = min_ego_edges)
+  expected_ego_networks_order_2 <- make_named_ego_graph(graph, order = 2,
+                                                        min_ego_nodes = min_ego_nodes,
+                                                        min_ego_edges = min_ego_edges)
   expected_counts_with_networks_order_1 <-
     list(graphlet_counts = expected_counts_order_1,
          ego_networks = expected_ego_networks_order_1)
@@ -1097,11 +1115,19 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
          ego_networks = expected_ego_networks_order_2)
   # 2. Calculate actual
   actual_counts_with_networks_order_1 <- 
-    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
-                               neighbourhood_size = 1, return_ego_networks = TRUE)
+    count_graphlets_ego(graph, 
+                        max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 1, 
+                        min_ego_nodes = min_ego_nodes,
+                        min_ego_edges = min_ego_edges,
+                        return_ego_networks = TRUE)
   actual_counts_with_networks_order_2 <- 
-    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
-                               neighbourhood_size = 2, return_ego_networks = TRUE)
+    count_graphlets_ego(graph, 
+                        max_graphlet_size = max_graphlet_size, 
+                        neighbourhood_size = 2, 
+                        min_ego_nodes = min_ego_nodes,
+                        min_ego_edges = min_ego_edges,
+                        return_ego_networks = TRUE)
   # Test that actual counts match expected with ego-networks requested
   expect_equal(actual_counts_with_networks_order_1$graphlet_counts, expected_counts_order_1)
   expect_equal(actual_counts_with_networks_order_2$graphlet_counts, expected_counts_order_2)

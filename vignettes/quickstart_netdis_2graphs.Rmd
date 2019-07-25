@@ -28,6 +28,10 @@ neighbourhood_size = 2
 # Minimum size of ego networks to consider
 min_ego_nodes <- 3
 min_ego_edges <- 1
+
+# Ego network density binning parameters
+min_bin_count <- 5
+num_bins <- 100
 ```
 
 ## Load graphs
@@ -51,7 +55,7 @@ ref_graph <- read_simple_graph(ref_path, format = "ncol")
 
 ## Generate ego networks
 ```{r}
-# Get ego networks for both query graphs
+# Get ego networks for query graphs and reference graph
 ego_1 <- make_named_ego_graph(graph_1, 
                               order = neighbourhood_size, 
                               min_ego_nodes = min_ego_nodes, 
@@ -61,24 +65,23 @@ ego_2 <- make_named_ego_graph(graph_2,
                               order = neighbourhood_size, 
                               min_ego_nodes = min_ego_nodes, 
                               min_ego_edges = min_ego_edges)
-```
 
-## Count graphlets in ego networks
-```{r}
-graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
-graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
-```
-
-### Generate scaled graphlet counts for reference graph.
-```{r}
-# Generate ego networks for reference graph
 ego_ref <- make_named_ego_graph(ref_graph, 
                                 order = neighbourhood_size, 
                                 min_ego_nodes = min_ego_nodes, 
                                 min_ego_edges = min_ego_edges)
+```
 
-# Count graphlets for ego networks in reference graph
+## Count graphlets in ego networks
+```{r}
+# Count graphlets for ego networks in query and reference graphs
+graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
+graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
 graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_graphlet_size)
+```
+
+### Generate scaled graphlet counts for reference graph.
+```{r}
 
 # Scale ego-network graphlet counts by dividing by total number of k-tuples in
   # ego-network (where k is graphlet size)
@@ -91,10 +94,6 @@ scaled_graphlet_counts_ref <- scale_graphlet_count(graphlet_counts_ref, ego_grap
 ## Define function for mapping ego networks to density bins
 ```{r}
 
-min_bin_count <- 5
-num_bins <- 100
-
-
 # Get ego-network densities
 densities_ref <- purrr::simplify(purrr::map_dbl(ego_ref, igraph::edge_density))
 
@@ -106,14 +105,41 @@ binned_densities <- binned_densities_adaptive(
 density_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
   scaled_graphlet_counts_ref, binned_densities$interval_indexes)
   
-
 ```
 
-## Calculate average count of each graphlet type per ego network in each density bin of reference graph
+## Function to calculate expected graphlet counts for a query network
+
 ```{r}
 
-```
+# Ew : density_binned_graphlet_counts
+# bins: binned_densities$breaks
 
+# fn (ego, Ew, bins)
+# make partial with Ew, bins given
+
+
+
+#netdis_expected_graphlet_counts_ego(
+#  graph, max_graphlet_size, neighbourhood_size,
+#  density_breaks, density_binned_reference_counts,
+#  min_ego_nodes = 3, min_ego_edges = 1)
+
+  # Generate ego-networks for query graph
+  # no - pass in pre-calculated ego networks
+  # remove params graph, neighbourhood_size, min_ego_nodes, min_ego_edges
+  # add param ego_networks
+
+  # Map over query graph ego-networks, using reference graph statistics to 
+  # calculate expected graphlet counts for each ego-network.
+  expected_graphlet_counts <- 
+    purrr::map(ego_networks, netdis_expected_graphlet_counts,
+               max_graphlet_size = max_graphlet_size,
+               density_breaks = density_breaks,
+               density_binned_reference_counts = density_binned_reference_counts)
+  names(expected_graphlet_counts) <- names(ego_networks)
+  # Simplify list to array
+  t(simplify2array(expected_graphlet_counts))
+```
 
 ## Centre and scale graphlet counts of query graphs based on statistics of reference graph
 ```{r}
