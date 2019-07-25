@@ -69,5 +69,5 @@ ref_ego_graphlet_counts <- purrr::map(ref_ego_networks, count_graphlets_for_grap
 ref_ego_graphlet_tuples <- 
     count_graphlet_tuples_ego(ref_ego_networks, max_graphlet_size = max_graphlet_size)
 
-ref_ego_graphlet_counts <- scale_graphlet_count(ref_ego_graphlet_counts, ref_ego_graphlet_tuples)
+#ref_ego_graphlet_counts <- scale_graphlet_count(ref_ego_graphlet_counts, ref_ego_graphlet_tuples)
 ```
