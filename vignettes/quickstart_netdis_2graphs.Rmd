@@ -91,59 +91,47 @@ ego_graphlet_tuples_ref <-
 scaled_graphlet_counts_ref <- scale_graphlet_count(graphlet_counts_ref, ego_graphlet_tuples_ref)
 ```
 
-## Define function for mapping ego networks to density bins
+## Bin reference ego networks by density and calculate mean graphlet counts in each bin
 ```{r}
 
 # Get ego-network densities
 densities_ref <- purrr::simplify(purrr::map_dbl(ego_ref, igraph::edge_density))
 
-# Adaptively bin ego-network densities
+# Adaptively bin ref ego-network densities
 binned_densities <- binned_densities_adaptive(
   densities_ref, min_counts_per_interval = min_bin_count, num_intervals = num_bins)
 
-# Average graphlet counts across density bins
+# Average ref graphlet counts across density bins
 density_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
   scaled_graphlet_counts_ref, binned_densities$interval_indexes)
   
 ```
 
-## Function to calculate expected graphlet counts for a query network
+## Calculate expected graphlet counts for query networks
 
 ```{r}
 
-# Ew : density_binned_graphlet_counts
-# bins: binned_densities$breaks
+exp_graphlet_counts_1 <- purrr::map(ego_1, netdis_expected_graphlet_counts,
+                                    max_graphlet_size = max_graphlet_size,
+                                    density_breaks = binned_densities$breaks,
+                                    density_binned_reference_counts = density_binned_graphlet_counts)
 
-# fn (ego, Ew, bins)
-# make partial with Ew, bins given
+exp_graphlet_counts_1 <- t(simplify2array(exp_graphlet_counts_1))
 
+exp_graphlet_counts_2 <- purrr::map(ego_2, netdis_expected_graphlet_counts,
+                                    max_graphlet_size = max_graphlet_size,
+                                    density_breaks = binned_densities$breaks,
+                                    density_binned_reference_counts = density_binned_graphlet_counts)
 
+exp_graphlet_counts_2 <- t(simplify2array(exp_graphlet_counts_2))
 
-#netdis_expected_graphlet_counts_ego(
-#  graph, max_graphlet_size, neighbourhood_size,
-#  density_breaks, density_binned_reference_counts,
-#  min_ego_nodes = 3, min_ego_edges = 1)
-
-  # Generate ego-networks for query graph
-  # no - pass in pre-calculated ego networks
-  # remove params graph, neighbourhood_size, min_ego_nodes, min_ego_edges
-  # add param ego_networks
-
-  # Map over query graph ego-networks, using reference graph statistics to 
-  # calculate expected graphlet counts for each ego-network.
-#  expected_graphlet_counts <- 
-#    purrr::map(ego_networks, netdis_expected_graphlet_counts,
-#               max_graphlet_size = max_graphlet_size,
-#               density_breaks = density_breaks,
-#               density_binned_reference_counts = density_binned_reference_counts)
-#  names(expected_graphlet_counts) <- names(ego_networks)
-#  # Simplify list to array
-#  t(simplify2array(expected_graphlet_counts))
 ```
 
-## Centre and scale graphlet counts of query graphs based on statistics of reference graph
+## Centre graphlet counts of query graphs based on statistics of reference graph
 ```{r}
-#query_ego_centred_graphlet_counts <- CENTRED_COUNTS(query_ego_subraph_counts, REF_COUNTS)
+centred_graphlet_counts_1 <- graphlet_counts_1 - exp_graphlet_counts_1
+
+centred_graphlet_counts_2 <- graphlet_counts_2 - exp_graphlet_counts_2
 ```
 
 ## Sum centred counts across all ego networks
