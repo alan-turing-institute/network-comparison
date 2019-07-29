@@ -52,7 +52,7 @@ min_bin_count <- 5
 num_bins <- 100
 ```
 
-## Generate ego networks for query graphs
+## Generate ego networks
 ```{r}
 # Get ego networks for query graphs and reference graph
 ego_1 <- make_named_ego_graph(graph_1, 
@@ -71,7 +71,7 @@ ego_ref <- make_named_ego_graph(ref_graph,
                                 min_ego_edges = min_ego_edges)
 ```
 
-## Count graphlets in ego networks for query graphs
+## Count graphlets in ego networks
 ```{r}
 # Count graphlets for ego networks in query and reference graphs
 graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
@@ -136,8 +136,9 @@ sum_graphlet_counts_2 <- colSums(centred_graphlet_counts_2)
 ## Calculate netdis statistics
 ```{r}
 
-netdis_uptok(sum_graphlet_counts_1, 
-             sum_graphlet_counts_2, 
-             max_graphlet_size)
+netdis_result <- netdis_uptok(sum_graphlet_counts_1, 
+                              sum_graphlet_counts_2, 
+                              max_graphlet_size)
 
+print(netdis_result)
 ```
