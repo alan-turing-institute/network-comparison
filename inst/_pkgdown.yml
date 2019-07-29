@@ -1,0 +1,21 @@
+reference:
+- title: netdis
+  desc:  netdis functions
+  contents:
+  - make_named_ego_graph
+  - ego_to_graphlet_counts
+  - scale_graphlet_counts_ego
+  - ego_network_density
+  - mean_density_binned_graphlet_counts
+  - netdis_expected_graphlet_counts_per_ego
+  - netdis_uptok
+- title: emd
+  desc: emd functions
+  contents:
+  - gdd_for_all_graphs
+  - net_emds_for_all_graphs
+- title: utility functions
+  desc: used by whole package
+  contents:
+    - read_simple_graph
+    - cross_comp_to_matrix

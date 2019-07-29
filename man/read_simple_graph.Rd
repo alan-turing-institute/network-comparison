@@ -4,8 +4,9 @@
 \alias{read_simple_graph}
 \title{Read a graph from file, simplifying as requested}
 \usage{
-read_simple_graph(file, format, as_undirected = TRUE, remove_loops = TRUE,
-  remove_multiple = TRUE, remove_isolates = TRUE)
+read_simple_graph(file, format, as_undirected = TRUE,
+  remove_loops = TRUE, remove_multiple = TRUE,
+  remove_isolates = TRUE)
 }
 \arguments{
 \item{file}{Path to file containing graph data}

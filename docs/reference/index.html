@@ -83,13 +83,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/dendrogram_example_net_dis.html">Dendrogram example for Netdis</a>
+      <a href="../articles/Quick_start_net_dis.html">Quick start guide for Netdis</a>
     </li>
     <li>
-      <a href="../articles/dendrogram_example_net_emd.html">Dendrogram example for NetEMD</a>
-    </li>
-    <li>
-      <a href="../articles/quickstart_netdis.html">Quick start guide for Netdis</a>
+      <a href="../articles/Quick_start_net_emd.html">Quick start guide for NetEMD</a>
     </li>
   </ul>
 </li>
@@ -123,192 +120,31 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-netdis" class="hasAnchor"><a href="#section-netdis" class="anchor"></a>netdis</h2>
+          <p class="section-desc"><p>netdis functions</p></p>
         </th>
       </tr>
       <tr>
         
         <td>
-          <p><code><a href="adaptive_breaks.html">adaptive_breaks()</a></code> </p>
+          <p><code><a href="make_named_ego_graph.html">make_named_ego_graph()</a></code> </p>
         </td>
-        <td><p>Generate a set of breaks that attempt to be evenly spaced while ensuring each
-interval has the specified minimum count</p></td>
+        <td><p>Get ego-networks for a graph as a named list</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="area_between_dhist_ecmfs.html">area_between_dhist_ecmfs()</a></code> </p>
-        </td>
-        <td><p>Calculate area between two discrete histogram empirical cumulative 
-mass functions (ECMFs)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="area_between_offset_ecmfs.html">area_between_offset_ecmfs()</a></code> </p>
-        </td>
-        <td><p>Area between two offset Empirical Cumulative Mass Functions (ECMFs)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as_smoothed_dhist.html">as_smoothed_dhist()</a></code> </p>
-        </td>
-        <td><p>Set dhist smoothing</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as_unsmoothed_dhist.html">as_unsmoothed_dhist()</a></code> </p>
-        </td>
-        <td><p>Remove dhist smoothing</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="binned_densities_adaptive.html">binned_densities_adaptive()</a></code> </p>
+          <p><code><a href="mean_density_binned_graphlet_counts.html">mean_density_binned_graphlet_counts()</a></code> </p>
         </td>
         <td><p>INTERNAL FUNCTION - Do not call directly</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cost_matrix.html">cost_matrix()</a></code> </p>
-        </td>
-        <td><p>Inter-bin cost matrix from bin centres</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="count_graphlets_ego.html">count_graphlets_ego()</a></code> </p>
-        </td>
-        <td><p>Ego-network graphlet counts</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="count_graphlets_ego_scaled.html">count_graphlets_ego_scaled()</a></code> </p>
-        </td>
-        <td><p>Scaled graphlet count for ego-networks</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="count_graphlets_for_graph.html">count_graphlets_for_graph()</a></code> </p>
-        </td>
-        <td><p>Count total number of graphlets in a graph</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="count_graphlets_per_node.html">count_graphlets_per_node()</a></code> </p>
-        </td>
-        <td><p>Count graphlets for each node in a graph</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="count_orbits_per_node.html">count_orbits_per_node()</a></code> </p>
-        </td>
-        <td><p>Count graphlet orbits for each node in a graph</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="counts_from_observations.html">counts_from_observations()</a></code> </p>
-        </td>
-        <td><p>Count number of occurences</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cross_comp_to_matrix.html">cross_comp_to_matrix()</a></code> </p>
-        </td>
-        <td><p>Convert a pair-wise cross-comparison into a matrix format</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cross_comparison_spec.html">cross_comparison_spec()</a></code> </p>
-        </td>
-        <td><p>Generate a cross-comparison specification</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dhist.html">dhist()</a></code> </p>
-        </td>
-        <td><p>Discrete histogram constructor</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dhist_ecmf.html">dhist_ecmf()</a></code> </p>
-        </td>
-        <td><p>Generate interpolating empirical cumulative mass function (ECMF) for 
-a discrete histogram</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dhist_from_obs.html">dhist_from_obs()</a></code> </p>
-        </td>
-        <td><p>Discrete histogram from observations</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dhist_from_obs_slow.html">dhist_from_obs_slow()</a></code> </p>
-        </td>
-        <td><p>Discrete histogram from observations (Pure R slow version)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dhist_mean_location.html">dhist_mean_location()</a></code> </p>
-        </td>
-        <td><p>Calculate mean location for a discrete histogram</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dhist_std.html">dhist_std()</a></code> </p>
-        </td>
-        <td><p>Calculate standard deviation of a discrete histogram</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dhist_variance.html">dhist_variance()</a></code> </p>
-        </td>
-        <td><p>Calculate variance of a discrete histogram</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ecmf_knots.html">ecmf_knots()</a></code> </p>
-        </td>
-        <td><p>Get "knots" for discrete histogram empirical cumulative mass function
-(ECMF). The "knots" are the x-values at which the y-value of the ECDM changes
-gradient (i.e. the x-values between which the ECMF does its constant or 
-linear interpolates)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="emd.html">emd()</a></code> </p>
-        </td>
-        <td><p>Earth Mover's Distance (EMD)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="emd_cs.html">emd_cs()</a></code> </p>
-        </td>
-        <td><p>Earth Mover's Distance (EMD) using the difference of cumulative sums method</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="emd_fast_no_smoothing.html">emd_fast_no_smoothing()</a></code> </p>
-        </td>
-        <td><p>Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
-Density Functions (ECDFs)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="emd_lp.html">emd_lp()</a></code> </p>
-        </td>
-        <td><p>Earth Mover's Distance (EMD) using linear programming (LP)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="equals-.dhist.html">`==`(<i>&lt;dhist&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Compare dhists</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gdd.html">gdd()</a></code> </p>
-        </td>
-        <td><p>Graphlet-based degree distributions (GDDs)</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-emd" class="hasAnchor"><a href="#section-emd" class="anchor"></a>emd</h2>
+          <p class="section-desc"><p>emd functions</p></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="gdd_for_all_graphs.html">gdd_for_all_graphs()</a></code> </p>
@@ -318,179 +154,19 @@ Distributions (GDDs)</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="graph_features_to_histograms.html">graph_features_to_histograms()</a></code> </p>
-        </td>
-        <td><p>Convert a matrix of node level features to a discrete histogram for each feature</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="graph_to_indexed_edges.html">graph_to_indexed_edges()</a></code> </p>
-        </td>
-        <td><p>Integer index edge list from igraph</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="graphlet_ids_for_size.html">graphlet_ids_for_size()</a></code> </p>
-        </td>
-        <td><p>Graphlet IDs for size</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="graphlet_key.html">graphlet_key()</a></code> </p>
-        </td>
-        <td><p>Graphlet key</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="harmonise_dhist_locations.html">harmonise_dhist_locations()</a></code> </p>
-        </td>
-        <td><p>Harmonise a pair of discrete histograms to share a common set of locations</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="indexed_edges_to_graph.html">indexed_edges_to_graph()</a></code> </p>
-        </td>
-        <td><p>Graph from integer index edge list</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="interval_index.html">interval_index()</a></code> </p>
-        </td>
-        <td><p>Bin values into intervals based on the provided breaks</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="is_dhist.html">is_dhist()</a></code> </p>
-        </td>
-        <td><p>Check if an object is a <code>dhist</code> discrete histogram</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="is_numeric_vector_1d.html">is_numeric_vector_1d()</a></code> </p>
-        </td>
-        <td><p>Check if 1D numeric vector</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="make_named_ego_graph.html">make_named_ego_graph()</a></code> </p>
-        </td>
-        <td><p>Get ego-networks for a graph as a named list</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="mean_centre_dhist.html">mean_centre_dhist()</a></code> </p>
-        </td>
-        <td><p>Centre a discrete histogram around its mean location</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="mean_density_binned_graphlet_counts.html">mean_density_binned_graphlet_counts()</a></code> </p>
-        </td>
-        <td><p>INTERNAL FUNCTION - Do not call directly</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="min_emd.html">min_emd()</a></code> </p>
-        </td>
-        <td><p>Minimum Earth Mover's Distance (EMD)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="min_emd_exhaustive.html">min_emd_exhaustive()</a></code> </p>
-        </td>
-        <td><p>Minimum Earth Mover's Distance (EMD) using exhaustive search</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="min_emd_optimise.html">min_emd_optimise()</a></code> </p>
-        </td>
-        <td><p>Minimum Earth Mover's Distance (EMD) using optimiser search</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="min_emd_optimise_fast.html">min_emd_optimise_fast()</a></code> </p>
-        </td>
-        <td><p>Minimum Earth Mover's Distance (EMD) using fast optimiser search</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="net_emd.html">net_emd()</a></code> </p>
-        </td>
-        <td><p>NetEMD Network Earth Mover's Distance</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="net_emds_for_all_graphs.html">net_emds_for_all_graphs()</a></code> </p>
         </td>
         <td><p>NetEMDs between all graph pairs using provided Graphlet-based Degree 
 Distributions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="netdis.html">netdis()</a></code> </p>
-        </td>
-        <td><p>Netdis</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="netdis_centred_graphlet_counts.html">netdis_centred_graphlet_counts()</a></code> </p>
-        </td>
-        <td><p>Generate Netdis centred graphlets counts by subtracting expected counts</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="netdis_centred_graphlet_counts_ego.html">netdis_centred_graphlet_counts_ego()</a></code> </p>
-        </td>
-        <td><p>TODO: Remove @export prior to publishing</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="netdis_expected_graphlet_counts.html">netdis_expected_graphlet_counts()</a></code> </p>
-        </td>
-        <td><p>INTERNAL FUNCTION - Do not call directly</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="netdis_expected_graphlet_counts_ego.html">netdis_expected_graphlet_counts_ego()</a></code> </p>
-        </td>
-        <td><p>INTERNAL FUNCTION - Do not call directly</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="netdis_expected_graphlet_counts_ego_fn.html">netdis_expected_graphlet_counts_ego_fn()</a></code> </p>
-        </td>
-        <td><p>Generate Netdis expected graphlet count function</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="netdis_for_all_graphs.html">netdis_for_all_graphs()</a></code> </p>
-        </td>
-        <td><p>Netdis between all graph pairs using provided Centred Graphlet Counts</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="normalise_dhist_mass.html">normalise_dhist_mass()</a></code> </p>
-        </td>
-        <td><p>Normalise a discrete histogram to unit mass</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="normalise_dhist_variance.html">normalise_dhist_variance()</a></code> </p>
-        </td>
-        <td><p>Normalise a discrete histogram to unit variance</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="orbit_key.html">orbit_key()</a></code> </p>
-        </td>
-        <td><p>Orbit key</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="orbit_to_graphlet_counts.html">orbit_to_graphlet_counts()</a></code> </p>
-        </td>
-        <td><p>Orbit to graphlet counts</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-utility-functions" class="hasAnchor"><a href="#section-utility-functions" class="anchor"></a>utility functions</h2>
+          <p class="section-desc"><p>used by whole package</p></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="read_simple_graph.html">read_simple_graph()</a></code> </p>
@@ -499,39 +175,9 @@ Distributions</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="read_simple_graphs.html">read_simple_graphs()</a></code> </p>
+          <p><code><a href="cross_comp_to_matrix.html">cross_comp_to_matrix()</a></code> </p>
         </td>
-        <td><p>Read all graphs in a directory, simplifying as requested</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="shift_dhist.html">shift_dhist()</a></code> </p>
-        </td>
-        <td><p>Shift discrete histogram</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="shift_to_next_alignment.html">shift_to_next_alignment()</a></code> </p>
-        </td>
-        <td><p>Minimum shift to next alignment of two location vectors</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="simplify_graph.html">simplify_graph()</a></code> </p>
-        </td>
-        <td><p>Simplify an igraph</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="sort_dhist.html">sort_dhist()</a></code> </p>
-        </td>
-        <td><p>Sort discrete histogram</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="virusppi.html">virusppi</a></code> </p>
-        </td>
-        <td><p>Protein-protein interaction (PPI) networks for 5 microorganisms</p></td>
+        <td><p>Convert a pair-wise cross-comparison into a matrix format</p></td>
       </tr>
     </tbody>
     </table>
@@ -540,7 +186,9 @@ Distributions</p></td>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-netdis">netdis</a></li>
+      <li><a href="#section-emd">emd</a></li>
+      <li><a href="#section-utility-functions">utility functions</a></li>
     </ul>
   </div>
 </div>
