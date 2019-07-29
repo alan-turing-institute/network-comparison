@@ -56,6 +56,38 @@ netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2,
   0.5 * (1 - netds2)
 } 
 
+#' Netdis - graphlets up to max_graphlet_size
+#' 
+#' Calculate Netdis statistic between two graphs from their Centred Graphlet
+#' Counts (generated using \code{netdis_centred_graphlet_counts}).
+#' @param centred_graphlet_counts1 Centred Graphlet Counts for graph 1
+#' @param centred_graphlet_counts2 Centred Graphlet Counts for graph 2
+#' @param max_graphlet_size The size of graphlets to use for the Netdis calculation
+#' The size of a graphlet is the number of nodes it contains. Netdis is calculated
+#' for all graphlets from size 3 to size max_graphlet_size.
+#' @return Netdis statistic calculated using centred counts for graphlets of 
+#' the specified size
+#' @export
+netdis_uptok <- function(centred_graphlet_counts1, centred_graphlet_counts2, 
+                         max_graphlet_size)
+{
+  if ((max_graphlet_size > 5) | (max_graphlet_size < 3)) {
+    stop("max_graphlet_size must be 3, 4 or 5.")
+  }
+
+  netdis_statistics <- purrr::map(3:max_graphlet_size, 
+                                  netdis, 
+                                  centred_graphlet_counts1=sum_graphlet_counts_1, 
+                                  centred_graphlet_counts2=sum_graphlet_counts_2)
+  
+  netdis_statistics <- simplify2array(netdis_statistics)
+  
+  names(netdis_statistics) <- sapply("netdis", paste, 3:max_graphlet_size, sep="")
+  
+  return(netdis_statistics)
+} 
+
+
 #' Scaled graphlet count for ego-networks
 #' 
 #' Calculates graphlet counts for the n-step ego-network of each node in a graph, 
@@ -270,6 +302,35 @@ netdis_expected_graphlet_counts_ego <- function(
 
 #' INTERNAL FUNCTION - Do not call directly
 #' 
+#' JACK To follow through logic of paper steps, wanted to pass
+#' ego networks to the function, not the input query graph
+#' (as in netdis_expected_graphlet_counts_ego_fn above).
+#' 
+#' Used by \code{netdis_expected_graphlet_counts_ego_fn} to 
+#' generate a function for calculating expected ego-network graphlet counts
+#' from the statistics of a provided reference graph.
+#' Temporarily accessible during development. 
+#' TODO: Remove @export prior to publishing
+#' @export
+netdis_expected_graphlet_counts_per_ego <- function(
+  ego_networks, max_graphlet_size,
+  density_breaks, density_binned_reference_counts) {
+
+  # Map over query graph ego-networks, using reference graph statistics to 
+  # calculate expected graphlet counts for each ego-network.
+  expected_graphlet_counts <- 
+    purrr::map(ego_networks, netdis_expected_graphlet_counts,
+               max_graphlet_size = max_graphlet_size,
+               density_breaks = density_breaks,
+               density_binned_reference_counts = density_binned_reference_counts)
+  names(expected_graphlet_counts) <- names(ego_networks)
+  
+  # Simplify list to array
+  t(simplify2array(expected_graphlet_counts))
+}
+
+#' INTERNAL FUNCTION - Do not call directly
+#' 
 #' Used by \code{netdis_expected_graphlet_counts_ego} to 
 #' calculate expected graphlet counts for a query graph ego-network from the 
 #' statistics of a provided reference graph.
@@ -331,6 +392,37 @@ count_graphlet_tuples_ego <- function(ego_networks, max_graphlet_size) {
              max_graphlet_size = max_graphlet_size)))
   graphlet_tuple_counts
 }
+
+#' @export
+ego_network_density <- function(ego_networks) {
+  densities <- purrr::simplify(purrr::map_dbl(ego_networks, 
+                                              igraph::edge_density))
+  
+  return(densities)
+}
+
+
+
+#' Scale graphlet counts for an ego network by the n choose k possible 
+#' choices of k nodes in that ego-network, where n is the number of nodes
+#' in the ego network and k is the number of nodes in the graphlet. 
+#' 
+#' @param ego_networks Pre-generated ego networks for an input graph.
+#' @param graphlet_counts Pre-calculated graphlet counts for each ego_network.
+#' @param max_graphlet_size Determines the maximum size of graphlets included
+#' in graphlet_counts.
+#' @return scaled graphlet counts.
+#' @export
+scale_graphlet_counts_ego <- function(ego_networks, graphlet_counts, 
+                                      max_graphlet_size) {
+  ego_graphlet_tuples <- 
+    count_graphlet_tuples_ego(ego_networks, max_graphlet_size = max_graphlet_size)
+  
+  scaled_graphlet_counts <- scale_graphlet_count(graphlet_counts, ego_graphlet_tuples)
+  
+  return (scaled_graphlet_counts)
+}
+
 
 #' @export
 count_graphlet_tuples <- function(graph, max_graphlet_size) {

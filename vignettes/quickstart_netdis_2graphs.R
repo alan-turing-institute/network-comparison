@@ -1,23 +1,9 @@
----
-title: "Quick start guide for Netdis - 2 graphs"
-author: "Martin O'Reilly, Jack Roberts"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Quick start for Netdis - 2 graphs}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-## Load required libraries
-```{r}
+## ------------------------------------------------------------------------
 # Load libraries
 library("netdist")
 library("purrr")
-```
 
-## Load graphs
-```{r}
+## ------------------------------------------------------------------------
 # Set source directory for Virus PPI graph edge files
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
@@ -33,15 +19,13 @@ graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
 ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
                         package = "netdist")
 ref_graph <- read_simple_graph(ref_path, format = "ncol")
-```
 
-## Set Netdis parameters
-```{r}
+## ------------------------------------------------------------------------
 # Maximum graphlet size to calculate counts and netdis statistic for.
-max_graphlet_size <- 4
+max_graphlet_size = 4
 
 # Ego network neighbourhood size
-neighbourhood_size <- 2
+neighbourhood_size = 2
 
 # Minimum size of ego networks to consider
 min_ego_nodes <- 3
@@ -50,10 +34,8 @@ min_ego_edges <- 1
 # Ego network density binning parameters
 min_bin_count <- 5
 num_bins <- 100
-```
 
-## Generate ego networks for query graphs
-```{r}
+## ------------------------------------------------------------------------
 # Get ego networks for query graphs and reference graph
 ego_1 <- make_named_ego_graph(graph_1, 
                               order = neighbourhood_size, 
@@ -69,19 +51,15 @@ ego_ref <- make_named_ego_graph(ref_graph,
                                 order = neighbourhood_size, 
                                 min_ego_nodes = min_ego_nodes, 
                                 min_ego_edges = min_ego_edges)
-```
 
-## Count graphlets in ego networks for query graphs
-```{r}
+## ------------------------------------------------------------------------
 # Count graphlets for ego networks in query and reference graphs
 graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
 graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
 
 graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_graphlet_size)
-```
 
-## Bin reference graph by ego network density and calculate mean graphlet counts in each bin
-```{r}
+## ------------------------------------------------------------------------
 
 # Scale ego-network graphlet counts by dividing by total number of k-tuples in
 # ego-network (where k is graphlet size)
@@ -104,10 +82,8 @@ ref_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
                                   scaled_graphlet_counts_ref, 
                                   binned_densities$interval_indexes)
   
-```
 
-## Centre graphlet counts of query graphs based on statistics of reference graph
-```{r}
+## ------------------------------------------------------------------------
 # Calculate expected graphlet counts (using ref graph ego network density bins)
 exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(ego_1, 
                                                                  max_graphlet_size,
@@ -124,20 +100,18 @@ exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(ego_2,
 centred_graphlet_counts_1 <- graphlet_counts_1 - exp_graphlet_counts_1
 
 centred_graphlet_counts_2 <- graphlet_counts_2 - exp_graphlet_counts_2
-```
 
-## Sum centred graphlet counts across all ego networks
-```{r}
+## ------------------------------------------------------------------------
 sum_graphlet_counts_1 <- colSums(centred_graphlet_counts_1)
 
 sum_graphlet_counts_2 <- colSums(centred_graphlet_counts_2)
-```
 
-## Calculate netdis statistics
-```{r}
-
+## ------------------------------------------------------------------------
 netdis_uptok(sum_graphlet_counts_1, 
              sum_graphlet_counts_2, 
              max_graphlet_size)
 
-```
+
+## ------------------------------------------------------------------------
+
+

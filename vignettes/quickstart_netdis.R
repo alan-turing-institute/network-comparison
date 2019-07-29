@@ -30,9 +30,18 @@ ego_graphlet_counts <- purrr::map_depth(ego_networks, 2, count_graphlets_for_gra
 file <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
                     package = "netdist")
 ref_graph <- read_simple_graph(file, format = "ncol")
+
 # Generate ego networks for reference graph
 ref_ego_networks <- make_named_ego_graph(ref_graph, order = neighbourhood_size)
+
 # Count graphlets for ego networks in reference graph
 ref_ego_graphlet_counts <- purrr::map(ref_ego_networks, count_graphlets_for_graph,
                               max_graphlet_size = max_graphlet_size)
+
+# Scale ego-network graphlet counts by dividing by total number of k-tuples in
+  # ego-network (where k is graphlet size)
+ref_ego_graphlet_tuples <- 
+    count_graphlet_tuples_ego(ref_ego_networks, max_graphlet_size = max_graphlet_size)
+
+#ref_ego_graphlet_counts <- scale_graphlet_count(ref_ego_graphlet_counts, ref_ego_graphlet_tuples)
 
