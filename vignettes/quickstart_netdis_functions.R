@@ -1,23 +1,9 @@
----
-title: "Quick start guide for usage of netdis functions"
-author: "Jack Roberts"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Quick start for Netdis functions}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-## Load required libraries
-```{r}
+## ------------------------------------------------------------------------
 # Load libraries
 library("netdist")
 library("purrr")
-```
 
-## Load graphs
-```{r}
+## ------------------------------------------------------------------------
 # Set source directory for Virus PPI graph edge files
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
@@ -33,10 +19,8 @@ graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
 ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
                         package = "netdist")
 ref_graph <- read_simple_graph(ref_path, format = "ncol")
-```
 
-## Set Netdis parameters
-```{r}
+## ------------------------------------------------------------------------
 # Maximum graphlet size to calculate counts and netdis statistic for.
 max_graphlet_size <- 4
 
@@ -56,10 +40,8 @@ ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"),
                         package = "netdist")
 ref_graph <- read_simple_graph(ref_path, format = "ncol")
 
-```
 
-## Compare two graphs
-```{r}
+## ------------------------------------------------------------------------
 # Load query graphs
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
@@ -78,10 +60,8 @@ netdis_one_to_one(graph_1, graph_2,
                   min_ego_edges = 1,
                   min_bin_count = 5,
                   num_bins = 100)
-```
 
-## Compare one graph to many other graphs
-```{r}
+## ------------------------------------------------------------------------
 # Load query graphs
 graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
 graph_1 <- graphs$EBV
@@ -96,10 +76,8 @@ netdis_one_to_many(graph_1, graphs_compare,
                    min_ego_edges = 1,
                    min_bin_count = 5,
                    num_bins = 100)
-```
 
-## Do pairwise netdis calculations for many graphs
-```{r}
+## ------------------------------------------------------------------------
 # Load query graphs
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
@@ -113,4 +91,4 @@ netdis_many_to_many(graphs,
                    min_ego_edges = 1,
                    min_bin_count = 5,
                    num_bins = 100)
-```
+

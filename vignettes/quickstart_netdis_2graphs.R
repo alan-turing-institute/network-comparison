@@ -36,16 +36,6 @@ min_bin_count <- 5
 num_bins <- 100
 
 ## ------------------------------------------------------------------------
-netdis_one_to_one(graph_1, graph_2,
-                  ref_graph,
-                  max_graphlet_size = 4,
-                  neighbourhood_size = 2,
-                  min_ego_nodes = 3,
-                  min_ego_edges = 1,
-                  min_bin_count = 5,
-                  num_bins = 100)
-
-## ------------------------------------------------------------------------
 # Get ego networks for query graphs and reference graph
 ego_1 <- make_named_ego_graph(graph_1, 
                               order = neighbourhood_size, 

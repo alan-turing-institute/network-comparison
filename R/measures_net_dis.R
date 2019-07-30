@@ -21,29 +21,129 @@ netdis_one_to_one <- function(graph_1, graph_2,
                               min_ego_edges = 1,
                               min_bin_count = 5,
                               num_bins = 100) {
+  
+  # bundle graphs into one vector with format needed for
+  # netdis many-to-many
+  graphs <- list(graph_1 = graph_1, graph_2 = graph_2)
+  
+  # calculate netdis
+  result <- netdis_many_to_many(
+    graphs,
+    ref_graph,
+    max_graphlet_size = 4,
+    neighbourhood_size = 2,
+    min_ego_nodes = 3,
+    min_ego_edges = 1,
+    min_bin_count = 5,
+    num_bins = 100
+  )
+  
+  # extract netdis statistics from list returned by netdis_many_to_many
+  result$netdis[, 1]
+}
+
+#' Netdis comparisons between one graph and many other graphs
+#' @param graph_1 query graph - this graph will be compared with
+#' all graphs in graphs_compare
+#' @param graphs_compare graphs graph_1 will be compared with
+#' @param ref_graph Reference graph
+#' @param max_graphlet_size Generate graphlets up to this size
+#' @param neighbourhood_size Ego network neighbourhood size
+#' @param min_ego_nodes Filter ego networks which have fewer
+#' than min_ego_nodes nodes
+#' @param min_ego_edges Filter ego networks which have fewer
+#' than min_ego_edges edges
+#' @param min_bin_count Minimum number of ego networks in each density bin
+#' @param num_bins Number of density bins to generate
+#' @return Netdis statistics between graph_1 and graph_2 for graphlet sizes
+#' up to and including max_graphlet_size
+#' @export
+netdis_one_to_many <- function(graph_1, graphs_compare,
+                              ref_graph,
+                              max_graphlet_size = 4,
+                              neighbourhood_size = 2,
+                              min_ego_nodes = 3,
+                              min_ego_edges = 1,
+                              min_bin_count = 5,
+                              num_bins = 100) {
+  
+  # bundle graph_1 and graphs_compare to one vector, with
+  # graph_1 at start as needed for netdis_many_to_many call
+  graphs <- append(graphs_compare, list(graph_1=graph_1), after=0)
+
+  # calculate netdis
+  result <- netdis_many_to_many(
+    graphs,
+    ref_graph,
+    comparisons = 'one-to-many',
+    max_graphlet_size = 4,
+    neighbourhood_size = 2,
+    min_ego_nodes = 3,
+    min_ego_edges = 1,
+    min_bin_count = 5,
+    num_bins = 100
+  )
+  
+  # restructure netdis_many_to_many output
+  colnames(result$netdis) <- result$comp_spec$name_b
+  result$netdis
+}
+
+
+#' Netdis between all graph pairs
+#' @param graphs Query graphs
+#' @param ref_graph Reference graph
+#' @param comparisons Which comparisons to perform between graphs.
+#' Can be "many-to-many" (all pairwise combinations) or "one-to-many"
+#' (compare first graph in graphs to all other graphs.)
+#' @param max_graphlet_size Generate graphlets up to this size
+#' @param neighbourhood_size Ego network neighbourhood size
+#' @param min_ego_nodes Filter ego networks which have fewer
+#' than min_ego_nodes nodes
+#' @param min_ego_edges Filter ego networks which have fewer
+#' than min_ego_edges edges
+#' @param min_bin_count Minimum number of ego networks in each density bin
+#' @param num_bins Number of density bins to generate
+#' @return Netdis statistics between graph_1 and graph_2 for graphlet sizes
+#' up to and including max_graphlet_size
+#' @export
+netdis_many_to_many <- function(graphs,
+                                ref_graph,
+                                comparisons = 'many-to-many',
+                                max_graphlet_size = 4,
+                                neighbourhood_size = 2,
+                                min_ego_nodes = 3,
+                                min_ego_edges = 1,
+                                min_bin_count = 5,
+                                num_bins = 100) {
   ## ------------------------------------------------------------------------
   # Get ego networks for query graphs and reference graph
-  ego_1 <- make_named_ego_graph(graph_1, 
-                                order = neighbourhood_size, 
-                                min_ego_nodes = min_ego_nodes, 
-                                min_ego_edges = min_ego_edges)
+  ego_networks <- purrr::map(
+    graphs, make_named_ego_graph,
+    order = neighbourhood_size, 
+    min_ego_nodes = min_ego_nodes, 
+    min_ego_edges = min_ego_edges
+  )
   
-  ego_2 <- make_named_ego_graph(graph_2, 
-                                order = neighbourhood_size, 
-                                min_ego_nodes = min_ego_nodes, 
-                                min_ego_edges = min_ego_edges)
-  
-  ego_ref <- make_named_ego_graph(ref_graph, 
-                                  order = neighbourhood_size, 
-                                  min_ego_nodes = min_ego_nodes, 
-                                  min_ego_edges = min_ego_edges)
+  ego_ref <- make_named_ego_graph(
+    ref_graph, 
+    order = neighbourhood_size, 
+    min_ego_nodes = min_ego_nodes, 
+    min_ego_edges = min_ego_edges
+  )
   
   ## ------------------------------------------------------------------------
   # Count graphlets for ego networks in query and reference graphs
-  graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
-  graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
-  
-  graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_graphlet_size)
+  graphlet_counts <- purrr::map(
+    ego_networks,
+    ego_to_graphlet_counts,
+    max_graphlet_size = max_graphlet_size
+  )
+
+  graphlet_counts_ref <- ego_to_graphlet_counts(
+    ego_ref,
+    max_graphlet_size = max_graphlet_size
+  )
   
   ## ------------------------------------------------------------------------
   # Scale ego-network graphlet counts by dividing by total number of k-tuples in
@@ -70,33 +170,41 @@ netdis_one_to_one <- function(graph_1, graph_2,
   
   ## ------------------------------------------------------------------------
   # Calculate expected graphlet counts (using ref graph ego network density bins)
-  exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(ego_1, 
-                                                                   max_graphlet_size,
-                                                                   ref_ego_density_bins, 
-                                                                   ref_binned_graphlet_counts)
-  
-  
-  exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(ego_2, 
-                                                                   max_graphlet_size,
-                                                                   ref_ego_density_bins, 
-                                                                   ref_binned_graphlet_counts)
+  exp_graphlet_counts <- purrr::map(
+    ego_networks,
+    netdis_expected_graphlet_counts_per_ego,
+    max_graphlet_size = max_graphlet_size,
+    density_breaks = ref_ego_density_bins,
+    density_binned_reference_counts = ref_binned_graphlet_counts
+  )
   
   # Centre graphlet counts by subtracting expected counts
-  centred_graphlet_counts_1 <- graphlet_counts_1 - exp_graphlet_counts_1
-  
-  centred_graphlet_counts_2 <- graphlet_counts_2 - exp_graphlet_counts_2
+  centred_graphlet_counts <- mapply("-", graphlet_counts, exp_graphlet_counts)
   
   ## ------------------------------------------------------------------------
   # Sum centred graphlet counts across all ego networks
-  sum_graphlet_counts_1 <- colSums(centred_graphlet_counts_1)
+  sum_graphlet_counts <- lapply(centred_graphlet_counts, colSums)
   
-  sum_graphlet_counts_2 <- colSums(centred_graphlet_counts_2)
+  ## ------------------------------------------------------------------------
+  # Generate pairwise comparisons
+  comp_spec <- cross_comparison_spec(sum_graphlet_counts, how = comparisons)
   
   ## ------------------------------------------------------------------------
   # Calculate netdis statistics
-  netdis_uptok(sum_graphlet_counts_1, 
-               sum_graphlet_counts_2, 
-               max_graphlet_size)
+  results <- parallel::mcmapply(
+      function(index_a, index_b) {
+        netdis_uptok(
+          sum_graphlet_counts[[index_a]], 
+          sum_graphlet_counts[[index_b]],
+          max_graphlet_size = max_graphlet_size
+        )
+      },
+      comp_spec$index_a,
+      comp_spec$index_b,
+      SIMPLIFY = TRUE)
+  
+  
+  list(netdis = results, comp_spec = comp_spec)
   
 }
 
