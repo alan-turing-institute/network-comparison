@@ -35,9 +35,10 @@ graph_to_indexed_edges <- function(graph) {
 indexed_edges_to_graph <- function(indexed_edges) {
   graph <- igraph::graph_from_edgelist(indexed_edges)
   graph <- igraph::set.vertex.attribute(
-            graph, name = "name",
-            value = attr(indexed_edges, "vertex_names")
-          )
+    graph,
+    name = "name",
+    value = attr(indexed_edges, "vertex_names")
+  )
   return(graph)
 }
 
@@ -79,33 +80,33 @@ read_simple_graphs <- function(source_dir,
   # Read graph data from each matched file as an igraph format graph,
   # simplifying as requested
   graphs <- purrr::map(
-              file_names,
-              function(file_name) {
-                read_simple_graph(
-                  file = file.path(source_dir, file_name),
-                  format = format,
-                  as_undirected = as_undirected,
-                  remove_loops = remove_loops,
-                  remove_multiple = remove_multiple,
-                  remove_isolates = remove_isolates
-                )
-              }
-            )
+    file_names,
+    function(file_name) {
+      read_simple_graph(
+        file = file.path(source_dir, file_name),
+        format = format,
+        as_undirected = as_undirected,
+        remove_loops = remove_loops,
+        remove_multiple = remove_multiple,
+        remove_isolates = remove_isolates
+      )
+    }
+  )
 
   # Name each graph with the name of the file it was read from (with any
   # extension moved)
   names <- purrr::simplify(
-            purrr::map(
-               strsplit(file_names, "\\."),
-               function(s) {
-                 if (length(s) == 1) {
-                   s
-                 } else {
-                   paste(utils::head(s, -1), collapse = ".")
-                 }
-                }
-              )
-           )
+    purrr::map(
+      strsplit(file_names, "\\."),
+      function(s) {
+        if (length(s) == 1) {
+          s
+        } else {
+          paste(utils::head(s, -1), collapse = ".")
+        }
+      }
+    )
+  )
   attr(graphs, "names") <- names
   return(graphs)
 }
@@ -143,9 +144,11 @@ read_simple_graph <- function(file, format, as_undirected = TRUE,
     graph <- igraph::read_graph(file = file, format = format)
   }
   # Perform any requested simplifications
-  simplify_graph(graph, as_undirected = as_undirected,
-                 remove_loops = remove_loops, remove_multiple = remove_multiple,
-                 remove_isolates = remove_isolates)
+  simplify_graph(graph,
+    as_undirected = as_undirected,
+    remove_loops = remove_loops, remove_multiple = remove_multiple,
+    remove_isolates = remove_isolates
+  )
 }
 
 #' Simplify an igraph
@@ -168,7 +171,7 @@ read_simple_graph <- function(file, format, as_undirected = TRUE,
 #' @return A simplified igraph graph object
 #' @export
 simplify_graph <- function(graph, as_undirected = TRUE, remove_loops = TRUE,
-               remove_multiple = TRUE, remove_isolates = TRUE) {
+                           remove_multiple = TRUE, remove_isolates = TRUE) {
   if (as_undirected) {
     # Ensure graph is undirected
     graph <- igraph::as.undirected(graph, mode = "each")
@@ -177,8 +180,10 @@ simplify_graph <- function(graph, as_undirected = TRUE, remove_loops = TRUE,
     # Remove loops (where both endpoints of an edge are the same vertex) and
     # multiple edges (where two edges have the same endpoints [in the same order
     # for directed graphs])
-    graph <- igraph::simplify(graph, remove.loops = remove_loops,
-                              remove.multiple = remove_multiple)
+    graph <- igraph::simplify(graph,
+      remove.loops = remove_loops,
+      remove.multiple = remove_multiple
+    )
   }
   if (remove_isolates) {
     # Remove vertices that have no edges connecting them to other vertices
@@ -228,23 +233,25 @@ graph_features_to_histogramsSLOW <- function(features_matrix) {
 #' @return List of graphlet-based degree distributions, with each distribution
 #' represented as a \code{dhist} discrete histogram object.
 #' @export
-gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4,
-                ego_neighbourhood_size = 0){
+gdd <- function(graph, feature_type = "orbit", max_graphlet_size = 4,
+                ego_neighbourhood_size = 0) {
   graph <- simplify_graph(graph)
-  if(ego_neighbourhood_size > 0) {
-    if(feature_type != 'graphlet') {
+  if (ego_neighbourhood_size > 0) {
+    if (feature_type != "graphlet") {
       stop("Feature type not supported for ego-networks")
     } else {
-      out <- count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size,
-                                 neighbourhood_size = ego_neighbourhood_size)
+      out <- count_graphlets_ego(graph,
+        max_graphlet_size = max_graphlet_size,
+        neighbourhood_size = ego_neighbourhood_size
+      )
     }
-  } else  if(feature_type == "orbit") {
+  } else if (feature_type == "orbit") {
     out <- count_orbits_per_node(graph, max_graphlet_size = max_graphlet_size)
-  } else if(feature_type == "graphlet") {
+  } else if (feature_type == "graphlet") {
     out <- count_graphlets_per_node(graph, max_graphlet_size = max_graphlet_size)
   }
   else {
-    stop('gdd: unrecognised feature_type')
+    stop("gdd: unrecognised feature_type")
   }
   graph_features_to_histograms(out)
 }
@@ -260,16 +267,16 @@ gdd <- function(graph, feature_type = 'orbit', max_graphlet_size = 4,
 #' orbit (columns) at each node in the graph (rows).
 #' @export
 count_orbits_per_node <- function(graph, max_graphlet_size) {
-  if(max_graphlet_size == 4) {
+  if (max_graphlet_size == 4) {
     orca_fn <- orca::count4
-  } else if(max_graphlet_size == 5) {
+  } else if (max_graphlet_size == 5) {
     orca_fn <- orca::count5
   } else {
     stop("Unsupported maximum graphlet size")
   }
   indexed_edges <- graph_to_indexed_edges(graph)
   num_edges <- dim(indexed_edges)[[1]]
-  if(num_edges >= 1) {
+  if (num_edges >= 1) {
     orbit_counts <- orca_fn(indexed_edges)
   } else {
     # ORCA functions expect at least one edge, so handle this case separately
@@ -354,19 +361,22 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
                                 return_ego_networks = FALSE) {
   # Extract ego network for each node in original graph, naming each ego network
   # in the list with the name of the node the ego network is generated for
-  ego_networks <- make_named_ego_graph(graph, order = neighbourhood_size,
-                                       min_ego_nodes = min_ego_nodes,
-                                       min_ego_edges = min_ego_edges)
+  ego_networks <- make_named_ego_graph(graph,
+    order = neighbourhood_size,
+    min_ego_nodes = min_ego_nodes,
+    min_ego_edges = min_ego_edges
+  )
   # Generate graphlet counts for each node in each ego network (returns an ORCA
   # format graphlet count matrix for each ego network)
   ego_graphlet_counts <- purrr::map(ego_networks, count_graphlets_for_graph,
-                                          max_graphlet_size = max_graphlet_size)
+    max_graphlet_size = max_graphlet_size
+  )
   # Reshape the list of per node single row graphlet count matrices to a single
   # ORCA format graphlet count matrix with one row per node
   ego_graphlet_counts <- t(simplify2array(ego_graphlet_counts))
 
   # Return either graphlet counts, or graphlet counts and ego_networks
-  if(return_ego_networks) {
+  if (return_ego_networks) {
     return(list(graphlet_counts = ego_graphlet_counts, ego_networks = ego_networks))
   } else {
     return(ego_graphlet_counts)
@@ -391,7 +401,8 @@ ego_to_graphlet_counts <- function(ego_networks, max_graphlet_size = 4) {
   # Generate graphlet counts for each node in each ego network (returns an ORCA
   # format graphlet count matrix for each ego network)
   ego_graphlet_counts <- purrr::map(ego_networks, count_graphlets_for_graph,
-                                    max_graphlet_size = max_graphlet_size)
+    max_graphlet_size = max_graphlet_size
+  )
 
   # Reshape the list of per node single row graphlet count matrices to a single
   # ORCA format graphlet count matrix with one row per node
@@ -416,9 +427,8 @@ ego_to_graphlet_counts <- function(ego_networks, max_graphlet_size = 4) {
 #' @param ... Additional parameters to be passed to the underlying
 #' \code{igraph::make_ego_graph} function used.
 #' @export
-make_named_ego_graph <- function(graph, order, min_ego_nodes=3,
-                                 min_ego_edges=1, ...) {
-
+make_named_ego_graph <- function(graph, order, min_ego_nodes = 3,
+                                 min_ego_edges = 1, ...) {
   ego_networks <- igraph::make_ego_graph(graph, order, ...)
   names(ego_networks) <- igraph::V(graph)$name
 
@@ -445,28 +455,39 @@ orbit_to_graphlet_counts <- function(orbit_counts) {
   # Indexes to select the orbit(s) that comprise each graphlet. Note that we
   # define these in the zero-based indexing used in journal papers, but
   # need to add 1 to convert to the 1-based indexing used by R
-  if(num_orbits == 15) {
+  if (num_orbits == 15) {
     # Orbits for graphlets comprising up to 4 nodes
     max_nodes <- 4
     orbit_to_graphlet_map <-
-      purrr::map(list(0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14),
-                 function(indexes){ indexes + 1})
-  } else if(num_orbits == 73) {
+      purrr::map(
+        list(0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14),
+        function(indexes) {
+          indexes + 1
+        }
+      )
+  } else if (num_orbits == 73) {
     # Orbits for graphlets comprising up to 5 nodes
     max_nodes <- 5
     orbit_to_graphlet_map <-
-      purrr::map(list(0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14, 15:17, 18:21,
-                      22:23, 24:26, 27:30, 31:33, 34, 35:38, 39:42, 43:44,
-                      45:48, 49:50, 51:53, 54:55, 56:58, 59:61, 62:64,
-                      65:67, 68:69, 70:71, 72),
-                 function(indexes){ indexes + 1})
+      purrr::map(
+        list(
+          0, 1:2, 3, 4:5, 6:7, 8, 9:11, 12:13, 14, 15:17, 18:21,
+          22:23, 24:26, 27:30, 31:33, 34, 35:38, 39:42, 43:44,
+          45:48, 49:50, 51:53, 54:55, 56:58, 59:61, 62:64,
+          65:67, 68:69, 70:71, 72
+        ),
+        function(indexes) {
+          indexes + 1
+        }
+      )
   } else {
     stop(("Unsupported number of orbits"))
   }
   # Sum counts across orbits in graphlets
-  graphlet_counts <- sapply(orbit_to_graphlet_map, function(indexes){
-    rowSums(orbit_counts[,indexes, drop = FALSE])})
-  if(dim(orbit_counts)[[1]] == 1) {
+  graphlet_counts <- sapply(orbit_to_graphlet_map, function(indexes) {
+    rowSums(orbit_counts[, indexes, drop = FALSE])
+  })
+  if (dim(orbit_counts)[[1]] == 1) {
     # If orbit counts has only a single row, sapply returns a vector
     # rather than a matrix, so convert to a matrix by adding dim
     dim(graphlet_counts) <- c(1, length(graphlet_counts))
@@ -489,22 +510,23 @@ orbit_to_graphlet_counts <- function(orbit_counts) {
 #' }
 #' @export
 graphlet_key <- function(max_graphlet_size) {
-  if(max_graphlet_size == 2) {
+  if (max_graphlet_size == 2) {
     node_count <- c(2)
-  } else if(max_graphlet_size == 3) {
-    node_count <- c(2, rep(3,2))
-  } else if(max_graphlet_size == 4) {
-    node_count <- c(2, rep(3,2), rep(4,6))
+  } else if (max_graphlet_size == 3) {
+    node_count <- c(2, rep(3, 2))
+  } else if (max_graphlet_size == 4) {
+    node_count <- c(2, rep(3, 2), rep(4, 6))
   } else if (max_graphlet_size == 5) {
-    node_count <- c(2, rep(3,2), rep(4,6), rep(5, 21))
+    node_count <- c(2, rep(3, 2), rep(4, 6), rep(5, 21))
   } else {
     stop("Unsupported maximum graphlet size")
   }
-  max_node_index <- length(node_count)-1
+  max_node_index <- length(node_count) - 1
   id <- purrr::simplify(purrr::map(0:max_node_index, function(index) {
-    paste('G', index, sep = "")}))
+    paste("G", index, sep = "")
+  }))
   name <-
-  return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
+    return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
 }
 
 #' Orbit key
@@ -520,20 +542,21 @@ graphlet_key <- function(max_graphlet_size) {
 #' }
 #' @export
 orbit_key <- function(max_graphlet_size) {
-  if(max_graphlet_size == 2) {
+  if (max_graphlet_size == 2) {
     node_count <- c(2)
-  } else if(max_graphlet_size == 3) {
-    node_count <- c(2, rep(3,3))
-  } else if(max_graphlet_size == 4) {
-    node_count <- c(2, rep(3,3), rep(4,11))
+  } else if (max_graphlet_size == 3) {
+    node_count <- c(2, rep(3, 3))
+  } else if (max_graphlet_size == 4) {
+    node_count <- c(2, rep(3, 3), rep(4, 11))
   } else if (max_graphlet_size == 5) {
-    node_count <- c(2, rep(3,3), rep(4,11), rep(5, 58))
+    node_count <- c(2, rep(3, 3), rep(4, 11), rep(5, 58))
   } else {
     stop("Unsupported maximum graphlet size")
   }
-  max_node_index <- length(node_count)-1
+  max_node_index <- length(node_count) - 1
   id <- purrr::simplify(purrr::map(0:max_node_index, function(index) {
-    paste('O', index, sep = "")}))
+    paste("O", index, sep = "")
+  }))
   name <-
     return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
 }
@@ -547,7 +570,7 @@ orbit_key <- function(max_graphlet_size) {
 #' @export
 graphlet_ids_for_size <- function(graphlet_size) {
   graphlet_key <- graphlet_key(graphlet_size)
-  graphlet_key$id[graphlet_key$node_count==graphlet_size]
+  graphlet_key$id[graphlet_key$node_count == graphlet_size]
 }
 
 #' Load all graphs in a directory and calculates their Graphlet-based Degree
@@ -574,27 +597,32 @@ graphlet_ids_for_size <- function(graphlet_size) {
 #' where each GDD element is a \code{dhist} discrete histogram object.
 #' @export
 gdd_for_all_graphs <- function(
-  source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit",
-  max_graphlet_size = 4, ego_neighbourhood_size = 0,
-  mc.cores = getOption("mc.cores", 2L)) {
+                               source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit",
+                               max_graphlet_size = 4, ego_neighbourhood_size = 0,
+                               mc.cores = getOption("mc.cores", 2L)) {
   # Create function to read graph from file and generate GDD
   graphs <- read_simple_graphs(
-    source_dir = source_dir, format = format, pattern = pattern)
+    source_dir = source_dir, format = format, pattern = pattern
+  )
   # Calculate specified GDDs for each graph
   # NOTE: mcapply only works on unix-like systems with system level forking
   # capability. This means it will work on Linux and OSX, but not Windows.
   # For now, we just revert to single threaded operation on Windows
   # TODO: Look into using the parLappy function on Windows
-  if(.Platform$OS.type != "unix") {
+  if (.Platform$OS.type != "unix") {
     # Force cores to 1 if system is not unix-like as it will not support
     # forking
-    mc.cores = 1
+    mc.cores <- 1
   }
-  parallel::mcmapply(gdd, graphs, MoreArgs =
-                       list(feature_type = feature_type,
-                            max_graphlet_size = max_graphlet_size,
-                            ego_neighbourhood_size = ego_neighbourhood_size),
-                     SIMPLIFY = FALSE, mc.cores = mc.cores)
+  parallel::mcmapply(gdd, graphs,
+    MoreArgs =
+      list(
+        feature_type = feature_type,
+        max_graphlet_size = max_graphlet_size,
+        ego_neighbourhood_size = ego_neighbourhood_size
+      ),
+    SIMPLIFY = FALSE, mc.cores = mc.cores
+  )
 }
 
 #' Generate a cross-comparison specification
@@ -606,12 +634,14 @@ gdd_for_all_graphs <- function(
 #' @return A matrix with one row for each possible pair-wise combination
 #' of elements from the provided named list. The first and second columns
 #' contain the names of the elements in the pair and the third and fourth
-#'columns contain the indexes of these elements in the provided list.
+#' columns contain the indexes of these elements in the provided list.
 #' @export
 cross_comparison_spec <- function(named_list) {
-  indexes <- as.data.frame(t(utils::combn(1:length(named_list),2)))
-  names <- as.data.frame(cbind(names(named_list)[indexes[,1]],
-                               names(named_list)[indexes[,2]]))
+  indexes <- as.data.frame(t(utils::combn(1:length(named_list), 2)))
+  names <- as.data.frame(cbind(
+    names(named_list)[indexes[, 1]],
+    names(named_list)[indexes[, 2]]
+  ))
   spec <- cbind(names, indexes)
   colnames(spec) <- c("name_a", "name_b", "index_a", "index_b")
   return(spec)
@@ -630,7 +660,7 @@ cross_comparison_spec <- function(named_list) {
 #' @export
 cross_comp_to_matrix <- function(measure, cross_comparison_spec) {
   num_items <- max(c(cross_comparison_spec$index_a, cross_comparison_spec$index_b))
-  out <- matrix(data = 0, nrow = num_items, ncol = num_items);
+  out <- matrix(data = 0, nrow = num_items, ncol = num_items)
   out[cbind(cross_comparison_spec$index_a, cross_comparison_spec$index_b)] <- measure
   out[cbind(cross_comparison_spec$index_b, cross_comparison_spec$index_a)] <- measure
   row_labels <- rep("<MISSING>", num_items)

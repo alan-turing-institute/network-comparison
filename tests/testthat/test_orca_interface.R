@@ -3,73 +3,105 @@ test_that("Graph to indexed edge list round trip conversion works", {
   data_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
   g_orig <- igraph::read_graph(file = file.path(data_dir, "EBV.txt"), format = "ncol")
   g_rtrip <- netdist::indexed_edges_to_graph(graph_to_indexed_edges(g_orig))
-  expect_true(all.equal(igraph::get.edgelist(g_orig),igraph::get.edgelist(g_orig)))
+  expect_true(all.equal(igraph::get.edgelist(g_orig), igraph::get.edgelist(g_orig)))
 })
 
 context("ORCA interface: Graphlet key")
 test_that("graphlet_key gives correct output for all supported max graphlet sizes", {
   correct_graphlet_key_2 <- list(max_nodes = 2, id = c("G0"), node_count = c(2))
-  correct_graphlet_key_3 <- list(max_nodes = 3, id = c("G0", "G1", "G2"), 
-                                 node_count = c(2, 3, 3))
-  correct_graphlet_key_4 = list(max_nodes = 4, 
-                                id = c("G0", "G1", "G2", "G3", "G4", "G5", "G6",
-                                       "G7", "G8"),
-                                node_count = c(2, 3, 3, 4, 4, 4, 4, 4, 4))
-  correct_graphlet_key_5 <- list(max_nodes = 5,
-                                 id = c("G0", "G1", "G2", "G3", "G4", "G5", "G6",
-                                        "G7", "G8", "G9", "G10", "G11", "G12", 
-                                        "G13", "G14", "G15", "G16", "G17", 
-                                        "G18", "G19", "G20", "G21", "G22", 
-                                        "G23", "G24", "G25", "G26", "G27", 
-                                        "G28", "G29"),
-                                 node_count = c(2, 3, 3, 4, 4, 4, 4, 4, 4,
-                                                5, 5, 5, 5, 5, 5, 5, 
-                                                5, 5, 5, 5, 5, 5, 5,
-                                                5, 5, 5, 5, 5, 5, 5))
+  correct_graphlet_key_3 <- list(
+    max_nodes = 3, id = c("G0", "G1", "G2"),
+    node_count = c(2, 3, 3)
+  )
+  correct_graphlet_key_4 <- list(
+    max_nodes = 4,
+    id = c(
+      "G0", "G1", "G2", "G3", "G4", "G5", "G6",
+      "G7", "G8"
+    ),
+    node_count = c(2, 3, 3, 4, 4, 4, 4, 4, 4)
+  )
+  correct_graphlet_key_5 <- list(
+    max_nodes = 5,
+    id = c(
+      "G0", "G1", "G2", "G3", "G4", "G5", "G6",
+      "G7", "G8", "G9", "G10", "G11", "G12",
+      "G13", "G14", "G15", "G16", "G17",
+      "G18", "G19", "G20", "G21", "G22",
+      "G23", "G24", "G25", "G26", "G27",
+      "G28", "G29"
+    ),
+    node_count = c(
+      2, 3, 3, 4, 4, 4, 4, 4, 4,
+      5, 5, 5, 5, 5, 5, 5,
+      5, 5, 5, 5, 5, 5, 5,
+      5, 5, 5, 5, 5, 5, 5
+    )
+  )
   expect_equal(graphlet_key(2), correct_graphlet_key_2)
   expect_equal(graphlet_key(3), correct_graphlet_key_3)
   expect_equal(graphlet_key(4), correct_graphlet_key_4)
   expect_equal(graphlet_key(5), correct_graphlet_key_5)
-  })
+})
 
 test_that("graphlet_key gives error for unsupported max graphlet sizes", {
   max_size_too_low <- c(1, 0, -1, -2, -3, -4, -5, -6)
   max_size_too_high <- c(6, 7, 8, 9, 10)
   max_size_not_int <- c(2.5, 3.5, 4.5)
-  purrr::map(max_size_too_low, function(s) {expect_error(graphlet_key(s))})
-  purrr::map(max_size_too_high, function(s) {expect_error(graphlet_key(s))})
-  purrr::map(max_size_not_int, function(s) {expect_error(graphlet_key(s))})
+  purrr::map(max_size_too_low, function(s) {
+    expect_error(graphlet_key(s))
+  })
+  purrr::map(max_size_too_high, function(s) {
+    expect_error(graphlet_key(s))
+  })
+  purrr::map(max_size_not_int, function(s) {
+    expect_error(graphlet_key(s))
+  })
 })
 
 context("ORCA interface: Orbit key")
 test_that("orbit_key gives correct output for all supported max graphlet sizes", {
   correct_orbit_key_2 <- list(max_nodes = 2, id = c("O0"), node_count = c(2))
-  correct_orbit_key_3 <- list(max_nodes = 3, id = c("O0", "O1", "O2", "O3"), 
-                                 node_count = c(2, 3, 3, 3))
-  correct_orbit_key_4 = list(max_nodes = 4, 
-                                id =  c("O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", 
-                                        "O10", "O11", "O12", "O13", "O14"),
-                                node_count = c(2, 3, 3, 3,
-                                               4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4))
-  correct_orbit_key_5 <- list(max_nodes = 5,
-                                 id =  c("O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", 
-                                         "O10", "O11", "O12", "O13", "O14", "O15", "O16", "O17", 
-                                         "O18", "O19", "O20", "O21", "O22", 
-                                         "O23", "O24", "O25", "O26", "O27", "O28", "O29",
-                                         "O30", "O31", "O32", "O33", "O34", "O35", "O36", "O37",
-                                         "O38", "O39", "O40", "O41", "O42", "O43", "O44", "O45",
-                                         "O46", "O47", "O48", "O49", "O50", "O51", "O52", "O53",
-                                         "O54", "O55", "O56", "O57", "O58", "O59", "O60", "O61",
-                                         "O62", "O63", "O64", "O65", "O66", "O67", "O68", "O69",
-                                         "O70", "O71", "O72"),
-                                 node_count = c(2, 3, 3, 3, 
-                                                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-                                                5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-                                                5, 5, 5, 5, 5, 5, 5, 5))
+  correct_orbit_key_3 <- list(
+    max_nodes = 3, id = c("O0", "O1", "O2", "O3"),
+    node_count = c(2, 3, 3, 3)
+  )
+  correct_orbit_key_4 <- list(
+    max_nodes = 4,
+    id = c(
+      "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9",
+      "O10", "O11", "O12", "O13", "O14"
+    ),
+    node_count = c(
+      2, 3, 3, 3,
+      4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+    )
+  )
+  correct_orbit_key_5 <- list(
+    max_nodes = 5,
+    id = c(
+      "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9",
+      "O10", "O11", "O12", "O13", "O14", "O15", "O16", "O17",
+      "O18", "O19", "O20", "O21", "O22",
+      "O23", "O24", "O25", "O26", "O27", "O28", "O29",
+      "O30", "O31", "O32", "O33", "O34", "O35", "O36", "O37",
+      "O38", "O39", "O40", "O41", "O42", "O43", "O44", "O45",
+      "O46", "O47", "O48", "O49", "O50", "O51", "O52", "O53",
+      "O54", "O55", "O56", "O57", "O58", "O59", "O60", "O61",
+      "O62", "O63", "O64", "O65", "O66", "O67", "O68", "O69",
+      "O70", "O71", "O72"
+    ),
+    node_count = c(
+      2, 3, 3, 3,
+      4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+      5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+      5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+      5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+      5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+      5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+      5, 5, 5, 5, 5, 5, 5, 5
+    )
+  )
   expect_equal(orbit_key(2), correct_orbit_key_2)
   expect_equal(orbit_key(3), correct_orbit_key_3)
   expect_equal(orbit_key(4), correct_orbit_key_4)
@@ -79,26 +111,32 @@ test_that("orbit_key gives correct output for all supported max graphlet sizes",
 context("ORCA interface: Graph cross comparison")
 test_that("cross_comparison_spec works for virus PPI data", {
   # Load viurs PPI network data in ORCA-compatible edge list format
-  expected_name_A <- c(rep("EBV", 4), rep("ECL", 3), rep("HSV-1", 2), 
-                       rep("KSHV", 1), rep("VZV", 0))
+  expected_name_A <- c(
+    rep("EBV", 4), rep("ECL", 3), rep("HSV-1", 2),
+    rep("KSHV", 1), rep("VZV", 0)
+  )
   expected_index_A <- c(rep(1, 4), rep(2, 3), rep(3, 2), rep(4, 1), rep(5, 0))
-  expected_name_B <- c(c("ECL", "HSV-1", "KSHV", "VZV"), c("HSV-1", "KSHV", "VZV"), 
-                       c("KSHV", "VZV"), c("VZV"))
+  expected_name_B <- c(
+    c("ECL", "HSV-1", "KSHV", "VZV"), c("HSV-1", "KSHV", "VZV"),
+    c("KSHV", "VZV"), c("VZV")
+  )
   expected_index_B <- c(c(2, 3, 4, 5), c(3, 4, 5), c(4, 5), c(5))
-  expected <- as.data.frame(cbind(expected_name_A, expected_name_B, 
-                                  expected_index_A, expected_index_B))
+  expected <- as.data.frame(cbind(
+    expected_name_A, expected_name_B,
+    expected_index_A, expected_index_B
+  ))
   colnames(expected) <- c("name_a", "name_b", "index_a", "index_b")
-  
+
   actual <- cross_comparison_spec(virusppi)
-  
+
   matched_output <- function(actual, expected) {
     dims_match <- identical(dim(as.matrix(expected)), dim(as.matrix(actual)))
     data_matches <- identical(as.matrix(expected), as.matrix(actual))
     headers_match <- identical(colnames(expected), colnames(actual))
     return(dims_match && data_matches && headers_match)
   }
-  
-  # Check that actual output matches one of the two acceptable outputs at each 
+
+  # Check that actual output matches one of the two acceptable outputs at each
   # cell
   expect_true(matched_output(actual, expected))
 })
@@ -107,35 +145,47 @@ context("ORCA interface: Orbit count wrapper")
 test_that("Single and zero node graphs are gracefully handled", {
   single_node_graph <- igraph::graph_from_adjacency_matrix(0, mode = "undirected")
   zero_node_graph <- igraph::delete.vertices(single_node_graph, 1)
-  names4 <- c("O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", 
-              "O10", "O11", "O12", "O13", "O14")
-  names5 <- c(names4, c("O15", "O16", "O17", "O18", "O19", "O20", "O21", "O22", 
-                        "O23", "O24", "O25", "O26", "O27", "O28", "O29",
-                        "O30", "O31", "O32", "O33", "O34", "O35", "O36", "O37",
-                        "O38", "O39", "O40", "O41", "O42", "O43", "O44", "O45",
-                        "O46", "O47", "O48", "O49", "O50", "O51", "O52", "O53",
-                        "O54", "O55", "O56", "O57", "O58", "O59", "O60", "O61",
-                        "O62", "O63", "O64", "O65", "O66", "O67", "O68", "O69",
-                        "O70", "O71", "O72"))
+  names4 <- c(
+    "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9",
+    "O10", "O11", "O12", "O13", "O14"
+  )
+  names5 <- c(names4, c(
+    "O15", "O16", "O17", "O18", "O19", "O20", "O21", "O22",
+    "O23", "O24", "O25", "O26", "O27", "O28", "O29",
+    "O30", "O31", "O32", "O33", "O34", "O35", "O36", "O37",
+    "O38", "O39", "O40", "O41", "O42", "O43", "O44", "O45",
+    "O46", "O47", "O48", "O49", "O50", "O51", "O52", "O53",
+    "O54", "O55", "O56", "O57", "O58", "O59", "O60", "O61",
+    "O62", "O63", "O64", "O65", "O66", "O67", "O68", "O69",
+    "O70", "O71", "O72"
+  ))
   expected_zero_node_counts4 <- matrix(0, nrow = 0, ncol = length(names4))
   colnames(expected_zero_node_counts4) <- names4
   expected_zero_node_counts5 <- matrix(0, nrow = 0, ncol = length(names5))
   colnames(expected_zero_node_counts5) <- names5
-  
+
   expected_single_node_counts4 <- matrix(0, nrow = 1, ncol = length(names4))
   colnames(expected_single_node_counts4) <- names4
   expected_single_node_counts5 <- matrix(0, nrow = 1, ncol = length(names5))
   colnames(expected_single_node_counts5) <- names5
-  
-  expect_equal(expected_zero_node_counts4, 
-               count_orbits_per_node(zero_node_graph, max_graphlet_size = 4))
-  expect_equal(expected_zero_node_counts5, 
-               count_orbits_per_node(zero_node_graph, max_graphlet_size = 5))
-  
-  expect_equal(expected_single_node_counts4, 
-               count_orbits_per_node(single_node_graph, max_graphlet_size = 4))
-  expect_equal(expected_single_node_counts5, 
-               count_orbits_per_node(single_node_graph, max_graphlet_size = 5))
+
+  expect_equal(
+    expected_zero_node_counts4,
+    count_orbits_per_node(zero_node_graph, max_graphlet_size = 4)
+  )
+  expect_equal(
+    expected_zero_node_counts5,
+    count_orbits_per_node(zero_node_graph, max_graphlet_size = 5)
+  )
+
+  expect_equal(
+    expected_single_node_counts4,
+    count_orbits_per_node(single_node_graph, max_graphlet_size = 4)
+  )
+  expect_equal(
+    expected_single_node_counts5,
+    count_orbits_per_node(single_node_graph, max_graphlet_size = 5)
+  )
 })
 
 context("ORCA interface: Simplify graph")
@@ -153,14 +203,14 @@ test_that("simplify_graph works", {
   rownames(adj_mat) <- c("n1", "n2", "n3", "n4", "n5", "n6", "n7")
   colnames(adj_mat) <- c("n1", "n2", "n3", "n4", "n5", "n6", "n7")
   graph <- igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed")
-  
+
   # Helper functions to amend adjacency matrix to generate simplified graphs
   remove_loops <- function(adj_mat) {
     diag(adj_mat) <- 0
     return(adj_mat)
   }
   remove_multiples <- function(adj_mat) {
-    adj_mat[adj_mat>1] <- 1
+    adj_mat[adj_mat > 1] <- 1
     return(adj_mat)
   }
   remove_isolates <- function(adj_mat) {
@@ -170,143 +220,191 @@ test_that("simplify_graph works", {
     adj_mat <- adj_mat[keep_nodes, keep_nodes]
     return(adj_mat)
   }
-  
+
   # Check "do nothing" option works
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed")),
+      igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = FALSE, 
-      remove_multiple = FALSE, remove_isolates = FALSE))
+      graph,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
   # Check directed -> undirected works
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(adj_mat, mode = "plus")),
+      igraph::graph_from_adjacency_matrix(adj_mat, mode = "plus")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = FALSE, 
-      remove_multiple = FALSE, remove_isolates = FALSE))
+      graph,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
-  
+
   # 1: Check DIRECTED simplifications
   # 1a. Loop removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "directed")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = TRUE, 
-      remove_multiple = FALSE, remove_isolates = FALSE))
+      graph,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
   # 1b. Multiple edge removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "directed")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = FALSE, 
-      remove_multiple = TRUE, remove_isolates = FALSE))
+      graph,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 1c. Isolate edge removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "directed")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = FALSE, 
-      remove_multiple = FALSE, remove_isolates = TRUE))
+      graph,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
   # 1ab. Loop + multiple edge removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "directed")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = TRUE, 
-      remove_multiple = TRUE, remove_isolates = FALSE))
+      graph,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 1ac. Loop + isolate removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "directed")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = TRUE, 
-      remove_multiple = FALSE, remove_isolates = TRUE))
+      graph,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
   # 1bc. Multiple + isolate removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "directed")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = FALSE, 
-      remove_multiple = TRUE, remove_isolates = TRUE))
+      graph,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
   # 1abc. Loop + multiple + isolate removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "directed")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = TRUE, 
-      remove_multiple = TRUE, remove_isolates = TRUE))
+      graph,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
-  
+
   # 2: Check UNDIRECTED simplifications individually
   # 2a. Loop removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "plus")),
+      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "plus")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = TRUE, 
-      remove_multiple = FALSE, remove_isolates = FALSE))
+      graph,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
-  # 2b. Multiple edge removal (use mode = "max" to avoid generating multiple 
+  # 2b. Multiple edge removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "max")),
+      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "max")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = FALSE, 
-      remove_multiple = TRUE, remove_isolates = FALSE))
+      graph,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 2c. Isolate edge removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "plus")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "plus")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = FALSE, 
-      remove_multiple = FALSE, remove_isolates = TRUE))
+      graph,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
-  # 2ab. Loop + multiple edge removal (use mode = "max" to avoid generating multiple 
+  # 2ab. Loop + multiple edge removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "max")),
+      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "max")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = TRUE, 
-      remove_multiple = TRUE, remove_isolates = FALSE))
+      graph,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 2ac. Loop + isolate removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "plus")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "plus")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = TRUE, 
-      remove_multiple = FALSE, remove_isolates = TRUE))
+      graph,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
-  # 2bc. Multiple + isolate removal (use mode = "max" to avoid generating multiple 
+  # 2bc. Multiple + isolate removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "max")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "max")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = FALSE, 
-      remove_multiple = TRUE, remove_isolates = TRUE))
+      graph,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
-  # 2abc. Loop + multiple + isolate removal (use mode = "max" to avoid generating multiple 
+  # 2abc. Loop + multiple + isolate removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "max")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "max")
+    ),
     igraph::as_adjacency_matrix(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = TRUE, 
-      remove_multiple = TRUE, remove_isolates = TRUE))
-  )  
+      graph,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
+  )
 })
 
 context("GDD: test simplify graph")
@@ -324,14 +422,14 @@ test_that("gdd simplifies works", {
   rownames(adj_mat) <- c("n1", "n2", "n3", "n4", "n5", "n6", "n7")
   colnames(adj_mat) <- c("n1", "n2", "n3", "n4", "n5", "n6", "n7")
   graph <- igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed")
-  
+
   # Helper functions to amend adjacency matrix to generate simplified graphs
   remove_loops <- function(adj_mat) {
     diag(adj_mat) <- 0
     return(adj_mat)
   }
   remove_multiples <- function(adj_mat) {
-    adj_mat[adj_mat>1] <- 1
+    adj_mat[adj_mat > 1] <- 1
     return(adj_mat)
   }
   remove_isolates <- function(adj_mat) {
@@ -341,182 +439,229 @@ test_that("gdd simplifies works", {
     adj_mat <- adj_mat[keep_nodes, keep_nodes]
     return(adj_mat)
   }
-  
+
   # Check "do nothing" option works
-  t1<-gdd(igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed"))
-  t2<-gdd(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = FALSE, 
-      remove_multiple = FALSE, remove_isolates = FALSE))
-  expect_equal(t1,t2)
+  t1 <- gdd(igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed"))
+  t2 <- gdd(simplify_graph(
+    graph,
+    as_undirected = FALSE, remove_loops = FALSE,
+    remove_multiple = FALSE, remove_isolates = FALSE
+  ))
+  expect_equal(t1, t2)
   # Check directed -> undirected works
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(adj_mat, mode = "plus")),
+      igraph::graph_from_adjacency_matrix(adj_mat, mode = "plus")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = FALSE, 
-      remove_multiple = FALSE, remove_isolates = FALSE))
+      graph,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
-  
+
   # 1: Check DIRECTED simplifications
   # 1a. Loop removal
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "directed")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = TRUE, 
-      remove_multiple = FALSE, remove_isolates = FALSE))
+      graph,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
   # 1b. Multiple edge removal
   expect_equal(
-gdd(
-      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "directed")),
+    gdd(
+      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "directed")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = FALSE, 
-      remove_multiple = TRUE, remove_isolates = FALSE))
+      graph,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 1c. Isolate edge removal
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "directed")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = FALSE, 
-      remove_multiple = FALSE, remove_isolates = TRUE))
+      graph,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
   # 1ab. Loop + multiple edge removal
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "directed")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = TRUE, 
-      remove_multiple = TRUE, remove_isolates = FALSE))
+      graph,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 1ac. Loop + isolate removal
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "directed")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = TRUE, 
-      remove_multiple = FALSE, remove_isolates = TRUE))
+      graph,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
   # 1bc. Multiple + isolate removal
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "directed")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = FALSE, 
-      remove_multiple = TRUE, remove_isolates = TRUE))
+      graph,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
   # 1abc. Loop + multiple + isolate removal
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "directed")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "directed")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = FALSE, remove_loops = TRUE, 
-      remove_multiple = TRUE, remove_isolates = TRUE))
+      graph,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
-  
+
   # 2: Check UNDIRECTED simplifications individually
   # 2a. Loop removal
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "plus")),
+      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "plus")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = TRUE, 
-      remove_multiple = FALSE, remove_isolates = FALSE))
+      graph,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
-  # 2b. Multiple edge removal (use mode = "max" to avoid generating multiple 
+  # 2b. Multiple edge removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "max")),
+      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "max")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = FALSE, 
-      remove_multiple = TRUE, remove_isolates = FALSE))
+      graph,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 2c. Isolate edge removal
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "plus")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "plus")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = FALSE, 
-      remove_multiple = FALSE, remove_isolates = TRUE))
+      graph,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
-  # 2ab. Loop + multiple edge removal (use mode = "max" to avoid generating multiple 
+  # 2ab. Loop + multiple edge removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "max")),
+      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "max")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = TRUE, 
-      remove_multiple = TRUE, remove_isolates = FALSE))
+      graph,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 2ac. Loop + isolate removal
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "plus")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "plus")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = TRUE, 
-      remove_multiple = FALSE, remove_isolates = TRUE))
+      graph,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
-  # 2bc. Multiple + isolate removal (use mode = "max" to avoid generating multiple 
+  # 2bc. Multiple + isolate removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "max")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "max")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = FALSE, 
-      remove_multiple = TRUE, remove_isolates = TRUE))
+      graph,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
-  # 2abc. Loop + multiple + isolate removal (use mode = "max" to avoid generating multiple 
+  # 2abc. Loop + multiple + isolate removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     gdd(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "max")),
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "max")
+    ),
     gdd(simplify_graph(
-      graph, as_undirected = TRUE, remove_loops = TRUE, 
-      remove_multiple = TRUE, remove_isolates = TRUE))
-  )  
+      graph,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
+  )
 })
 
 
 
 context("Features to Histograms Test ")
 test_that("Features to Histograms Test", {
-	#basic test
-	c1<-matrix(c(1,2,3,4,5),nrow=5)
-	res<-graph_features_to_histograms(c1)
-	expect_equal(res[[1]]$locations,c(1,2,3,4,5))
-	expect_equal(res[[1]]$masses,c(1,1,1,1,1))
-	#multiple 
-	c1<-matrix(c(1,1,3,4,5),nrow=5)
-	res<-graph_features_to_histograms(c1)
-	expect_equal(res[[1]]$locations,c(1,3,4,5))
-	expect_equal(res[[1]]$masses,c(2,1,1,1))
-	#non-integer
-	c1<-matrix(c(0.1,0.1,0.3,0.4,0.5),nrow=5)
-	res<-graph_features_to_histograms(c1)
-	expect_equal(res[[1]]$locations,c(0.1,0.3,0.4,0.5))
-	expect_equal(res[[1]]$masses,c(2,1,1,1))
-	#Negative
-	c1<-matrix(c(0.1,-0.1,0.3,-0.4,0.5),nrow=5)
-	res<-graph_features_to_histograms(c1)
-	expect_equal(res[[1]]$locations,c(-0.4,-0.1,0.1,0.3,0.5))
-	expect_equal(res[[1]]$masses,c(1,1,1,1,1))
-	#negative multiple
-	c1<-matrix(c(0.1,-0.1,0.3,-0.4,0.5,-0.4),nrow=6)
-	res<-graph_features_to_histograms(c1)
-	expect_equal(res[[1]]$locations,c(-0.4,-0.1,0.1,0.3,0.5))
-	expect_equal(res[[1]]$masses,c(2,1,1,1,1))
-	#small (testing machine precision)
-	c1<-matrix(c(10^-8,10^-9,10^-2,10^3,10^-8,10^-10),nrow=6)
-	res<-graph_features_to_histograms(c1)
-	expect_equal(res[[1]]$locations,c(10^-10,10^-9,10^-8,10^-2,10^3))
-	expect_equal(res[[1]]$masses,c(1,1,2,1,1))
-	#irrational 
-	c1<-matrix(c(pi,sqrt(2),sqrt(2)/pi,sqrt(3),sqrt(2),sqrt(2)/pi),nrow=6)
-	res<-graph_features_to_histograms(c1)
-	expect_equal(res[[1]]$locations,c(sqrt(2)/pi,sqrt(2),sqrt(3),pi))
-	expect_equal(res[[1]]$masses,c(2,2,1,1))
+  # basic test
+  c1 <- matrix(c(1, 2, 3, 4, 5), nrow = 5)
+  res <- graph_features_to_histograms(c1)
+  expect_equal(res[[1]]$locations, c(1, 2, 3, 4, 5))
+  expect_equal(res[[1]]$masses, c(1, 1, 1, 1, 1))
+  # multiple
+  c1 <- matrix(c(1, 1, 3, 4, 5), nrow = 5)
+  res <- graph_features_to_histograms(c1)
+  expect_equal(res[[1]]$locations, c(1, 3, 4, 5))
+  expect_equal(res[[1]]$masses, c(2, 1, 1, 1))
+  # non-integer
+  c1 <- matrix(c(0.1, 0.1, 0.3, 0.4, 0.5), nrow = 5)
+  res <- graph_features_to_histograms(c1)
+  expect_equal(res[[1]]$locations, c(0.1, 0.3, 0.4, 0.5))
+  expect_equal(res[[1]]$masses, c(2, 1, 1, 1))
+  # Negative
+  c1 <- matrix(c(0.1, -0.1, 0.3, -0.4, 0.5), nrow = 5)
+  res <- graph_features_to_histograms(c1)
+  expect_equal(res[[1]]$locations, c(-0.4, -0.1, 0.1, 0.3, 0.5))
+  expect_equal(res[[1]]$masses, c(1, 1, 1, 1, 1))
+  # negative multiple
+  c1 <- matrix(c(0.1, -0.1, 0.3, -0.4, 0.5, -0.4), nrow = 6)
+  res <- graph_features_to_histograms(c1)
+  expect_equal(res[[1]]$locations, c(-0.4, -0.1, 0.1, 0.3, 0.5))
+  expect_equal(res[[1]]$masses, c(2, 1, 1, 1, 1))
+  # small (testing machine precision)
+  c1 <- matrix(c(10^-8, 10^-9, 10^-2, 10^3, 10^-8, 10^-10), nrow = 6)
+  res <- graph_features_to_histograms(c1)
+  expect_equal(res[[1]]$locations, c(10^-10, 10^-9, 10^-8, 10^-2, 10^3))
+  expect_equal(res[[1]]$masses, c(1, 1, 2, 1, 1))
+  # irrational
+  c1 <- matrix(c(pi, sqrt(2), sqrt(2) / pi, sqrt(3), sqrt(2), sqrt(2) / pi), nrow = 6)
+  res <- graph_features_to_histograms(c1)
+  expect_equal(res[[1]]$locations, c(sqrt(2) / pi, sqrt(2), sqrt(3), pi))
+  expect_equal(res[[1]]$masses, c(2, 2, 1, 1))
 })
 
 
@@ -538,20 +683,22 @@ test_that("read_simple_graph works", {
   graph <- igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed")
   # Save graph to temp directory
   path <- file.path(tempdir(), "read_simple_graph_test_input.txt")
-  format = "graphml"
+  format <- "graphml"
   igraph::write_graph(graph, path, format = format)
   # Sanity check round trip of graph to file and back
   check_graph <- igraph::read_graph(file = path, format = format)
-  expect_equal(igraph::as_adjacency_matrix(graph), 
-               igraph::as_adjacency_matrix(check_graph))
-  
+  expect_equal(
+    igraph::as_adjacency_matrix(graph),
+    igraph::as_adjacency_matrix(check_graph)
+  )
+
   # Helper functions to amend adjacency matrix to generate simplified graphs
   remove_loops <- function(adj_mat) {
     diag(adj_mat) <- 0
     return(adj_mat)
   }
   remove_multiples <- function(adj_mat) {
-    adj_mat[adj_mat>1] <- 1
+    adj_mat[adj_mat > 1] <- 1
     return(adj_mat)
   }
   remove_isolates <- function(adj_mat) {
@@ -561,142 +708,190 @@ test_that("read_simple_graph works", {
     adj_mat <- adj_mat[keep_nodes, keep_nodes]
     return(adj_mat)
   }
-  
+
   # Check "do nothing" option works
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = FALSE, remove_loops = FALSE, 
-                                          remove_multiple = FALSE, remove_isolates = FALSE))
+      igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
   # Check directed -> undirected works
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(adj_mat, mode = "plus")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = TRUE, remove_loops = FALSE, 
-                                          remove_multiple = FALSE, remove_isolates = FALSE))
+      igraph::graph_from_adjacency_matrix(adj_mat, mode = "plus")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
-  
+
   # 1: Check DIRECTED simplifications
   # 1a. Loop removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "directed")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = FALSE, remove_loops = TRUE, 
-                                          remove_multiple = FALSE, remove_isolates = FALSE))
+      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "directed")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
   # 1b. Multiple edge removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "directed")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = FALSE, remove_loops = FALSE, 
-                                          remove_multiple = TRUE, remove_isolates = FALSE))
+      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "directed")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 1c. Isolate edge removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "directed")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = FALSE, remove_loops = FALSE, 
-                                          remove_multiple = FALSE, remove_isolates = TRUE))
+      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "directed")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
   # 1ab. Loop + multiple edge removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "directed")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = FALSE, remove_loops = TRUE, 
-                                          remove_multiple = TRUE, remove_isolates = FALSE))
+      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "directed")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 1ac. Loop + isolate removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "directed")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = FALSE, remove_loops = TRUE, 
-                                          remove_multiple = FALSE, remove_isolates = TRUE))
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "directed")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
   # 1bc. Multiple + isolate removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "directed")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = FALSE, remove_loops = FALSE, 
-                                          remove_multiple = TRUE, remove_isolates = TRUE))
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "directed")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = FALSE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
   # 1abc. Loop + multiple + isolate removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "directed")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = FALSE, remove_loops = TRUE, 
-                                          remove_multiple = TRUE, remove_isolates = TRUE))
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "directed")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = FALSE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
-  
+
   # 2: Check UNDIRECTED simplifications individually
   # 2a. Loop removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "plus")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = TRUE, remove_loops = TRUE, 
-                                          remove_multiple = FALSE, remove_isolates = FALSE))
+      igraph::graph_from_adjacency_matrix(remove_loops(adj_mat), mode = "plus")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = FALSE
+    ))
   )
-  # 2b. Multiple edge removal (use mode = "max" to avoid generating multiple 
+  # 2b. Multiple edge removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "max")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = TRUE, remove_loops = FALSE, 
-                                          remove_multiple = TRUE, remove_isolates = FALSE))
+      igraph::graph_from_adjacency_matrix(remove_multiples(adj_mat), mode = "max")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 2c. Isolate edge removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "plus")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = TRUE, remove_loops = FALSE, 
-                                          remove_multiple = FALSE, remove_isolates = TRUE))
+      igraph::graph_from_adjacency_matrix(remove_isolates(adj_mat), mode = "plus")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
-  # 2ab. Loop + multiple edge removal (use mode = "max" to avoid generating multiple 
+  # 2ab. Loop + multiple edge removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "max")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = TRUE, remove_loops = TRUE, 
-                                          remove_multiple = TRUE, remove_isolates = FALSE))
+      igraph::graph_from_adjacency_matrix(remove_multiples(remove_loops(adj_mat)), mode = "max")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = FALSE
+    ))
   )
   # 2ac. Loop + isolate removal
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "plus")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = TRUE, remove_loops = TRUE, 
-                                          remove_multiple = FALSE, remove_isolates = TRUE))
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_loops(adj_mat)), mode = "plus")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = FALSE, remove_isolates = TRUE
+    ))
   )
-  # 2bc. Multiple + isolate removal (use mode = "max" to avoid generating multiple 
+  # 2bc. Multiple + isolate removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "max")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = TRUE, remove_loops = FALSE, 
-                                          remove_multiple = TRUE, remove_isolates = TRUE))
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(adj_mat)), mode = "max")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = TRUE, remove_loops = FALSE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
-  # 2abc. Loop + multiple + isolate removal (use mode = "max" to avoid generating multiple 
+  # 2abc. Loop + multiple + isolate removal (use mode = "max" to avoid generating multiple
   # edges where nodes are mutually connected in adjacency matrix)
   expect_equal(
     igraph::as_adjacency_matrix(
-      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "max")),
-    igraph::as_adjacency_matrix(read_simple_graph(file = path, format = format,
-                                          as_undirected = TRUE, remove_loops = TRUE, 
-                                          remove_multiple = TRUE, remove_isolates = TRUE))
+      igraph::graph_from_adjacency_matrix(remove_isolates(remove_multiples(remove_loops(adj_mat))), mode = "max")
+    ),
+    igraph::as_adjacency_matrix(read_simple_graph(
+      file = path, format = format,
+      as_undirected = TRUE, remove_loops = TRUE,
+      remove_multiple = TRUE, remove_isolates = TRUE
+    ))
   )
 })
 
@@ -715,20 +910,20 @@ test_that("read_simple_files works (all files in a directory)", {
   colnames(adj_mat) <- c("n1", "n2", "n3", "n4", "n5", "n6", "n7")
   graph <- igraph::graph_from_adjacency_matrix(adj_mat, mode = "directed")
   # Save graphs to temp directory
-  format = "graphml"
+  format <- "graphml"
   base_dir <- tempdir()
-  igraph::write_graph(graph, file =  file.path(base_dir, "oltw54387eNS_1.txt"), format = format)
-  igraph::write_graph(graph, file =  file.path(base_dir, "oltw54387eNS_2.txt"), format = format)
-  igraph::write_graph(graph, file =  file.path(base_dir, "oltw54387eNS_3.txt"), format = format)
-  igraph::write_graph(graph, file =  file.path(base_dir, "oltw54387eNS_4.txt"), format = format)
-  
+  igraph::write_graph(graph, file = file.path(base_dir, "oltw54387eNS_1.txt"), format = format)
+  igraph::write_graph(graph, file = file.path(base_dir, "oltw54387eNS_2.txt"), format = format)
+  igraph::write_graph(graph, file = file.path(base_dir, "oltw54387eNS_3.txt"), format = format)
+  igraph::write_graph(graph, file = file.path(base_dir, "oltw54387eNS_4.txt"), format = format)
+
   # Helper functions to amend adjacency matrix to generate simplified graphs
   remove_loops <- function(adj_mat) {
     diag(adj_mat) <- 0
     return(adj_mat)
   }
   remove_multiples <- function(adj_mat) {
-    adj_mat[adj_mat>1] <- 1
+    adj_mat[adj_mat > 1] <- 1
     return(adj_mat)
   }
   remove_isolates <- function(adj_mat) {
@@ -738,24 +933,31 @@ test_that("read_simple_files works (all files in a directory)", {
     adj_mat <- adj_mat[keep_nodes, keep_nodes]
     return(adj_mat)
   }
-  
+
   # No simplification
   graphs_actual <- read_simple_graphs(
-    base_dir, format = format, pattern = "oltw54387eNS*", as_undirected = FALSE, 
-    remove_loops = FALSE, remove_multiple = FALSE, remove_isolates = FALSE)
-  purrr::walk(graphs_actual, ~expect_equal(
-    igraph::as_adjacency_matrix(.x), igraph::as_adjacency_matrix(graph)))
-  
+    base_dir,
+    format = format, pattern = "oltw54387eNS*", as_undirected = FALSE,
+    remove_loops = FALSE, remove_multiple = FALSE, remove_isolates = FALSE
+  )
+  purrr::walk(graphs_actual, ~ expect_equal(
+    igraph::as_adjacency_matrix(.x), igraph::as_adjacency_matrix(graph)
+  ))
+
   # Full ORCA compatible simplification
   graphs_actual <- read_simple_graphs(
-    base_dir, format = format, pattern = "oltw54387eNS*", as_undirected = TRUE, 
-    remove_loops = TRUE, remove_multiple = TRUE, remove_isolates = TRUE)
-  purrr::walk(graphs_actual, ~expect_equal(
+    base_dir,
+    format = format, pattern = "oltw54387eNS*", as_undirected = TRUE,
+    remove_loops = TRUE, remove_multiple = TRUE, remove_isolates = TRUE
+  )
+  purrr::walk(graphs_actual, ~ expect_equal(
     igraph::as_adjacency_matrix(.x), igraph::as_adjacency_matrix(
       igraph::as.undirected(
         igraph::graph_from_adjacency_matrix(
-        remove_isolates(remove_multiples(remove_loops(adj_mat))))
-      ))
+          remove_isolates(remove_multiples(remove_loops(adj_mat)))
+        )
+      )
+    )
   ))
 })
 
@@ -786,7 +988,7 @@ test_that("orbit_to_graphlet_counts summation works", {
   g16_indexes <- c(35:38) + 1
   g17_indexes <- c(39:42) + 1
   g18_indexes <- c(43:44) + 1
-  g19_indexes <- c(45:48) +1
+  g19_indexes <- c(45:48) + 1
   g20_indexes <- c(49:50) + 1
   g21_indexes <- c(51:53) + 1
   g22_indexes <- c(54:55) + 1
@@ -829,21 +1031,25 @@ test_that("orbit_to_graphlet_counts summation works", {
   g28_counts <- rowSums(orbit_counts_5[, g28_indexes, drop = FALSE])
   g29_counts <- rowSums(orbit_counts_5[, g29_indexes, drop = FALSE])
   # Define expected graphlet count matrix for graphlets up to 5 nodes
-  expected_graphlet_counts_5 <- 
-    cbind(g0_counts, g1_counts, g2_counts, g3_counts, g4_counts, g5_counts, 
-          g6_counts, g7_counts, g8_counts, g9_counts, g10_counts, g11_counts,
-          g12_counts, g13_counts, g14_counts, g15_counts, g16_counts,
-          g17_counts, g18_counts, g19_counts, g20_counts, g21_counts,
-          g22_counts, g23_counts, g24_counts, g25_counts, g26_counts,
-          g27_counts, g28_counts, g29_counts)
-  colnames(expected_graphlet_counts_5) <- 
-             c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9","G10",
-               "G11", "G12", "G13", "G14", "G15", "G16", "G17", "G18", "G19", 
-               "G20", "G21", "G22", "G23", "G24", "G25", "G26", "G27", "G28", 
-               "G29")
+  expected_graphlet_counts_5 <-
+    cbind(
+      g0_counts, g1_counts, g2_counts, g3_counts, g4_counts, g5_counts,
+      g6_counts, g7_counts, g8_counts, g9_counts, g10_counts, g11_counts,
+      g12_counts, g13_counts, g14_counts, g15_counts, g16_counts,
+      g17_counts, g18_counts, g19_counts, g20_counts, g21_counts,
+      g22_counts, g23_counts, g24_counts, g25_counts, g26_counts,
+      g27_counts, g28_counts, g29_counts
+    )
+  colnames(expected_graphlet_counts_5) <-
+    c(
+      "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10",
+      "G11", "G12", "G13", "G14", "G15", "G16", "G17", "G18", "G19",
+      "G20", "G21", "G22", "G23", "G24", "G25", "G26", "G27", "G28",
+      "G29"
+    )
   # Define epected graphlet count matrix for graphlets up to 4 nodes by selecting
   # a subset of the matrix for graphlets up to 5 nodes
-  expected_graphlet_counts_4 <- expected_graphlet_counts_5[,1:9]
+  expected_graphlet_counts_4 <- expected_graphlet_counts_5[, 1:9]
   # Calculate actual graphlet counts from functions under test
   actual_graphlet_counts_4 <- orbit_to_graphlet_counts(orbit_counts_4)
   actual_graphlet_counts_5 <- orbit_to_graphlet_counts(orbit_counts_5)
@@ -854,197 +1060,199 @@ test_that("orbit_to_graphlet_counts summation works", {
 
 context("ORCA interface: Named ego networks")
 test_that("make_named_ego_graph labels each ego-network with the correct node name", {
-  # Helper function to sort edgelists in consistent order 
+  # Helper function to sort edgelists in consistent order
   sort_edge_list <- function(edge_list) {
-    edge_list[order(edge_list[,1],edge_list[,2], decreasing = FALSE),]
+    edge_list[order(edge_list[, 1], edge_list[, 2], decreasing = FALSE), ]
   }
   # Set up a small sample network with at least one ego-network that contains
   # at least one of each graphlets
   elist <- rbind(
-    c("n1","n2"),
-    c("n2","n3"),
-    c("n1","n4"),
-    c("n2","n5"),
-    c("n1","n6"),
-    c("n1","n7"),
-    c("n2","n4"),
-    c("n4","n6"),
-    c("n6","n8"),
-    c("n7","n8"),
-    c("n7","n9"),
-    c("n7","n10"),
-    c("n8","n9"),
-    c("n8","n10"),
-    c("n9","n10")
+    c("n1", "n2"),
+    c("n2", "n3"),
+    c("n1", "n4"),
+    c("n2", "n5"),
+    c("n1", "n6"),
+    c("n1", "n7"),
+    c("n2", "n4"),
+    c("n4", "n6"),
+    c("n6", "n8"),
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
   )
   graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
-  # The expectation below is based on igraph::graph_from_edgelist adding nodes 
+  # The expectation below is based on igraph::graph_from_edgelist adding nodes
   # in the order they appear in the edge list, and igraph::V returning them
   # in this same order
-  expected_node_names <- c("n1","n2","n3","n4","n5","n6","n7","n8","n9","n10")
-  
+  expected_node_names <- c("n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10")
+
   # Expected edgelists for ego networks of order 1
   expected_ego_elist_n1_o1 <- rbind(
-    c("n1","n2"),
-    c("n1","n4"),
-    c("n1","n6"),
-    c("n1","n7"),
-    c("n2","n4"),
-    c("n4","n6")
+    c("n1", "n2"),
+    c("n1", "n4"),
+    c("n1", "n6"),
+    c("n1", "n7"),
+    c("n2", "n4"),
+    c("n4", "n6")
   )
   expected_ego_elist_n2_o1 <- rbind(
-    c("n1","n2"),
-    c("n1","n4"),
-    c("n2","n3"),
-    c("n2","n4"),
-    c("n2","n5")
+    c("n1", "n2"),
+    c("n1", "n4"),
+    c("n2", "n3"),
+    c("n2", "n4"),
+    c("n2", "n5")
   )
   expected_ego_elist_n3_o1 <- rbind(
-    c("n2","n3")
+    c("n2", "n3")
   )
   expected_ego_elist_n4_o1 <- rbind(
-    c("n1","n2"),
-    c("n1","n4"),
-    c("n1","n6"),
-    c("n2","n4"),
-    c("n4","n6")
+    c("n1", "n2"),
+    c("n1", "n4"),
+    c("n1", "n6"),
+    c("n2", "n4"),
+    c("n4", "n6")
   )
   expected_ego_elist_n5_o1 <- rbind(
-    c("n2","n5")
+    c("n2", "n5")
   )
   expected_ego_elist_n6_o1 <- rbind(
-    c("n1","n4"),
-    c("n1","n6"),
-    c("n4","n6"),
-    c("n6","n8")
+    c("n1", "n4"),
+    c("n1", "n6"),
+    c("n4", "n6"),
+    c("n6", "n8")
   )
   expected_ego_elist_n7_o1 <- rbind(
-    c("n1","n7"),
-    c("n7","n8"),
-    c("n7","n9"),
-    c("n7","n10"),
-    c("n8","n9"),
-    c("n8","n10"),
-    c("n9","n10")
+    c("n1", "n7"),
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
   )
   expected_ego_elist_n8_o1 <- rbind(
-    c("n6","n8"),
-    c("n7","n8"),
-    c("n7","n9"),
-    c("n7","n10"),
-    c("n8","n9"),
-    c("n8","n10"),
-    c("n9","n10")
+    c("n6", "n8"),
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
   )
   expected_ego_elist_n9_o1 <- rbind(
-    c("n7","n8"),
-    c("n7","n9"),
-    c("n7","n10"),
-    c("n8","n9"),
-    c("n8","n10"),
-    c("n9","n10")
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
   )
   expected_ego_elist_n10_o1 <- rbind(
-    c("n7","n8"),
-    c("n7","n9"),
-    c("n7","n10"),
-    c("n8","n9"),
-    c("n8","n10"),
-    c("n9","n10")
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
   )
-  
+
   # Test ego-networks of order 1.
   # We compare edgelists as igraphs do not implement comparison
   order <- 1
   min_ego_nodes <- 0
   min_ego_edges <- 0
-  
+
   expected_ego_elists_o1 <- list(
-    n1 =  dplyr::arrange(data.frame(expected_ego_elist_n1_o1), X1, X2),
-    n2 =  dplyr::arrange(data.frame(expected_ego_elist_n2_o1), X1, X2),
-    n3 =  dplyr::arrange(data.frame(expected_ego_elist_n3_o1), X1, X2),
-    n4 =  dplyr::arrange(data.frame(expected_ego_elist_n4_o1), X1, X2),
-    n5 =  dplyr::arrange(data.frame(expected_ego_elist_n5_o1), X1, X2),
-    n6 =  dplyr::arrange(data.frame(expected_ego_elist_n6_o1), X1, X2),
-    n7 =  dplyr::arrange(data.frame(expected_ego_elist_n7_o1), X1, X2),
-    n8 =  dplyr::arrange(data.frame(expected_ego_elist_n8_o1), X1, X2),
-    n9 =  dplyr::arrange(data.frame(expected_ego_elist_n9_o1), X1, X2),
+    n1 = dplyr::arrange(data.frame(expected_ego_elist_n1_o1), X1, X2),
+    n2 = dplyr::arrange(data.frame(expected_ego_elist_n2_o1), X1, X2),
+    n3 = dplyr::arrange(data.frame(expected_ego_elist_n3_o1), X1, X2),
+    n4 = dplyr::arrange(data.frame(expected_ego_elist_n4_o1), X1, X2),
+    n5 = dplyr::arrange(data.frame(expected_ego_elist_n5_o1), X1, X2),
+    n6 = dplyr::arrange(data.frame(expected_ego_elist_n6_o1), X1, X2),
+    n7 = dplyr::arrange(data.frame(expected_ego_elist_n7_o1), X1, X2),
+    n8 = dplyr::arrange(data.frame(expected_ego_elist_n8_o1), X1, X2),
+    n9 = dplyr::arrange(data.frame(expected_ego_elist_n9_o1), X1, X2),
     n10 = dplyr::arrange(data.frame(expected_ego_elist_n10_o1), X1, X2)
   )
   # Generate actual ego-networks and convert to edge lists for comparison
-  actual_ego_elists_o1 <- 
-    purrr::map(make_named_ego_graph(graph, order, 
-                                    min_ego_nodes = min_ego_nodes, 
-                                    min_ego_edges = min_ego_edges), 
-               function(g) {
-                dplyr::arrange(data.frame(igraph::as_edgelist(g)), X1, X2)
-               }
-              )
+  actual_ego_elists_o1 <-
+    purrr::map(
+      make_named_ego_graph(graph, order,
+        min_ego_nodes = min_ego_nodes,
+        min_ego_edges = min_ego_edges
+      ),
+      function(g) {
+        dplyr::arrange(data.frame(igraph::as_edgelist(g)), X1, X2)
+      }
+    )
   expect_equal(actual_ego_elists_o1, expected_ego_elists_o1)
 })
 
 context("ORCA interface: Graphlet counts")
 test_that("count_graphlets_for_graph works", {
-  # Set up a small sample network with at least that contains at least one of 
+  # Set up a small sample network with at least that contains at least one of
   # each graphlet
   elist <- rbind(
-    c("n1","n2"),
-    c("n2","n3"),
-    c("n1","n4"),
-    c("n2","n5"),
-    c("n1","n6"),
-    c("n1","n7"),
-    c("n2","n4"),
-    c("n4","n6"),
-    c("n6","n8"),
-    c("n7","n8"),
-    c("n7","n9"),
-    c("n7","n10"),
-    c("n8","n9"),
-    c("n8","n10"),
-    c("n9","n10")
+    c("n1", "n2"),
+    c("n2", "n3"),
+    c("n1", "n4"),
+    c("n2", "n5"),
+    c("n1", "n6"),
+    c("n1", "n7"),
+    c("n2", "n4"),
+    c("n4", "n6"),
+    c("n6", "n8"),
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
   )
   graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
-  
+
   # Setgraphlet labels to use for names in expected counts
   graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
-  
+
   # Manually verified graphlet counts
-  expected_counts <- c(15, 18,6, 21,3,1, 11, 1, 1)
+  expected_counts <- c(15, 18, 6, 21, 3, 1, 11, 1, 1)
   names(expected_counts) <- graphlet_labels
-  
+
   # Test
   actual_counts <- count_graphlets_for_graph(graph, max_graphlet_size = 4)
   expect_equal(expected_counts, actual_counts)
 })
 
 context("ORCA interface: Ego-network graphlet counts")
-test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manually verified totals for test graph",{
+test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manually verified totals for test graph", {
   # Set up a small sample network with at least one ego-network that contains
   # at least one of each graphlets
   elist <- rbind(
-    c("n1","n2"),
-    c("n2","n3"),
-    c("n1","n4"),
-    c("n2","n5"),
-    c("n1","n6"),
-    c("n1","n7"),
-    c("n2","n4"),
-    c("n4","n6"),
-    c("n6","n8"),
-    c("n7","n8"),
-    c("n7","n9"),
-    c("n7","n10"),
-    c("n8","n9"),
-    c("n8","n10"),
-    c("n9","n10")
+    c("n1", "n2"),
+    c("n2", "n3"),
+    c("n1", "n4"),
+    c("n2", "n5"),
+    c("n1", "n6"),
+    c("n1", "n7"),
+    c("n2", "n4"),
+    c("n4", "n6"),
+    c("n6", "n8"),
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
   )
   graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
-  
+
   # Set node and graphlet labels to use for row and col names in expected counts
   node_labels <- igraph::V(graph)$name
   graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
-  
+
   max_graphlet_size <- 4
   graphlet_key <- graphlet_key(max_graphlet_size)
   k <- graphlet_key$node_count
@@ -1057,7 +1265,7 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
     c(5, 2, 2, 0, 0, 0, 0, 1, 0),
     c(1, 0, 0, 0, 0, 0, 0, 0, 0),
     c(4, 2, 1, 0, 0, 0, 1, 0, 0),
-    c(7, 3, 4, 0, 0, 0, 3, 0, 1), 
+    c(7, 3, 4, 0, 0, 0, 3, 0, 1),
     c(7, 3, 4, 0, 0, 0, 3, 0, 1),
     c(6, 0, 4, 0, 0, 0, 0, 0, 1),
     c(6, 0, 4, 0, 0, 0, 0, 0, 1)
@@ -1067,94 +1275,120 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
   # 2-step ego networks
   expected_counts_order_2 <- rbind(
     c(15, 18, 6, 21, 3, 1, 11, 1, 1),
-    c( 8, 10, 2,  6, 3, 0,  4, 1, 0),
-    c( 5,  5, 1,  0, 2, 0,  2, 0, 0),
-    c(10, 14, 2, 11, 3, 1,  5, 1, 0),
-    c( 5,  5, 1,  0, 2, 0,  2, 0, 0),
-    c(13, 13, 6, 15, 1, 1,  9, 1, 1),
-    c(13, 13, 6, 15, 1, 1,  9, 1, 1),
-    c(11, 10, 5, 10 ,0 ,1,  8, 0, 1),
-    c( 9,  8, 4,  4, 0, 1,  6, 0, 1),
-    c( 9,  8, 4,  4, 0, 1,  6, 0, 1)
+    c(8, 10, 2, 6, 3, 0, 4, 1, 0),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0),
+    c(10, 14, 2, 11, 3, 1, 5, 1, 0),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0),
+    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
+    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
+    c(11, 10, 5, 10, 0, 1, 8, 0, 1),
+    c(9, 8, 4, 4, 0, 1, 6, 0, 1),
+    c(9, 8, 4, 4, 0, 1, 6, 0, 1)
   )
   rownames(expected_counts_order_2) <- node_labels
   colnames(expected_counts_order_2) <- graphlet_labels
-  
+
   # Count graphlets in each ego network of the graph with only counts requested
   min_ego_nodes <- 0
   min_ego_edges <- 0
-  
-  actual_counts_order_1 <- 
-    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size,
-                        neighbourhood_size = 1,
-                        min_ego_nodes = min_ego_nodes,
-                        min_ego_edges = min_ego_edges)
-  actual_counts_order_2 <- 
-    count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = 2,
-                        min_ego_nodes = min_ego_nodes,
-                        min_ego_edges = min_ego_edges)
+
+  actual_counts_order_1 <-
+    count_graphlets_ego(graph,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = 1,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges
+    )
+  actual_counts_order_2 <-
+    count_graphlets_ego(graph,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = 2,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges
+    )
 
   # Test that actual counts match expected with only counts requested (default)
   expect_equal(actual_counts_order_1, expected_counts_order_1)
   expect_equal(actual_counts_order_2, expected_counts_order_2)
-  
+
   # Test that actual and returned ego networks match expected
   # 1. Define expected
-  expected_ego_networks_order_1 <- make_named_ego_graph(graph, order = 1, 
-                                                        min_ego_nodes = min_ego_nodes,
-                                                        min_ego_edges = min_ego_edges)
-  expected_ego_networks_order_2 <- make_named_ego_graph(graph, order = 2,
-                                                        min_ego_nodes = min_ego_nodes,
-                                                        min_ego_edges = min_ego_edges)
+  expected_ego_networks_order_1 <- make_named_ego_graph(graph,
+    order = 1,
+    min_ego_nodes = min_ego_nodes,
+    min_ego_edges = min_ego_edges
+  )
+  expected_ego_networks_order_2 <- make_named_ego_graph(graph,
+    order = 2,
+    min_ego_nodes = min_ego_nodes,
+    min_ego_edges = min_ego_edges
+  )
   expected_counts_with_networks_order_1 <-
-    list(graphlet_counts = expected_counts_order_1,
-         ego_networks = expected_ego_networks_order_1)
-  expected_counts_with_networks_order_2 <- 
-    list(graphlet_counts = expected_counts_order_2,
-         ego_networks = expected_ego_networks_order_2)
+    list(
+      graphlet_counts = expected_counts_order_1,
+      ego_networks = expected_ego_networks_order_1
+    )
+  expected_counts_with_networks_order_2 <-
+    list(
+      graphlet_counts = expected_counts_order_2,
+      ego_networks = expected_ego_networks_order_2
+    )
   # 2. Calculate actual
-  actual_counts_with_networks_order_1 <- 
-    count_graphlets_ego(graph, 
-                        max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = 1, 
-                        min_ego_nodes = min_ego_nodes,
-                        min_ego_edges = min_ego_edges,
-                        return_ego_networks = TRUE)
-  actual_counts_with_networks_order_2 <- 
-    count_graphlets_ego(graph, 
-                        max_graphlet_size = max_graphlet_size, 
-                        neighbourhood_size = 2, 
-                        min_ego_nodes = min_ego_nodes,
-                        min_ego_edges = min_ego_edges,
-                        return_ego_networks = TRUE)
+  actual_counts_with_networks_order_1 <-
+    count_graphlets_ego(graph,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = 1,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      return_ego_networks = TRUE
+    )
+  actual_counts_with_networks_order_2 <-
+    count_graphlets_ego(graph,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = 2,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      return_ego_networks = TRUE
+    )
   # Test that actual counts match expected with ego-networks requested
   expect_equal(actual_counts_with_networks_order_1$graphlet_counts, expected_counts_order_1)
   expect_equal(actual_counts_with_networks_order_2$graphlet_counts, expected_counts_order_2)
-  
+
   # 3. Compare
-  # Comparison is not implemented for igraph objects, so convert all igraphs to 
+  # Comparison is not implemented for igraph objects, so convert all igraphs to
   # indexed edge list and then compare. Do in-situ replacement of igraphs with
   # indexed edge lists to ensure we are checking full properties of returned
   # objects (i.e. named lists with matching elements).
   # 3a. Convert expected and actual ego networks from igraphs to indexed edges
-  expected_counts_with_networks_order_1$ego_networks <- 
-    purrr::map(expected_counts_with_networks_order_1$ego_networks, 
-               graph_to_indexed_edges)
-  expected_counts_with_networks_order_2$ego_networks <- 
-    purrr::map(expected_counts_with_networks_order_2$ego_networks, 
-               graph_to_indexed_edges)
-  actual_counts_with_networks_order_1$ego_networks <- 
-    purrr::map(actual_counts_with_networks_order_1$ego_networks, 
-               graph_to_indexed_edges)
-  actual_counts_with_networks_order_2$ego_networks <- 
-    purrr::map(actual_counts_with_networks_order_2$ego_networks, 
-               graph_to_indexed_edges)
+  expected_counts_with_networks_order_1$ego_networks <-
+    purrr::map(
+      expected_counts_with_networks_order_1$ego_networks,
+      graph_to_indexed_edges
+    )
+  expected_counts_with_networks_order_2$ego_networks <-
+    purrr::map(
+      expected_counts_with_networks_order_2$ego_networks,
+      graph_to_indexed_edges
+    )
+  actual_counts_with_networks_order_1$ego_networks <-
+    purrr::map(
+      actual_counts_with_networks_order_1$ego_networks,
+      graph_to_indexed_edges
+    )
+  actual_counts_with_networks_order_2$ego_networks <-
+    purrr::map(
+      actual_counts_with_networks_order_2$ego_networks,
+      graph_to_indexed_edges
+    )
   # 3b. Do comparison
-  expect_equal(actual_counts_with_networks_order_1, 
-               expected_counts_with_networks_order_1)
-  expect_equal(actual_counts_with_networks_order_2, 
-               expected_counts_with_networks_order_2)
+  expect_equal(
+    actual_counts_with_networks_order_1,
+    expected_counts_with_networks_order_1
+  )
+  expect_equal(
+    actual_counts_with_networks_order_2,
+    expected_counts_with_networks_order_2
+  )
 })
 
 # context("ORCA interface: Graphlet-based degree distributions")
@@ -1181,7 +1415,7 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
 #   gdd_orbit_default_actual <- gdd(graph, feature_type = "orbit")
 #   gdd_graphlet_default_actual <- gdd(graph, feature_type = "graphlet")
 #   gdd_default_default_actual <- gdd(graph)
-#   # Compare actual gdd with expected gdd 
+#   # Compare actual gdd with expected gdd
 #   expect_equal(gdd_orbit_4_actual, gdd_orbit_4_expected)
 #   expect_equal(gdd_orbit_5_actual, gdd_orbit_5_expected)
 #   expect_equal(gdd_graphlet_4_actual, gdd_graphlet_4_expected)
@@ -1191,7 +1425,7 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
 #   expect_equal(gdd_orbit_default_actual, gdd_orbit_4_expected)
 #   expect_equal(gdd_graphlet_default_actual, gdd_graphlet_4_expected)
 #   expect_equal(gdd_default_default_actual, gdd_orbit_4_expected)
-#   
+#
 #   # Check gdd throws error for invalid feature type
 #   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 4))
 #   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 5))
@@ -1202,9 +1436,9 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
 #   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 2))
 #   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 3))
 #   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 6))
-#   
+#
 # })
-# 
+#
 # context("ORCA interface: Ego-network graphlet outputs for manually verified networks")
 # test_that("Ego-network 4-node graphlet counts match manually verified totals
 #           and gdd gives expected discrete histograms",{
@@ -1228,20 +1462,20 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
 #     c("n9","n10")
 #   )
 #   graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
-#   
+#
 #   # Set node and graphlet labels to use for row and col names in expected counts
 #   node_labels <- igraph::V(graph)$name
 #   graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
-#   
+#
 #   # Count graphlets in each ego network of the graph with neighbourhood sizes of 1 and 2
 #   max_graphlet_size <- 4
-#   actual_counts_order_1 <- 
-#     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+#   actual_counts_order_1 <-
+#     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size,
 #                         neighbourhood_size = 1)
-#   actual_counts_order_2 <- 
-#     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+#   actual_counts_order_2 <-
+#     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size,
 #                         neighbourhood_size = 2)
-#   
+#
 #   # Set manually verified ego-network graphlet counts
 #   # 1-step ego networks
 #   expected_counts_order_1 <- rbind(
@@ -1273,55 +1507,55 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
 #   )
 #   rownames(expected_counts_order_2) <- node_labels
 #   colnames(expected_counts_order_2) <- graphlet_labels
-# 
+#
 #   # Test that actual counts match expected with only counts requested (default)
 #   expect_equal(actual_counts_order_1, expected_counts_order_1)
 #   expect_equal(actual_counts_order_2, expected_counts_order_2)
-#   
+#
 #   # Test that actual counts and returned ego networks match expected
 #   # 1. Define expected
 #   expected_ego_networks_order_1 <- make_named_ego_graph(graph, order = 1)
 #   expected_ego_networks_order_2 <- make_named_ego_graph(graph, order = 2)
-#   expected_counts_with_networks_order_1 <- 
+#   expected_counts_with_networks_order_1 <-
 #     list(graphlet_counts = expected_counts_order_1,
 #          ego_networks = expected_ego_networks_order_1)
-#   expected_counts_with_networks_order_2 <- 
+#   expected_counts_with_networks_order_2 <-
 #     list(graphlet_counts = expected_counts_order_2,
 #          ego_networks = expected_ego_networks_order_2)
 #   # 2. Calculate actual
-#   actual_counts_with_networks_order_1 <- 
-#     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+#   actual_counts_with_networks_order_1 <-
+#     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size,
 #                         neighbourhood_size = 1, return_ego_networks = TRUE)
-#   actual_counts_with_networks_order_2 <- 
-#     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size, 
+#   actual_counts_with_networks_order_2 <-
+#     count_graphlets_ego(graph, max_graphlet_size = max_graphlet_size,
 #                         neighbourhood_size = 2, return_ego_networks = TRUE)
 #   # 3. Compare
-#   # Comparison is not implemented for igraph objects, so convert all igraphs to 
+#   # Comparison is not implemented for igraph objects, so convert all igraphs to
 #   # indexed edge list and then compare. Do in-situ replacement of igraphs with
 #   # indexed edge lists to ensure we are checking full properties of returned
 #   # objects (i.e. named lists with matching elements).
 #   # 3a. Convert expected and actual ego networks from igraphs to indexed edges
-#   expected_counts_with_networks_order_1$ego_networks <- 
-#     purrr::map(expected_counts_with_networks_order_1$ego_networks, 
+#   expected_counts_with_networks_order_1$ego_networks <-
+#     purrr::map(expected_counts_with_networks_order_1$ego_networks,
 #               graph_to_indexed_edges)
-#   expected_counts_with_networks_order_2$ego_networks <- 
-#     purrr::map(expected_counts_with_networks_order_2$ego_networks, 
+#   expected_counts_with_networks_order_2$ego_networks <-
+#     purrr::map(expected_counts_with_networks_order_2$ego_networks,
 #               graph_to_indexed_edges)
-#   actual_counts_with_networks_order_1$ego_networks <- 
-#     purrr::map(actual_counts_with_networks_order_1$ego_networks, 
+#   actual_counts_with_networks_order_1$ego_networks <-
+#     purrr::map(actual_counts_with_networks_order_1$ego_networks,
 #               graph_to_indexed_edges)
-#   actual_counts_with_networks_order_2$ego_networks <- 
-#     purrr::map(actual_counts_with_networks_order_2$ego_networks, 
+#   actual_counts_with_networks_order_2$ego_networks <-
+#     purrr::map(actual_counts_with_networks_order_2$ego_networks,
 #               graph_to_indexed_edges)
 #   # 3b. Do comparison
-#   expect_equal(actual_counts_with_networks_order_1, 
+#   expect_equal(actual_counts_with_networks_order_1,
 #                expected_counts_with_networks_order_1)
-#   expect_equal(actual_counts_with_networks_order_2, 
+#   expect_equal(actual_counts_with_networks_order_2,
 #                expected_counts_with_networks_order_2)
-#   
+#
 #   # Test that gdd method gives the expected graphlet degree distributions
 #   # 1-step ego-networks
-#   actual_gdd_order_1 <- gdd(graph, feature_type = "graphlet", 
+#   actual_gdd_order_1 <- gdd(graph, feature_type = "graphlet",
 #                             max_graphlet_size = 4, ego_neighbourhood_size = 1)
 #   expected_gdd_order_1 <- list(
 #     G0 = dhist(locations = c(1, 4, 5, 6, 7), masses = c(2, 1, 2, 3, 2)),
@@ -1336,7 +1570,7 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
 #   )
 #   expect_equal(actual_gdd_order_1, expected_gdd_order_1)
 #   # 2-step ego-networks
-#   actual_gdd_order_2 <- gdd(graph, feature_type = "graphlet", 
+#   actual_gdd_order_2 <- gdd(graph, feature_type = "graphlet",
 #                             max_graphlet_size = 4, ego_neighbourhood_size = 2)
 #   expected_gdd_order_2 <- list(
 #     G0 = dhist(locations = c(5, 8, 9, 10, 11, 13, 15), masses = c(2, 1, 2, 1, 1, 2, 1)),
@@ -1350,46 +1584,46 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
 #     G8 = dhist(locations = c(0, 1), masses = c(4, 6))
 #   )
 #   expect_equal(actual_gdd_order_2, expected_gdd_order_2)
-#   
+#
 #   # Check gdd throws error for invalid feature type
-#   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 4, 
+#   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 4,
 #                    ego_neighbourhood_size = 0))
-#   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 4, 
+#   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 4,
 #                    ego_neighbourhood_size = 1))
-#   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 5, 
+#   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 5,
 #                    ego_neighbourhood_size = 0))
-#   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 5, 
+#   expect_error(gdd(graph, feature_type = "foo", max_graphlet_size = 5,
 #                    ego_neighbourhood_size = 1))
 #   # We don't support orbit feature type for ego networks (i.e. neighbourhood > 0)
-#   expect_error(gdd(graph, feature_type = "orbit", max_graphlet_size = 4, 
+#   expect_error(gdd(graph, feature_type = "orbit", max_graphlet_size = 4,
 #                    ego_neighbourhood_size = 1))
-#   expect_error(gdd(graph, feature_type = "orbit", max_graphlet_size = 5, 
+#   expect_error(gdd(graph, feature_type = "orbit", max_graphlet_size = 5,
 #                    ego_neighbourhood_size = 1))
 #   # Check gdd throws error for invalid maximum graphlet size
-#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 2, 
+#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 2,
 #                    ego_neighbourhood_size = 0))
-#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 2, 
+#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 2,
 #                    ego_neighbourhood_size = 1))
-#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 3, 
+#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 3,
 #                    ego_neighbourhood_size = 0))
-#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 3, 
+#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 3,
 #                    ego_neighbourhood_size = 1))
-#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 6, 
+#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 6,
 #                    ego_neighbourhood_size = 0))
-#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 6, 
+#   expect_error(gdd(graph, feature_type = "graphlet", max_graphlet_size = 6,
 #                    ego_neighbourhood_size = 1))
 # })
-# 
+#
 # context("ORCA interface: GDD for all graphs in a directory")
 # test_that("gdd_for_all_graphs works", {
 #   # Set source directory and file properties for Virus PPI graph edge files
 #   source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 #   edge_format = "ncol"
 #   file_pattern = ".txt"
-#   
+#
 #   # Set number of threads to use at once for parallel processing.
 #   num_threads = getOption("mc.cores", 2L)
-#   
+#
 #   # Use previously tested gdd code to calculate expected gdds
 #   expected_gdd_fn <- function(feature_type, max_graphlet_size, ego_neighbourhood_size) {
 #     gdds <- list(
@@ -1402,12 +1636,12 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
 #     names(gdds) <- c("EBV", "ECL", "HSV-1", "KSHV", "VZV")
 #     gdds
 #   }
-# 
+#
 #   # Use code under test to generate actual gdds
 #   actual_gdd_fn <- function (feature_type, max_graphlet_size, ego_neighbourhood_size) {
-#     gdd_for_all_graphs(source_dir = source_dir, format = edge_format, 
-#                        pattern = file_pattern, feature_type = feature_type, 
-#                        max_graphlet_size = max_graphlet_size, 
+#     gdd_for_all_graphs(source_dir = source_dir, format = edge_format,
+#                        pattern = file_pattern, feature_type = feature_type,
+#                        max_graphlet_size = max_graphlet_size,
 #                        ego_neighbourhood_size = ego_neighbourhood_size,
 #                        mc.cores = num_threads)
 #   }

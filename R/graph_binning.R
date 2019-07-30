@@ -9,10 +9,14 @@
 binned_densities_adaptive <- function(densities,
                                       min_counts_per_interval,
                                       num_intervals) {
-  breaks <- adaptive_breaks(densities, min_count = min_counts_per_interval,
-                            breaks = num_intervals)
-  interval_indexes <- interval_index(densities, breaks = breaks,
-                                     out_of_range_intervals = FALSE)
+  breaks <- adaptive_breaks(densities,
+    min_count = min_counts_per_interval,
+    breaks = num_intervals
+  )
+  interval_indexes <- interval_index(densities,
+    breaks = breaks,
+    out_of_range_intervals = FALSE
+  )
   list(
     densities = densities,
     interval_indexes = interval_indexes,
@@ -75,15 +79,15 @@ adaptive_breaks <- function(x, min_count, breaks) {
   # an accurate count that includes indexes with no members with zero counts
   all_interval_indexes <- 1:num_intervals
   interval_index_counts <- plyr::count(
-                            c(x_interval_indexes, all_interval_indexes)
-                          )
+    c(x_interval_indexes, all_interval_indexes)
+  )
   interval_index_counts$freq <- interval_index_counts$freq - 1
 
   # Find the first interval with fewer members than the minimum specified count
   merge_position <- Position(
-                      function(i) i < min_count,
-                      interval_index_counts$freq
-                    )
+    function(i) i < min_count,
+    interval_index_counts$freq
+  )
   # Not all intervals are guaranteed to have members, so convert the index
   # provided by Position into an index into the full interval list and then add
   merge_interval_index <- interval_index_counts$x[merge_position]

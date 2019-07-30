@@ -54,8 +54,8 @@ netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2,
     sum(counts2^2 / sqrt(counts1^2 + counts2^2), na.rm = TRUE)
   # Calculate intermediate "netD" statistic that falls within range -1..1
   netds2 <- (1 / sqrt(norm_const)) *
-            sum((counts1 * counts2) /
-            sqrt(counts1^2 + counts2^2), na.rm = TRUE)
+    sum((counts1 * counts2) /
+      sqrt(counts1^2 + counts2^2), na.rm = TRUE)
   # Calculate corresponding "netd" Netdis statistic that falls within range 0..1
   0.5 * (1 - netds2)
 }
@@ -152,13 +152,13 @@ count_graphlets_ego_scaled <- function(graph,
   # Scale ego-network graphlet counts by dividing by total number of k-tuples in
   # ego-network (where k is graphlet size)
   ego_graphlet_tuples <- count_graphlet_tuples_ego(
-                          ego_networks,
-                          max_graphlet_size = max_graphlet_size
-                        )
+    ego_networks,
+    max_graphlet_size = max_graphlet_size
+  )
   ego_graphlet_counts <- scale_graphlet_count(
-                          ego_graphlet_counts,
-                          ego_graphlet_tuples
-                        )
+    ego_graphlet_counts,
+    ego_graphlet_tuples
+  )
 
   # Return either graphlet counts, or graphlet counts and ego_networks
   if (return_ego_networks) {
@@ -195,11 +195,11 @@ netdis_centred_graphlet_counts <- function(graph,
                                            expected_ego_count_fn = NULL) {
   # Get centred counts for each ego network
   centred_counts <- netdis_centred_graphlet_counts_ego(
-                      graph,
-                      max_graphlet_size,
-                      neighbourhood_size,
-                      expected_ego_count_fn
-                    )
+    graph,
+    max_graphlet_size,
+    neighbourhood_size,
+    expected_ego_count_fn
+  )
   # Sum centred counts over ego-networks
   apply(centred_counts, MARGIN = 2, FUN = sum)
 }
@@ -277,34 +277,34 @@ netdis_expected_graphlet_counts_ego_fn <- function(graph,
   # graph, also returning the ego networks themselves in order to calculate
   # their densities
   res <- count_graphlets_ego_scaled(
-          graph,
-          max_graphlet_size,
-          neighbourhood_size,
-          min_ego_nodes = min_ego_nodes,
-          min_ego_edges = min_ego_edges,
-          return_ego_networks = TRUE
-        )
+    graph,
+    max_graphlet_size,
+    neighbourhood_size,
+    min_ego_nodes = min_ego_nodes,
+    min_ego_edges = min_ego_edges,
+    return_ego_networks = TRUE
+  )
 
   scaled_graphlet_counts <- res$graphlet_counts
   ego_networks <- res$ego_networks
 
   # Get ego-network densities
   densities <- purrr::simplify(
-                purrr::map_dbl(ego_networks, igraph::edge_density)
-              )
+    purrr::map_dbl(ego_networks, igraph::edge_density)
+  )
 
   # Adaptively bin ego-network densities
   binned_densities <- binned_densities_adaptive(
-                        densities,
-                        min_counts_per_interval = min_bin_count,
-                        num_intervals = num_bins
-                      )
+    densities,
+    min_counts_per_interval = min_bin_count,
+    num_intervals = num_bins
+  )
 
   # Average graphlet counts across density bins
   density_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
-                                      scaled_graphlet_counts,
-                                      binned_densities$interval_indexes
-                                    )
+    scaled_graphlet_counts,
+    binned_densities$interval_indexes
+  )
 
   # Return a partially applied function with the key reference graph information
   # built-in
@@ -479,12 +479,14 @@ ego_network_density <- function(ego_networks) {
 scale_graphlet_counts_ego <- function(ego_networks, graphlet_counts,
                                       max_graphlet_size) {
   ego_graphlet_tuples <- count_graphlet_tuples_ego(
-                          ego_networks,
-                          max_graphlet_size = max_graphlet_size)
+    ego_networks,
+    max_graphlet_size = max_graphlet_size
+  )
 
   scaled_graphlet_counts <- scale_graphlet_count(
-                              graphlet_counts,
-                              ego_graphlet_tuples)
+    graphlet_counts,
+    ego_graphlet_tuples
+  )
 
   return(scaled_graphlet_counts)
 }
@@ -497,7 +499,8 @@ count_graphlet_tuples <- function(graph, max_graphlet_size) {
   graphlet_node_counts <- graphlet_key$node_count
   graphlet_tuple_counts <- choose(graph_node_count, graphlet_node_counts)
   graphlet_tuple_counts <- stats::setNames(
-                            graphlet_tuple_counts,
-                            graphlet_key$id)
+    graphlet_tuple_counts,
+    graphlet_key$id
+  )
   graphlet_tuple_counts
 }
