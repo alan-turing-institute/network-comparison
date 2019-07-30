@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martin O’Reilly, Jack Roberts" />
 
-<meta name="date" content="2019-07-29" />
+<meta name="date" content="2019-07-30" />
 
 <title>Quick start guide for Netdis - 2 graphs</title>
 
@@ -303,7 +303,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Quick start guide for Netdis - 2 graphs</h1>
 <h4 class="author">Martin O’Reilly, Jack Roberts</h4>
-<h4 class="date">2019-07-29</h4>
+<h4 class="date">2019-07-30</h4>
 
 
 
@@ -334,10 +334,10 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="set-netdis-parameters" class="section level2">
 <h2>Set Netdis parameters</h2>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Maximum graphlet size to calculate counts and netdis statistic for.</span></a>
-<a class="sourceLine" id="cb3-2" title="2">max_graphlet_size =<span class="st"> </span><span class="dv">4</span></a>
+<a class="sourceLine" id="cb3-2" title="2">max_graphlet_size &lt;-<span class="st"> </span><span class="dv">4</span></a>
 <a class="sourceLine" id="cb3-3" title="3"></a>
 <a class="sourceLine" id="cb3-4" title="4"><span class="co"># Ego network neighbourhood size</span></a>
-<a class="sourceLine" id="cb3-5" title="5">neighbourhood_size =<span class="st"> </span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb3-5" title="5">neighbourhood_size &lt;-<span class="st"> </span><span class="dv">2</span></a>
 <a class="sourceLine" id="cb3-6" title="6"></a>
 <a class="sourceLine" id="cb3-7" title="7"><span class="co"># Minimum size of ego networks to consider</span></a>
 <a class="sourceLine" id="cb3-8" title="8">min_ego_nodes &lt;-<span class="st"> </span><span class="dv">3</span></a>
@@ -346,90 +346,100 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb3-11" title="11"><span class="co"># Ego network density binning parameters</span></a>
 <a class="sourceLine" id="cb3-12" title="12">min_bin_count &lt;-<span class="st"> </span><span class="dv">5</span></a>
 <a class="sourceLine" id="cb3-13" title="13">num_bins &lt;-<span class="st"> </span><span class="dv">100</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">netdis_one_to_one</span>(graph_<span class="dv">1</span>, graph_<span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb4-2" title="2">                  ref_graph,</a>
+<a class="sourceLine" id="cb4-3" title="3">                  <span class="dt">max_graphlet_size =</span> <span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb4-4" title="4">                  <span class="dt">neighbourhood_size =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb4-5" title="5">                  <span class="dt">min_ego_nodes =</span> <span class="dv">3</span>,</a>
+<a class="sourceLine" id="cb4-6" title="6">                  <span class="dt">min_ego_edges =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb4-7" title="7">                  <span class="dt">min_bin_count =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb4-8" title="8">                  <span class="dt">num_bins =</span> <span class="dv">100</span>)</a></code></pre></div>
+<pre><code>##   netdis3   netdis4 
+## 0.1846655 0.1749835</code></pre>
 </div>
-<div id="generate-ego-networks-for-query-graphs" class="section level2">
-<h2>Generate ego networks for query graphs</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># Get ego networks for query graphs and reference graph</span></a>
-<a class="sourceLine" id="cb4-2" title="2">ego_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">make_named_ego_graph</span>(graph_<span class="dv">1</span>, </a>
-<a class="sourceLine" id="cb4-3" title="3">                              <span class="dt">order =</span> neighbourhood_size, </a>
-<a class="sourceLine" id="cb4-4" title="4">                              <span class="dt">min_ego_nodes =</span> min_ego_nodes, </a>
-<a class="sourceLine" id="cb4-5" title="5">                              <span class="dt">min_ego_edges =</span> min_ego_edges)</a>
-<a class="sourceLine" id="cb4-6" title="6"></a>
-<a class="sourceLine" id="cb4-7" title="7">ego_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">make_named_ego_graph</span>(graph_<span class="dv">2</span>, </a>
-<a class="sourceLine" id="cb4-8" title="8">                              <span class="dt">order =</span> neighbourhood_size, </a>
-<a class="sourceLine" id="cb4-9" title="9">                              <span class="dt">min_ego_nodes =</span> min_ego_nodes, </a>
-<a class="sourceLine" id="cb4-10" title="10">                              <span class="dt">min_ego_edges =</span> min_ego_edges)</a>
-<a class="sourceLine" id="cb4-11" title="11"></a>
-<a class="sourceLine" id="cb4-12" title="12">ego_ref &lt;-<span class="st"> </span><span class="kw">make_named_ego_graph</span>(ref_graph, </a>
-<a class="sourceLine" id="cb4-13" title="13">                                <span class="dt">order =</span> neighbourhood_size, </a>
-<a class="sourceLine" id="cb4-14" title="14">                                <span class="dt">min_ego_nodes =</span> min_ego_nodes, </a>
-<a class="sourceLine" id="cb4-15" title="15">                                <span class="dt">min_ego_edges =</span> min_ego_edges)</a></code></pre></div>
+<div id="generate-ego-networks" class="section level2">
+<h2>Generate ego networks</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co"># Get ego networks for query graphs and reference graph</span></a>
+<a class="sourceLine" id="cb6-2" title="2">ego_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">make_named_ego_graph</span>(graph_<span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb6-3" title="3">                              <span class="dt">order =</span> neighbourhood_size, </a>
+<a class="sourceLine" id="cb6-4" title="4">                              <span class="dt">min_ego_nodes =</span> min_ego_nodes, </a>
+<a class="sourceLine" id="cb6-5" title="5">                              <span class="dt">min_ego_edges =</span> min_ego_edges)</a>
+<a class="sourceLine" id="cb6-6" title="6"></a>
+<a class="sourceLine" id="cb6-7" title="7">ego_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">make_named_ego_graph</span>(graph_<span class="dv">2</span>, </a>
+<a class="sourceLine" id="cb6-8" title="8">                              <span class="dt">order =</span> neighbourhood_size, </a>
+<a class="sourceLine" id="cb6-9" title="9">                              <span class="dt">min_ego_nodes =</span> min_ego_nodes, </a>
+<a class="sourceLine" id="cb6-10" title="10">                              <span class="dt">min_ego_edges =</span> min_ego_edges)</a>
+<a class="sourceLine" id="cb6-11" title="11"></a>
+<a class="sourceLine" id="cb6-12" title="12">ego_ref &lt;-<span class="st"> </span><span class="kw">make_named_ego_graph</span>(ref_graph, </a>
+<a class="sourceLine" id="cb6-13" title="13">                                <span class="dt">order =</span> neighbourhood_size, </a>
+<a class="sourceLine" id="cb6-14" title="14">                                <span class="dt">min_ego_nodes =</span> min_ego_nodes, </a>
+<a class="sourceLine" id="cb6-15" title="15">                                <span class="dt">min_ego_edges =</span> min_ego_edges)</a></code></pre></div>
 </div>
-<div id="count-graphlets-in-ego-networks-for-query-graphs" class="section level2">
-<h2>Count graphlets in ego networks for query graphs</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># Count graphlets for ego networks in query and reference graphs</span></a>
-<a class="sourceLine" id="cb5-2" title="2">graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">ego_to_graphlet_counts</span>(ego_<span class="dv">1</span>, <span class="dt">max_graphlet_size =</span> max_graphlet_size)</a>
-<a class="sourceLine" id="cb5-3" title="3">graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">ego_to_graphlet_counts</span>(ego_<span class="dv">2</span>, <span class="dt">max_graphlet_size =</span> max_graphlet_size)</a>
-<a class="sourceLine" id="cb5-4" title="4"></a>
-<a class="sourceLine" id="cb5-5" title="5">graphlet_counts_ref &lt;-<span class="st"> </span><span class="kw">ego_to_graphlet_counts</span>(ego_ref, <span class="dt">max_graphlet_size =</span> max_graphlet_size)</a></code></pre></div>
+<div id="count-graphlets-in-ego-networks" class="section level2">
+<h2>Count graphlets in ego networks</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># Count graphlets for ego networks in query and reference graphs</span></a>
+<a class="sourceLine" id="cb7-2" title="2">graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">ego_to_graphlet_counts</span>(ego_<span class="dv">1</span>, <span class="dt">max_graphlet_size =</span> max_graphlet_size)</a>
+<a class="sourceLine" id="cb7-3" title="3">graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">ego_to_graphlet_counts</span>(ego_<span class="dv">2</span>, <span class="dt">max_graphlet_size =</span> max_graphlet_size)</a>
+<a class="sourceLine" id="cb7-4" title="4"></a>
+<a class="sourceLine" id="cb7-5" title="5">graphlet_counts_ref &lt;-<span class="st"> </span><span class="kw">ego_to_graphlet_counts</span>(ego_ref, <span class="dt">max_graphlet_size =</span> max_graphlet_size)</a></code></pre></div>
 </div>
 <div id="bin-reference-graph-by-ego-network-density-and-calculate-mean-graphlet-counts-in-each-bin" class="section level2">
 <h2>Bin reference graph by ego network density and calculate mean graphlet counts in each bin</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co"># Scale ego-network graphlet counts by dividing by total number of k-tuples in</span></a>
-<a class="sourceLine" id="cb6-2" title="2"><span class="co"># ego-network (where k is graphlet size)</span></a>
-<a class="sourceLine" id="cb6-3" title="3">scaled_graphlet_counts_ref &lt;-<span class="st"> </span><span class="kw">scale_graphlet_counts_ego</span>(ego_ref, </a>
-<a class="sourceLine" id="cb6-4" title="4">                                                        graphlet_counts_ref, </a>
-<a class="sourceLine" id="cb6-5" title="5">                                                        max_graphlet_size)</a>
-<a class="sourceLine" id="cb6-6" title="6"></a>
-<a class="sourceLine" id="cb6-7" title="7"><span class="co"># Get ego-network densities</span></a>
-<a class="sourceLine" id="cb6-8" title="8">densities_ref &lt;-<span class="st"> </span><span class="kw">ego_network_density</span>(ego_ref)</a>
-<a class="sourceLine" id="cb6-9" title="9"></a>
-<a class="sourceLine" id="cb6-10" title="10"><span class="co"># Adaptively bin ref ego-network densities</span></a>
-<a class="sourceLine" id="cb6-11" title="11">binned_densities &lt;-<span class="st"> </span><span class="kw">binned_densities_adaptive</span>(densities_ref, </a>
-<a class="sourceLine" id="cb6-12" title="12">                                              <span class="dt">min_counts_per_interval =</span> min_bin_count, </a>
-<a class="sourceLine" id="cb6-13" title="13">                                              <span class="dt">num_intervals =</span> num_bins)</a>
-<a class="sourceLine" id="cb6-14" title="14"></a>
-<a class="sourceLine" id="cb6-15" title="15">ref_ego_density_bins &lt;-<span class="st"> </span>binned_densities<span class="op">$</span>breaks</a>
-<a class="sourceLine" id="cb6-16" title="16"></a>
-<a class="sourceLine" id="cb6-17" title="17"><span class="co"># Average ref graphlet counts across density bins</span></a>
-<a class="sourceLine" id="cb6-18" title="18">ref_binned_graphlet_counts &lt;-<span class="st"> </span><span class="kw">mean_density_binned_graphlet_counts</span>(</a>
-<a class="sourceLine" id="cb6-19" title="19">                                  scaled_graphlet_counts_ref, </a>
-<a class="sourceLine" id="cb6-20" title="20">                                  binned_densities<span class="op">$</span>interval_indexes)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="co"># Scale ego-network graphlet counts by dividing by total number of k-tuples in</span></a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co"># ego-network (where k is graphlet size)</span></a>
+<a class="sourceLine" id="cb8-3" title="3">scaled_graphlet_counts_ref &lt;-<span class="st"> </span><span class="kw">scale_graphlet_counts_ego</span>(ego_ref, </a>
+<a class="sourceLine" id="cb8-4" title="4">                                                        graphlet_counts_ref, </a>
+<a class="sourceLine" id="cb8-5" title="5">                                                        max_graphlet_size)</a>
+<a class="sourceLine" id="cb8-6" title="6"></a>
+<a class="sourceLine" id="cb8-7" title="7"><span class="co"># Get ego-network densities</span></a>
+<a class="sourceLine" id="cb8-8" title="8">densities_ref &lt;-<span class="st"> </span><span class="kw">ego_network_density</span>(ego_ref)</a>
+<a class="sourceLine" id="cb8-9" title="9"></a>
+<a class="sourceLine" id="cb8-10" title="10"><span class="co"># Adaptively bin ref ego-network densities</span></a>
+<a class="sourceLine" id="cb8-11" title="11">binned_densities &lt;-<span class="st"> </span><span class="kw">binned_densities_adaptive</span>(densities_ref, </a>
+<a class="sourceLine" id="cb8-12" title="12">                                              <span class="dt">min_counts_per_interval =</span> min_bin_count, </a>
+<a class="sourceLine" id="cb8-13" title="13">                                              <span class="dt">num_intervals =</span> num_bins)</a>
+<a class="sourceLine" id="cb8-14" title="14"></a>
+<a class="sourceLine" id="cb8-15" title="15">ref_ego_density_bins &lt;-<span class="st"> </span>binned_densities<span class="op">$</span>breaks</a>
+<a class="sourceLine" id="cb8-16" title="16"></a>
+<a class="sourceLine" id="cb8-17" title="17"><span class="co"># Average ref graphlet counts across density bins</span></a>
+<a class="sourceLine" id="cb8-18" title="18">ref_binned_graphlet_counts &lt;-<span class="st"> </span><span class="kw">mean_density_binned_graphlet_counts</span>(</a>
+<a class="sourceLine" id="cb8-19" title="19">                                  scaled_graphlet_counts_ref, </a>
+<a class="sourceLine" id="cb8-20" title="20">                                  binned_densities<span class="op">$</span>interval_indexes)</a></code></pre></div>
 </div>
 <div id="centre-graphlet-counts-of-query-graphs-based-on-statistics-of-reference-graph" class="section level2">
 <h2>Centre graphlet counts of query graphs based on statistics of reference graph</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># Calculate expected graphlet counts (using ref graph ego network density bins)</span></a>
-<a class="sourceLine" id="cb7-2" title="2">exp_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">netdis_expected_graphlet_counts_per_ego</span>(ego_<span class="dv">1</span>, </a>
-<a class="sourceLine" id="cb7-3" title="3">                                                                 max_graphlet_size,</a>
-<a class="sourceLine" id="cb7-4" title="4">                                                                 ref_ego_density_bins, </a>
-<a class="sourceLine" id="cb7-5" title="5">                                                                 ref_binned_graphlet_counts)</a>
-<a class="sourceLine" id="cb7-6" title="6"></a>
-<a class="sourceLine" id="cb7-7" title="7"></a>
-<a class="sourceLine" id="cb7-8" title="8">exp_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">netdis_expected_graphlet_counts_per_ego</span>(ego_<span class="dv">2</span>, </a>
-<a class="sourceLine" id="cb7-9" title="9">                                                                 max_graphlet_size,</a>
-<a class="sourceLine" id="cb7-10" title="10">                                                                 ref_ego_density_bins, </a>
-<a class="sourceLine" id="cb7-11" title="11">                                                                 ref_binned_graphlet_counts)</a>
-<a class="sourceLine" id="cb7-12" title="12"></a>
-<a class="sourceLine" id="cb7-13" title="13"><span class="co"># Centre graphlet counts by subtracting expected counts</span></a>
-<a class="sourceLine" id="cb7-14" title="14">centred_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span>graphlet_counts_<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>exp_graphlet_counts_<span class="dv">1</span></a>
-<a class="sourceLine" id="cb7-15" title="15"></a>
-<a class="sourceLine" id="cb7-16" title="16">centred_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span>graphlet_counts_<span class="dv">2</span> <span class="op">-</span><span class="st"> </span>exp_graphlet_counts_<span class="dv">2</span></a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="co"># Calculate expected graphlet counts (using ref graph ego network density bins)</span></a>
+<a class="sourceLine" id="cb9-2" title="2">exp_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">netdis_expected_graphlet_counts_per_ego</span>(ego_<span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb9-3" title="3">                                                                 max_graphlet_size,</a>
+<a class="sourceLine" id="cb9-4" title="4">                                                                 ref_ego_density_bins, </a>
+<a class="sourceLine" id="cb9-5" title="5">                                                                 ref_binned_graphlet_counts)</a>
+<a class="sourceLine" id="cb9-6" title="6"></a>
+<a class="sourceLine" id="cb9-7" title="7"></a>
+<a class="sourceLine" id="cb9-8" title="8">exp_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">netdis_expected_graphlet_counts_per_ego</span>(ego_<span class="dv">2</span>, </a>
+<a class="sourceLine" id="cb9-9" title="9">                                                                 max_graphlet_size,</a>
+<a class="sourceLine" id="cb9-10" title="10">                                                                 ref_ego_density_bins, </a>
+<a class="sourceLine" id="cb9-11" title="11">                                                                 ref_binned_graphlet_counts)</a>
+<a class="sourceLine" id="cb9-12" title="12"></a>
+<a class="sourceLine" id="cb9-13" title="13"><span class="co"># Centre graphlet counts by subtracting expected counts</span></a>
+<a class="sourceLine" id="cb9-14" title="14">centred_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span>graphlet_counts_<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>exp_graphlet_counts_<span class="dv">1</span></a>
+<a class="sourceLine" id="cb9-15" title="15"></a>
+<a class="sourceLine" id="cb9-16" title="16">centred_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span>graphlet_counts_<span class="dv">2</span> <span class="op">-</span><span class="st"> </span>exp_graphlet_counts_<span class="dv">2</span></a></code></pre></div>
 </div>
 <div id="sum-centred-graphlet-counts-across-all-ego-networks" class="section level2">
 <h2>Sum centred graphlet counts across all ego networks</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">sum_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">colSums</span>(centred_graphlet_counts_<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb8-2" title="2"></a>
-<a class="sourceLine" id="cb8-3" title="3">sum_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">colSums</span>(centred_graphlet_counts_<span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">sum_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">colSums</span>(centred_graphlet_counts_<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb10-2" title="2"></a>
+<a class="sourceLine" id="cb10-3" title="3">sum_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">colSums</span>(centred_graphlet_counts_<span class="dv">2</span>)</a></code></pre></div>
 </div>
 <div id="calculate-netdis-statistics" class="section level2">
 <h2>Calculate netdis statistics</h2>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">netdis_uptok</span>(sum_graphlet_counts_<span class="dv">1</span>, </a>
-<a class="sourceLine" id="cb9-2" title="2">             sum_graphlet_counts_<span class="dv">2</span>, </a>
-<a class="sourceLine" id="cb9-3" title="3">             max_graphlet_size)</a></code></pre></div>
-<pre><code>## [1] 0.1846655 0.1749835</code></pre>
-</div>
-<div id="display-results" class="section level2">
-<h2>Display results</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">netdis_result &lt;-<span class="st"> </span><span class="kw">netdis_uptok</span>(sum_graphlet_counts_<span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb11-2" title="2">                              sum_graphlet_counts_<span class="dv">2</span>, </a>
+<a class="sourceLine" id="cb11-3" title="3">                              max_graphlet_size)</a>
+<a class="sourceLine" id="cb11-4" title="4"></a>
+<a class="sourceLine" id="cb11-5" title="5"><span class="kw">print</span>(netdis_result)</a></code></pre></div>
+<pre><code>##   netdis3   netdis4 
+## 0.1846655 0.1749835</code></pre>
 </div>
 
 

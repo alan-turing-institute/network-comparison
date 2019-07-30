@@ -13,13 +13,13 @@ make_named_ego_graph(graph, order, min_ego_nodes = 3,
 \item{order}{The number of steps from the source node to include
 nodes for each ego-network.}
 
-\item{min_ego_nodes}{Only ego networks with at least \code{min_ego_nodes} 
+\item{min_ego_nodes}{Only ego networks with at least \code{min_ego_nodes}
 nodes are returned.}
 
-\item{min_ego_edges}{Only ego networks with at least \code{min_ego_edges} 
+\item{min_ego_edges}{Only ego networks with at least \code{min_ego_edges}
 edges are returned.}
 
-\item{...}{Additional parameters to be passed to the underlying 
+\item{...}{Additional parameters to be passed to the underlying
 \code{igraph::make_ego_graph} function used.}
 }
 \description{

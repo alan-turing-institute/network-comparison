@@ -2,7 +2,7 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{scale_graphlet_counts_ego}
 \alias{scale_graphlet_counts_ego}
-\title{Scale graphlet counts for an ego network by the n choose k possible 
+\title{Scale graphlet counts for an ego network by the n choose k possible
 choices of k nodes in that ego-network, where n is the number of nodes
 in the ego network and k is the number of nodes in the graphlet.}
 \usage{
@@ -20,7 +20,7 @@ in graphlet_counts.}
 scaled graphlet counts.
 }
 \description{
-Scale graphlet counts for an ego network by the n choose k possible 
+Scale graphlet counts for an ego network by the n choose k possible
 choices of k nodes in that ego-network, where n is the number of nodes
 in the ego network and k is the number of nodes in the graphlet.
 }

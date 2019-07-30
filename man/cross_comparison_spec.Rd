@@ -12,8 +12,8 @@ cross-comparison is required.}
 }
 \value{
 A matrix with one row for each possible pair-wise combination
-of elements from the provided named list. The first and second columns  
-contain the names of the elements in the pair and the third and fourth  
+of elements from the provided named list. The first and second columns
+contain the names of the elements in the pair and the third and fourth
 columns contain the indexes of these elements in the provided list.
 }
 \description{

@@ -1,3 +1,105 @@
+#' Netdis between two graphs
+#' @param graph_1 First query graph
+#' @param graph_2 Second query graph
+#' @param ref_graph Reference graph
+#' @param max_graphlet_size Generate graphlets up to this size
+#' @param neighbourhood_size Ego network neighbourhood size
+#' @param min_ego_nodes Filter ego networks which have fewer
+#' than min_ego_nodes nodes
+#' @param min_ego_edges Filter ego networks which have fewer
+#' than min_ego_edges edges
+#' @param min_bin_count Minimum number of ego networks in each density bin
+#' @param num_bins Number of density bins to generate
+#' @return Netdis statistics between graph_1 and graph_2 for graphlet sizes
+#' up to and including max_graphlet_size
+#' @export
+netdis_one_to_one <- function(graph_1, graph_2,
+                              ref_graph,
+                              max_graphlet_size = 4,
+                              neighbourhood_size = 2,
+                              min_ego_nodes = 3,
+                              min_ego_edges = 1,
+                              min_bin_count = 5,
+                              num_bins = 100) {
+  ## ------------------------------------------------------------------------
+  # Get ego networks for query graphs and reference graph
+  ego_1 <- make_named_ego_graph(graph_1, 
+                                order = neighbourhood_size, 
+                                min_ego_nodes = min_ego_nodes, 
+                                min_ego_edges = min_ego_edges)
+  
+  ego_2 <- make_named_ego_graph(graph_2, 
+                                order = neighbourhood_size, 
+                                min_ego_nodes = min_ego_nodes, 
+                                min_ego_edges = min_ego_edges)
+  
+  ego_ref <- make_named_ego_graph(ref_graph, 
+                                  order = neighbourhood_size, 
+                                  min_ego_nodes = min_ego_nodes, 
+                                  min_ego_edges = min_ego_edges)
+  
+  ## ------------------------------------------------------------------------
+  # Count graphlets for ego networks in query and reference graphs
+  graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
+  graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
+  
+  graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_graphlet_size)
+  
+  ## ------------------------------------------------------------------------
+  # Scale ego-network graphlet counts by dividing by total number of k-tuples in
+  # ego-network (where k is graphlet size)
+  scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(ego_ref, 
+                                                          graphlet_counts_ref, 
+                                                          max_graphlet_size)
+  
+  # Get ego-network densities
+  densities_ref <- ego_network_density(ego_ref)
+  
+  # Adaptively bin ref ego-network densities
+  binned_densities <- binned_densities_adaptive(densities_ref, 
+                                                min_counts_per_interval = min_bin_count, 
+                                                num_intervals = num_bins)
+  
+  ref_ego_density_bins <- binned_densities$breaks
+  
+  # Average ref graphlet counts across density bins
+  ref_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
+    scaled_graphlet_counts_ref, 
+    binned_densities$interval_indexes)
+  
+  
+  ## ------------------------------------------------------------------------
+  # Calculate expected graphlet counts (using ref graph ego network density bins)
+  exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(ego_1, 
+                                                                   max_graphlet_size,
+                                                                   ref_ego_density_bins, 
+                                                                   ref_binned_graphlet_counts)
+  
+  
+  exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(ego_2, 
+                                                                   max_graphlet_size,
+                                                                   ref_ego_density_bins, 
+                                                                   ref_binned_graphlet_counts)
+  
+  # Centre graphlet counts by subtracting expected counts
+  centred_graphlet_counts_1 <- graphlet_counts_1 - exp_graphlet_counts_1
+  
+  centred_graphlet_counts_2 <- graphlet_counts_2 - exp_graphlet_counts_2
+  
+  ## ------------------------------------------------------------------------
+  # Sum centred graphlet counts across all ego networks
+  sum_graphlet_counts_1 <- colSums(centred_graphlet_counts_1)
+  
+  sum_graphlet_counts_2 <- colSums(centred_graphlet_counts_2)
+  
+  ## ------------------------------------------------------------------------
+  # Calculate netdis statistics
+  netdis_uptok(sum_graphlet_counts_1, 
+               sum_graphlet_counts_2, 
+               max_graphlet_size)
+  
+}
+
 #' Netdis between all graph pairs using provided Centred Graphlet Counts
 #' @param centred_graphlet_counts List containing Centred Graphlet Counts for
 #' all graphs being compared
@@ -80,8 +182,8 @@ netdis_uptok <- function(centred_graphlet_counts1, centred_graphlet_counts2,
 
   netdis_statistics <- purrr::map(3:max_graphlet_size,
     netdis,
-    centred_graphlet_counts1 = sum_graphlet_counts_1,
-    centred_graphlet_counts2 = sum_graphlet_counts_2
+    centred_graphlet_counts1 = centred_graphlet_counts1,
+    centred_graphlet_counts2 = centred_graphlet_counts2
   )
 
   netdis_statistics <- simplify2array(netdis_statistics)

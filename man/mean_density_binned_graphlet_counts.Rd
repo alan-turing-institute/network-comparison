@@ -8,9 +8,9 @@ mean_density_binned_graphlet_counts(graphlet_counts,
   density_interval_indexes)
 }
 \description{
-Used by \code{netdis_expected_graphlet_counts_ego_fn} to 
+Used by \code{netdis_expected_graphlet_counts_ego_fn} to
 generate a function for calculating expected ego-network graphlet counts
 from the statistics of a provided reference graph.
-Temporarily accessible during development. 
+Temporarily accessible during development.
 TODO: Remove @export prior to publishing
 }

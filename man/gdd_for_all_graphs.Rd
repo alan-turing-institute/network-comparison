@@ -16,13 +16,13 @@ gdd_for_all_graphs(source_dir, format = "ncol", pattern = ".txt",
 
 \item{pattern}{Filename pattern to match graph files}
 
-\item{feature_type}{Type of graphlet-based degree distributions. Can be 
+\item{feature_type}{Type of graphlet-based degree distributions. Can be
 \code{graphlet} to count graphlets or \code{orbit} to count orbits.}
 
 \item{max_graphlet_size}{Maximum size of graphlets to use when generating GDD}
 
-\item{ego_neighbourhood_size}{The number of steps from the source node to 
-include nodes for each ego-network. If set to 0, ego-networks will not be 
+\item{ego_neighbourhood_size}{The number of steps from the source node to
+include nodes for each ego-network. If set to 0, ego-networks will not be
 used}
 
 \item{mc.cores}{Number of cores to use for parallel processing. Defaults to
@@ -32,12 +32,12 @@ the \code{mc.cores} option set in the R environment.}
 A named list where each element contains a set of GDDs for a single
 
 A named list where each element contains a set of GDDs for a single
-graph from the source directory. Each set of GDDs is itself a named list,  
+graph from the source directory. Each set of GDDs is itself a named list,
 where each GDD element is a \code{dhist} discrete histogram object.
 }
 \description{
 Loads graphs from all files matching the given pattern in the given directory,
-converts them to indexed edge lists compatible with the ORCA fast orbit 
-counting package and calculates the specified set of graphlet-based degree 
+converts them to indexed edge lists compatible with the ORCA fast orbit
+counting package and calculates the specified set of graphlet-based degree
 distributions usingthe ORCA package.
 }

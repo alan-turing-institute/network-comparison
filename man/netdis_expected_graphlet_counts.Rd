@@ -8,9 +8,9 @@ netdis_expected_graphlet_counts(graph, max_graphlet_size, density_breaks,
   density_binned_reference_counts)
 }
 \description{
-Used by \code{netdis_expected_graphlet_counts_ego} to 
-calculate expected graphlet counts for a query graph ego-network from the 
+Used by \code{netdis_expected_graphlet_counts_ego} to
+calculate expected graphlet counts for a query graph ego-network from the
 statistics of a provided reference graph.
-Temporarily accessible during development. 
+Temporarily accessible during development.
 TODO: Remove @export prior to publishing
 }

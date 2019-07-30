@@ -14,6 +14,6 @@ A copy of a \code{dhist} object with its \code{smoothing_window_width}
 attribute set to 0.
 }
 \description{
-Returns an "unsmoothed" copy of a \code{dhist} object with its 
+Returns an "unsmoothed" copy of a \code{dhist} object with its
 \code{smoothing_window_width} attribute set to 0.
 }

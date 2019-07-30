@@ -14,7 +14,7 @@ gdd(graph, feature_type = "orbit", max_graphlet_size = 4,
 counts the number of graphlets each node participates in; "orbit" calculates
 the number of graphlet orbits each node participates in.}
 
-\item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
 
 \item{ego_neighbourhood_size}{The number of steps from the source node to include

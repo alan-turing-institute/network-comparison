@@ -8,9 +8,9 @@ binned_densities_adaptive(densities, min_counts_per_interval,
   num_intervals)
 }
 \description{
-Used by \code{netdis_expected_graphlet_counts_ego_fn} to 
+Used by \code{netdis_expected_graphlet_counts_ego_fn} to
 generate a function for calculating expected ego-network graphlet counts
 from the statistics of a provided reference graph.
-Temporarily accessible during development. 
+Temporarily accessible during development.
 TODO: Remove @export prior to publishing
 }

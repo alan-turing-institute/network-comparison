@@ -12,12 +12,12 @@ netdis_uptok(centred_graphlet_counts1, centred_graphlet_counts2,
 
 \item{centred_graphlet_counts2}{Centred Graphlet Counts for graph 2}
 
-\item{max_graphlet_size}{The size of graphlets to use for the Netdis calculation
-The size of a graphlet is the number of nodes it contains. Netdis is calculated
-for all graphlets from size 3 to size max_graphlet_size.}
+\item{max_graphlet_size}{max graphlet size to calculate Netdis for.
+The size of a graphlet is the number of nodes it contains. Netdis is
+calculated for all graphlets from size 3 to size max_graphlet_size.}
 }
 \value{
-Netdis statistic calculated using centred counts for graphlets of 
+Netdis statistic calculated using centred counts for graphlets of
 the specified size
 }
 \description{

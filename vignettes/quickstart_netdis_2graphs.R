@@ -22,10 +22,10 @@ ref_graph <- read_simple_graph(ref_path, format = "ncol")
 
 ## ------------------------------------------------------------------------
 # Maximum graphlet size to calculate counts and netdis statistic for.
-max_graphlet_size = 4
+max_graphlet_size <- 4
 
 # Ego network neighbourhood size
-neighbourhood_size = 2
+neighbourhood_size <- 2
 
 # Minimum size of ego networks to consider
 min_ego_nodes <- 3
@@ -34,6 +34,16 @@ min_ego_edges <- 1
 # Ego network density binning parameters
 min_bin_count <- 5
 num_bins <- 100
+
+## ------------------------------------------------------------------------
+netdis_one_to_one(graph_1, graph_2,
+                  ref_graph,
+                  max_graphlet_size = 4,
+                  neighbourhood_size = 2,
+                  min_ego_nodes = 3,
+                  min_ego_edges = 1,
+                  min_bin_count = 5,
+                  num_bins = 100)
 
 ## ------------------------------------------------------------------------
 # Get ego networks for query graphs and reference graph
@@ -107,11 +117,10 @@ sum_graphlet_counts_1 <- colSums(centred_graphlet_counts_1)
 sum_graphlet_counts_2 <- colSums(centred_graphlet_counts_2)
 
 ## ------------------------------------------------------------------------
-netdis_uptok(sum_graphlet_counts_1, 
-             sum_graphlet_counts_2, 
-             max_graphlet_size)
 
+netdis_result <- netdis_uptok(sum_graphlet_counts_1, 
+                              sum_graphlet_counts_2, 
+                              max_graphlet_size)
 
-## ------------------------------------------------------------------------
-
+print(netdis_result)
 

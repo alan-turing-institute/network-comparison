@@ -9,10 +9,10 @@ sort_dhist(dhist, decreasing = FALSE)
 \arguments{
 \item{dhist}{A discrete histogram as a \code{dhist} object}
 
-\item{decreasing}{Logical indicating whether histograms should be sorted in 
+\item{decreasing}{Logical indicating whether histograms should be sorted in
 increasing (default) or decreasing order of location}
 }
 \description{
-Sort a discrete histogram so that locations are in increasing (default) or 
+Sort a discrete histogram so that locations are in increasing (default) or
 decreasing order
 }

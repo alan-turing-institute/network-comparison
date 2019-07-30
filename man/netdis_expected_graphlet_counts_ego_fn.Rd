@@ -9,35 +9,36 @@ netdis_expected_graphlet_counts_ego_fn(graph, max_graphlet_size,
   min_bin_count = 5, num_bins = 100)
 }
 \arguments{
-\item{graph}{A connected, undirected, simple reference graph as an 
+\item{graph}{A connected, undirected, simple reference graph as an
 \code{igraph} object.}
 
-\item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
-Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count.
+Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
 
 \item{neighbourhood_size}{The number of steps from the source node to include
 node in ego-network.}
 }
 \value{
-A function taking a connected, undirected, simple query graph as an 
-\code{igraph} object and returning an RxC matrix containing the expected 
-counts of each graphlet (columns, C) for each ego-network in the query graph 
-(rows, R). Columns are labelled with graphlet IDs and rows are labelled with 
-the ID of the central node in each ego-network (if nodes in the query graph 
+A function taking a connected, undirected, simple query graph as an
+\code{igraph} object and returning an RxC matrix containing the expected
+counts of each graphlet (columns, C) for each ego-network in the query graph
+(rows, R). Columns are labelled with graphlet IDs and rows are labelled with
+the ID of the central node in each ego-network (if nodes in the query graph
 are labelled)
 }
 \description{
-Generates a function to calculate expected ego-network graphlet counts for 
+Generates a function to calculate expected ego-network graphlet counts for
 query graphs based on the statistics of a provided reference graph.
 }
 \details{
-Generates graphlet counts for all ego-networks in the supplied reference graph 
-and then averages these graphlet counts over density bins to generate
-density-dependent reference graphlet counts. Prior to averaging, the graphlet
-counts are scaled in a size-dependent manner to permit ego-networks with 
-similar densities but different sizes to be averaged together.
+Generates graphlet counts for all ego-networks in the supplied
+reference graph and then averages these graphlet counts over density bins to
+generate density-dependent reference graphlet counts. Prior to averaging,
+the graphlet counts are scaled in a size-dependent manner to permit
+ego-networks with similar densities but different sizes to be averaged
+together.
 
-Returns a function that uses the density-dependent reference graphlet 
+Returns a function that uses the density-dependent reference graphlet
 counts to generate expected graphlet counts for all ego-networks in a query
 network. When doing so, it matches ego-networks to reference counts by
 density and reverses the scaling that was applied to the original reference

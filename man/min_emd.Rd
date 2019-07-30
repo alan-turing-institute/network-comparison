@@ -11,19 +11,19 @@ min_emd(dhist1, dhist2, method = "optimise")
 
 \item{dhist2}{A \code{dhist} discrete histogram object}
 
-\item{method}{The method to use to find the minimum EMD across all potential 
+\item{method}{The method to use to find the minimum EMD across all potential
 offsets for each pair of histograms. Default is "optimise" to use
-R's built-in \code{stats::optimise} method to efficiently find the offset 
-with the minimal EMD. However, this is not guaranteed to find the global 
-minimum if multiple local minima EMDs exist. You can alternatively specify the 
-"exhaustive" method, which will exhaustively evaluate the EMD between the 
+R's built-in \code{stats::optimise} method to efficiently find the offset
+with the minimal EMD. However, this is not guaranteed to find the global
+minimum if multiple local minima EMDs exist. You can alternatively specify the
+"exhaustive" method, which will exhaustively evaluate the EMD between the
 histograms at all offsets that are candidates for the minimal EMD.}
 }
 \value{
 Earth Mover's Distance between the two discrete histograms
 }
 \description{
-Calculates the minimum Earth Mover's Distance (EMD) between two discrete 
+Calculates the minimum Earth Mover's Distance (EMD) between two discrete
 histograms. This is the minimum EMD between the two histograms across all
 possible offsets of histogram 1 against histogram 2.
 }

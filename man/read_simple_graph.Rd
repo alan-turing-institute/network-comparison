@@ -11,17 +11,17 @@ read_simple_graph(file, format, as_undirected = TRUE,
 \arguments{
 \item{file}{Path to file containing graph data}
 
-\item{format}{Format of graph data. All formats supported by 
+\item{format}{Format of graph data. All formats supported by
 \code{igraph::read_graph} are supported.}
 
 \item{as_undirected}{If TRUE make graph edges undirected}
 
 \item{remove_loops}{If TRUE, remove edgeds that connect a vertex to itself}
 
-\item{remove_multiple}{If TRUE remove multiple edges connencting the same 
+\item{remove_multiple}{If TRUE remove multiple edges connencting the same
 pair of vertices}
 
-\item{remove_isolates}{If TRUE, remove vertices with no edges after the 
+\item{remove_isolates}{If TRUE, remove vertices with no edges after the
 previous alterations have been made}
 }
 \value{
@@ -32,8 +32,8 @@ Reads graph data from file, constructing an a igraph graph object, making the
 requested subset of the following simplifications in the following order:
   1. Makes the graph undirected
   2. Removes loops (where both endpoints of an edge are the same vertex)
-  3. Removes multiple edges (i.e. ensuring only one edge exists for each 
+  3. Removes multiple edges (i.e. ensuring only one edge exists for each
      pair of endpoints)
-  4. Removes isolated vertices (i.e. vertices with no edges after the 
+  4. Removes isolated vertices (i.e. vertices with no edges after the
      previous alterations)
 }

@@ -8,19 +8,21 @@ netdis_centred_graphlet_counts(graph, max_graphlet_size,
   neighbourhood_size, expected_ego_count_fn = NULL)
 }
 \arguments{
-\item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
+\item{graph}{A connected, undirected, simple graph as an
+\code{igraph} object.}
 
-\item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
-Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count.
+Only graphlets containing up to \code{max_graphlet_size} nodes
+will be counted.}
 
 \item{neighbourhood_size}{The number of steps from the source node to include
 nodes for each ego-network.}
 
 \item{expected_ego_count_fn}{A function for generating expected ego-network
-graphlet counts for a graph. This function should take a connected, 
-undirected, simple graph as an \code{igraph} object for its only argument. 
-Where \code{expected_ego_count_fn} is specific to particular values of 
-\code{max_graphlet_size} or \code{neighbourhood_size}, care should be taken 
+graphlet counts for a graph. This function should take a connected,
+undirected, simple graph as an \code{igraph} object for its only argument.
+Where \code{expected_ego_count_fn} is specific to particular values of
+\code{max_graphlet_size} or \code{neighbourhood_size}, care should be taken
 to ensure that the values of these parameters passed to this function are
 consistent with those used when creating \code{expected_ego_count_fn}.}
 }

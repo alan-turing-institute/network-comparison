@@ -16,7 +16,7 @@ netdis(centred_graphlet_counts1, centred_graphlet_counts2, graphlet_size)
 a graphlet is the number of nodes it contains.}
 }
 \value{
-Netdis statistic calculated using centred counts for graphlets of 
+Netdis statistic calculated using centred counts for graphlets of
 the specified size
 }
 \description{

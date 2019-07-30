@@ -13,9 +13,9 @@ ego networks to the function, not the input query graph
 (as in netdis_expected_graphlet_counts_ego_fn above).
 }
 \details{
-Used by \code{netdis_expected_graphlet_counts_ego_fn} to 
+Used by \code{netdis_expected_graphlet_counts_ego_fn} to
 generate a function for calculating expected ego-network graphlet counts
 from the statistics of a provided reference graph.
-Temporarily accessible during development. 
+Temporarily accessible during development.
 TODO: Remove @export prior to publishing
 }

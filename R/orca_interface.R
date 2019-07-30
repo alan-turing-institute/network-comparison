@@ -627,17 +627,29 @@ gdd_for_all_graphs <- function(
 
 #' Generate a cross-comparison specification
 #'
-#' Creates a cross-comparison matrix with all possible pair-wise combinations
+#' Creates a cross-comparison matrix with pair-wise combinations
 #' of elements from the provided list.
 #' @param named_list A named list of items for which an exhaustive pair-wise
 #' cross-comparison is required.
+#' @param how How to generate pair-wise combinations. Either "many-to-many"
+#' (default) which generates all possible pair-wise combinations, or
+#' "one-to-many" which generates all combinations between the first element
+#' in named_list and the rest of the elements only.
 #' @return A matrix with one row for each possible pair-wise combination
 #' of elements from the provided named list. The first and second columns
 #' contain the names of the elements in the pair and the third and fourth
 #' columns contain the indexes of these elements in the provided list.
 #' @export
-cross_comparison_spec <- function(named_list) {
-  indexes <- as.data.frame(t(utils::combn(1:length(named_list), 2)))
+cross_comparison_spec <- function(named_list, how = "many-to-many") {
+  if (how == "one-to-many") {
+    indexes <- data.frame(
+      rep(1, length(named_list)-1),
+      2:length(named_list)
+    )
+  } else {
+    indexes <- as.data.frame(t(utils::combn(1:length(named_list), 2)))
+  }
+  
   names <- as.data.frame(cbind(
     names(named_list)[indexes[, 1]],
     names(named_list)[indexes[, 2]]

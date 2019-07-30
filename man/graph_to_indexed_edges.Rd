@@ -18,6 +18,6 @@ the label for the vertice represented by index N in the edgelist
 Takes a igraph graph object and generates an edgelist where each edge is
 represented by the integer indexes of its vertices. Note that, where a graph
 has isolated vertices, the indexes for these vertices will not be present
-in the edge list. Where a graph has no isolated vertices, the edge list will 
+in the edge list. Where a graph has no isolated vertices, the edge list will
 include all vertex indexes from 1 to numVertices.
 }

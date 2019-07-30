@@ -2,16 +2,16 @@
 % Please edit documentation in R/dhist.R
 \name{area_between_dhist_ecmfs}
 \alias{area_between_dhist_ecmfs}
-\title{Calculate area between two discrete histogram empirical cumulative 
+\title{Calculate area between two discrete histogram empirical cumulative
 mass functions (ECMFs)}
 \usage{
 area_between_dhist_ecmfs(dhist_ecmf1, dhist_ecmf2)
 }
 \arguments{
-\item{dhist_ecmf1}{An object of class \code{dhist_ecmf}, returned from a call 
+\item{dhist_ecmf1}{An object of class \code{dhist_ecmf}, returned from a call
 to the \code{dhist_ecmf} function}
 
-\item{dhist_ecmf2}{An object of class \code{dhist_ecmf}, returned from a call 
+\item{dhist_ecmf2}{An object of class \code{dhist_ecmf}, returned from a call
 to the \code{dhist_ecmf} function}
 }
 \value{
@@ -19,6 +19,6 @@ area The area between the two discrete histogram ECMFs, calculated as
 the integral of the absolute difference between the two ECMFs
 }
 \description{
-Calculate area between two discrete histogram empirical cumulative 
+Calculate area between two discrete histogram empirical cumulative
 mass functions (ECMFs)
 }

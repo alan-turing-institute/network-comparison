@@ -12,13 +12,13 @@ ego_to_graphlet_counts(ego_networks, max_graphlet_size = 4)
 \arguments{
 \item{ego_networks}{Named list of ego networks for a graph.}
 
-\item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
 }
 \value{
-returns an RxC matrix 
-containing counts of each graphlet (columns, C) for each ego-network (rows, R). 
-Columns are labelled with graphlet IDs and rows are 
+returns an RxC matrix
+containing counts of each graphlet (columns, C) for each ego-network (rows, R).
+Columns are labelled with graphlet IDs and rows are
 labelled with the ID of the central node in each ego-network.
 }
 \description{
