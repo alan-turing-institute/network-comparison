@@ -135,7 +135,6 @@ expected_counts_gp <- function(graphlet_counts, bin_indexes, max_graphlet_size) 
   expected_counts_bin
 }
 
-
 binned_graphlet_counts_1 <- expected_counts_gp(graphlet_counts_1,
                                                binned_densities_1$interval_indexes,
                                                max_graphlet_size)
@@ -143,7 +142,6 @@ binned_graphlet_counts_1 <- expected_counts_gp(graphlet_counts_1,
 binned_graphlet_counts_2 <- expected_counts_gp(graphlet_counts_2,
                                                binned_densities_2$interval_indexes,
                                                max_graphlet_size)
-
 
 ```
 

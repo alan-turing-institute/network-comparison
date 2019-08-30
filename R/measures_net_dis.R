@@ -568,7 +568,7 @@ netdis_expected_graphlet_counts_ego <- function(graph,
 #'
 #' JACK To follow through logic of paper steps, wanted to pass
 #' ego networks to the function, not the input query graph
-#' (as in netdis_expected_graphlet_counts_ego_fn above).
+#' (as in netdis_expected_graphlet_counts_ego above).
 #'
 #' Used by \code{netdis_expected_graphlet_counts_ego_fn} to
 #' generate a function for calculating expected ego-network graphlet counts
