@@ -579,7 +579,8 @@ netdis_expected_graphlet_counts_ego <- function(graph,
 netdis_expected_graphlet_counts_per_ego <- function(ego_networks,
                                                     max_graphlet_size,
                                                     density_breaks,
-                                                    density_binned_reference_counts) {
+                                                    density_binned_reference_counts,
+                                                    scale_counts_fn=count_graphlet_tuples) {
 
   # Map over query graph ego-networks, using reference graph statistics to
   # calculate expected graphlet counts for each ego-network.
@@ -587,7 +588,8 @@ netdis_expected_graphlet_counts_per_ego <- function(ego_networks,
     purrr::map(ego_networks, netdis_expected_graphlet_counts,
       max_graphlet_size = max_graphlet_size,
       density_breaks = density_breaks,
-      density_binned_reference_counts = density_binned_reference_counts
+      density_binned_reference_counts = density_binned_reference_counts,
+      scale_counts_fn = scale_counts_fn
     )
   names(expected_graphlet_counts) <- names(ego_networks)
 
@@ -606,17 +608,23 @@ netdis_expected_graphlet_counts_per_ego <- function(ego_networks,
 netdis_expected_graphlet_counts <- function(graph,
                                             max_graphlet_size,
                                             density_breaks,
-                                            density_binned_reference_counts) {
+                                            density_binned_reference_counts,
+                                            scale_counts_fn=count_graphlet_tuples) {
   # Look up average scaled graphlet counts for graphs of similar density
   # in the reference graph
   query_density <- igraph::edge_density(graph)
   matched_density_index <- interval_index(query_density, density_breaks)
   matched_reference_counts <-
     density_binned_reference_counts[matched_density_index, ]
-  # Scale reference counts by multiplying the reference count for each graphlet
-  # by the number of possible sets of k nodes in the query graph, where k is the
-  # number of nodes in the graphlet
-  matched_reference_counts * count_graphlet_tuples(graph, max_graphlet_size)
+  
+  if (!is.null(scale_counts_fn)) {
+    # Scale reference counts e.g. by multiplying the reference count for each graphlet
+    # by the number of possible sets of k nodes in the query graph, where k is the
+    # number of nodes in the graphlet
+    matched_reference_counts <- matched_reference_counts * scale_counts_fn(graph, max_graphlet_size)
+  }
+  
+  matched_reference_counts
 }
 
 #' INTERNAL FUNCTION - Do not call directly

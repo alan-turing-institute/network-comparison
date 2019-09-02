@@ -69,7 +69,7 @@ graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graph
 graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
 ```
 
-## Bin ego networks by density
+## Use mean graphlet counts as expected counts
 ```{r}
 mean_graphlet_counts_1 <- colMeans(graphlet_counts_1)
 mean_graphlet_counts_2 <- colMeans(graphlet_counts_2)
@@ -88,13 +88,15 @@ bins <- c(0, 1)
 exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(ego_1, 
                                                                  max_graphlet_size,
                                                                  bins, 
-                                                                 mean_graphlet_counts_1)
+                                                                 mean_graphlet_counts_1,
+                                                                 scale_counts_fn = NULL)
 
 
 exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(ego_2, 
                                                                  max_graphlet_size,
                                                                  bins, 
-                                                                 mean_graphlet_counts_2)
+                                                                 mean_graphlet_counts_2,
+                                                                 scale_counts_fn = NULL)
 # Centre graphlet counts by subtracting expected counts
 centred_graphlet_counts_1 <- graphlet_counts_1 - exp_graphlet_counts_1
 
