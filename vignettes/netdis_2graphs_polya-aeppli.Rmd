@@ -94,7 +94,7 @@ ego_density_bins_2 <- binned_densities_2$breaks
 ## Calculate expected graphlet counts in each bin using geometric poisson approximation
 ```{r}
 
-expected_counts_gp <- function(graphlet_counts, bin_indexes, max_graphlet_size) {
+density_binned_counts_gp <- function(graphlet_counts, bin_indexes, max_graphlet_size) {
   
   mean_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
                                   graphlet_counts, 
@@ -135,13 +135,13 @@ expected_counts_gp <- function(graphlet_counts, bin_indexes, max_graphlet_size) 
   expected_counts_bin
 }
 
-binned_graphlet_counts_1 <- expected_counts_gp(graphlet_counts_1,
-                                               binned_densities_1$interval_indexes,
-                                               max_graphlet_size)
+binned_graphlet_counts_1 <- density_binned_counts_gp(graphlet_counts_1,
+                                                     binned_densities_1$interval_indexes,
+                                                     max_graphlet_size)
 
-binned_graphlet_counts_2 <- expected_counts_gp(graphlet_counts_2,
-                                               binned_densities_2$interval_indexes,
-                                               max_graphlet_size)
+binned_graphlet_counts_2 <- density_binned_counts_gp(graphlet_counts_2,
+                                                     binned_densities_2$interval_indexes,
+                                                     max_graphlet_size)
 
 ```
 

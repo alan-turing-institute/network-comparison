@@ -71,16 +71,15 @@ graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graph
 
 ## Use mean graphlet counts as expected counts
 ```{r}
-mean_graphlet_counts_1 <- colMeans(graphlet_counts_1)
-mean_graphlet_counts_2 <- colMeans(graphlet_counts_2)
+# rep(1, nrow(graphlet_counts)): list of ones as bin index, i.e. everything in same bin
+mean_graphlet_counts_1 <- density_binned_counts(graphlet_counts_1,
+                                                rep(1, nrow(graphlet_counts_1)))
 
-# functions take expected counts as 2 dimensional vectors so create 2nd dim
-dim(mean_graphlet_counts_1) <- c(1, length(mean_graphlet_counts_1))
-dim(mean_graphlet_counts_2) <- c(1, length(mean_graphlet_counts_2))
+mean_graphlet_counts_2 <- density_binned_counts(graphlet_counts_2,
+                                                rep(1, nrow(graphlet_counts_2)))
 
 bins <- c(0, 1)
 ```
-
 
 ## Centre graphlet counts of query graphs using binned expected counts 
 ```{r}

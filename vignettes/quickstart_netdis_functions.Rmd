@@ -56,9 +56,7 @@ netdis_one_to_one(graph_1, graph_2,
                   max_graphlet_size = max_graphlet_size,
                   neighbourhood_size = neighbourhood_size,
                   min_ego_nodes = min_ego_nodes,
-                  min_ego_edges = min_ego_edges,
-                  min_bin_count = min_bin_count,
-                  num_bins = num_bins)
+                  min_ego_edges = min_ego_edges)
 ```
 
 ## Compare one graph to many other graphs
@@ -74,9 +72,7 @@ netdis_one_to_many(graph_1, graphs_compare,
                    max_graphlet_size = max_graphlet_size,
                    neighbourhood_size = neighbourhood_size,
                    min_ego_nodes = min_ego_nodes,
-                   min_ego_edges = min_ego_edges,
-                   min_bin_count = min_bin_count,
-                   num_bins = num_bins)
+                   min_ego_edges = min_ego_edges)
 ```
 
 ## Do pairwise netdis calculations for many graphs
@@ -91,9 +87,7 @@ results <- netdis_many_to_many(graphs,
                                max_graphlet_size = max_graphlet_size,
                                neighbourhood_size = neighbourhood_size,
                                min_ego_nodes = min_ego_nodes,
-                               min_ego_edges = min_ego_edges,
-                               min_bin_count = min_bin_count,
-                               num_bins = num_bins)
+                               min_ego_edges = min_ego_edges)
 
 print(results$netdis)
 print(results$comp_spec)
