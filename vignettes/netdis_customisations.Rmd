@@ -1,0 +1,125 @@
+---
+title: "Quick start guide for usage of netdis with different pairwise comparisons."
+author: "Jack Roberts"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Netdis pairwise comparisons}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Load required libraries
+```{r}
+# Load libraries
+library("netdist")
+library("purrr")
+```
+
+## Set Netdis parameters
+```{r}
+# Maximum graphlet size to calculate counts and netdis statistic for.
+max_graphlet_size <- 4
+
+# Ego network neighbourhood size
+neighbourhood_size <- 2
+
+# Minimum size of ego networks to consider
+min_ego_nodes <- 3
+min_ego_edges <- 1
+
+# Reference graph
+ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
+                        package = "netdist")
+ref_graph <- read_simple_graph(ref_path, format = "ncol")
+
+```
+
+## Load query graphs
+```{r}
+source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
+```
+
+## Default Expected Counts with Reference Graph
+```{r}
+
+# Calculate netdis statistics
+results <- netdis_many_to_many(graphs,
+                               ref_graph,
+                               max_graphlet_size = max_graphlet_size,
+                               neighbourhood_size = neighbourhood_size,
+                               min_ego_nodes = min_ego_nodes,
+                               min_ego_edges = min_ego_edges)
+
+print(results$netdis)
+print(results$comp_spec)
+```
+
+## With Modified Binning Parameters
+```{r}
+
+binning_fn <- purrr::partial(binned_densities_adaptive,
+                             min_counts_per_interval = 10,
+                             num_intervals = 50)
+
+
+# Calculate netdis statistics
+results <- netdis_many_to_many(graphs,
+                               ref_graph,
+                               max_graphlet_size = max_graphlet_size,
+                               neighbourhood_size = neighbourhood_size,
+                               min_ego_nodes = min_ego_nodes,
+                               min_ego_edges = min_ego_edges,
+                               binning_fn = binning_fn)
+
+print(results$netdis)
+print(results$comp_spec)
+
+
+```
+
+## With Modified Expected Counts: Geometric Poisson
+```{r}
+bin_counts_fn <- density_binned_counts_gp
+
+exp_counts_fn <- purrr::partial(netdis_expected_graphlet_counts_per_ego,
+                                scale_counts_fn = NULL)
+
+# Calculate netdis statistics
+results <- netdis_many_to_many(graphs,
+                               ref_graph = NULL,
+                               max_graphlet_size = max_graphlet_size,
+                               neighbourhood_size = neighbourhood_size,
+                               min_ego_nodes = min_ego_nodes,
+                               min_ego_edges = min_ego_edges,
+                               bin_counts_fn = bin_counts_fn,
+                               exp_counts_fn = exp_counts_fn)
+
+print(results$netdis)
+print(results$comp_spec)
+```
+
+## With Modified Expected Counts: Simple Mean
+```{r}
+
+binning_fn <- single_density_bin
+bin_counts_fn <- density_binned_counts
+exp_counts_fn <- netdis_expected_graphlet_counts_per_ego
+
+# Calculate netdis statistics
+results <- netdis_many_to_many(graphs,
+                               ref_graph = NULL,
+                               max_graphlet_size = max_graphlet_size,
+                               neighbourhood_size = neighbourhood_size,
+                               min_ego_nodes = min_ego_nodes,
+                               min_ego_edges = min_ego_edges,
+                               binning_fn = binning_fn,
+                               bin_counts_fn = bin_counts_fn,
+                               exp_counts_fn = exp_counts_fn)
+
+print(results$netdis)
+print(results$comp_spec)
+
+
+```

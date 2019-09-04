@@ -1,10 +1,10 @@
 ---
-title: "Quick start guide for usage of netdis functions"
+title: "Quick start guide for usage of netdis with different pairwise comparisons."
 author: "Jack Roberts"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Quick start for Netdis functions}
+  %\VignetteIndexEntry{Netdis pairwise comparisons}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

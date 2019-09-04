@@ -5,7 +5,7 @@
 \title{INTERNAL FUNCTION - Do not call directly}
 \usage{
 netdis_expected_graphlet_counts(graph, max_graphlet_size, density_breaks,
-  density_binned_reference_counts)
+  density_binned_reference_counts, scale_counts_fn = NULL)
 }
 \description{
 Used by \code{netdis_expected_graphlet_counts_ego} to

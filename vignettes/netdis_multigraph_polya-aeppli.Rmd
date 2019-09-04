@@ -134,7 +134,7 @@ density_binned_counts_gp <- function(graphlet_counts, bin_indexes, max_graphlet_
 }
 
 
-bin_counts_fn = purrr::partial(density_binned_counts_gp,
+bin_counts_fn <- purrr::partial(density_binned_counts_gp,
                                max_graphlet_size = max_graphlet_size)
 
 binned_graphlet_counts <- mapply(bin_counts_fn,
@@ -145,7 +145,7 @@ binned_graphlet_counts <- mapply(bin_counts_fn,
 ## Centre graphlet counts of query graphs using binned expected counts 
 ```{r}
 # Calculate expected graphlet counts for each ego network
-exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego,
+exp_counts_fn <- purrr::partial(netdis_expected_graphlet_counts_per_ego,
                                max_graphlet_size = max_graphlet_size,
                                scale_counts_fn=NULL)
 

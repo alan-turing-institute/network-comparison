@@ -6,7 +6,13 @@
 \usage{
 netdis_many_to_many(graphs, ref_graph, comparisons = "many-to-many",
   max_graphlet_size = 4, neighbourhood_size = 2, min_ego_nodes = 3,
-  min_ego_edges = 1, min_bin_count = 5, num_bins = 100)
+  min_ego_edges = 1,
+  binning_fn = purrr::partial(binned_densities_adaptive,
+  min_counts_per_interval = 5, num_intervals = 100),
+  bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean,
+  scale_fn = scale_graphlet_counts_ego),
+  exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego,
+  scale_counts_fn = count_graphlet_tuples))
 }
 \arguments{
 \item{graphs}{Query graphs}
