@@ -523,7 +523,8 @@ netdis_expected_graphlet_counts_ego_fn <- function(graph,
                                                    min_ego_nodes = 3,
                                                    min_ego_edges = 1,
                                                    min_bin_count = 5,
-                                                   num_bins = 100) {
+                                                   num_bins = 100,
+                                                   scale_counts_fn = NULL) {
 
   # Calculate the scaled graphlet counts for all ego networks in the reference
   # graph, also returning the ego networks themselves in order to calculate
@@ -567,7 +568,8 @@ netdis_expected_graphlet_counts_ego_fn <- function(graph,
     min_ego_nodes = min_ego_nodes,
     min_ego_edges = min_ego_edges,
     density_breaks = binned_densities$breaks,
-    density_binned_reference_counts = density_binned_graphlet_counts
+    density_binned_reference_counts = density_binned_graphlet_counts,
+    scale_counts_fn = scale_counts_fn
   )
 }
 
@@ -585,7 +587,8 @@ netdis_expected_graphlet_counts_ego <- function(graph,
                                                 density_breaks,
                                                 density_binned_reference_counts,
                                                 min_ego_nodes = 3,
-                                                min_ego_edges = 1) {
+                                                min_ego_edges = 1,
+                                                scale_counts_fn=NULL) {
   
   #print("netdis_expected_graphlet_counts_ego")
   #print(density_binned_reference_counts)
@@ -603,7 +606,8 @@ netdis_expected_graphlet_counts_ego <- function(graph,
     purrr::map(ego_networks, netdis_expected_graphlet_counts,
       max_graphlet_size = max_graphlet_size,
       density_breaks = density_breaks,
-      density_binned_reference_counts = density_binned_reference_counts
+      density_binned_reference_counts = density_binned_reference_counts,
+      scale_counts_fn=scale_counts_fn
     )
   names(expected_graphlet_counts) <- names(ego_networks)
   # Simplify list to array
