@@ -492,7 +492,7 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
       max_graphlet_size = max_graphlet_size,
       density_breaks = density_breaks,
       density_binned_reference_counts = scaled_reference_counts,
-      scale_counts_fn=count_graphlet_tuples
+      scale_fn=count_graphlet_tuples
     )
   # Loop over each graph and compare expected with actual
   # NOTE: v2.0.0 of testthat library made a breaking change that means using
@@ -621,7 +621,7 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
       neighbourhood_size = 1, density_breaks = breaks,
       density_binned_reference_counts = scaled_reference_counts,
       min_ego_nodes = min_ego_nodes, min_ego_edges = min_ego_edges,
-      scale_counts_fn=count_graphlet_tuples
+      scale_fn=count_graphlet_tuples
     )
   actual_expected_graphlet_counts_ego_o2 <-
     netdis_expected_graphlet_counts_ego(
@@ -630,7 +630,7 @@ test_that("netdis_expected_graphlet_counts_ego works for graphlets up to 4 nodes
       neighbourhood_size = 2, density_breaks = breaks,
       density_binned_reference_counts = scaled_reference_counts,
       min_ego_nodes = min_ego_nodes, min_ego_edges = min_ego_edges,
-      scale_counts_fn=count_graphlet_tuples
+      scale_fn=count_graphlet_tuples
     )
 
   # Compare actual to expected
@@ -840,7 +840,7 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
       density_binned_reference_counts_o1,
       min_ego_nodes = min_ego_nodes,
       min_ego_edges = min_ego_edges,
-      scale_counts_fn=count_graphlet_tuples
+      scale_fn=count_graphlet_tuples
     )
   )
   expect_equal(
@@ -853,7 +853,7 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
       density_binned_reference_counts_o2,
       min_ego_nodes = min_ego_nodes,
       min_ego_edges = min_ego_edges,
-      scale_counts_fn=count_graphlet_tuples
+      scale_fn=count_graphlet_tuples
     )
   )
 
@@ -867,7 +867,7 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
       num_bins = num_bins,
       min_ego_nodes = min_ego_nodes,
       min_ego_edges = min_ego_edges,
-      scale_counts_fn=count_graphlet_tuples
+      scale_fn=count_graphlet_tuples
     )
   actual_expected_graphlet_counts_ego_fn_o2 <-
     netdis_expected_graphlet_counts_ego_fn(
@@ -878,7 +878,7 @@ test_that("netdis_expected_graphlet_counts_ego_fn works for graphlets up to 4 no
       num_bins = num_bins,
       min_ego_nodes = min_ego_nodes,
       min_ego_edges = min_ego_edges,
-      scale_counts_fn=count_graphlet_tuples
+      scale_fn=count_graphlet_tuples
     )
   # Generate actual expected accounts by applying generated functions to test
   # graph

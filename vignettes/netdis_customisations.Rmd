@@ -1,10 +1,10 @@
 ---
-title: "Quick start guide for usage of netdis with different pairwise comparisons."
+title: "Usage of netdis with binning and expected counts customisations."
 author: "Jack Roberts"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Netdis pairwise comparisons}
+  %\VignetteIndexEntry{Netdis function customisations}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -84,7 +84,7 @@ print(results$comp_spec)
 bin_counts_fn <- density_binned_counts_gp
 
 exp_counts_fn <- purrr::partial(netdis_expected_graphlet_counts_per_ego,
-                                scale_counts_fn = NULL)
+                                scale_fn = NULL)
 
 # Calculate netdis statistics
 results <- netdis_many_to_many(graphs,

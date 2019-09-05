@@ -1,10 +1,10 @@
 ---
-title: "Netdis - 2 graphs with Expected Counts from Geometric Poisson Approximation"
+title: "Netdis - Multiple graphs with Expected Counts from Geometric Poisson Approximation"
 author: "Martin O'Reilly, Jack Roberts"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Netdis - 2 graphs with GP Approximation}
+  %\VignetteIndexEntry{Netdis - multiple graphs with GP Approximation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -22,14 +22,7 @@ library("purrr")
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
 # Load query graphs
-graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
-                             format = "ncol")
-
-graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
-                             format = "ncol")
-
-
-graphs <- list(EBV = graph_1, ECL = graph_2)
+graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
 ```
 
 ## Set Netdis parameters
@@ -147,7 +140,7 @@ binned_graphlet_counts <- mapply(bin_counts_fn,
 # Calculate expected graphlet counts for each ego network
 exp_counts_fn <- purrr::partial(netdis_expected_graphlet_counts_per_ego,
                                max_graphlet_size = max_graphlet_size,
-                               scale_counts_fn=NULL)
+                               scale_fn=NULL)
 
 exp_graphlet_counts <- mapply(exp_counts_fn,
                               ego_networks,

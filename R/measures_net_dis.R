@@ -21,7 +21,7 @@ netdis_one_to_one <- function(graph_1, graph_2,
                               min_ego_edges = 1,
                               binning_fn = purrr::partial(binned_densities_adaptive, min_counts_per_interval = 5, num_intervals = 100),
                               bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean, scale_fn = scale_graphlet_counts_ego),
-                              exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego, scale_counts_fn=count_graphlet_tuples)) {
+                              exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego, scale_fn=count_graphlet_tuples)) {
   
   # bundle graphs into one vector with format needed for
   # netdis many-to-many
@@ -67,7 +67,7 @@ netdis_one_to_many <- function(graph_1, graphs_compare,
                               min_ego_edges = 1,
                               binning_fn = purrr::partial(binned_densities_adaptive, min_counts_per_interval = 5, num_intervals = 100),
                               bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean, scale_fn = scale_graphlet_counts_ego),
-                              exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego, scale_counts_fn=count_graphlet_tuples)) {
+                              exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego, scale_fn=count_graphlet_tuples)) {
   
   # bundle graph_1 and graphs_compare to one vector, with
   # graph_1 at start as needed for netdis_many_to_many call
@@ -124,7 +124,7 @@ netdis_many_to_many <- function(graphs,
                                                                agg_fn = mean,
                                                                scale_fn = scale_graphlet_counts_ego),
                                 exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego,
-                                                               scale_counts_fn=count_graphlet_tuples)) {
+                                                               scale_fn=count_graphlet_tuples)) {
   ## ------------------------------------------------------------------------
   # Get ego networks for query graphs
   ego_networks <- purrr::map(
@@ -524,7 +524,7 @@ netdis_expected_graphlet_counts_ego_fn <- function(graph,
                                                    min_ego_edges = 1,
                                                    min_bin_count = 5,
                                                    num_bins = 100,
-                                                   scale_counts_fn = NULL) {
+                                                   scale_fn = NULL) {
 
   # Calculate the scaled graphlet counts for all ego networks in the reference
   # graph, also returning the ego networks themselves in order to calculate
@@ -569,7 +569,7 @@ netdis_expected_graphlet_counts_ego_fn <- function(graph,
     min_ego_edges = min_ego_edges,
     density_breaks = binned_densities$breaks,
     density_binned_reference_counts = density_binned_graphlet_counts,
-    scale_counts_fn = scale_counts_fn
+    scale_fn = scale_fn
   )
 }
 
@@ -588,7 +588,7 @@ netdis_expected_graphlet_counts_ego <- function(graph,
                                                 density_binned_reference_counts,
                                                 min_ego_nodes = 3,
                                                 min_ego_edges = 1,
-                                                scale_counts_fn=NULL) {
+                                                scale_fn=NULL) {
   
   #print("netdis_expected_graphlet_counts_ego")
   #print(density_binned_reference_counts)
@@ -607,7 +607,7 @@ netdis_expected_graphlet_counts_ego <- function(graph,
       max_graphlet_size = max_graphlet_size,
       density_breaks = density_breaks,
       density_binned_reference_counts = density_binned_reference_counts,
-      scale_counts_fn=scale_counts_fn
+      scale_fn=scale_fn
     )
   names(expected_graphlet_counts) <- names(ego_networks)
   # Simplify list to array
@@ -630,7 +630,7 @@ netdis_expected_graphlet_counts_per_ego <- function(ego_networks,
                                                     density_breaks,
                                                     density_binned_reference_counts,
                                                     max_graphlet_size,
-                                                    scale_counts_fn=NULL) {
+                                                    scale_fn=NULL) {
   
   
   #print("netdis_expected_graphlet_counts_per_ego")
@@ -643,7 +643,7 @@ netdis_expected_graphlet_counts_per_ego <- function(ego_networks,
       max_graphlet_size = max_graphlet_size,
       density_breaks = density_breaks,
       density_binned_reference_counts = density_binned_reference_counts,
-      scale_counts_fn = scale_counts_fn
+      scale_fn = scale_fn
     )
   names(expected_graphlet_counts) <- names(ego_networks)
 
@@ -663,7 +663,7 @@ netdis_expected_graphlet_counts <- function(graph,
                                             max_graphlet_size,
                                             density_breaks,
                                             density_binned_reference_counts,
-                                            scale_counts_fn=NULL) {
+                                            scale_fn=NULL) {
   
   #print("netdis_expected_graphlet_counts")
   #print(density_binned_reference_counts)
@@ -676,11 +676,11 @@ netdis_expected_graphlet_counts <- function(graph,
   matched_reference_counts <-
     density_binned_reference_counts[matched_density_index, ]
   
-  if (!is.null(scale_counts_fn)) {
+  if (!is.null(scale_fn)) {
     # Scale reference counts e.g. by multiplying the reference count for each graphlet
     # by the number of possible sets of k nodes in the query graph, where k is the
     # number of nodes in the graphlet
-    matched_reference_counts <- matched_reference_counts * scale_counts_fn(graph, max_graphlet_size)
+    matched_reference_counts <- matched_reference_counts * scale_fn(graph, max_graphlet_size)
   }
   
   matched_reference_counts
