@@ -11,7 +11,7 @@ netdis_one_to_one(graph_1, graph_2, ref_graph, max_graphlet_size = 4,
   bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean,
   scale_fn = scale_graphlet_counts_ego),
   exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego,
-  scale_counts_fn = count_graphlet_tuples))
+  scale_fn = count_graphlet_tuples))
 }
 \arguments{
 \item{graph_1}{First query graph}

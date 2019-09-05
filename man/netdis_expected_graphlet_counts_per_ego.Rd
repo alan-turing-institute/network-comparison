@@ -4,9 +4,8 @@
 \alias{netdis_expected_graphlet_counts_per_ego}
 \title{INTERNAL FUNCTION - Do not call directly}
 \usage{
-netdis_expected_graphlet_counts_per_ego(ego_networks, max_graphlet_size,
-  density_breaks, density_binned_reference_counts,
-  scale_counts_fn = NULL)
+netdis_expected_graphlet_counts_per_ego(ego_networks, density_breaks,
+  density_binned_reference_counts, max_graphlet_size, scale_fn = NULL)
 }
 \description{
 JACK To follow through logic of paper steps, wanted to pass

@@ -42,62 +42,36 @@ ego_2 <- make_named_ego_graph(graph_2,
                               min_ego_nodes = min_ego_nodes, 
                               min_ego_edges = min_ego_edges)
 
+
 ## ------------------------------------------------------------------------
 # Count graphlets for ego networks in query and reference graphs
 graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
 graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
 
 ## ------------------------------------------------------------------------
-# Load reference graph
-# JACK - need to deal with case where ref graph not used.
-ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
-                        package = "netdist")
-ref_graph <- read_simple_graph(ref_path, format = "ncol")
+# rep(1, nrow(graphlet_counts)): list of ones as bin index, i.e. everything in same bin
+mean_graphlet_counts_1 <- density_binned_counts(graphlet_counts_1,
+                                                rep(1, nrow(graphlet_counts_1)))
 
-ego_ref <- make_named_ego_graph(ref_graph, 
-                                order = neighbourhood_size, 
-                                min_ego_nodes = min_ego_nodes, 
-                                min_ego_edges = min_ego_edges)
+mean_graphlet_counts_2 <- density_binned_counts(graphlet_counts_2,
+                                                rep(1, nrow(graphlet_counts_2)))
 
-graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_graphlet_size)
-
-# Scale ego-network graphlet counts by dividing by total number of k-tuples in
-# ego-network (where k is graphlet size)
-scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(ego_ref, 
-                                                        graphlet_counts_ref, 
-                                                        max_graphlet_size)
-
-# Get ego-network densities
-densities_ref <- ego_network_density(ego_ref)
-
-# Adaptively bin ref ego-network densities
-binned_densities <- binned_densities_adaptive(densities_ref, 
-                                              min_counts_per_interval = min_bin_count, 
-                                              num_intervals = num_bins)
-
-ref_ego_density_bins <- binned_densities$breaks
-
-# Average ref graphlet counts across density bins
-ref_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
-                                  scaled_graphlet_counts_ref, 
-                                  binned_densities$interval_indexes)
-  
+bins <- c(0, 1)
 
 ## ------------------------------------------------------------------------
-# Calculate expected graphlet counts (using ref graph ego network density bins)
+# Calculate expected graphlet counts for each ego network
 exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(ego_1, 
-                                                                 ref_ego_density_bins, 
-                                                                 ref_binned_graphlet_counts,
+                                                                 bins, 
+                                                                 mean_graphlet_counts_1,
                                                                  max_graphlet_size,
-                                                                 scale_fn=count_graphlet_tuples)
+                                                                 scale_fn = NULL)
 
 
 exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(ego_2, 
-                                                                 ref_ego_density_bins, 
-                                                                 ref_binned_graphlet_counts,
+                                                                 bins, 
+                                                                 mean_graphlet_counts_2,
                                                                  max_graphlet_size,
-                                                                 scale_fn=count_graphlet_tuples)
-
+                                                                 scale_fn = NULL)
 # Centre graphlet counts by subtracting expected counts
 centred_graphlet_counts_1 <- graphlet_counts_1 - exp_graphlet_counts_1
 

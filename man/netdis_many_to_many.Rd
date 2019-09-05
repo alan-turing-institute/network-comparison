@@ -12,7 +12,7 @@ netdis_many_to_many(graphs, ref_graph, comparisons = "many-to-many",
   bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean,
   scale_fn = scale_graphlet_counts_ego),
   exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego,
-  scale_counts_fn = count_graphlet_tuples))
+  scale_fn = count_graphlet_tuples))
 }
 \arguments{
 \item{graphs}{Query graphs}

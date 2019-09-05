@@ -12,7 +12,7 @@ netdis_one_to_many(graph_1, graphs_compare, ref_graph,
   bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean,
   scale_fn = scale_graphlet_counts_ego),
   exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego,
-  scale_counts_fn = count_graphlet_tuples))
+  scale_fn = count_graphlet_tuples))
 }
 \arguments{
 \item{graph_1}{query graph - this graph will be compared with
