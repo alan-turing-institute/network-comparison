@@ -720,6 +720,7 @@ mean_density_binned_graphlet_counts <- function(graphlet_counts,
 #' For case where don't want to use binning, return
 #' a single bin which covers full range of possible
 #' densities.
+#' @export
 single_density_bin <- function(densities) {
 
   binned_densities <- list(densities = densities,
