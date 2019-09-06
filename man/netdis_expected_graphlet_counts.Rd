@@ -7,10 +7,28 @@
 netdis_expected_graphlet_counts(graph, max_graphlet_size, density_breaks,
   density_binned_reference_counts, scale_fn = NULL)
 }
+\arguments{
+\item{graph}{A connected, undirected, simple reference graph as an
+\code{igraph} object.}
+
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count.
+Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
+
+\item{density_breaks}{Density values defining bin edges.}
+
+\item{density_binned_reference_counts}{Reference network graphlet counts for
+each density bin.}
+
+\item{scale_fn}{Optional function to scale calculated expected counts, taking
+\code{graph} and \code{max_graphlet_size} as arguments, and returning a scale
+factor that the looked up \code{density_binned_reference_counts} values will
+be multiplied by.
+Temporarily accessible during development.
+TODO: Remove @export prior to publishing}
+}
 \description{
 Used by \code{netdis_expected_graphlet_counts_ego} to
-calculate expected graphlet counts for a query graph ego-network from the
-statistics of a provided reference graph.
-Temporarily accessible during development.
-TODO: Remove @export prior to publishing
+calculate expected graphlet counts for a query graph 
+ego-network from the statistics of a provided reference
+graph.
 }

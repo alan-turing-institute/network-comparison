@@ -7,10 +7,19 @@
 mean_density_binned_graphlet_counts(graphlet_counts,
   density_interval_indexes, agg_fn = mean)
 }
+\arguments{
+\item{graphlet_counts}{Graphlet counts for a number of ego_networks.}
+
+\item{density_interval_indexes}{Density bin index for 
+each ego network.}
+
+\item{agg_fn}{Function to aggregate counts in each bin
+(default \code{agg_fn = mean}).
+Temporarily accessible during development.
+TODO: Remove @export prior to publishing}
+}
 \description{
 Used by \code{netdis_expected_graphlet_counts_ego_fn} to
 generate a function for calculating expected ego-network graphlet counts
 from the statistics of a provided reference graph.
-Temporarily accessible during development.
-TODO: Remove @export prior to publishing
 }

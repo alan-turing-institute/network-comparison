@@ -14,6 +14,10 @@ all graphs being compared}
 \item{graphlet_size}{The size of graphlets to use for the Netdis calculation
 (only counts for graphlets of the specified size will be used). The size of
 a graphlet is the number of nodes it contains.}
+
+\item{mc.cores}{Number of cores to run on. NOTE: only works on unix-like
+systems with system level forking capability. This means it will work on
+Linux and OSX, but not Windows.}
 }
 \value{
 Pairwise Netdis statistics between graphs calculated using centred

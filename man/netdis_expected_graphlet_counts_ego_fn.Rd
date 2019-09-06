@@ -17,6 +17,21 @@ Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
 
 \item{neighbourhood_size}{The number of steps from the source node to include
 node in ego-network.}
+
+\item{min_ego_nodes}{Filter ego networks which have fewer
+than min_ego_nodes nodes}
+
+\item{min_ego_edges}{Filter ego networks which have fewer
+than min_ego_edges edges}
+
+\item{min_bin_count}{Minimum count of ego networks in each density bin.}
+
+\item{num_bins}{Initial number of density bins to generate.}
+
+\item{scale_fn}{Optional function to scale calculated expected counts, taking
+\code{graph} and \code{max_graphlet_size} as arguments, and returning a scale
+factor that the looked up \code{density_binned_reference_counts} values will
+be multiplied by.}
 }
 \value{
 A function taking a connected, undirected, simple query graph as an

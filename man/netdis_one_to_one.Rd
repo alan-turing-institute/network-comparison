@@ -30,9 +30,26 @@ than min_ego_nodes nodes}
 \item{min_ego_edges}{Filter ego networks which have fewer
 than min_ego_edges edges}
 
-\item{min_bin_count}{Minimum number of ego networks in each density bin}
+\item{binning_fn}{Function used to bin ego network densities. Takes densities
+as its single argument, and returns a named list including keys \code{breaks}
+(list of bin edges) and \code{interval_indexes} (density bin index for each
+ego network). (Default: \code{binned_densities_adaptive} with
+\code{min_counts_per_interval = 5} and \code{num_intervals = 100}).}
 
-\item{num_bins}{Number of density bins to generate}
+\item{bin_counts_fn}{Function used to calculate expected graphlet counts in
+each density bin. Takes \code{graphlet_counts}, \code{interval_indexes} 
+(bin indexes), \code{ego_networks} and \code{max_graphlet_size} as arguments.
+(Default: \code{density_binned_counts} with \code{agg_fn = mean} and 
+\code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
+approach used in the original netdis paper).}
+
+\item{exp_counts_fn}{Function used to map from binned reference counts to 
+expected counts for each graphlet in each ego network of the query graphs.
+Takes \code{ego_networks}, \code{density_bin_breaks},
+\code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
+(Default: \code{netdis_expected_graphlet_counts_per_ego} with 
+\code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
+the original netdis paper).}
 }
 \value{
 Netdis statistics between graph_1 and graph_2 for graphlet sizes

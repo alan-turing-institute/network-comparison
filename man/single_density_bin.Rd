@@ -2,14 +2,16 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{single_density_bin}
 \alias{single_density_bin}
-\title{For case where don't want to use binning, return
-a single bin which covers full range of possible
-densities.}
+\title{For case where don't want to use binning, return a single bin which covers
+the full range of possible density values.}
 \usage{
 single_density_bin(densities)
 }
+\arguments{
+\item{densities}{Ego network density values (only used to return
+a list of indexes of the required length.)}
+}
 \description{
-For case where don't want to use binning, return
-a single bin which covers full range of possible
-densities.
+For case where don't want to use binning, return a single bin which covers
+the full range of possible density values.
 }

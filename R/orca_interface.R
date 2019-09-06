@@ -203,9 +203,10 @@ simplify_graph <- function(graph, as_undirected = TRUE, remove_loops = TRUE,
 #' of each graphlet or orbit at each graph vertex) to
 #' a set of discrete histograms (a histogram of counts for each distinct value
 #' across all graph vertices for each feature with no binning)
-#' @param A number of nodes (rows) by number of features (columns) matrix, where
-#' the ij entry is the score of node i on feature j (e.g. for ORCA output this
-#' is counts of each graphlet or orbit at each graph vertex)
+#' @param features_matrix A number of nodes (rows) by number of features 
+#' (columns) matrix, where the ij entry is the score of node i on feature j
+#' (e.g. for ORCA output this is counts of each graphlet or orbit at each
+#' graph vertex)
 #' @return Feature histograms: List of discrete histograms for each
 #' feature
 #' @export

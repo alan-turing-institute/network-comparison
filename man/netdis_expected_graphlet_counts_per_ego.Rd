@@ -7,6 +7,26 @@
 netdis_expected_graphlet_counts_per_ego(ego_networks, density_breaks,
   density_binned_reference_counts, max_graphlet_size, scale_fn = NULL)
 }
+\arguments{
+\item{ego_networks}{The number of steps from the source node to include
+node in ego-network.}
+
+\item{density_breaks}{Density values defining bin edges.}
+
+\item{density_binned_reference_counts}{Reference network graphlet counts for
+each density bin.}
+
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count.
+Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
+
+\item{scale_fn}{Optional function to scale calculated expected counts, taking
+\code{graph} and \code{max_graphlet_size} as arguments, and returning a scale
+factor that the looked up \code{density_binned_reference_counts} values will
+be multiplied by.
+
+#' Temporarily accessible during development.
+TODO: Remove @export prior to publishing}
+}
 \description{
 JACK To follow through logic of paper steps, wanted to pass
 ego networks to the function, not the input query graph
@@ -16,6 +36,4 @@ ego networks to the function, not the input query graph
 Used by \code{netdis_expected_graphlet_counts_ego_fn} to
 generate a function for calculating expected ego-network graphlet counts
 from the statistics of a provided reference graph.
-Temporarily accessible during development.
-TODO: Remove @export prior to publishing
 }

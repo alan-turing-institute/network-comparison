@@ -4,6 +4,9 @@
 #' generate a function for calculating expected ego-network graphlet counts
 #' from the statistics of a provided reference graph.
 #' Temporarily accessible during development.
+#' @param densities Density values to use for binning.
+#' @param min_counts_per_interval Minimum count for each bin. 
+#' @param num_intervals Initial number of density bins to generate.
 #' TODO: Remove @export prior to publishing
 #' @export
 binned_densities_adaptive <- function(densities,
