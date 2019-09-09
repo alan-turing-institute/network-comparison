@@ -516,17 +516,117 @@ test_that("Ego-network 4-node density-binned reference counts match manually ver
   )
 })
 
+context("Measures Netdis: scale_graphlet_counts_ego for manually verified networks")
+test_that("Ego-network 4-node graphlet counts match manually verified totals", {
+  # Set up a small sample network with at least one ego-network that contains
+  # at least one of each graphlets
+  elist <- rbind(
+    c("n1", "n2"),
+    c("n2", "n3"),
+    c("n1", "n4"),
+    c("n2", "n5"),
+    c("n1", "n6"),
+    c("n1", "n7"),
+    c("n2", "n4"),
+    c("n4", "n6"),
+    c("n6", "n8"),
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
+  )
+  graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
+  
+  # Set node and graphlet labels to use for row and col names in expected counts
+  node_labels <- igraph::V(graph)$name
+  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  
+  # Count graphlets in each ego network of the graph with neighbourhood sizes of 1 and 2
+  max_graphlet_size <- 4
+  min_ego_edges <- 0
+  min_ego_nodes <- 0
+  
+  # Use previously tested functions to generate ego networks and calcualte graphlet
+  # counts.
+  #ego nets
+  ego_networks_o1 <- make_named_ego_graph(graph,
+                                          order = 1,
+                                          min_ego_edges = min_ego_edges,
+                                          min_ego_nodes = min_ego_nodes
+  )
+  ego_networks_o2 <- make_named_ego_graph(graph,
+                                          order = 2,
+                                          min_ego_edges = min_ego_edges,
+                                          min_ego_nodes = min_ego_nodes
+  )
+  
+  #graphlet counts
+  graphlet_counts_o1 <-
+    ego_to_graphlet_counts(ego_networks_o1,
+                           max_graphlet_size = max_graphlet_size
+    )
+  graphlet_counts_o2 <-
+    ego_to_graphlet_counts(ego_networks_o2,
+                           max_graphlet_size = max_graphlet_size
+    )
+  
+  
+  # Calculate scaled counts with scale_graphlet_counts_ego 
+  # (function to test).
+  actual_counts_o1 <-
+    scale_graphlet_counts_ego(ego_networks_o1,
+                              graphlet_counts_o1,
+                               max_graphlet_size = max_graphlet_size
+    )
+  actual_counts_o2 <-
+    scale_graphlet_counts_ego(ego_networks_o2,
+                              graphlet_counts_o2,
+                              max_graphlet_size = max_graphlet_size
+    )
+  
+  graphlet_key <- graphlet_key(max_graphlet_size)
+  k <- graphlet_key$node_count
+  # Set manually verified counts
+  # 1-step ego networks
+  expected_counts_o1 <- rbind(
+    c(6, 5, 2, 0, 1, 0, 2, 1, 0) / zeros_to_ones(choose(5, k)),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0) / zeros_to_ones(choose(5, k)),
+    c(1, 0, 0, 0, 0, 0, 0, 0, 0) / zeros_to_ones(choose(2, k)),
+    c(5, 2, 2, 0, 0, 0, 0, 1, 0) / zeros_to_ones(choose(4, k)),
+    c(1, 0, 0, 0, 0, 0, 0, 0, 0) / zeros_to_ones(choose(2, k)),
+    c(4, 2, 1, 0, 0, 0, 1, 0, 0) / zeros_to_ones(choose(4, k)),
+    c(7, 3, 4, 0, 0, 0, 3, 0, 1) / zeros_to_ones(choose(5, k)),
+    c(7, 3, 4, 0, 0, 0, 3, 0, 1) / zeros_to_ones(choose(5, k)),
+    c(6, 0, 4, 0, 0, 0, 0, 0, 1) / zeros_to_ones(choose(4, k)),
+    c(6, 0, 4, 0, 0, 0, 0, 0, 1) / zeros_to_ones(choose(4, k))
+  )
+  rownames(expected_counts_o1) <- node_labels
+  colnames(expected_counts_o1) <- graphlet_labels
+  # 2-step ego networks
+  expected_counts_o2 <- rbind(
+    c(15, 18, 6, 21, 3, 1, 11, 1, 1) / zeros_to_ones(choose(10, k)),
+    c(8, 10, 2, 6, 3, 0, 4, 1, 0) / zeros_to_ones(choose(7, k)),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0) / zeros_to_ones(choose(5, k)),
+    c(10, 14, 2, 11, 3, 1, 5, 1, 0) / zeros_to_ones(choose(8, k)),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0) / zeros_to_ones(choose(5, k)),
+    c(13, 13, 6, 15, 1, 1, 9, 1, 1) / zeros_to_ones(choose(8, k)),
+    c(13, 13, 6, 15, 1, 1, 9, 1, 1) / zeros_to_ones(choose(8, k)),
+    c(11, 10, 5, 10, 0, 1, 8, 0, 1) / zeros_to_ones(choose(7, k)),
+    c(9, 8, 4, 4, 0, 1, 6, 0, 1) / zeros_to_ones(choose(6, k)),
+    c(9, 8, 4, 4, 0, 1, 6, 0, 1) / zeros_to_ones(choose(6, k))
+  )
+  rownames(expected_counts_o2) <- node_labels
+  colnames(expected_counts_o2) <- graphlet_labels
+  
+  # Test that actual counts match expected
+  expect_equal(actual_counts_o1, expected_counts_o1)
+  expect_equal(actual_counts_o2, expected_counts_o2)
+})
 
-
-
-
-
-
-
-
-# JACK ----------------------------------------------------------------------
 context("Measures Netdis: Ego-network density-binned counts for manually verified networks")
-test_that("Ego-network 4-node density-binned counts match manually verified totals", {
+test_that("density_binned_counts output matches manually verified totals with different scaling and aggregation functions", {
   # Set up a small sample network with at least one ego-network that contains
   # at least one of each graphlets
   elist <- rbind(
@@ -552,6 +652,8 @@ test_that("Ego-network 4-node density-binned counts match manually verified tota
   max_graphlet_size <- 4
   min_counts_per_interval <- 2
   num_intervals <- 100
+  min_ego_edges <- 0
+  min_ego_nodes <- 0
   
   # Set node and graphlet labels to use for row and col names in expected counts
   node_labels <- igraph::V(graph)$name
@@ -582,13 +684,6 @@ test_that("Ego-network 4-node density-binned counts match manually verified tota
     interval_indexes = expected_interval_indexes_o1,
     breaks = expected_breaks_o1
   )
-  # Check binned densities are as expected
-  actual_binned_densities_o1 <- binned_densities_adaptive(
-    expected_densities_o1,
-    min_counts_per_interval = min_counts_per_interval,
-    num_intervals = num_intervals
-  )
-  expect_equal(actual_binned_densities_o1, expected_binned_densities_o1)
   # 2. Ego-networks of order 2
   expected_min_break_o2 <- 1 / 3
   expected_max_break_o2 <- 0.6
@@ -601,14 +696,7 @@ test_that("Ego-network 4-node density-binned counts match manually verified tota
     interval_indexes = expected_interval_indexes_o2,
     breaks = expected_breaks_o2
   )
-  # Check binned densities are as expected
-  actual_binned_densities_o2 <- binned_densities_adaptive(
-    expected_densities_o2,
-    min_counts_per_interval = min_counts_per_interval,
-    num_intervals = num_intervals
-  )
-  expect_equal(actual_binned_densities_o2, expected_binned_densities_o2)
-  
+
   # Set manually verified scaled ego-network graphlet counts
   graphlet_key <- graphlet_key(max_graphlet_size)
   k <- graphlet_key$node_count
@@ -669,31 +757,163 @@ test_that("Ego-network 4-node density-binned counts match manually verified tota
   )
   rownames(expected_mean_density_binned_counts_o2) <- 1:4
   
-  # Calculate actual output of function under test
-  actual_mean_density_binned_counts_o1 <- mean_density_binned_graphlet_counts(
-    expected_counts_o1, expected_interval_indexes_o1
-  )
-  actual_mean_density_binned_counts_o2 <- mean_density_binned_graphlet_counts(
-    expected_counts_o2, expected_interval_indexes_o2
-  )
+  # density_binned_counts with default arguments should give
+  # mean graphlet count in each density bin
+  actual_density_binned_counts_o1 <- density_binned_counts(
+    expected_counts_o1,
+    expected_interval_indexes_o1)
+
+  actual_density_binned_counts_o2 <- density_binned_counts(
+    expected_counts_o2,
+    expected_interval_indexes_o2)
   
   # Check actual output vs expected
   expect_equal(
-    actual_mean_density_binned_counts_o1,
+    actual_density_binned_counts_o1,
     expected_mean_density_binned_counts_o1
   )
   expect_equal(
-    actual_mean_density_binned_counts_o2,
+    actual_density_binned_counts_o2,
     expected_mean_density_binned_counts_o2
   )
+  
+  # Calculate max binned counts based on manually verified counts
+  # and density bins
+  # Order 1: Expected interval indexes: 1, 1, 3, 3, 3, 2, 2, 2, 3, 3
+  # apply(x, 2, max): returns max of each column in x
+  max_counts_bin1_o1 <- apply(rbind(expected_counts_o1[1, ], expected_counts_o1[2, ]), 2, max)
+  max_counts_bin2_o1 <- apply(rbind(expected_counts_o1[6, ], expected_counts_o1[7, ],
+                              expected_counts_o1[8, ]), 2, max)
+  max_counts_bin3_o1 <- apply(rbind(expected_counts_o1[3, ], expected_counts_o1[4, ],
+                              expected_counts_o1[5, ], expected_counts_o1[9, ],
+                              expected_counts_o1[10, ]), 2, max)
+  
+  expected_max_density_binned_counts_o1 <- rbind(
+    max_counts_bin1_o1, max_counts_bin2_o1, max_counts_bin3_o1
+  )
+  rownames(expected_max_density_binned_counts_o1) <- 1:3
+  # Order 2: Expected interval indexes: 1, 3, 3, 1, 3, 2, 2, 4, 4, 4
+  max_counts_bin1_o2 <- apply(rbind(expected_counts_o2[1, ], expected_counts_o2[4, ]), 2, max)
+  max_counts_bin2_o2 <- apply(rbind(expected_counts_o2[2, ], expected_counts_o2[6, ],
+                               expected_counts_o2[7, ]), 2, max)
+  max_counts_bin3_o2 <-  apply(rbind(expected_counts_o2[3, ], expected_counts_o2[5, ]), 2, max)
+  max_counts_bin4_o2 <-  apply(rbind(expected_counts_o2[8, ], expected_counts_o2[9, ],
+                               expected_counts_o2[10, ]), 2, max)
+  
+  expected_max_density_binned_counts_o2 <- rbind(
+    max_counts_bin1_o2, max_counts_bin2_o2, max_counts_bin3_o2,
+    max_counts_bin4_o2
+  )
+  rownames(expected_max_density_binned_counts_o2) <- 1:4
+  
+  # density_binned_counts with agg_fn = max should give
+  # max graphlet count in each density bin
+  agg_fn <- max
+  scale_fn <- NULL
+  
+  actual_max_density_binned_counts_o1 <- density_binned_counts(
+    expected_counts_o1,
+    expected_interval_indexes_o1,
+    agg_fn = agg_fn,
+    scale_fn = scale_fn)
+  
+  actual_max_density_binned_counts_o2 <- density_binned_counts(
+    expected_counts_o2,
+    expected_interval_indexes_o2,
+    agg_fn = agg_fn,
+    scale_fn = scale_fn)
+  
+  # Check actual output vs expected
+  expect_equal(
+    actual_max_density_binned_counts_o1,
+    expected_max_density_binned_counts_o1
+  )
+  expect_equal(
+    actual_max_density_binned_counts_o2,
+    expected_max_density_binned_counts_o2
+  )
+  
+  # density_binned_counts with scale_fn = scale_graphlet_counts_ego
+  # should give mean graphlet counts in each density bin scaled by
+  # count_graphlet_tuples.
+  agg_fn <- mean
+  scale_fn <- scale_graphlet_counts_ego
+  
+  # generate ego networks using previously tested function
+  ego_networks_o1 <- make_named_ego_graph(graph,
+                                          order = 1,
+                                          min_ego_edges = min_ego_edges,
+                                          min_ego_nodes = min_ego_nodes
+  )
+  ego_networks_o2 <- make_named_ego_graph(graph,
+                                          order = 2,
+                                          min_ego_edges = min_ego_edges,
+                                          min_ego_nodes = min_ego_nodes
+  )
+  # calculate expected counts using previously tested function
+  expected_scaled_counts_o1 <-
+    scale_graphlet_counts_ego(ego_networks_o1,
+                              expected_counts_o1,
+                              max_graphlet_size = max_graphlet_size
+    )
+  expected_scaled_counts_o2 <-
+    scale_graphlet_counts_ego(ego_networks_o2,
+                              expected_counts_o2,
+                              max_graphlet_size = max_graphlet_size
+    )
+  
+  # calculate mean expected counts using expected density bins
+  mean_scaled_counts_bin1_o1 <- (expected_scaled_counts_o1[1, ] + expected_scaled_counts_o1[2, ]) / 2
+  mean_scaled_counts_bin2_o1 <- (expected_scaled_counts_o1[6, ] + expected_scaled_counts_o1[7, ] +
+                                 expected_scaled_counts_o1[8, ]) / 3
+  mean_scaled_counts_bin3_o1 <- (expected_scaled_counts_o1[3, ] + expected_scaled_counts_o1[4, ] +
+                                 expected_scaled_counts_o1[5, ] + expected_scaled_counts_o1[9, ] +
+                                 expected_scaled_counts_o1[10, ]) / 5
+  expected_scaled_density_binned_counts_o1 <- rbind(
+    mean_scaled_counts_bin1_o1, mean_scaled_counts_bin2_o1, mean_scaled_counts_bin3_o1
+  )
+  rownames(expected_scaled_density_binned_counts_o1) <- 1:3
+  # Order 2: Expected interval indexes: 1, 3, 3, 1, 3, 2, 2, 4, 4, 4
+  mean_scaled_counts_bin1_o2 <- (expected_scaled_counts_o2[1, ] + expected_scaled_counts_o2[4, ]) / 2
+  mean_scaled_counts_bin2_o2 <- (expected_scaled_counts_o2[2, ] + expected_scaled_counts_o2[6, ] +
+                                 expected_scaled_counts_o2[7, ]) / 3
+  mean_scaled_counts_bin3_o2 <- (expected_scaled_counts_o2[3, ] + expected_scaled_counts_o2[5, ]) / 2
+  mean_scaled_counts_bin4_o2 <- (expected_scaled_counts_o2[8, ] + expected_scaled_counts_o2[9, ] +
+                                 expected_scaled_counts_o2[10, ]) / 3
+  expected_scaled_density_binned_counts_o2 <- rbind(
+    mean_scaled_counts_bin1_o2, mean_scaled_counts_bin2_o2, mean_scaled_counts_bin3_o2,
+    mean_scaled_counts_bin4_o2
+  )
+  rownames(expected_scaled_density_binned_counts_o2) <- 1:4
+  
+  # Calculate scaled binned counts with density_binned_counts (function to test)
+  actual_scaled_density_binned_counts_o1 <- density_binned_counts(
+    expected_counts_o1,
+    expected_interval_indexes_o1,
+    agg_fn = agg_fn,
+    scale_fn = scale_fn,
+    ego_networks = ego_networks_o1,
+    max_graphlet_size = max_graphlet_size)
+  
+  actual_scaled_density_binned_counts_o2 <- density_binned_counts(
+    expected_counts_o2,
+    expected_interval_indexes_o2,
+    agg_fn = agg_fn,
+    scale_fn = scale_fn,
+    ego_networks = ego_networks_o2,
+    max_graphlet_size = max_graphlet_size)
+  
+  # Check actual output vs expected
+  expect_equal(
+    actual_scaled_density_binned_counts_o1,
+    expected_scaled_density_binned_counts_o1
+  )
+  expect_equal(
+    actual_scaled_density_binned_counts_o2,
+    expected_scaled_density_binned_counts_o2
+  )
+  
 })
-# /JACK ----------------------------------------------------------------------
-
-
-
-
-
-
 
 context("Measures Netdis: Expected graphlet counts")
 test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
