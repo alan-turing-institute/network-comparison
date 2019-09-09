@@ -1,5 +1,5 @@
 ---
-title: "Usage of netdis with different pairwise comparison options."
+title: "Usage of netdis interfaces for different pairwise comparison options."
 author: "Jack Roberts"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette

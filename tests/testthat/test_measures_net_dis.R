@@ -279,6 +279,80 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals", {
   )
 })
 
+context("Measures Netdis: Ego-network density values match those for manually verified networks")
+test_that("Ego-network 4-node density values match manually verified totals", {
+  # Set up a small sample network with at least one ego-network that contains
+  # at least one of each graphlets
+  elist <- rbind(
+    c("n1", "n2"),
+    c("n2", "n3"),
+    c("n1", "n4"),
+    c("n2", "n5"),
+    c("n1", "n6"),
+    c("n1", "n7"),
+    c("n2", "n4"),
+    c("n4", "n6"),
+    c("n6", "n8"),
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
+  )
+  graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
+  
+  # Set parameters for test
+  max_graphlet_size <- 4
+  min_counts_per_interval <- 2
+  num_intervals <- 100
+  min_ego_edges <- 0
+  min_ego_nodes <- 0
+  
+  # Set node and graphlet labels to use for row and col names in expected counts
+  node_labels <- igraph::V(graph)$name
+  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  
+  # Set manually verified ego-network node counts and edge densities
+  # 1 . Ego-networks of order 1
+  expected_node_counts_o1 <- c(5, 5, 2, 4, 2, 4, 5, 5, 4, 4)
+  expected_edge_counts_o1 <- c(6, 5, 1, 5, 1, 4, 7, 7, 6, 6)
+  max_edge_counts_o1 <- choose(expected_node_counts_o1, 2)
+  expected_densities_o1 <- c(expected_edge_counts_o1 / max_edge_counts_o1)
+  names(expected_densities_o1) <- node_labels
+  # Order 1 expected densities should be:
+  # 0.6, 0.5, 1.0, 0.83, 1.0, 0.67, 0.7, 0.7, 1.0, 1.0
+  # 2. Ego-networks of order 2
+  expected_node_counts_o2 <- c(10, 7, 5, 8, 5, 8, 8, 7, 6, 6)
+  expected_edge_counts_o2 <- c(15, 8, 5, 10, 5, 13, 13, 11, 9, 9)
+  max_edge_counts_o2 <- choose(expected_node_counts_o2, 2)
+  expected_densities_o2 <- c(expected_edge_counts_o2 / max_edge_counts_o2)
+  names(expected_densities_o2) <- node_labels
+  # Order 2 expected densities should be:
+  # 0.33, 0.38, 0.50, 0.36, 0.50, 0.46, 0.46, 0.52, 0.60, 0.60
+  
+  # Generate order 1 and 2 ego networks with previously tested function
+  ego_networks_o1 <- make_named_ego_graph(graph,
+                       order = 1,
+                       min_ego_edges = min_ego_edges,
+                       min_ego_nodes = min_ego_nodes
+  )
+  ego_networks_o2 <- make_named_ego_graph(graph,
+                        order = 2,
+                        min_ego_edges = min_ego_edges,
+                        min_ego_nodes = min_ego_nodes
+  )
+  
+  # Calculate densities
+  actual_densities_o1 <- ego_network_density(ego_networks_o1)
+  actual_densities_o2 <- ego_network_density(ego_networks_o2)
+
+  # Check densities match expected values
+  expect_equal(actual_densities_o1, expected_densities_o1)
+  expect_equal(actual_densities_o2, expected_densities_o2)
+  
+})
+
 context("Measures Netdis: Ego-network density-binned reference counts for manually verified networks")
 test_that("Ego-network 4-node density-binned reference counts match manually verified totals", {
   # Set up a small sample network with at least one ego-network that contains
@@ -441,6 +515,185 @@ test_that("Ego-network 4-node density-binned reference counts match manually ver
     expected_mean_density_binned_counts_o2
   )
 })
+
+
+
+
+
+
+
+
+
+# JACK ----------------------------------------------------------------------
+context("Measures Netdis: Ego-network density-binned counts for manually verified networks")
+test_that("Ego-network 4-node density-binned counts match manually verified totals", {
+  # Set up a small sample network with at least one ego-network that contains
+  # at least one of each graphlets
+  elist <- rbind(
+    c("n1", "n2"),
+    c("n2", "n3"),
+    c("n1", "n4"),
+    c("n2", "n5"),
+    c("n1", "n6"),
+    c("n1", "n7"),
+    c("n2", "n4"),
+    c("n4", "n6"),
+    c("n6", "n8"),
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
+  )
+  graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
+  
+  # Set parameters for test
+  max_graphlet_size <- 4
+  min_counts_per_interval <- 2
+  num_intervals <- 100
+  
+  # Set node and graphlet labels to use for row and col names in expected counts
+  node_labels <- igraph::V(graph)$name
+  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  
+  # Set manually verified ego-network node counts and edge densities
+  # 1 . Ego-networks of order 1
+  expected_node_counts_o1 <- c(5, 5, 2, 4, 2, 4, 5, 5, 4, 4)
+  expected_edge_counts_o1 <- c(6, 5, 1, 5, 1, 4, 7, 7, 6, 6)
+  max_edge_counts_o1 <- choose(expected_node_counts_o1, 2)
+  expected_densities_o1 <- c(expected_edge_counts_o1 / max_edge_counts_o1)
+  # Order 1 expected densities should be:
+  # 0.6, 0.5, 1.0, 0.83, 1.0, 0.67, 0.7, 0.7, 1.0, 1.0
+  # 2. Ego-networks of order 2
+  expected_node_counts_o2 <- c(10, 7, 5, 8, 5, 8, 8, 7, 6, 6)
+  expected_edge_counts_o2 <- c(15, 8, 5, 10, 5, 13, 13, 11, 9, 9)
+  max_edge_counts_o2 <- choose(expected_node_counts_o2, 2)
+  expected_densities_o2 <- c(expected_edge_counts_o2 / max_edge_counts_o2)
+  # Order 2 expected densities should be:
+  # 0.33, 0.38, 0.50, 0.36, 0.50, 0.46, 0.46, 0.52, 0.60, 0.60
+  
+  # Set manually verified density bins for ego-networks
+  # 1. Ego-networks of order 1
+  expected_breaks_o1 <- c(0.5, 0.605, 0.705, 1)
+  expected_interval_indexes_o1 <- c(1, 1, 3, 3, 3, 2, 2, 2, 3, 3)
+  expected_binned_densities_o1 <- list(
+    densities = expected_densities_o1,
+    interval_indexes = expected_interval_indexes_o1,
+    breaks = expected_breaks_o1
+  )
+  # Check binned densities are as expected
+  actual_binned_densities_o1 <- binned_densities_adaptive(
+    expected_densities_o1,
+    min_counts_per_interval = min_counts_per_interval,
+    num_intervals = num_intervals
+  )
+  expect_equal(actual_binned_densities_o1, expected_binned_densities_o1)
+  # 2. Ego-networks of order 2
+  expected_min_break_o2 <- 1 / 3
+  expected_max_break_o2 <- 0.6
+  expected_initial_interval_o2 <-
+    (expected_max_break_o2 - expected_min_break_o2) / (num_intervals) # 0.00266666667
+  expected_breaks_o2 <- expected_min_break_o2 + (expected_initial_interval_o2 * c(0, 9, 50, 63, 100))
+  expected_interval_indexes_o2 <- c(1, 2, 3, 1, 3, 2, 2, 4, 4, 4)
+  expected_binned_densities_o2 <- list(
+    densities = expected_densities_o2,
+    interval_indexes = expected_interval_indexes_o2,
+    breaks = expected_breaks_o2
+  )
+  # Check binned densities are as expected
+  actual_binned_densities_o2 <- binned_densities_adaptive(
+    expected_densities_o2,
+    min_counts_per_interval = min_counts_per_interval,
+    num_intervals = num_intervals
+  )
+  expect_equal(actual_binned_densities_o2, expected_binned_densities_o2)
+  
+  # Set manually verified scaled ego-network graphlet counts
+  graphlet_key <- graphlet_key(max_graphlet_size)
+  k <- graphlet_key$node_count
+  # 1-step ego networks
+  expected_counts_o1 <- rbind(
+    c(6, 5, 2, 0, 1, 0, 2, 1, 0) / zeros_to_ones(choose(5, k)),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0) / zeros_to_ones(choose(5, k)),
+    c(1, 0, 0, 0, 0, 0, 0, 0, 0) / zeros_to_ones(choose(2, k)),
+    c(5, 2, 2, 0, 0, 0, 0, 1, 0) / zeros_to_ones(choose(4, k)),
+    c(1, 0, 0, 0, 0, 0, 0, 0, 0) / zeros_to_ones(choose(2, k)),
+    c(4, 2, 1, 0, 0, 0, 1, 0, 0) / zeros_to_ones(choose(4, k)),
+    c(7, 3, 4, 0, 0, 0, 3, 0, 1) / zeros_to_ones(choose(5, k)),
+    c(7, 3, 4, 0, 0, 0, 3, 0, 1) / zeros_to_ones(choose(5, k)),
+    c(6, 0, 4, 0, 0, 0, 0, 0, 1) / zeros_to_ones(choose(4, k)),
+    c(6, 0, 4, 0, 0, 0, 0, 0, 1) / zeros_to_ones(choose(4, k))
+  )
+  rownames(expected_counts_o1) <- node_labels
+  colnames(expected_counts_o1) <- graphlet_labels
+  # 2-step ego networks
+  expected_counts_o2 <- rbind(
+    c(15, 18, 6, 21, 3, 1, 11, 1, 1) / zeros_to_ones(choose(10, k)),
+    c(8, 10, 2, 6, 3, 0, 4, 1, 0) / zeros_to_ones(choose(7, k)),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0) / zeros_to_ones(choose(5, k)),
+    c(10, 14, 2, 11, 3, 1, 5, 1, 0) / zeros_to_ones(choose(8, k)),
+    c(5, 5, 1, 0, 2, 0, 2, 0, 0) / zeros_to_ones(choose(5, k)),
+    c(13, 13, 6, 15, 1, 1, 9, 1, 1) / zeros_to_ones(choose(8, k)),
+    c(13, 13, 6, 15, 1, 1, 9, 1, 1) / zeros_to_ones(choose(8, k)),
+    c(11, 10, 5, 10, 0, 1, 8, 0, 1) / zeros_to_ones(choose(7, k)),
+    c(9, 8, 4, 4, 0, 1, 6, 0, 1) / zeros_to_ones(choose(6, k)),
+    c(9, 8, 4, 4, 0, 1, 6, 0, 1) / zeros_to_ones(choose(6, k))
+  )
+  rownames(expected_counts_o2) <- node_labels
+  colnames(expected_counts_o2) <- graphlet_labels
+  
+  # Calculate binned average expected counts based on manually verified counts
+  # and density bins
+  # Order 1: Expected interval indexes: 1, 1, 3, 3, 3, 2, 2, 2, 3, 3
+  mean_counts_bin1_o1 <- (expected_counts_o1[1, ] + expected_counts_o1[2, ]) / 2
+  mean_counts_bin2_o1 <- (expected_counts_o1[6, ] + expected_counts_o1[7, ] +
+                            expected_counts_o1[8, ]) / 3
+  mean_counts_bin3_o1 <- (expected_counts_o1[3, ] + expected_counts_o1[4, ] +
+                            expected_counts_o1[5, ] + expected_counts_o1[9, ] +
+                            expected_counts_o1[10, ]) / 5
+  expected_mean_density_binned_counts_o1 <- rbind(
+    mean_counts_bin1_o1, mean_counts_bin2_o1, mean_counts_bin3_o1
+  )
+  rownames(expected_mean_density_binned_counts_o1) <- 1:3
+  # Order 2: Expected interval indexes: 1, 3, 3, 1, 3, 2, 2, 4, 4, 4
+  mean_counts_bin1_o2 <- (expected_counts_o2[1, ] + expected_counts_o2[4, ]) / 2
+  mean_counts_bin2_o2 <- (expected_counts_o2[2, ] + expected_counts_o2[6, ] +
+                            expected_counts_o2[7, ]) / 3
+  mean_counts_bin3_o2 <- (expected_counts_o2[3, ] + expected_counts_o2[5, ]) / 2
+  mean_counts_bin4_o2 <- (expected_counts_o2[8, ] + expected_counts_o2[9, ] +
+                            expected_counts_o2[10, ]) / 3
+  expected_mean_density_binned_counts_o2 <- rbind(
+    mean_counts_bin1_o2, mean_counts_bin2_o2, mean_counts_bin3_o2,
+    mean_counts_bin4_o2
+  )
+  rownames(expected_mean_density_binned_counts_o2) <- 1:4
+  
+  # Calculate actual output of function under test
+  actual_mean_density_binned_counts_o1 <- mean_density_binned_graphlet_counts(
+    expected_counts_o1, expected_interval_indexes_o1
+  )
+  actual_mean_density_binned_counts_o2 <- mean_density_binned_graphlet_counts(
+    expected_counts_o2, expected_interval_indexes_o2
+  )
+  
+  # Check actual output vs expected
+  expect_equal(
+    actual_mean_density_binned_counts_o1,
+    expected_mean_density_binned_counts_o1
+  )
+  expect_equal(
+    actual_mean_density_binned_counts_o2,
+    expected_mean_density_binned_counts_o2
+  )
+})
+# /JACK ----------------------------------------------------------------------
+
+
+
+
+
+
 
 context("Measures Netdis: Expected graphlet counts")
 test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
