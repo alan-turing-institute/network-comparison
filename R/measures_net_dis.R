@@ -782,7 +782,9 @@ netdis_expected_graphlet_counts_per_ego <- function(
   names(expected_graphlet_counts) <- names(ego_networks)
 
   # Simplify list to array
-  t(simplify2array(expected_graphlet_counts))
+  expected_graphlet_counts <- t(simplify2array(expected_graphlet_counts))
+  colnames(expected_graphlet_counts) <- graphlet_key(max_graphlet_size)$id
+  expected_graphlet_counts
 }
 
 #' INTERNAL FUNCTION - Do not call directly
@@ -818,7 +820,7 @@ netdis_expected_graphlet_counts <- function(graph,
 
   matched_reference_counts <-
     density_binned_reference_counts[matched_density_index, ]
-
+  
   if (!is.null(scale_fn)) {
     # Scale reference counts e.g. by multiplying the
     # reference count for each graphlet by the number
@@ -827,7 +829,6 @@ netdis_expected_graphlet_counts <- function(graph,
     matched_reference_counts <- matched_reference_counts *
                                 scale_fn(graph, max_graphlet_size)
   }
-
   matched_reference_counts
 }
 
