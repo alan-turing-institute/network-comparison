@@ -1763,12 +1763,45 @@ test_that("netdis_uptok gives expected netdis result for graphlets up to size k"
 
 context("Netdis: full calculation pipeline")
 test_that("netdis_many_to_many gives expected result", {
-  
+
 })
 
 context("Netdis: functions for different pairwise comparisons")
 test_that("netdis_one_to_one gives expected result", {
+  # Set source directory for Virus PPI graph edge files
+  source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
   
+  # Load query and reference graphs
+  graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
+                               format = "ncol")
+  
+  graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
+                               format = "ncol")
+  
+  ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
+                          package = "netdist")
+  ref_graph <- read_simple_graph(ref_path, format = "ncol")
+  
+  # set parameters
+  max_graphlet_size <- 4
+  neighbourhood_size <- 2
+  min_ego_nodes <- 3
+  min_ego_edges <- 1
+  
+  # manually verified results
+  expected_netdis <- c(0.1846655, 0.1749835)
+  names(expected_netdis) <- c("netdis3", "netdis4")
+    
+  # check function to test
+  actual_netdis <- netdis_one_to_one(graph_1,
+                                     graph_2,
+                                     ref_graph,
+                                     max_graphlet_size = max_graphlet_size,
+                                     neighbourhood_size = neighbourhood_size,
+                                     min_ego_nodes = min_ego_nodes,
+                                     min_ego_edges = min_ego_edges)
+  
+  expect_equal(expected_netdis, actual_netdis)
 })
 test_that("netdis_one_to_many gives expected result", {
   
