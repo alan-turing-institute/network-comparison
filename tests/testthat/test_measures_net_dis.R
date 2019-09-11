@@ -1705,9 +1705,71 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
 #   }
 # })
 
-
+context("Netdis: Geometric Poisson")
+test_that("expected counts using geometric poisson approximation are correct", {
+  
+})
 
 context("Netdis: Statistic calculation")
-test_that("netdis statistic function is correct", {
+test_that("netdis statistic function output matches manually verified result", {
+  
+  # arbitrary counts of correct size for graphlets up to size 5
+  counts_1 <- c(11, 11, 13, 9, 12, 10, 14, 9, 13, 10, 10, 7, 9, 12, 6, 12, 9, 12,
+                9, 7, 15, 7, 5, 12, 16, 10, 10, 8, 9, 14)
+  counts_2 <- c(12, 11,  6, 10, 15,  7, 10,  8,  7,  7,  7, 13,  9, 14,  7, 12,
+                7, 10,  9, 11,  7,  7, 11,  8, 10, 14,  8, 16, 14, 10)
+  
+  # add graphlet names
+  ids <- graphlet_key(5)$id
+  names(counts_1) <- ids
+  names(counts_2) <- ids
+  
+  # manually verified results
+  expected_netdis_3 <- 0.03418796
+  expected_netdis_4 <- 0.02091792
+  expected_netdis_5 <- 0.03826385
+  
+  # check function to test
+  actual_netdis_3 <- netdis(counts_1, counts_2, 3)
+  actual_netdis_4 <- netdis(counts_1, counts_2, 4)
+  actual_netdis_5 <- netdis(counts_1, counts_2, 5)
+  
+  expect_equal(expected_netdis_3, actual_netdis_3)
+  expect_equal(expected_netdis_4, actual_netdis_4)
+  expect_equal(expected_netdis_5, actual_netdis_5)
+  
+})
+test_that("netdis_uptok gives expected netdis result for graphlets up to size k", {
+  # arbitrary counts of correct size for graphlets up to size 5
+  counts_1 <- c(11, 11, 13, 9, 12, 10, 14, 9, 13, 10, 10, 7, 9, 12, 6, 12, 9, 12,
+                9, 7, 15, 7, 5, 12, 16, 10, 10, 8, 9, 14)
+  counts_2 <- c(12, 11,  6, 10, 15,  7, 10,  8,  7,  7,  7, 13,  9, 14,  7, 12,
+                7, 10,  9, 11,  7,  7, 11,  8, 10, 14,  8, 16, 14, 10)
+  
+  # add graphlet names
+  ids <- graphlet_key(5)$id
+  names(counts_1) <- ids
+  names(counts_2) <- ids
+  
+  # manually verified results
+  expected_netdis <- c(0.03418796, 0.02091792, 0.03826385)
+  names(expected_netdis) <- c("netdis3", "netdis4", "netdis5")
+  
+  # check function to test
+  actual_netdis <- netdis_uptok(counts_1, counts_2, 5)
+
+  expect_equal(expected_netdis, actual_netdis)
+})
+
+context("Netdis: full calculation pipeline")
+test_that("netdis_many_to_many gives expected result", {
+  
+})
+
+context("Netdis: functions for different pairwise comparisons")
+test_that("netdis_one_to_one gives expected result", {
+  
+})
+test_that("netdis_one_to_many gives expected result", {
   
 })
