@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{scale_graphlet_count}
 \alias{scale_graphlet_count}
-\title{Divide graphlet counts by pre-computed scaling factor from
+\title{FLAGUSED
+Divide graphlet counts by pre-computed scaling factor from
 \code{count_graphlet_tuples} output.}
 \usage{
 scale_graphlet_count(graphlet_count, graphlet_tuples)
@@ -13,6 +14,7 @@ scale_graphlet_count(graphlet_count, graphlet_tuples)
 \item{graphlet_tuples}{Pre-computed \code{count_graphlet_tuples} output.}
 }
 \description{
+FLAGUSED
 Divide graphlet counts by pre-computed scaling factor from
 \code{count_graphlet_tuples} output.
 }

@@ -78,7 +78,6 @@ print(results$netdis)
 print(results$comp_spec)
 
 ## ------------------------------------------------------------------------
-
 binning_fn <- single_density_bin
 bin_counts_fn <- density_binned_counts
 exp_counts_fn <- netdis_expected_graphlet_counts_per_ego
@@ -96,6 +95,4 @@ results <- netdis_many_to_many(graphs,
 
 print(results$netdis)
 print(results$comp_spec)
-
-
 

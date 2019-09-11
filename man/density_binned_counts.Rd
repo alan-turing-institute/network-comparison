@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{density_binned_counts}
 \alias{density_binned_counts}
-\title{INTERNAL FUNCTION - Do not call directly}
+\title{FLAGUSED
+INTERNAL FUNCTION - Do not call directly}
 \usage{
 density_binned_counts(graphlet_counts, density_interval_indexes,
   agg_fn = mean, scale_fn = NULL, ego_networks = NULL,
@@ -11,7 +12,7 @@ density_binned_counts(graphlet_counts, density_interval_indexes,
 \arguments{
 \item{graphlet_counts}{Graphlet counts for a number of ego_networks.}
 
-\item{density_interval_indexes}{Density bin index for 
+\item{density_interval_indexes}{Density bin index for
 each ego network.}
 
 \item{agg_fn}{Function to aggregate counts in each bin

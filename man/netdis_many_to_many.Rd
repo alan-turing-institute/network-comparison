@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis_many_to_many}
 \alias{netdis_many_to_many}
-\title{Netdis between all graph pairs}
+\title{FLAGUSED
+Netdis between all graph pairs}
 \usage{
 netdis_many_to_many(graphs, ref_graph, comparisons = "many-to-many",
   max_graphlet_size = 4, neighbourhood_size = 2, min_ego_nodes = 3,
@@ -40,17 +41,17 @@ ego network). (Default: \code{binned_densities_adaptive} with
 \code{min_counts_per_interval = 5} and \code{num_intervals = 100}).}
 
 \item{bin_counts_fn}{Function used to calculate expected graphlet counts in
-each density bin. Takes \code{graphlet_counts}, \code{interval_indexes} 
+each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
 (bin indexes), \code{ego_networks} and \code{max_graphlet_size} as arguments.
-(Default: \code{density_binned_counts} with \code{agg_fn = mean} and 
+(Default: \code{density_binned_counts} with \code{agg_fn = mean} and
 \code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
 approach used in the original netdis paper).}
 
-\item{exp_counts_fn}{Function used to map from binned reference counts to 
+\item{exp_counts_fn}{Function used to map from binned reference counts to
 expected counts for each graphlet in each ego network of the query graphs.
 Takes \code{ego_networks}, \code{density_bin_breaks},
 \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-(Default: \code{netdis_expected_graphlet_counts_per_ego} with 
+(Default: \code{netdis_expected_graphlet_counts_per_ego} with
 \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 the original netdis paper).}
 }
@@ -59,5 +60,6 @@ Netdis statistics between query graphs for graphlet sizes
 up to and including max_graphlet_size.
 }
 \description{
+FLAGUSED
 Netdis between all graph pairs
 }

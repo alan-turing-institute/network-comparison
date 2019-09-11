@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{zeros_to_ones}
 \alias{zeros_to_ones}
-\title{Replace zero values in a vector with ones. Used by
+\title{FLAGUSED
+Replace zero values in a vector with ones. Used by
 \code{scale_graphlet_count} to prevent divide by
 zero errors.}
 \usage{
@@ -13,6 +14,7 @@ zeros_to_ones(v)
 TODO remove export}
 }
 \description{
+FLAGUSED
 Replace zero values in a vector with ones. Used by
 \code{scale_graphlet_count} to prevent divide by
 zero errors.

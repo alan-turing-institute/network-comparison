@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis_uptok}
 \alias{netdis_uptok}
-\title{Netdis - graphlets up to max_graphlet_size}
+\title{FLAGUSED
+Netdis - graphlets up to max_graphlet_size}
 \usage{
 netdis_uptok(centred_graphlet_counts1, centred_graphlet_counts2,
   max_graphlet_size)

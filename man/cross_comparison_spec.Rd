@@ -2,7 +2,8 @@
 % Please edit documentation in R/orca_interface.R
 \name{cross_comparison_spec}
 \alias{cross_comparison_spec}
-\title{Generate a cross-comparison specification}
+\title{FLAGUSED
+Generate a cross-comparison specification}
 \usage{
 cross_comparison_spec(named_list, how = "many-to-many")
 }

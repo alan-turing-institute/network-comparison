@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{single_density_bin}
 \alias{single_density_bin}
-\title{For case where don't want to use binning, return a single bin which covers
+\title{FLAGUSED
+For case where don't want to use binning, return a single bin which covers
 the full range of possible density values.}
 \usage{
 single_density_bin(densities)
@@ -12,6 +13,7 @@ single_density_bin(densities)
 a list of indexes of the required length.)}
 }
 \description{
+FLAGUSED
 For case where don't want to use binning, return a single bin which covers
 the full range of possible density values.
 }

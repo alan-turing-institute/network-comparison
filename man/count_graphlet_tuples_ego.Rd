@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{count_graphlet_tuples_ego}
 \alias{count_graphlet_tuples_ego}
-\title{Run count_graphlet_tuples across pre-computed ego networks.}
+\title{FLAGUSED
+Run count_graphlet_tuples across pre-computed ego networks.}
 \usage{
 count_graphlet_tuples_ego(ego_networks, max_graphlet_size)
 }
@@ -13,5 +14,6 @@ count_graphlet_tuples_ego(ego_networks, max_graphlet_size)
 in the tuple counts.}
 }
 \description{
+FLAGUSED
 Run count_graphlet_tuples across pre-computed ego networks.
 }

@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{ego_network_density}
 \alias{ego_network_density}
-\title{Calculate ego network edge densities.}
+\title{FLAGUSED
+Calculate ego network edge densities.}
 \usage{
 ego_network_density(ego_networks)
 }
@@ -10,5 +11,6 @@ ego_network_density(ego_networks)
 \item{ego_networks}{Pre-generated ego networks for an input graph.}
 }
 \description{
+FLAGUSED
 Calculate ego network edge densities.
 }

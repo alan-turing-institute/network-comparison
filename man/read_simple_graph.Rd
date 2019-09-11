@@ -2,7 +2,8 @@
 % Please edit documentation in R/orca_interface.R
 \name{read_simple_graph}
 \alias{read_simple_graph}
-\title{Read a graph from file, simplifying as requested}
+\title{FLAGUSED
+Read a graph from file, simplifying as requested}
 \usage{
 read_simple_graph(file, format, as_undirected = TRUE,
   remove_loops = TRUE, remove_multiple = TRUE,

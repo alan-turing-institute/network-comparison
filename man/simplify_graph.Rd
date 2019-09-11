@@ -2,7 +2,8 @@
 % Please edit documentation in R/orca_interface.R
 \name{simplify_graph}
 \alias{simplify_graph}
-\title{Simplify an igraph}
+\title{FLAGUSED
+Simplify an igraph}
 \usage{
 simplify_graph(graph, as_undirected = TRUE, remove_loops = TRUE,
   remove_multiple = TRUE, remove_isolates = TRUE)

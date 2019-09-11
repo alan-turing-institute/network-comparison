@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis_expected_graphlet_counts}
 \alias{netdis_expected_graphlet_counts}
-\title{INTERNAL FUNCTION - Do not call directly}
+\title{FLAGUSED
+INTERNAL FUNCTION - Do not call directly}
 \usage{
 netdis_expected_graphlet_counts(graph, max_graphlet_size, density_breaks,
   density_binned_reference_counts, scale_fn = NULL)
@@ -28,7 +29,7 @@ TODO: Remove @export prior to publishing}
 }
 \description{
 Used by \code{netdis_expected_graphlet_counts_ego} to
-calculate expected graphlet counts for a query graph 
+calculate expected graphlet counts for a query graph
 ego-network from the statistics of a provided reference
 graph.
 }
