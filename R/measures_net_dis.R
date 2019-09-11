@@ -1,3 +1,4 @@
+#' FLAGUSED
 #' Netdis between two graphs
 #' @param graph_1 First query graph
 #' @param graph_2 Second query graph
@@ -67,6 +68,7 @@ netdis_one_to_one <- function(graph_1, graph_2,
   result$netdis[, 1]
 }
 
+#' FLAGUSED
 #' Netdis comparisons between one graph and many other graphs
 #' @param graph_1 query graph - this graph will be compared with
 #' all graphs in graphs_compare
@@ -141,6 +143,7 @@ netdis_one_to_many <- function(graph_1, graphs_compare,
 }
 
 
+#' FLAGUSED
 #' Netdis between all graph pairs
 #' @param graphs Query graphs
 #' @param ref_graph Reference graph
@@ -356,6 +359,7 @@ netdis_for_all_graphs <- function(centred_graphlet_counts,
   list(netdis = netdis, comp_spec = comp_spec)
 }
 
+#' FLAGUSED
 #' Netdis
 #'
 #' Calculate Netdis statistic between two graphs from their Centred Graphlet
@@ -387,6 +391,7 @@ netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2,
   0.5 * (1 - netds2)
 }
 
+#' FLAGUSED
 #' Netdis - graphlets up to max_graphlet_size
 #'
 #' Calculate Netdis statistic between two graphs from their Centred Graphlet
@@ -737,6 +742,7 @@ netdis_expected_graphlet_counts_ego <- function(graph,
   t(simplify2array(expected_graphlet_counts))
 }
 
+#' FLAGUSED
 #' INTERNAL FUNCTION - Do not call directly
 #'
 #' JACK To follow through logic of paper steps, wanted to pass
@@ -787,6 +793,7 @@ netdis_expected_graphlet_counts_per_ego <- function(
   expected_graphlet_counts
 }
 
+#' FLAGUSED
 #' INTERNAL FUNCTION - Do not call directly
 #'
 #' Used by \code{netdis_expected_graphlet_counts_ego} to
@@ -832,6 +839,7 @@ netdis_expected_graphlet_counts <- function(graph,
   matched_reference_counts
 }
 
+#' FLAGUSED
 #' INTERNAL FUNCTION - Do not call directly
 #'
 #' Used by \code{netdis_expected_graphlet_counts_ego_fn} to
@@ -871,6 +879,7 @@ mean_density_binned_graphlet_counts <- function(graphlet_counts,
   mean_density_binned_graphlet_counts
 }
 
+#' FLAGUSED
 #' For case where don't want to use binning, return a single bin which covers
 #' the full range of possible density values.
 #' @param densities Ego network density values (only used to return
@@ -882,6 +891,7 @@ single_density_bin <- function(densities) {
        breaks = c(0, 1))
 }
 
+#' FLAGUSED
 #' INTERNAL FUNCTION - Do not call directly
 #'
 #' Used to calculate expected graphlet counts for each density bin.
@@ -919,6 +929,7 @@ density_binned_counts <- function(graphlet_counts,
 }
 
 
+#' FLAGUSED
 #' Calculate expected counts in density bins using
 #' geometric poisson (Polya-Aeppli) approximation.
 #' @param graphlet_counts Graphlet counts for a number of ego_networks.
@@ -971,6 +982,7 @@ density_binned_counts_gp <- function(graphlet_counts,
 }
 
 
+#' FLAGUSED
 #' Replace zero values in a vector with ones. Used by
 #' \code{scale_graphlet_count} to prevent divide by
 #' zero errors.
@@ -984,6 +996,7 @@ zeros_to_ones <- function(v) {
 }
 
 
+#' FLAGUSED
 #' Divide graphlet counts by pre-computed scaling factor from
 #' \code{count_graphlet_tuples} output.
 #' @param graphlet_count Pre-computed graphlet counts.
@@ -995,6 +1008,7 @@ scale_graphlet_count <- function(graphlet_count, graphlet_tuples) {
   graphlet_count / zeros_to_ones(graphlet_tuples)
 }
 
+#' FLAGUSED
 #' Run count_graphlet_tuples across pre-computed ego networks.
 #' @param ego_networks Pre-generated ego networks for an input graph.
 #' @param max_graphlet_size Determines the maximum size of graphlets included
@@ -1008,6 +1022,7 @@ count_graphlet_tuples_ego <- function(ego_networks, max_graphlet_size) {
   graphlet_tuple_counts
 }
 
+#' FLAGUSED
 #' Calculate ego network edge densities.
 #' @param ego_networks Pre-generated ego networks for an input graph.
 #' @export
@@ -1021,7 +1036,7 @@ ego_network_density <- function(ego_networks) {
 }
 
 
-
+#' FLAGUSED
 #' Scale graphlet counts for an ego network by the n choose k possible
 #' choices of k nodes in that ego-network, where n is the number of nodes
 #' in the ego network and k is the number of nodes in the graphlet.
@@ -1048,6 +1063,7 @@ scale_graphlet_counts_ego <- function(ego_networks, graphlet_counts,
 }
 
 
+#' FLAGUSED
 #' For each graphlet calculate the number of possible sets of k nodes in the
 #' query graph, where k is the number of nodes in the graphlet.
 #'

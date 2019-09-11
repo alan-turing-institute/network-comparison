@@ -42,6 +42,7 @@ indexed_edges_to_graph <- function(indexed_edges) {
   return(graph)
 }
 
+#' FLAGUSED
 #' Read all graphs in a directory, simplifying as requested
 #'
 #' Reads graph data from all files in a directory matching the specified
@@ -111,6 +112,7 @@ read_simple_graphs <- function(source_dir,
   return(graphs)
 }
 
+#' FLAGUSED
 #' Read a graph from file, simplifying as requested
 #'
 #' Reads graph data from file, constructing an a igraph graph object, making the
@@ -151,6 +153,7 @@ read_simple_graph <- function(file, format, as_undirected = TRUE,
   )
 }
 
+#' FLAGUSED
 #' Simplify an igraph
 #'
 #' Takes a igraph graph object and makes the requested subset of the following
@@ -384,6 +387,7 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
   }
 }
 
+#' FLAGUSED
 #' ego_to_graphlet_counts
 #' JACK To follow through logic of paper steps, wanted to pass
 #' ego networks to the function for generating graphlet counts,
@@ -413,6 +417,7 @@ ego_to_graphlet_counts <- function(ego_networks, max_graphlet_size = 4) {
   return(ego_graphlet_counts)
 }
 
+#' FLAGUSED
 #' Get ego-networks for a graph as a named list
 #'
 #' Simple wrapper for the \code{igraph::make_ego_graph} function that names
@@ -562,6 +567,7 @@ orbit_key <- function(max_graphlet_size) {
     return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
 }
 
+#' FLAGUSED
 #' Graphlet IDs for size
 #'
 #' List IDs for all graphlets of a specified size
@@ -626,6 +632,7 @@ gdd_for_all_graphs <- function(
   )
 }
 
+#' FLAGUSED
 #' Generate a cross-comparison specification
 #'
 #' Creates a cross-comparison matrix with pair-wise combinations
@@ -644,7 +651,7 @@ gdd_for_all_graphs <- function(
 cross_comparison_spec <- function(named_list, how = "many-to-many") {
   if (how == "one-to-many") {
     indexes <- data.frame(
-      rep(1, length(named_list)-1),
+      rep(1, length(named_list) - 1),
       2:length(named_list)
     )
   } else {
