@@ -1801,7 +1801,7 @@ test_that("netdis_one_to_one gives expected result", {
                                      min_ego_nodes = min_ego_nodes,
                                      min_ego_edges = min_ego_edges)
   
-  expect_equal(expected_netdis, actual_netdis)
+  expect_equal(expected_netdis, actual_netdis, tolerance = .002, scale = 1)
 })
 test_that("netdis_one_to_many gives expected result", {
   
