@@ -1805,4 +1805,34 @@ test_that("netdis_one_to_one gives expected result", {
 })
 test_that("netdis_one_to_many gives expected result", {
   
+  # Load query and reference graphs
+  graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
+  graph_1 <- graphs$EBV
+  graphs_compare <- graphs[c("ECL", "HSV-1", "KSHV", "VZV")]
+  
+  ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
+                          package = "netdist")
+  ref_graph <- read_simple_graph(ref_path, format = "ncol")
+  
+  # set parameters
+  max_graphlet_size <- 4
+  neighbourhood_size <- 2
+  min_ego_nodes <- 3
+  min_ego_edges <- 1
+  
+  # manually verified results
+  # ECL       HSV-1       KSHV         VZV
+  # netdis3 0.1846655 0.008264222 0.01005385 0.006777578
+  # netdis4 0.1749835 0.165264120 0.01969246 0.159711160
+  
+  # Calculate netdis statistics
+  actual_netdis <- netdis_one_to_many(graph_1, graphs_compare,
+                                     ref_graph,
+                                     max_graphlet_size = max_graphlet_size,
+                                     neighbourhood_size = neighbourhood_size,
+                                     min_ego_nodes = min_ego_nodes,
+                                     min_ego_edges = min_ego_edges)
+  
+  
+  
 })
