@@ -1029,6 +1029,7 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
 
 context("Netdis: Geometric Poisson")
 test_that("expected counts using geometric poisson approximation are correct", {
+  # TODO write this test
   
 })
 
@@ -1088,6 +1089,69 @@ test_that("netdis_uptok gives expected netdis result for graphlets up to size k"
 
 context("Netdis: full calculation pipeline")
 test_that("netdis_many_to_many gives expected result", {
+  # TODO write this test
+  # TODO This test is not robust. Rewrite with basic network that gives known
+  # result.
+
+  # Set source directory for Virus PPI graph edge files
+  source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+
+  # Load query and reference graphs
+  graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
+  graphs <- graphs[c("EBV", "ECL", "HSV-1", "KSHV")]
+
+  ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"),
+                          package = "netdist")
+  ref_graph <- read_simple_graph(ref_path, format = "ncol")
+
+  # set parameters
+  max_graphlet_size <- 4
+  neighbourhood_size <- 2
+  min_ego_nodes <- 3
+  min_ego_edges <- 1
+
+  # manually verified results
+  # $netdis
+  #              [,1]        [,2]       [,3]      [,4]      [,5]         [,6]
+  # netdis3 0.1846655 0.008264222 0.01005385 0.2065762 0.2091241 0.0001335756
+  # netdis4 0.1749835 0.165264120 0.01969246 0.2917612 0.2215579 0.0760242643
+  #
+  # $comp_spec
+  # name_a name_b index_a index_b
+  # 1    EBV    ECL       1       2
+  # 2    EBV  HSV-1       1       3
+  # 3    EBV   KSHV       1       4
+  # 4    ECL  HSV-1       2       3
+  # 5    ECL   KSHV       2       4
+  # 6  HSV-1   KSHV       3       4
+  expected_netdis_netdis <- matrix(nrow = 2, ncol = 6)
+  expected_netdis_netdis[1,] <- c(0.1846655, 0.008264222, 0.01005385,
+                                 0.2065762, 0.2091241, 0.0001335756)
+  expected_netdis_netdis[2,] <- c(0.1749835, 0.165264120, 0.01969246,
+                                 0.2917612, 0.2215579, 0.0760242643)
+  rownames(expected_netdis_netdis) <- c("netdis3", "netdis4")
+  
+  expected_netdis_comp_spec <- cross_comparison_spec(
+   list("EBV" = c(),
+        "ECL" = c(),
+        "HSV-1" = c(),
+        "KSHV" = c())
+  )
+  
+  expected_netdis = list(netdis = expected_netdis_netdis,
+                         comp_spec = expected_netdis_comp_spec)
+
+
+  # Calculate netdis statistics
+  actual_netdis <- netdis_many_to_many(graphs,
+                                       ref_graph,
+                                       max_graphlet_size = max_graphlet_size,
+                                       neighbourhood_size = neighbourhood_size,
+                                       min_ego_nodes = min_ego_nodes,
+                                       min_ego_edges = min_ego_edges)
+
+  # Check results as expected
+  expect_equal(expected_netdis, actual_netdis, tolerance = .001, scale = 1)
 
 })
 
@@ -1129,7 +1193,7 @@ test_that("netdis_one_to_one gives expected result", {
                                      min_ego_nodes = min_ego_nodes,
                                      min_ego_edges = min_ego_edges)
   
-  expect_equal(expected_netdis, actual_netdis, tolerance = .002, scale = 1)
+  expect_equal(expected_netdis, actual_netdis, tolerance = .001, scale = 1)
 })
 test_that("netdis_one_to_many gives expected result", {
   # TODO This test is not robust. Rewrite with basic network that gives known
@@ -1154,9 +1218,14 @@ test_that("netdis_one_to_many gives expected result", {
   min_ego_edges <- 1
   
   # manually verified results
-  # ECL       HSV-1       KSHV         VZV
+  #         ECL       HSV-1       KSHV       VZV
   # netdis3 0.1846655 0.008264222 0.01005385 0.006777578
   # netdis4 0.1749835 0.165264120 0.01969246 0.159711160
+  expected_netdis <- matrix(nrow = 2, ncol = 4)
+  colnames(expected_netdis) <- c("ECL", "HSV-1", "KSHV", "VZV")
+  rownames(expected_netdis) <- c("netdis3", "netdis4")
+  expected_netdis[1,] <- c(0.1846655, 0.008264222, 0.01005385, 0.006777578)
+  expected_netdis[2,] <- c(0.1749835, 0.165264120, 0.01969246, 0.159711160)
   
   # Calculate netdis statistics
   actual_netdis <- netdis_one_to_many(graph_1, graphs_compare,
@@ -1166,6 +1235,6 @@ test_that("netdis_one_to_many gives expected result", {
                                       min_ego_nodes = min_ego_nodes,
                                       min_ego_edges = min_ego_edges)
   
-  
-  
+  # Check results as expected
+  expect_equal(expected_netdis, actual_netdis, tolerance = .001, scale = 1)
 })
