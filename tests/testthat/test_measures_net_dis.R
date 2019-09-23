@@ -1804,6 +1804,8 @@ test_that("netdis_one_to_one gives expected result", {
   expect_equal(expected_netdis, actual_netdis, tolerance = .002, scale = 1)
 })
 test_that("netdis_one_to_many gives expected result", {
+  # Set source directory for Virus PPI graph edge files
+  source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
   
   # Load query and reference graphs
   graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
@@ -1827,11 +1829,11 @@ test_that("netdis_one_to_many gives expected result", {
   
   # Calculate netdis statistics
   actual_netdis <- netdis_one_to_many(graph_1, graphs_compare,
-                                     ref_graph,
-                                     max_graphlet_size = max_graphlet_size,
-                                     neighbourhood_size = neighbourhood_size,
-                                     min_ego_nodes = min_ego_nodes,
-                                     min_ego_edges = min_ego_edges)
+                                      ref_graph,
+                                      max_graphlet_size = max_graphlet_size,
+                                      neighbourhood_size = neighbourhood_size,
+                                      min_ego_nodes = min_ego_nodes,
+                                      min_ego_edges = min_ego_edges)
   
   
   
