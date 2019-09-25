@@ -1089,7 +1089,6 @@ test_that("netdis_uptok gives expected netdis result for graphlets up to size k"
 
 context("Netdis: full calculation pipeline")
 test_that("netdis_many_to_many gives expected result", {
-  # TODO write this test
   # TODO This test is not robust. Rewrite with basic network that gives known
   # result.
 
