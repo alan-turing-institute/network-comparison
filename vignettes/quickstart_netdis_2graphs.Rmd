@@ -90,7 +90,7 @@ scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(graphlet_counts_ref,
 
 
 # Get ego-network densities
-densities_ref <- ego_network_density(ego_ref)
+densities_ref <- ego_network_density(graphlet_counts_ref)
 
 # Adaptively bin ref ego-network densities
 binned_densities <- binned_densities_adaptive(densities_ref, 

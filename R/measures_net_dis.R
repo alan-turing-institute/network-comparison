@@ -261,7 +261,7 @@ netdis_many_to_many <- function(graphs,
     # Case where expected counts calculated using query networks
 
     # Get ego-network densities
-    densities <- purrr::map(ego_networks,
+    densities <- purrr::map(graphlet_counts,
                             ego_network_density)
 
     # bin ref ego-network densities
@@ -663,18 +663,22 @@ count_graphlet_tuples_ego <- function(graphlet_counts, max_graphlet_size) {
 }
 
 
-#' Calculate ego network edge densities.
-#' @param ego_networks Pre-generated ego networks for an input graph.
+#' Calculate edge density for a single graph.
+#' @param graphlet_counts Vector of pre-calculated graphlet, edge and node 
+#' counts. Must have named items "N" (node counts) and "G0" (edge counts).
 #' @export
-ego_network_density <- function(ego_networks) {
-  densities <- purrr::simplify(purrr::map_dbl(
-    ego_networks,
-    igraph::edge_density
-  ))
-
-  return(densities)
+density_from_counts <- function(graphlet_counts) {
+  graphlet_counts["G0"] / choose(graphlet_counts["N"], 2)
 }
 
+#' Calculate ego network edge densities.
+#' @param graphlet_counts Matrix of pre-generated graphlet, edge and node counts
+#' (columns) for each ego network (rows). Columns must include "N" (node counts)
+#' and "G0" (edge counts).
+#' @export
+ego_network_density <- function(graphlet_counts) {
+  apply(graphlet_counts, 1, density_from_counts)
+}
 
 #' Scale graphlet counts for an ego network by the n choose k possible
 #' choices of k nodes in that ego-network, where n is the number of nodes
