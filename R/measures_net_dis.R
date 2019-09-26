@@ -201,6 +201,8 @@ netdis_many_to_many <- function(graphs,
     min_ego_edges = min_ego_edges
   )
 
+  rm(graphs)
+  
   ## ------------------------------------------------------------------------
   # Count graphlets for ego networks in query graphs
   graphlet_counts <- purrr::map(
@@ -219,6 +221,8 @@ netdis_many_to_many <- function(graphs,
       min_ego_nodes = min_ego_nodes,
       min_ego_edges = min_ego_edges
     )
+    
+    rm(ref_graph)
 
     # Get ego network graphlet counts
     graphlet_counts_ref <- ego_to_graphlet_counts(
