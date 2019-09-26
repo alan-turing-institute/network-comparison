@@ -85,9 +85,9 @@ graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_g
 
 # Scale ego-network graphlet counts by dividing by total number of k-tuples in
 # ego-network (where k is graphlet size)
-scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(ego_ref, 
-                                                        graphlet_counts_ref, 
+scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(graphlet_counts_ref, 
                                                         max_graphlet_size)
+
 
 # Get ego-network densities
 densities_ref <- ego_network_density(ego_ref)

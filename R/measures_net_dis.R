@@ -654,11 +654,11 @@ scale_graphlet_count <- function(graphlet_count, graphlet_tuples) {
 #' @param max_graphlet_size Determines the maximum size of graphlets included
 #' in the tuple counts.
 #' @export
-count_graphlet_tuples_ego <- function(ego_networks, max_graphlet_size) {
+count_graphlet_tuples_ego <- function(graphlet_counts, max_graphlet_size) {
   graphlet_tuple_counts <-
-    t(simplify2array(purrr::map(ego_networks, count_graphlet_tuples,
-      max_graphlet_size = max_graphlet_size
-    )))
+    t(apply(graphlet_counts, 1,
+            count_graphlet_tuples, max_graphlet_size = max_graphlet_size))
+  
   graphlet_tuple_counts
 }
 
@@ -686,10 +686,10 @@ ego_network_density <- function(ego_networks) {
 #' in graphlet_counts.
 #' @return scaled graphlet counts.
 #' @export
-scale_graphlet_counts_ego <- function(ego_networks, graphlet_counts,
+scale_graphlet_counts_ego <- function(graphlet_counts,
                                       max_graphlet_size) {
   ego_graphlet_tuples <- count_graphlet_tuples_ego(
-    ego_networks,
+    graphlet_counts,
     max_graphlet_size = max_graphlet_size
   )
 
@@ -710,14 +710,20 @@ scale_graphlet_counts_ego <- function(ego_networks, graphlet_counts,
 #' @param max_graphlet_size Determines the maximum size of graphlets included
 #' in the tuple counts.
 #' @export
-count_graphlet_tuples <- function(graph, max_graphlet_size) {
-  graph_node_count <- igraph::vcount(graph)
+count_graphlet_tuples <- function(graph_graphlet_counts, max_graphlet_size) {
+  # extract node counts from graph_graphlet_counts
+  N <- graph_graphlet_counts["N"]
+  
   graphlet_key <- graphlet_key(max_graphlet_size)
   graphlet_node_counts <- graphlet_key$node_count
-  graphlet_tuple_counts <- choose(graph_node_count, graphlet_node_counts)
+  
+  graphlet_tuple_counts <- choose(N, graphlet_node_counts)
+  
   graphlet_tuple_counts <- stats::setNames(
     graphlet_tuple_counts,
     graphlet_key$id
   )
-  graphlet_tuple_counts
+  
+  # add node counts back to object
+  graphlet_tuple_counts <- c(N, graphlet_tuple_counts)
 }
