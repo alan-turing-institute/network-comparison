@@ -191,47 +191,50 @@ netdis_many_to_many <- function(graphs,
                                   scale_fn = scale_graphlet_counts_ego),
                                 exp_counts_fn = purrr::partial(
                                   netdis_expected_graphlet_counts_per_ego,
-                                  scale_fn = count_graphlet_tuples)) {
+                                  scale_fn = count_graphlet_tuples),
+                                graphlet_counts = NULL,
+                                graphlet_counts_ref = NULL) {
   ## ------------------------------------------------------------------------
-  # Get ego networks for query graphs
-  ego_networks <- purrr::map(
-    graphs, make_named_ego_graph,
-    order = neighbourhood_size,
-    min_ego_nodes = min_ego_nodes,
-    min_ego_edges = min_ego_edges
-  )
-
-  rm(graphs)
-  
-  ## ------------------------------------------------------------------------
-  # Count graphlets for ego networks in query graphs
-  graphlet_counts <- purrr::map(
-    ego_networks,
-    ego_to_graphlet_counts,
-    max_graphlet_size = max_graphlet_size
-  )
-
-  rm(ego_networks)
-  
-  ## ------------------------------------------------------------------------
-  # Case where expected counts calculated using a reference network
-  if (!is.null(ref_graph)) {
-    # Get ego networks
-    ego_ref <- make_named_ego_graph(
-      ref_graph,
-      order = neighbourhood_size,
+  # Generate ego networks and count graphlets for query graphs.
+  # But if some graphlet counts have been provided we can skip this step.
+  if (is.null(graphlet_counts)) {
+    graphlet_counts <- purrr::map(
+      graphs,
+      count_graphlets_ego,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
       min_ego_nodes = min_ego_nodes,
-      min_ego_edges = min_ego_edges
+      min_ego_edges = min_ego_edges,
+      return_ego_networks = FALSE
     )
+  }
+  rm(graphs)
+
+  ## ------------------------------------------------------------------------
+  # If a number has been passed as ref_graph, treat it as a constant expected
+  # counts value (e.g. if zero counts will not be centred)
+  if (is.numeric(ref_graph)) {
+    # TODO set exp_graphlet_counts to matrices of constant (ref_graph)
+  
+  ## ------------------------------------------------------------------------
+  # If a reference graph passed, use it to calculate expected counts for all
+  # query graphs.
+  } else if (!is.null(ref_graph) || !is.null(graphlet_counts_ref)) {
     
+    # Generate ego networks and calculate graphlet counts
+    # But if some ref graphlet counts provided can skip this step
+    if (is.null(graphlet_counts_ref)) {
+      graphlet_counts_ref <- count_graphlets_ego(
+        ref_graph,
+        max_graphlet_size = max_graphlet_size,
+        neighbourhood_size = neighbourhood_size,
+        min_ego_nodes = min_ego_nodes,
+        min_ego_edges = min_ego_edges,
+        return_ego_networks = FALSE
+      )
+    }
     rm(ref_graph)
-
-    # Get ego network graphlet counts
-    graphlet_counts_ref <- ego_to_graphlet_counts(
-      ego_ref,
-      max_graphlet_size = max_graphlet_size
-    )
-
+    
     # Get ego-network densities
     densities_ref <- ego_network_density(graphlet_counts_ref)
 
@@ -258,9 +261,9 @@ netdis_many_to_many <- function(graphs,
     )
 
   ## ------------------------------------------------------------------------
+  # If no reference passed, calculate expected counts using query networks
+  # themselves.
   } else {
-    # Case where expected counts calculated using query networks
-
     # Get ego-network densities
     densities <- purrr::map(graphlet_counts,
                             ego_network_density)
@@ -298,7 +301,10 @@ netdis_many_to_many <- function(graphs,
 
   ## ------------------------------------------------------------------------
   # Centre graphlet counts by subtracting expected counts
-  centred_graphlet_counts <- mapply("-", graphlet_counts, exp_graphlet_counts)
+  centred_graphlet_counts <- mapply(netdis_centred_graphlet_counts,
+                                    graphlet_counts,
+                                    exp_graphlet_counts,
+                                    max_graphlet_size = max_graphlet_size)
 
   ## ------------------------------------------------------------------------
   # Sum centred graphlet counts across all ego networks
@@ -393,6 +399,33 @@ netdis_uptok <- function(centred_graphlet_counts1, centred_graphlet_counts2,
     )
 
   netdis_statistics
+}
+
+
+#' netdis_centred_graphlet_counts
+#'
+#' Centre counts by subtracting expected graphlet counts from actual graphlet
+#' counts.
+#' @param graphlet_counts Ego network graphlet counts for a query graph
+#' @param exp_graphlet_counts Pre-calculated expected counts for each graphlet 
+#' type for each ego network.
+#' @param max_graphlet_size max graphlet size to calculate centred counts for.
+#' @return graphlet_counts minus exp_graphlet_counts for graphlets up to size
+#' max_graphlet_size.
+#' @export
+netdis_centred_graphlet_counts <- function(
+                                    graphlet_counts,
+                                    exp_graphlet_counts,
+                                    max_graphlet_size) {
+
+  # extract columns for graphlets up to size max_graphlet_size  
+  id <- graphlet_key(max_graphlet_size)$id
+  graphlet_counts <- graphlet_counts[, id]
+  exp_graphlet_counts <- exp_graphlet_counts[, id]
+  
+  # centre counts
+  graphlet_counts - exp_graphlet_counts
+
 }
 
 #' INTERNAL FUNCTION - Do not call directly

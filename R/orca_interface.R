@@ -367,15 +367,10 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
     min_ego_nodes = min_ego_nodes,
     min_ego_edges = min_ego_edges
   )
-  # Generate graphlet counts for each node in each ego network (returns an ORCA
-  # format graphlet count matrix for each ego network)
-  ego_graphlet_counts <- purrr::map(ego_networks, count_graphlets_for_graph,
-    max_graphlet_size = max_graphlet_size
-  )
-  # Reshape the list of per node single row graphlet count matrices to a single
-  # ORCA format graphlet count matrix with one row per node
-  ego_graphlet_counts <- t(simplify2array(ego_graphlet_counts))
-
+  
+  # Generate graphlet counts for each node in each ego network
+  ego_graphlet_counts <- ego_to_graphlet_counts(ego_networks, max_graphlet_size)
+  
   # Return either graphlet counts, or graphlet counts and ego_networks
   if (return_ego_networks) {
     return(list(graphlet_counts = ego_graphlet_counts, ego_networks = ego_networks))
