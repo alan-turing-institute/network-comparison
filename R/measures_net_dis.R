@@ -42,12 +42,21 @@
 #' (Default: \code{netdis_expected_graphlet_counts_per_ego} with
 #' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 #' the original netdis paper).
-#'
+#' 
+#' @param graphlet_counts_1 Pre-generated graphlet counts for the first query
+#' graph. If the \code{graphlet_counts_1} argument is defined then
+#' \code{graph_1} will not be used.
+#' 
+#' @param graphlet_counts_2 Pre-generated graphlet counts for the second query
+#' graph. If the \code{graphlet_counts_2} argument is defined then
+#' \code{graph_2} will not be used.
+#' 
 #' @return Netdis statistics between graph_1 and graph_2 for graphlet sizes
 #' up to and including max_graphlet_size
 #' 
 #' @export
-netdis_one_to_one <- function(graph_1, graph_2,
+netdis_one_to_one <- function(graph_1 = NULL,
+                              graph_2 = NULL,
                               ref_graph = 0,
                               max_graphlet_size = 4,
                               neighbourhood_size = 2,
@@ -63,24 +72,65 @@ netdis_one_to_one <- function(graph_1, graph_2,
                                 scale_fn = scale_graphlet_counts_ego),
                               exp_counts_fn = purrr::partial(
                                 netdis_expected_graphlet_counts_per_ego,
-                                scale_fn = count_graphlet_tuples)) {
+                                scale_fn = count_graphlet_tuples),
+                              graphlet_counts_1 = NULL,
+                              graphlet_counts_2 = NULL) {
 
-  # bundle graphs into one vector with format needed for
-  # netdis many-to-many
-  graphs <- list(graph_1 = graph_1, graph_2 = graph_2)
+  ## ------------------------------------------------------------------------
+  # Check arguments
+  if (is.null(graph_1) & is.null(graphlet_counts_1)) {
+    stop("One of graph_1 and graphlet_counts_1 must be supplied.")
+  }
+  if (is.null(graph_2) & is.null(graphlet_counts_2)) {
+    stop("One of graph_2 and graphlet_counts_2 must be supplied.")
+  }
+  
+  ## ------------------------------------------------------------------------
+  # Generate graphlet counts and bundle them into named list with format needed
+  # for netdis_many_to_many.
+  
+  if (is.null(graphlet_counts_1)) {
+    graphlet_counts_1 <- count_graphlets_ego(
+      graph_1,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      return_ego_networks = FALSE
+    )
+  }
+  rm(graph_1)
+  
+  if (is.null(graphlet_counts_2)) {
+    graphlet_counts_2 <- count_graphlets_ego(
+      graph_2,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      return_ego_networks = FALSE
+    )
+  }
+  rm(graph_2)  
+  
+  graphlet_counts <- list(graph_1 = graphlet_counts_1,
+                          graph_2 = graphlet_counts_2)
 
+  ## ------------------------------------------------------------------------
   # calculate netdis
   result <- netdis_many_to_many(
-    graphs,
-    ref_graph,
+    graphs = NULL,
+    ref_graph = ref_graph,
     max_graphlet_size = 4,
     neighbourhood_size = 2,
     min_ego_nodes = 3,
     min_ego_edges = 1,
     binning_fn = binning_fn,
-    exp_counts_fn = exp_counts_fn
+    exp_counts_fn = exp_counts_fn,
+    graphlet_counts = graphlet_counts
   )
-
+  
+  ## ------------------------------------------------------------------------
   # extract netdis statistics from list returned by netdis_many_to_many
   result$netdis[, 1]
 }
@@ -132,10 +182,19 @@ netdis_one_to_one <- function(graph_1, graph_2,
 #' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 #' the original netdis paper).
 #'
+#' @param graphlet_counts_1 Pre-generated graphlet counts for the first query
+#' graph. If the \code{graphlet_counts_1} argument is defined then
+#' \code{graph_1} will not be used.
+#' 
+#' @param graphlet_counts_compare Named list of pre-generated graphlet counts
+#' for the remaining query graphs. If the \code{graphlet_counts_compare}
+#' argument is defined then \code{graphs_compare} will not be used.
+#' 
 #' @return Netdis statistics between graph_1 and graph_2 for graphlet sizes
 #' up to and including max_graphlet_size
 #' @export
-netdis_one_to_many <- function(graph_1, graphs_compare,
+netdis_one_to_many <- function(graph_1 = NULL,
+                               graphs_compare = NULL,
                                ref_graph = 0,
                                max_graphlet_size = 4,
                                neighbourhood_size = 2,
@@ -151,16 +210,56 @@ netdis_one_to_many <- function(graph_1, graphs_compare,
                                  scale_fn = scale_graphlet_counts_ego),
                                exp_counts_fn = purrr::partial(
                                  netdis_expected_graphlet_counts_per_ego,
-                                 scale_fn = count_graphlet_tuples)) {
-
-  # bundle graph_1 and graphs_compare to one vector, with
-  # graph_1 at start as needed for netdis_many_to_many call
-  graphs <- append(graphs_compare, list(graph_1 = graph_1), after = 0)
-
+                                 scale_fn = count_graphlet_tuples),
+                               graphlet_counts_1 = NULL,
+                               graphlet_counts_compare = NULL) {
+  ## ------------------------------------------------------------------------
+  # Check arguments
+  if (is.null(graph_1) & is.null(graphlet_counts_1)) {
+    stop("One of graph_1 and graphlet_counts_1 must be supplied.")
+  }
+  if (is.null(graphs_compare) & is.null(graphlet_counts_compare)) {
+    stop("One of graph_2 and graphlet_counts_2 must be supplied.")
+  }
+  
+  ## ------------------------------------------------------------------------
+  # Generate graphlet counts and bundle them into named list with format needed
+  # for netdis_many_to_many.
+  
+  if (is.null(graphlet_counts_1)) {
+    graphlet_counts_1 <- count_graphlets_ego(
+      graph_1,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      return_ego_networks = FALSE
+    )
+  }
+  rm(graph_1)
+  
+  if (is.null(graphlet_counts_compare)) {
+    graphlet_counts_compare <- purrr::map(
+      graphs_compare,
+      count_graphlets_ego,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      return_ego_networks = FALSE
+    )
+  }
+  rm(graphs_compare)  
+  
+  graphlet_counts <- append(graphlet_counts_compare,
+                            list(graph_1 = graphlet_counts_1),
+                            after = 0)
+  
+  ## ------------------------------------------------------------------------
   # calculate netdis
   result <- netdis_many_to_many(
-    graphs,
-    ref_graph,
+    graphs = NULL,
+    ref_graph = ref_graph,
     comparisons = "one-to-many",
     max_graphlet_size = 4,
     neighbourhood_size = 2,
@@ -168,9 +267,11 @@ netdis_one_to_many <- function(graph_1, graphs_compare,
     min_ego_edges = 1,
     binning_fn = binning_fn,
     bin_counts_fn = bin_counts_fn,
-    exp_counts_fn = exp_counts_fn
+    exp_counts_fn = exp_counts_fn,
+    graphlet_counts = graphlet_counts
   )
 
+  ## ------------------------------------------------------------------------
   # restructure netdis_many_to_many output
   colnames(result$netdis) <- result$comp_spec$name_b
   result$netdis
@@ -266,13 +367,14 @@ netdis_many_to_many <- function(graphs = NULL,
                                 graphlet_counts_ref = NULL) {
   
   ## ------------------------------------------------------------------------
+  # Check arguments
   if (is.null(graphs) & is.null(graphlet_counts)) {
     stop("One of graphs and graphlet_counts must be supplied.")
   }
   
   ## ------------------------------------------------------------------------
   # Generate ego networks and count graphlets for query graphs.
-  # But if some graphlet counts have been provided we can skip this step.
+  # But if graphlet counts have already been provided we can skip this step.
   if (is.null(graphlet_counts)) {
     graphlet_counts <- purrr::map(
       graphs,
@@ -288,7 +390,7 @@ netdis_many_to_many <- function(graphs = NULL,
 
   ## ------------------------------------------------------------------------
   # If a number has been passed as ref_graph, treat it as a constant expected
-  # counts value (e.g. if ref_graph = 0 then graphlet_counts used directly).
+  # counts value (e.g. if ref_graph = 0 then no centring of counts).
   if (is.numeric(ref_graph)) {
     exp_graphlet_counts <- purrr::map(graphlet_counts,
                                       netdis_const_expected_counts,
@@ -405,7 +507,6 @@ netdis_many_to_many <- function(graphs = NULL,
       comp_spec$index_a,
       comp_spec$index_b,
       SIMPLIFY = TRUE)
-
 
   list(netdis = results, comp_spec = comp_spec)
 
