@@ -1,24 +1,40 @@
 #' Netdis between two graphs
-#' @param graph_1 First query graph
-#' @param graph_2 Second query graph
-#' @param ref_graph Reference graph
-#' @param max_graphlet_size Generate graphlets up to this size
-#' @param neighbourhood_size Ego network neighbourhood size
+#' 
+#' @param graph_1 A simplified igraph graph object.
+#' 
+#' @param graph_2 A simplified igraph graph object.
+#' 
+#' @param ref_graph Controls how expected counts are calculated. Either: 
+#' 1) A numeric value - used as a constant expected counts value for all query 
+#' graphs (DEFAULT: 0).
+#' 2) A simplified \code{igraph} object - used as a reference graph from which
+#' expected counts are calculated for all query graphs.
+#' 3) NULL - Expected counts will be calculated based on the properties of the 
+#' query graphs themselves.
+#' 
+#' @param max_graphlet_size Generate graphlets up to this size.
+#' 
+#' @param neighbourhood_size Ego network neighbourhood size.
+#' 
 #' @param min_ego_nodes Filter ego networks which have fewer
-#' than min_ego_nodes nodes
+#' than min_ego_nodes nodes.
+#' 
 #' @param min_ego_edges Filter ego networks which have fewer
-#' than min_ego_edges edges
+#' than min_ego_edges edges.
+#' 
 #' @param binning_fn Function used to bin ego network densities. Takes densities
 #' as its single argument, and returns a named list including keys \code{breaks}
 #' (list of bin edges) and \code{interval_indexes} (density bin index for each
 #' ego network). (Default: \code{binned_densities_adaptive} with
 #' \code{min_counts_per_interval = 5} and \code{num_intervals = 100}).
+#' 
 #' @param bin_counts_fn Function used to calculate expected graphlet counts in
 #' each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-#' (bin indexes), \code{ego_networks} and \code{max_graphlet_size} as arguments.
+#' (bin indexes) and \code{max_graphlet_size} as arguments.
 #' (Default: \code{density_binned_counts} with \code{agg_fn = mean} and
 #' \code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
 #' approach used in the original netdis paper).
+#' 
 #' @param exp_counts_fn Function used to map from binned reference counts to
 #' expected counts for each graphlet in each ego network of the query graphs.
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
@@ -26,11 +42,13 @@
 #' (Default: \code{netdis_expected_graphlet_counts_per_ego} with
 #' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 #' the original netdis paper).
+#'
 #' @return Netdis statistics between graph_1 and graph_2 for graphlet sizes
 #' up to and including max_graphlet_size
+#' 
 #' @export
 netdis_one_to_one <- function(graph_1, graph_2,
-                              ref_graph,
+                              ref_graph = 0,
                               max_graphlet_size = 4,
                               neighbourhood_size = 2,
                               min_ego_nodes = 3,
@@ -67,28 +85,45 @@ netdis_one_to_one <- function(graph_1, graph_2,
   result$netdis[, 1]
 }
 
-#' Netdis comparisons between one graph and many other graphs
-#' @param graph_1 query graph - this graph will be compared with
-#' all graphs in graphs_compare
-#' @param graphs_compare graphs graph_1 will be compared with
-#' @param ref_graph Reference graph
-#' @param max_graphlet_size Generate graphlets up to this size
-#' @param neighbourhood_size Ego network neighbourhood size
+#' Netdis comparisons between one graph and many other graphs.
+#' 
+#' @param graph_1 Query graph - this graph will be compared with
+#' all graphs in graphs_compare. A simplified igraph graph object.
+#' 
+#' @param graphs_compare Graphs graph_1 will be compared with. A named list of
+#' simplified igraph graph objects.
+#' 
+#' @param ref_graph Controls how expected counts are calculated. Either: 
+#' 1) A numeric value - used as a constant expected counts value for all query 
+#' graphs (DEFAULT: 0).
+#' 2) A simplified \code{igraph} object - used as a reference graph from which
+#' expected counts are calculated for all query graphs.
+#' 3) NULL - Expected counts will be calculated based on the properties of the 
+#' query graphs themselves.
+#' 
+#' @param max_graphlet_size Generate graphlets up to this size.
+#' 
+#' @param neighbourhood_size Ego network neighbourhood size.
+#' 
 #' @param min_ego_nodes Filter ego networks which have fewer
-#' than min_ego_nodes nodes
+#' than min_ego_nodes nodes.
+#' 
 #' @param min_ego_edges Filter ego networks which have fewer
-#' than min_ego_edges edges
+#' than min_ego_edges edges.
+#' 
 #' @param binning_fn Function used to bin ego network densities. Takes densities
 #' as its single argument, and returns a named list including keys \code{breaks}
 #' (list of bin edges) and \code{interval_indexes} (density bin index for each
 #' ego network). (Default: \code{binned_densities_adaptive} with
 #' \code{min_counts_per_interval = 5} and \code{num_intervals = 100}).
+#' 
 #' @param bin_counts_fn Function used to calculate expected graphlet counts in
 #' each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-#' (bin indexes), \code{ego_networks} and \code{max_graphlet_size} as arguments.
+#' (bin indexes) and \code{max_graphlet_size} as arguments.
 #' (Default: \code{density_binned_counts} with \code{agg_fn = mean} and
 #' \code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
 #' approach used in the original netdis paper).
+#' 
 #' @param exp_counts_fn Function used to map from binned reference counts to
 #' expected counts for each graphlet in each ego network of the query graphs.
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
@@ -96,26 +131,27 @@ netdis_one_to_one <- function(graph_1, graph_2,
 #' (Default: \code{netdis_expected_graphlet_counts_per_ego} with
 #' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 #' the original netdis paper).
+#'
 #' @return Netdis statistics between graph_1 and graph_2 for graphlet sizes
 #' up to and including max_graphlet_size
 #' @export
 netdis_one_to_many <- function(graph_1, graphs_compare,
-                              ref_graph,
-                              max_graphlet_size = 4,
-                              neighbourhood_size = 2,
-                              min_ego_nodes = 3,
-                              min_ego_edges = 1,
-                              binning_fn = purrr::partial(
-                                binned_densities_adaptive,
-                                min_counts_per_interval = 5,
-                                num_intervals = 100),
-                              bin_counts_fn = purrr::partial(
-                                density_binned_counts,
-                                agg_fn = mean,
-                                scale_fn = scale_graphlet_counts_ego),
-                              exp_counts_fn = purrr::partial(
-                                netdis_expected_graphlet_counts_per_ego,
-                                scale_fn = count_graphlet_tuples)) {
+                               ref_graph = 0,
+                               max_graphlet_size = 4,
+                               neighbourhood_size = 2,
+                               min_ego_nodes = 3,
+                               min_ego_edges = 1,
+                               binning_fn = purrr::partial(
+                                 binned_densities_adaptive,
+                                 min_counts_per_interval = 5,
+                                 num_intervals = 100),
+                               bin_counts_fn = purrr::partial(
+                                 density_binned_counts,
+                                 agg_fn = mean,
+                                 scale_fn = scale_graphlet_counts_ego),
+                               exp_counts_fn = purrr::partial(
+                                 netdis_expected_graphlet_counts_per_ego,
+                                 scale_fn = count_graphlet_tuples)) {
 
   # bundle graph_1 and graphs_compare to one vector, with
   # graph_1 at start as needed for netdis_many_to_many call
@@ -142,28 +178,46 @@ netdis_one_to_many <- function(graph_1, graphs_compare,
 
 
 #' Netdis between all graph pairs
-#' @param graphs Query graphs
-#' @param ref_graph Reference graph
+#' 
+#' @param graphs A named list of simplified igraph graph objects (undirected
+#' graphs excluding loops, multiple edges and isolated vertices), such as those
+#' obtained by using \code{read_simple_graphs}.
+#' 
+#' @param ref_graph Controls how expected counts are calculated. Either: 
+#' 1) A numeric value - used as a constant expected counts value for all query 
+#' graphs (DEFAULT: 0).
+#' 2) A simplified \code{igraph} object - used as a reference graph from which
+#' expected counts are calculated for all query graphs.
+#' 3) NULL - Expected counts will be calculated based on the properties of the 
+#' query graphs themselves.
+#' 
 #' @param comparisons Which comparisons to perform between graphs.
 #' Can be "many-to-many" (all pairwise combinations) or "one-to-many"
 #' (compare first graph in graphs to all other graphs.)
-#' @param max_graphlet_size Generate graphlets up to this size
-#' @param neighbourhood_size Ego network neighbourhood size
+#' 
+#' @param max_graphlet_size Generate graphlets up to this size.
+#' 
+#' @param neighbourhood_size Ego network neighbourhood size.
+#' 
 #' @param min_ego_nodes Filter ego networks which have fewer
-#' than min_ego_nodes nodes
+#' than min_ego_nodes nodes.
+#' 
 #' @param min_ego_edges Filter ego networks which have fewer
-#' than min_ego_edges edges
+#' than min_ego_edges edges.
+#' 
 #' @param binning_fn Function used to bin ego network densities. Takes densities
 #' as its single argument, and returns a named list including keys \code{breaks}
 #' (list of bin edges) and \code{interval_indexes} (density bin index for each
 #' ego network). (Default: \code{binned_densities_adaptive} with
 #' \code{min_counts_per_interval = 5} and \code{num_intervals = 100}).
+#' 
 #' @param bin_counts_fn Function used to calculate expected graphlet counts in
 #' each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-#' (bin indexes), \code{ego_networks} and \code{max_graphlet_size} as arguments.
+#' (bin indexes) and \code{max_graphlet_size} as arguments.
 #' (Default: \code{density_binned_counts} with \code{agg_fn = mean} and
 #' \code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
 #' approach used in the original netdis paper).
+#' 
 #' @param exp_counts_fn Function used to map from binned reference counts to
 #' expected counts for each graphlet in each ego network of the query graphs.
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
@@ -171,11 +225,27 @@ netdis_one_to_many <- function(graph_1, graphs_compare,
 #' (Default: \code{netdis_expected_graphlet_counts_per_ego} with
 #' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 #' the original netdis paper).
+#' 
+#' @param graphlet_counts Pre-generated graphlet counts. If the
+#' \code{graphlet_counts} argument is defined then \code{graphs} will not be 
+#' used.
+#' A named list of matrices containing counts of each graphlet (columns) for
+#' each ego-network in the input graph (rows). Columns are labelled with
+#' graphlet IDs and rows are labelled with the ID of the central node in each
+#' ego-network. As well as graphlet counts, each matrix  must contain an
+#' additional column labelled "N" including the node count for
+#' each ego network.
+#' 
+#' @param graphlet_counts_ref Pre-generated reference graphlet counts. If the
+#' \code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
+#' be used.
+#'
 #' @return Netdis statistics between query graphs for graphlet sizes
 #' up to and including max_graphlet_size.
+#' 
 #' @export
-netdis_many_to_many <- function(graphs,
-                                ref_graph,
+netdis_many_to_many <- function(graphs = NULL,
+                                ref_graph = 0,
                                 comparisons = "many-to-many",
                                 max_graphlet_size = 4,
                                 neighbourhood_size = 2,
@@ -194,6 +264,12 @@ netdis_many_to_many <- function(graphs,
                                   scale_fn = count_graphlet_tuples),
                                 graphlet_counts = NULL,
                                 graphlet_counts_ref = NULL) {
+  
+  ## ------------------------------------------------------------------------
+  if (is.null(graphs) & is.null(graphlet_counts)) {
+    stop("One of graphs and graphlet_counts must be supplied.")
+  }
+  
   ## ------------------------------------------------------------------------
   # Generate ego networks and count graphlets for query graphs.
   # But if some graphlet counts have been provided we can skip this step.
@@ -212,10 +288,12 @@ netdis_many_to_many <- function(graphs,
 
   ## ------------------------------------------------------------------------
   # If a number has been passed as ref_graph, treat it as a constant expected
-  # counts value (e.g. if zero counts will not be centred)
+  # counts value (e.g. if ref_graph = 0 then graphlet_counts used directly).
   if (is.numeric(ref_graph)) {
-    # TODO set exp_graphlet_counts to matrices of constant (ref_graph)
-  
+    exp_graphlet_counts <- purrr::map(graphlet_counts,
+                                      netdis_const_expected_counts,
+                                      const = ref_graph)
+
   ## ------------------------------------------------------------------------
   # If a reference graph passed, use it to calculate expected counts for all
   # query graphs.
@@ -648,6 +726,18 @@ density_binned_counts_gp <- function(graphlet_counts,
   expected_counts_bin[is.nan(expected_counts_bin)] <- 0
 
   expected_counts_bin
+}
+
+
+#' Create matrix of constant value to use as expected counts.
+#' @param graphlet_counts Ego network graphlet counts matrix to create expected
+#' counts for.
+#' @param const Constant expected counts value to use.
+#' @return Counts of value const with same shape and names as graphlet_counts.
+netdis_const_expected_counts <- function(graphlet_counts, const) {
+  exp_counts <- graphlet_counts
+  exp_counts[,] <- const
+  exp_counts
 }
 
 
