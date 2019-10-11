@@ -685,26 +685,13 @@ test_that("density_binned_counts output matches manually verified totals with di
   agg_fn <- mean
   scale_fn <- scale_graphlet_counts_ego
   
-  # generate ego networks using previously tested function
-  ego_networks_o1 <- make_named_ego_graph(graph,
-                                          order = 1,
-                                          min_ego_edges = min_ego_edges,
-                                          min_ego_nodes = min_ego_nodes
-  )
-  ego_networks_o2 <- make_named_ego_graph(graph,
-                                          order = 2,
-                                          min_ego_edges = min_ego_edges,
-                                          min_ego_nodes = min_ego_nodes
-  )
   # calculate expected counts using previously tested function
   expected_scaled_counts_o1 <-
-    scale_graphlet_counts_ego(ego_networks_o1,
-                              expected_counts_o1,
+    scale_graphlet_counts_ego(expected_counts_o1,
                               max_graphlet_size = max_graphlet_size
     )
   expected_scaled_counts_o2 <-
-    scale_graphlet_counts_ego(ego_networks_o2,
-                              expected_counts_o2,
+    scale_graphlet_counts_ego(expected_counts_o2,
                               max_graphlet_size = max_graphlet_size
     )
   
@@ -738,7 +725,6 @@ test_that("density_binned_counts output matches manually verified totals with di
     expected_interval_indexes_o1,
     agg_fn = agg_fn,
     scale_fn = scale_fn,
-    ego_networks = ego_networks_o1,
     max_graphlet_size = max_graphlet_size)
   
   actual_scaled_density_binned_counts_o2 <- density_binned_counts(
@@ -746,7 +732,6 @@ test_that("density_binned_counts output matches manually verified totals with di
     expected_interval_indexes_o2,
     agg_fn = agg_fn,
     scale_fn = scale_fn,
-    ego_networks = ego_networks_o2,
     max_graphlet_size = max_graphlet_size)
   
   # Check actual output vs expected
@@ -797,7 +782,9 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
   density_indexes <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
   num_nodes <- rep(120, 10)
   graphs <- purrr::map2(num_nodes, densities, rand_graph)
-
+  graphlet_counts <- purrr::map(graphs,
+                                count_graphlets_for_graph,
+                                max_graphlet_size = max_graphlet_size)
   # WITH scale_fn = NULL (bin counts directly with no scaling)
   # Helper function to calculate expected expected graphlet counts
   expected_expected_graphlet_counts_fn <- function(density_index) {
@@ -807,12 +794,13 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
   expected_expected_graphlet_counts <-
     purrr::map(density_indexes, expected_expected_graphlet_counts_fn)
   actual_expected_graphlet_counts <-
-    purrr::map(graphs, netdis_expected_graphlet_counts,
+    purrr::map(graphlet_counts, netdis_expected_graphlet_counts,
                max_graphlet_size = max_graphlet_size,
                density_breaks = density_breaks,
                density_binned_reference_counts = scaled_reference_counts,
                scale_fn = NULL
     )
+  
   # Loop over each graph and compare expected with actual
   # NOTE: v2.0.0 of testthat library made a breaking change that means using
   # map, mapply etc can cause failures under certain conditions
@@ -834,7 +822,7 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
   expected_expected_graphlet_counts <-
     purrr::map2(density_indexes, num_nodes, expected_expected_graphlet_counts_fn)
   actual_expected_graphlet_counts <-
-    purrr::map(graphs, netdis_expected_graphlet_counts,
+    purrr::map(graphlet_counts, netdis_expected_graphlet_counts,
       max_graphlet_size = max_graphlet_size,
       density_breaks = density_breaks,
       density_binned_reference_counts = scaled_reference_counts,
