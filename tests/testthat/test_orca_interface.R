@@ -1251,7 +1251,7 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
 
   # Set node and graphlet labels to use for row and col names in expected counts
   node_labels <- igraph::V(graph)$name
-  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  graphlet_labels <- c("N", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
 
   max_graphlet_size <- 4
   graphlet_key <- graphlet_key(max_graphlet_size)
@@ -1259,31 +1259,31 @@ test_that("count_graphlets_ego: Ego-network 4-node graphlet counts match manuall
   # Set manually verified counts
   # 1-step ego networks
   expected_counts_order_1 <- rbind(
-    c(6, 5, 2, 0, 1, 0, 2, 1, 0),
-    c(5, 5, 1, 0, 2, 0, 2, 0, 0),
-    c(1, 0, 0, 0, 0, 0, 0, 0, 0),
-    c(5, 2, 2, 0, 0, 0, 0, 1, 0),
-    c(1, 0, 0, 0, 0, 0, 0, 0, 0),
-    c(4, 2, 1, 0, 0, 0, 1, 0, 0),
-    c(7, 3, 4, 0, 0, 0, 3, 0, 1),
-    c(7, 3, 4, 0, 0, 0, 3, 0, 1),
-    c(6, 0, 4, 0, 0, 0, 0, 0, 1),
-    c(6, 0, 4, 0, 0, 0, 0, 0, 1)
+    c(5, 6, 5, 2, 0, 1, 0, 2, 1, 0),
+    c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
+    c(2, 1, 0, 0, 0, 0, 0, 0, 0, 0),
+    c(4, 5, 2, 2, 0, 0, 0, 0, 1, 0),
+    c(2, 1, 0, 0, 0, 0, 0, 0, 0, 0),
+    c(4, 4, 2, 1, 0, 0, 0, 1, 0, 0),
+    c(5, 7, 3, 4, 0, 0, 0, 3, 0, 1),
+    c(5, 7, 3, 4, 0, 0, 0, 3, 0, 1),
+    c(4, 6, 0, 4, 0, 0, 0, 0, 0, 1),
+    c(4, 6, 0, 4, 0, 0, 0, 0, 0, 1)
   )
   rownames(expected_counts_order_1) <- node_labels
   colnames(expected_counts_order_1) <- graphlet_labels
   # 2-step ego networks
   expected_counts_order_2 <- rbind(
-    c(15, 18, 6, 21, 3, 1, 11, 1, 1),
-    c(8, 10, 2, 6, 3, 0, 4, 1, 0),
-    c(5, 5, 1, 0, 2, 0, 2, 0, 0),
-    c(10, 14, 2, 11, 3, 1, 5, 1, 0),
-    c(5, 5, 1, 0, 2, 0, 2, 0, 0),
-    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
-    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
-    c(11, 10, 5, 10, 0, 1, 8, 0, 1),
-    c(9, 8, 4, 4, 0, 1, 6, 0, 1),
-    c(9, 8, 4, 4, 0, 1, 6, 0, 1)
+    c(10, 15, 18, 6, 21, 3, 1, 11, 1, 1),
+    c(7, 8, 10, 2, 6, 3, 0, 4, 1, 0),
+    c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
+    c(8, 10, 14, 2, 11, 3, 1, 5, 1, 0),
+    c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
+    c(8, 13, 13, 6, 15, 1, 1, 9, 1, 1),
+    c(8, 13, 13, 6, 15, 1, 1, 9, 1, 1),
+    c(7, 11, 10, 5, 10, 0, 1, 8, 0, 1),
+    c(6, 9, 8, 4, 4, 0, 1, 6, 0, 1),
+    c(6, 9, 8, 4, 4, 0, 1, 6, 0, 1)
   )
   rownames(expected_counts_order_2) <- node_labels
   colnames(expected_counts_order_2) <- graphlet_labels
@@ -1416,7 +1416,7 @@ test_that("ego_to_graphlet_counts: Ego-network 4-node graphlet counts match manu
   
   # Set node and graphlet labels to use for row and col names in expected counts
   node_labels <- igraph::V(graph)$name
-  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  graphlet_labels <- c("N", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
   
   max_graphlet_size <- 4
   graphlet_key <- graphlet_key(max_graphlet_size)
@@ -1424,31 +1424,31 @@ test_that("ego_to_graphlet_counts: Ego-network 4-node graphlet counts match manu
   # Set manually verified counts
   # 1-step ego networks
   expected_counts_order_1 <- rbind(
-    c(6, 5, 2, 0, 1, 0, 2, 1, 0),
-    c(5, 5, 1, 0, 2, 0, 2, 0, 0),
-    c(1, 0, 0, 0, 0, 0, 0, 0, 0),
-    c(5, 2, 2, 0, 0, 0, 0, 1, 0),
-    c(1, 0, 0, 0, 0, 0, 0, 0, 0),
-    c(4, 2, 1, 0, 0, 0, 1, 0, 0),
-    c(7, 3, 4, 0, 0, 0, 3, 0, 1),
-    c(7, 3, 4, 0, 0, 0, 3, 0, 1),
-    c(6, 0, 4, 0, 0, 0, 0, 0, 1),
-    c(6, 0, 4, 0, 0, 0, 0, 0, 1)
+    c(5, 6, 5, 2, 0, 1, 0, 2, 1, 0),
+    c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
+    c(2, 1, 0, 0, 0, 0, 0, 0, 0, 0),
+    c(4, 5, 2, 2, 0, 0, 0, 0, 1, 0),
+    c(2, 1, 0, 0, 0, 0, 0, 0, 0, 0),
+    c(4, 4, 2, 1, 0, 0, 0, 1, 0, 0),
+    c(5, 7, 3, 4, 0, 0, 0, 3, 0, 1),
+    c(5, 7, 3, 4, 0, 0, 0, 3, 0, 1),
+    c(4, 6, 0, 4, 0, 0, 0, 0, 0, 1),
+    c(4, 6, 0, 4, 0, 0, 0, 0, 0, 1)
   )
   rownames(expected_counts_order_1) <- node_labels
   colnames(expected_counts_order_1) <- graphlet_labels
   # 2-step ego networks
   expected_counts_order_2 <- rbind(
-    c(15, 18, 6, 21, 3, 1, 11, 1, 1),
-    c(8, 10, 2, 6, 3, 0, 4, 1, 0),
-    c(5, 5, 1, 0, 2, 0, 2, 0, 0),
-    c(10, 14, 2, 11, 3, 1, 5, 1, 0),
-    c(5, 5, 1, 0, 2, 0, 2, 0, 0),
-    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
-    c(13, 13, 6, 15, 1, 1, 9, 1, 1),
-    c(11, 10, 5, 10, 0, 1, 8, 0, 1),
-    c(9, 8, 4, 4, 0, 1, 6, 0, 1),
-    c(9, 8, 4, 4, 0, 1, 6, 0, 1)
+    c(10, 15, 18, 6, 21, 3, 1, 11, 1, 1),
+    c(7, 8, 10, 2, 6, 3, 0, 4, 1, 0),
+    c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
+    c(8, 10, 14, 2, 11, 3, 1, 5, 1, 0),
+    c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
+    c(8, 13, 13, 6, 15, 1, 1, 9, 1, 1),
+    c(8, 13, 13, 6, 15, 1, 1, 9, 1, 1),
+    c(7, 11, 10, 5, 10, 0, 1, 8, 0, 1),
+    c(6, 9, 8, 4, 4, 0, 1, 6, 0, 1),
+    c(6, 9, 8, 4, 4, 0, 1, 6, 0, 1)
   )
   rownames(expected_counts_order_2) <- node_labels
   colnames(expected_counts_order_2) <- graphlet_labels
