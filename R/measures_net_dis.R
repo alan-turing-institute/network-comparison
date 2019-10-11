@@ -863,7 +863,7 @@ zeros_to_ones <- function(v) {
 scale_graphlet_count <- function(graphlet_count, graphlet_tuples) {
   # Avoid divide by zero errors by replacing all zeros with ones in the
   # divisor
-  graphlet_count / zeros_to_ones(graphlet_tuples)
+  graphlet_count[, colnames(graphlet_tuples)] / zeros_to_ones(graphlet_tuples)
 }
 
 

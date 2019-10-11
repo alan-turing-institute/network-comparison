@@ -424,13 +424,11 @@ test_that("Ego-network 4-node graphlet counts match manually verified totals", {
   # Calculate scaled counts with scale_graphlet_counts_ego 
   # (function to test).
   actual_counts_o1 <-
-    scale_graphlet_counts_ego(ego_networks_o1,
-                              graphlet_counts_o1,
-                               max_graphlet_size = max_graphlet_size
+    scale_graphlet_counts_ego(graphlet_counts_o1,
+                              max_graphlet_size = max_graphlet_size
     )
   actual_counts_o2 <-
-    scale_graphlet_counts_ego(ego_networks_o2,
-                              graphlet_counts_o2,
+    scale_graphlet_counts_ego(graphlet_counts_o2,
                               max_graphlet_size = max_graphlet_size
     )
   
