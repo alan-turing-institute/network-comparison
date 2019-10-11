@@ -203,7 +203,7 @@ simplify_graph <- function(graph, as_undirected = TRUE, remove_loops = TRUE,
 #' of each graphlet or orbit at each graph vertex) to
 #' a set of discrete histograms (a histogram of counts for each distinct value
 #' across all graph vertices for each feature with no binning)
-#' @param features_matrix A number of nodes (rows) by number of features 
+#' @param features_matrix A number of nodes (rows) by number of features
 #' (columns) matrix, where the ij entry is the score of node i on feature j
 #' (e.g. for ORCA output this is counts of each graphlet or orbit at each
 #' graph vertex)
@@ -221,16 +221,17 @@ graph_features_to_histogramsSLOW <- function(features_matrix) {
 
 #' Graphlet-based degree distributions (GDDs)
 #'
-#' Generates graphlet-based degree distributions from \code{igraph} graph object,
+#' Generates graphlet-based degree distributions from \code{igraph} graph object
 #' using the ORCA fast graphlet orbit counting package.
-#' @param graph A connected, undirected, simple graph as an \code{igraph} object.
+#' @param graph A connected, undirected, simple graph as an \code{igraph} object
 #' @param feature_type Type of graphlet-based feature to count: "graphlet"
 #' counts the number of graphlets each node participates in; "orbit" calculates
 #' the number of graphlet orbits each node participates in.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
-#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
-#' @param ego_neighbourhood_size The number of steps from the source node to include
-#' nodes for each ego-network.
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be
+#' counted.
+#' @param ego_neighbourhood_size The number of steps from the source node to
+#' include nodes for each ego-network.
 #' @return List of graphlet-based degree distributions, with each distribution
 #' represented as a \code{dhist} discrete histogram object.
 #' @export
@@ -249,7 +250,8 @@ gdd <- function(graph, feature_type = "orbit", max_graphlet_size = 4,
   } else if (feature_type == "orbit") {
     out <- count_orbits_per_node(graph, max_graphlet_size = max_graphlet_size)
   } else if (feature_type == "graphlet") {
-    out <- count_graphlets_per_node(graph, max_graphlet_size = max_graphlet_size)
+    out <- count_graphlets_per_node(graph,
+                                    max_graphlet_size = max_graphlet_size)
   }
   else {
     stop("gdd: unrecognised feature_type")
@@ -261,9 +263,10 @@ gdd <- function(graph, feature_type = "orbit", max_graphlet_size = 4,
 #'
 #' Calculates graphlet orbit counts for each node in an \code{igraph} graph
 #' object, using the ORCA fast graphlet orbit counting package.
-#' @param graph A connected, undirected, simple graph as an \code{igraph} object.
+#' @param graph A connected, undirected, simple graph as an \code{igraph} object
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
-#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be
+#' counted.
 #' @return ORCA-format matrix containing counts of each graphlet
 #' orbit (columns) at each node in the graph (rows).
 #' @export
@@ -297,14 +300,16 @@ count_orbits_per_node <- function(graph, max_graphlet_size) {
 #' Calculates graphlet counts for each node in an \code{igraph} graph object,
 #' using the ORCA fast graphlet orbit counting package. by summing orbits over
 #' graphlets.
-#' @param graph A connected, undirected, simple graph as an \code{igraph} object.
+#' @param graph A connected, undirected, simple graph as an \code{igraph} object
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
-#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be
+#' counted.
 #' @return ORCA-format matrix containing counts of each graphlet (columns) at
 #' each node in the graph (rows).
 #' @export
 count_graphlets_per_node <- function(graph, max_graphlet_size) {
-  orbit_counts <- count_orbits_per_node(graph, max_graphlet_size = max_graphlet_size)
+  orbit_counts <- count_orbits_per_node(graph,
+                                        max_graphlet_size = max_graphlet_size)
   orbit_to_graphlet_counts(orbit_counts)
 }
 
@@ -315,9 +320,10 @@ count_graphlets_per_node <- function(graph, max_graphlet_size) {
 #' calculated by summing orbits over graphlets. These are then divided by the
 #' number of nodes comprising each graphlet to avoid counting the same graphlet
 #' multiple times.
-#' @param graph A connected, undirected, simple graph as an \code{igraph} object.
+#' @param graph A connected, undirected, simple graph as an \code{igraph} object
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
-#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be
+#' counted.
 #' @return Vector containing counts of each graphlet for the graph.
 #' @export
 count_graphlets_for_graph <- function(graph, max_graphlet_size) {
@@ -329,7 +335,7 @@ count_graphlets_for_graph <- function(graph, max_graphlet_size) {
   # each graphlet type
   nodes_per_graphlet <- graphlet_key(max_graphlet_size)$node_count
   total_counts <- total_counts / nodes_per_graphlet
-  
+
   # add overall graph node count to total_counts
   N <- igraph::vcount(graph)
   total_counts <- c(N = N, total_counts)
@@ -339,9 +345,10 @@ count_graphlets_for_graph <- function(graph, max_graphlet_size) {
 #' Ego-network graphlet counts
 #'
 #' Calculates graphlet counts for the n-step ego-network of each node in a graph
-#' @param graph A connected, undirected, simple graph as an \code{igraph} object.
+#' @param graph A connected, undirected, simple graph as an \code{igraph} object
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
-#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be
+#' counted.
 #' @param neighbourhood_size The number of steps from the source node to include
 #' nodes for each ego-network.
 #' @param min_ego_nodes Only ego networks with at least \code{min_ego_nodes}
@@ -362,8 +369,11 @@ count_graphlets_for_graph <- function(graph, max_graphlet_size) {
 #'   \item \code{ego_networks}: The ego-networks of the query graph.
 #' }
 #' @export
-count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size,
-                                min_ego_nodes = 3, min_ego_edges = 1,
+count_graphlets_ego <- function(graph,
+                                max_graphlet_size = 4,
+                                neighbourhood_size,
+                                min_ego_nodes = 3,
+                                min_ego_edges = 1,
                                 return_ego_networks = FALSE) {
   # Extract ego network for each node in original graph, naming each ego network
   # in the list with the name of the node the ego network is generated for
@@ -372,13 +382,14 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
     min_ego_nodes = min_ego_nodes,
     min_ego_edges = min_ego_edges
   )
-  
+
   # Generate graphlet counts for each node in each ego network
   ego_graphlet_counts <- ego_to_graphlet_counts(ego_networks, max_graphlet_size)
-  
+
   # Return either graphlet counts, or graphlet counts and ego_networks
   if (return_ego_networks) {
-    return(list(graphlet_counts = ego_graphlet_counts, ego_networks = ego_networks))
+    return(list(graphlet_counts = ego_graphlet_counts,
+                ego_networks = ego_networks))
   } else {
     return(ego_graphlet_counts)
   }
@@ -389,9 +400,11 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
 #' Calculates graphlet counts for previously generated ego networks.
 #' @param ego_networks Named list of ego networks for a graph.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
-#' Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be
+#' counted.
 #' @return returns an RxC matrix
-#' containing counts of each graphlet (columns, C) for each ego-network (rows, R).
+#' containing counts of each graphlet (columns, C) for each ego-network
+#' (rows, R).
 #' Columns are labelled with graphlet IDs and rows are
 #' labelled with the ID of the central node in each ego-network.
 #' @export
@@ -401,11 +414,11 @@ ego_to_graphlet_counts <- function(ego_networks, max_graphlet_size = 4) {
   ego_graphlet_counts <- purrr::map(ego_networks, count_graphlets_for_graph,
     max_graphlet_size = max_graphlet_size
   )
-  
+
   # Reshape the list of per node single row graphlet count matrices to a single
   # ORCA format graphlet count matrix with one row per node
   ego_graphlet_counts <- t(simplify2array(ego_graphlet_counts))
-  
+
   # Return graphlet counts
   return(ego_graphlet_counts)
 }
@@ -524,7 +537,9 @@ graphlet_key <- function(max_graphlet_size) {
     paste("G", index, sep = "")
   }))
   name <-
-    return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
+    return(list(max_nodes = max_graphlet_size,
+                id = id,
+                node_count = node_count))
 }
 
 #' Orbit key
@@ -556,7 +571,9 @@ orbit_key <- function(max_graphlet_size) {
     paste("O", index, sep = "")
   }))
   name <-
-    return(list(max_nodes = max_graphlet_size, id = id, node_count = node_count))
+    return(list(max_nodes = max_graphlet_size,
+                id = id,
+                node_count = node_count))
 }
 
 #' Graphlet IDs for size
@@ -574,10 +591,10 @@ graphlet_ids_for_size <- function(graphlet_size) {
 #' Load all graphs in a directory and calculates their Graphlet-based Degree
 #' Distributions (GDDs)
 #'
-#' Loads graphs from all files matching the given pattern in the given directory,
-#' converts them to indexed edge lists compatible with the ORCA fast orbit
-#' counting package and calculates the specified set of graphlet-based degree
-#' distributions usingthe ORCA package.
+#' Loads graphs from all files matching the given pattern in the given
+#' directory, converts them to indexed edge lists compatible with the ORCA fast
+#' orbit counting package and calculates the specified set of graphlet-based
+#' degree distributions usingthe ORCA package.
 #' @param source_dir Path to graph directory
 #' @param format Format of graph files
 #' @param pattern Filename pattern to match graph files
@@ -594,9 +611,12 @@ graphlet_ids_for_size <- function(graphlet_size) {
 #' graph from the source directory. Each set of GDDs is itself a named list,
 #' where each GDD element is a \code{dhist} discrete histogram object.
 #' @export
-gdd_for_all_graphs <- function(
-                               source_dir, format = "ncol", pattern = ".txt", feature_type = "orbit",
-                               max_graphlet_size = 4, ego_neighbourhood_size = 0,
+gdd_for_all_graphs <- function(source_dir,
+                               format = "ncol",
+                               pattern = ".txt",
+                               feature_type = "orbit",
+                               max_graphlet_size = 4,
+                               ego_neighbourhood_size = 0,
                                mc.cores = getOption("mc.cores", 2L)) {
   # Create function to read graph from file and generate GDD
   graphs <- read_simple_graphs(
@@ -647,7 +667,7 @@ cross_comparison_spec <- function(named_list, how = "many-to-many") {
   } else {
     indexes <- as.data.frame(t(utils::combn(1:length(named_list), 2)))
   }
-  
+
   names <- as.data.frame(cbind(
     names(named_list)[indexes[, 1]],
     names(named_list)[indexes[, 2]]
@@ -669,17 +689,24 @@ cross_comparison_spec <- function(named_list, how = "many-to-many") {
 #' \code{index_b = j}
 #' @export
 cross_comp_to_matrix <- function(measure, cross_comparison_spec) {
-  num_items <- max(c(cross_comparison_spec$index_a, cross_comparison_spec$index_b))
+  num_items <- max(c(cross_comparison_spec$index_a,
+                     cross_comparison_spec$index_b))
   out <- matrix(data = 0, nrow = num_items, ncol = num_items)
-  out[cbind(cross_comparison_spec$index_a, cross_comparison_spec$index_b)] <- measure
-  out[cbind(cross_comparison_spec$index_b, cross_comparison_spec$index_a)] <- measure
+  out[cbind(cross_comparison_spec$index_a,
+            cross_comparison_spec$index_b)] <- measure
+  out[cbind(cross_comparison_spec$index_b,
+            cross_comparison_spec$index_a)] <- measure
   row_labels <- rep("<MISSING>", num_items)
-  row_labels[cross_comparison_spec$index_a] <- as.character(cross_comparison_spec$name_a)
-  row_labels[cross_comparison_spec$index_b] <- as.character(cross_comparison_spec$name_b)
+  row_labels[cross_comparison_spec$index_a] <- as.character(
+    cross_comparison_spec$name_a)
+  row_labels[cross_comparison_spec$index_b] <- as.character(
+    cross_comparison_spec$name_b)
   rownames(out) <- row_labels
   col_labels <- rep("<MISSING>", num_items)
-  col_labels[cross_comparison_spec$index_a] <- as.character(cross_comparison_spec$name_a)
-  col_labels[cross_comparison_spec$index_b] <- as.character(cross_comparison_spec$name_b)
+  col_labels[cross_comparison_spec$index_a] <- as.character(
+    cross_comparison_spec$name_a)
+  col_labels[cross_comparison_spec$index_b] <- as.character(
+    cross_comparison_spec$name_b)
   colnames(out) <- col_labels
   return(out)
 }
