@@ -7,7 +7,7 @@
 density_from_counts(graphlet_counts)
 }
 \arguments{
-\item{graphlet_counts}{Vector of pre-calculated graphlet, edge and node 
+\item{graphlet_counts}{Vector of pre-calculated graphlet, edge and node
 counts. Must have named items "N" (node counts) and "G0" (edge counts).}
 }
 \description{

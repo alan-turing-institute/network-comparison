@@ -36,8 +36,8 @@ graph from the source directory. Each set of GDDs is itself a named list,
 where each GDD element is a \code{dhist} discrete histogram object.
 }
 \description{
-Loads graphs from all files matching the given pattern in the given directory,
-converts them to indexed edge lists compatible with the ORCA fast orbit
-counting package and calculates the specified set of graphlet-based degree
-distributions usingthe ORCA package.
+Loads graphs from all files matching the given pattern in the given
+directory, converts them to indexed edge lists compatible with the ORCA fast
+orbit counting package and calculates the specified set of graphlet-based
+degree distributions usingthe ORCA package.
 }

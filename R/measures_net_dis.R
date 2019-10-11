@@ -613,17 +613,17 @@ netdis_centred_graphlet_counts <- function(
 #' generate a function for calculating expected ego-network graphlet counts
 #' from the statistics of a provided reference graph.
 #'
-#' @param ego_networks The number of steps from the source node to include
-#' node in ego-network.
+#' @param graphlet_counts Matrix of graphlet and node counts (columns) for a
+#' nummber of ego networks (rows).
 #' @param density_breaks Density values defining bin edges.
 #' @param density_binned_reference_counts Reference network graphlet counts for
 #' each density bin.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
 #' Only graphlets containing up to \code{max_graphlet_size} nodes are counted.
 #' @param scale_fn Optional function to scale calculated expected counts, taking
-#' \code{graph} and \code{max_graphlet_size} as arguments, and returning a scale
-#' factor that the looked up \code{density_binned_reference_counts} values will
-#' be multiplied by.
+#' \code{graphlet_counts} and \code{max_graphlet_size} as arguments,
+#' and returning a scale factor that the looked up
+#' \code{density_binned_reference_counts} values will be multiplied by.
 #'
 #' #' Temporarily accessible during development.
 #' TODO: Remove @export prior to publishing
@@ -654,8 +654,7 @@ netdis_expected_graphlet_counts_per_ego <- function(
 #' calculate expected graphlet counts for a query graph
 #' ego-network from the statistics of a provided reference
 #' graph.
-#' @param graph A connected, undirected, simple reference graph as an
-#' \code{igraph} object.
+#' @param graphlet_counts Node and graphlet counts for a graph.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
 #' Only graphlets containing up to \code{max_graphlet_size} nodes are counted.
 #' @param density_breaks Density values defining bin edges.
@@ -746,15 +745,15 @@ single_density_bin <- function(densities) {
 #' INTERNAL FUNCTION - Do not call directly
 #'
 #' Used to calculate expected graphlet counts for each density bin.
-#' @param graphlet_counts Graphlet counts for a number of ego_networks.
+#' @param graphlet_counts Graphlet and node counts (columns) for a number of
+#' ego_networks (rows).
 #' @param density_interval_indexes Density bin index for
 #' each ego network.
 #' @param agg_fn Function to aggregate counts in each bin
 #' (default \code{agg_fn = mean}).
 #' @param scale_fn Optional function to apply a transformation
-#' to graphlet_counts, must have arguments graphlet_counts,
-#' ego_networks and max_graphlet_size.
-#' @param ego_networks Optionally passed and used by scale_fn.
+#' to graphlet_counts, must have arguments graphlet_counts and
+#' max_graphlet_size.
 #' @param max_graphlet_size Optionally passed and used by scale_fn.
 #' @export
 density_binned_counts <- function(graphlet_counts,
@@ -868,7 +867,8 @@ scale_graphlet_count <- function(graphlet_count, graphlet_tuples) {
 
 
 #' Run count_graphlet_tuples across pre-computed ego networks.
-#' @param ego_networks Pre-generated ego networks for an input graph.
+#' @param graphlet_counts Matrix of graphlet and node counts (columns) for a
+#' number of ego networks (rows). 
 #' @param max_graphlet_size Determines the maximum size of graphlets included
 #' in the tuple counts.
 #' @export
@@ -927,8 +927,7 @@ scale_graphlet_counts_ego <- function(graphlet_counts,
 #' For each graphlet calculate the number of possible sets of k nodes in the
 #' query graph, where k is the number of nodes in the graphlet.
 #'
-#' @param graph A connected, undirected, simple graph as an \code{igraph}
-#' object.
+#' @param graph_graphlet_counts Node and graphlet counts for a single graph.
 #' @param max_graphlet_size Determines the maximum size of graphlets included
 #' in the tuple counts.
 #' @export

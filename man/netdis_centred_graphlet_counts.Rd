@@ -10,7 +10,7 @@ netdis_centred_graphlet_counts(graphlet_counts, exp_graphlet_counts,
 \arguments{
 \item{graphlet_counts}{Ego network graphlet counts for a query graph}
 
-\item{exp_graphlet_counts}{Pre-calculated expected counts for each graphlet 
+\item{exp_graphlet_counts}{Pre-calculated expected counts for each graphlet
 type for each ego network.}
 
 \item{max_graphlet_size}{max graphlet size to calculate centred counts for.}

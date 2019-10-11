@@ -8,7 +8,8 @@ density_binned_counts(graphlet_counts, density_interval_indexes,
   agg_fn = mean, scale_fn = NULL, max_graphlet_size = NULL)
 }
 \arguments{
-\item{graphlet_counts}{Graphlet counts for a number of ego_networks.}
+\item{graphlet_counts}{Graphlet and node counts (columns) for a number of
+ego_networks (rows).}
 
 \item{density_interval_indexes}{Density bin index for
 each ego network.}
@@ -17,12 +18,10 @@ each ego network.}
 (default \code{agg_fn = mean}).}
 
 \item{scale_fn}{Optional function to apply a transformation
-to graphlet_counts, must have arguments graphlet_counts,
-ego_networks and max_graphlet_size.}
+to graphlet_counts, must have arguments graphlet_counts and
+max_graphlet_size.}
 
 \item{max_graphlet_size}{Optionally passed and used by scale_fn.}
-
-\item{ego_networks}{Optionally passed and used by scale_fn.}
 }
 \description{
 Used to calculate expected graphlet counts for each density bin.

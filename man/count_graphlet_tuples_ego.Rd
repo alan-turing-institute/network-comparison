@@ -7,10 +7,11 @@
 count_graphlet_tuples_ego(graphlet_counts, max_graphlet_size)
 }
 \arguments{
+\item{graphlet_counts}{Matrix of graphlet and node counts (columns) for a
+number of ego networks (rows).}
+
 \item{max_graphlet_size}{Determines the maximum size of graphlets included
 in the tuple counts.}
-
-\item{ego_networks}{Pre-generated ego networks for an input graph.}
 }
 \description{
 Run count_graphlet_tuples across pre-computed ego networks.

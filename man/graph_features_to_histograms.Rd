@@ -8,7 +8,7 @@ each feature.}
 graph_features_to_histograms(features_matrix)
 }
 \arguments{
-\item{features_matrix}{A number of nodes (rows) by number of features 
+\item{features_matrix}{A number of nodes (rows) by number of features
 (columns) matrix, where the ij entry is the score of node i on feature j
 (e.g. for ORCA output this is counts of each graphlet or orbit at each
 graph vertex)}

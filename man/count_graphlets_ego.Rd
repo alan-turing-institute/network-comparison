@@ -8,10 +8,11 @@ count_graphlets_ego(graph, max_graphlet_size = 4, neighbourhood_size,
   min_ego_nodes = 3, min_ego_edges = 1, return_ego_networks = FALSE)
 }
 \arguments{
-\item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
+\item{graph}{A connected, undirected, simple graph as an \code{igraph} object}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
-Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
+Only graphlets containing up to \code{max_graphlet_size} nodes will be
+counted.}
 
 \item{neighbourhood_size}{The number of steps from the source node to include
 nodes for each ego-network.}

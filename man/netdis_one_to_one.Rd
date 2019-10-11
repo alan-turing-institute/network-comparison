@@ -20,12 +20,12 @@ netdis_one_to_one(graph_1 = NULL, graph_2 = NULL, ref_graph = 0,
 
 \item{graph_2}{A simplified igraph graph object.}
 
-\item{ref_graph}{Controls how expected counts are calculated. Either: 
-1) A numeric value - used as a constant expected counts value for all query 
+\item{ref_graph}{Controls how expected counts are calculated. Either:
+1) A numeric value - used as a constant expected counts value for all query
 graphs (DEFAULT: 0).
 2) A simplified \code{igraph} object - used as a reference graph from which
 expected counts are calculated for all query graphs.
-3) NULL - Expected counts will be calculated based on the properties of the 
+3) NULL - Expected counts will be calculated based on the properties of the
 query graphs themselves.}
 
 \item{max_graphlet_size}{Generate graphlets up to this size.}

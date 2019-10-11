@@ -20,12 +20,12 @@ netdis_many_to_many(graphs = NULL, ref_graph = 0,
 graphs excluding loops, multiple edges and isolated vertices), such as those
 obtained by using \code{read_simple_graphs}.}
 
-\item{ref_graph}{Controls how expected counts are calculated. Either: 
-1) A numeric value - used as a constant expected counts value for all query 
+\item{ref_graph}{Controls how expected counts are calculated. Either:
+1) A numeric value - used as a constant expected counts value for all query
 graphs (DEFAULT: 0).
 2) A simplified \code{igraph} object - used as a reference graph from which
 expected counts are calculated for all query graphs.
-3) NULL - Expected counts will be calculated based on the properties of the 
+3) NULL - Expected counts will be calculated based on the properties of the
 query graphs themselves.}
 
 \item{comparisons}{Which comparisons to perform between graphs.
@@ -64,7 +64,7 @@ Takes \code{ego_networks}, \code{density_bin_breaks},
 the original netdis paper).}
 
 \item{graphlet_counts}{Pre-generated graphlet counts. If the
-\code{graphlet_counts} argument is defined then \code{graphs} will not be 
+\code{graphlet_counts} argument is defined then \code{graphs} will not be
 used.
 A named list of matrices containing counts of each graphlet (columns) for
 each ego-network in the input graph (rows). Columns are labelled with
