@@ -1012,8 +1012,7 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
       max_graphlet_size,
       scale_fn = NULL
     )  
-  print(actual_expected_graphlet_counts_ego_o1)
-  print(expected_expected_graphlet_counts_ego_o1)  
+ 
   # Compare actual to expected
   expect_equal(
     actual_expected_graphlet_counts_ego_o1,
