@@ -681,7 +681,7 @@ netdis_expected_graphlet_counts <- function(graphlet_counts,
 
   matched_reference_counts <-
     density_binned_reference_counts[matched_density_index, ]
-  
+  rownames(matched_reference_counts) <- rownames(graphlet_counts)
   if (!is.null(scale_fn)) {
     # Scale reference counts e.g. by multiplying the
     # reference count for each graphlet by the number

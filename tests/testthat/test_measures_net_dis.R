@@ -868,16 +868,16 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
   min_ego_edges <- 0
   min_ego_nodes <- 0
   
-  # Make graph ego networks
-  ego_networks_o1 <- make_named_ego_graph(graph,
-                                          order = 1,
-                                          min_ego_edges = min_ego_edges,
-                                          min_ego_nodes = min_ego_nodes
+  # Get ego network graphlet counts
+  graphlet_counts_ego_o1 <- count_graphlets_ego(graph,
+                                                neighbourhood_size = 1,
+                                                min_ego_edges = min_ego_edges,
+                                                min_ego_nodes = min_ego_nodes
   )
-  ego_networks_o2 <- make_named_ego_graph(graph,
-                                          order = 2,
-                                          min_ego_edges = min_ego_edges,
-                                          min_ego_nodes = min_ego_nodes
+  graphlet_counts_ego_o2 <- count_graphlets_ego(graph,
+                                                neighbourhood_size = 2,
+                                                min_ego_edges = min_ego_edges,
+                                                min_ego_nodes = min_ego_nodes
   )
   # Set manually-verified node counts and densities
   # 1. Ego-networks of order 1
@@ -909,6 +909,7 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
     c(81, 82, 83, 84, 85, 86, 87, 88, 89),
     c(91, 92, 93, 94, 95, 96, 97, 98, 99)
   )
+  colnames(scaled_reference_counts) <- graphlet_labels
   expected_dims <- dim(scaled_reference_counts)
   min_ego_nodes <- 3
   min_ego_edges <- 1
@@ -937,13 +938,13 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
   colnames(expected_expected_graphlet_counts_ego_o1) <- graphlet_labels
   colnames(expected_expected_graphlet_counts_ego_o2) <- graphlet_labels
   # Set row labels to ego network names
-  rownames(expected_expected_graphlet_counts_ego_o1) <- names(ego_networks_o1)
-  rownames(expected_expected_graphlet_counts_ego_o2) <- names(ego_networks_o2)
+  rownames(expected_expected_graphlet_counts_ego_o1) <- rownames(graphlet_counts_ego_o1)
+  rownames(expected_expected_graphlet_counts_ego_o2) <- rownames(graphlet_counts_ego_o1)
   
   # Calculate actual output of function under test
   actual_expected_graphlet_counts_ego_o1 <-
     netdis_expected_graphlet_counts_per_ego(
-      ego_networks_o1,
+      graphlet_counts_ego_o1,
       breaks,
       scaled_reference_counts,
       max_graphlet_size,
@@ -951,13 +952,13 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
     )
   actual_expected_graphlet_counts_ego_o2 <-
     netdis_expected_graphlet_counts_per_ego(
-      ego_networks_o2,
+      graphlet_counts_ego_o2,
       breaks,
       scaled_reference_counts,
       max_graphlet_size,
       scale_fn = count_graphlet_tuples
     )
-  
+
   # Compare actual to expected
   expect_equal(
     actual_expected_graphlet_counts_ego_o1,
@@ -991,13 +992,13 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
   colnames(expected_expected_graphlet_counts_ego_o1) <- graphlet_labels
   colnames(expected_expected_graphlet_counts_ego_o2) <- graphlet_labels
   # Set row labels to ego network names
-  rownames(expected_expected_graphlet_counts_ego_o1) <- names(ego_networks_o1)
-  rownames(expected_expected_graphlet_counts_ego_o2) <- names(ego_networks_o2)
+  rownames(expected_expected_graphlet_counts_ego_o1) <- rownames(graphlet_counts_ego_o1)
+  rownames(expected_expected_graphlet_counts_ego_o2) <- rownames(graphlet_counts_ego_o2)
   
   # Calculate actual output of function under test
   actual_expected_graphlet_counts_ego_o1 <-
     netdis_expected_graphlet_counts_per_ego(
-      ego_networks_o1,
+      graphlet_counts_ego_o1,
       breaks,
       scaled_reference_counts,
       max_graphlet_size,
@@ -1005,12 +1006,14 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
     )
   actual_expected_graphlet_counts_ego_o2 <-
     netdis_expected_graphlet_counts_per_ego(
-      ego_networks_o2,
+      graphlet_counts_ego_o2,
       breaks,
       scaled_reference_counts,
       max_graphlet_size,
       scale_fn = NULL
     )  
+  print(actual_expected_graphlet_counts_ego_o1)
+  print(expected_expected_graphlet_counts_ego_o1)  
   # Compare actual to expected
   expect_equal(
     actual_expected_graphlet_counts_ego_o1,
