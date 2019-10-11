@@ -2,15 +2,15 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{ego_network_density}
 \alias{ego_network_density}
-\title{FLAGUSED
-Calculate ego network edge densities.}
+\title{Calculate ego network edge densities.}
 \usage{
-ego_network_density(ego_networks)
+ego_network_density(graphlet_counts)
 }
 \arguments{
-\item{ego_networks}{Pre-generated ego networks for an input graph.}
+\item{graphlet_counts}{Matrix of pre-generated graphlet, edge and node counts
+(columns) for each ego network (rows). Columns must include "N" (node counts)
+and "G0" (edge counts).}
 }
 \description{
-FLAGUSED
 Calculate ego network edge densities.
 }

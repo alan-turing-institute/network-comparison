@@ -49,7 +49,6 @@ graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graph
 
 ## ------------------------------------------------------------------------
 # Load reference graph
-# JACK - need to deal with case where ref graph not used.
 ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
                         package = "netdist")
 ref_graph <- read_simple_graph(ref_path, format = "ncol")
@@ -63,12 +62,12 @@ graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_g
 
 # Scale ego-network graphlet counts by dividing by total number of k-tuples in
 # ego-network (where k is graphlet size)
-scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(ego_ref, 
-                                                        graphlet_counts_ref, 
+scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(graphlet_counts_ref, 
                                                         max_graphlet_size)
 
+
 # Get ego-network densities
-densities_ref <- ego_network_density(ego_ref)
+densities_ref <- ego_network_density(graphlet_counts_ref)
 
 # Adaptively bin ref ego-network densities
 binned_densities <- binned_densities_adaptive(densities_ref, 
@@ -85,23 +84,27 @@ ref_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
 
 ## ------------------------------------------------------------------------
 # Calculate expected graphlet counts (using ref graph ego network density bins)
-exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(ego_1, 
+exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(graphlet_counts_1, 
                                                                  ref_ego_density_bins, 
                                                                  ref_binned_graphlet_counts,
                                                                  max_graphlet_size,
                                                                  scale_fn=count_graphlet_tuples)
 
 
-exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(ego_2, 
+exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(graphlet_counts_2, 
                                                                  ref_ego_density_bins, 
                                                                  ref_binned_graphlet_counts,
                                                                  max_graphlet_size,
                                                                  scale_fn=count_graphlet_tuples)
 
 # Centre graphlet counts by subtracting expected counts
-centred_graphlet_counts_1 <- graphlet_counts_1 - exp_graphlet_counts_1
+centred_graphlet_counts_1 <- netdis_centred_graphlet_counts(graphlet_counts_1,
+                                                            exp_graphlet_counts_1,
+                                                            max_graphlet_size)
 
-centred_graphlet_counts_2 <- graphlet_counts_2 - exp_graphlet_counts_2
+centred_graphlet_counts_2 <- netdis_centred_graphlet_counts(graphlet_counts_2,
+                                                            exp_graphlet_counts_2,
+                                                            max_graphlet_size)
 
 ## ------------------------------------------------------------------------
 sum_graphlet_counts_1 <- colSums(centred_graphlet_counts_1)

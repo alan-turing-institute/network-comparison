@@ -2,36 +2,43 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis_one_to_many}
 \alias{netdis_one_to_many}
-\title{FLAGUSED
-Netdis comparisons between one graph and many other graphs}
+\title{Netdis comparisons between one graph and many other graphs.}
 \usage{
-netdis_one_to_many(graph_1, graphs_compare, ref_graph,
-  max_graphlet_size = 4, neighbourhood_size = 2, min_ego_nodes = 3,
-  min_ego_edges = 1,
+netdis_one_to_many(graph_1 = NULL, graphs_compare = NULL,
+  ref_graph = 0, max_graphlet_size = 4, neighbourhood_size = 2,
+  min_ego_nodes = 3, min_ego_edges = 1,
   binning_fn = purrr::partial(binned_densities_adaptive,
   min_counts_per_interval = 5, num_intervals = 100),
   bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean,
   scale_fn = scale_graphlet_counts_ego),
   exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego,
-  scale_fn = count_graphlet_tuples))
+  scale_fn = count_graphlet_tuples), graphlet_counts_1 = NULL,
+  graphlet_counts_compare = NULL)
 }
 \arguments{
-\item{graph_1}{query graph - this graph will be compared with
-all graphs in graphs_compare}
+\item{graph_1}{Query graph - this graph will be compared with
+all graphs in graphs_compare. A simplified igraph graph object.}
 
-\item{graphs_compare}{graphs graph_1 will be compared with}
+\item{graphs_compare}{Graphs graph_1 will be compared with. A named list of
+simplified igraph graph objects.}
 
-\item{ref_graph}{Reference graph}
+\item{ref_graph}{Controls how expected counts are calculated. Either: 
+1) A numeric value - used as a constant expected counts value for all query 
+graphs (DEFAULT: 0).
+2) A simplified \code{igraph} object - used as a reference graph from which
+expected counts are calculated for all query graphs.
+3) NULL - Expected counts will be calculated based on the properties of the 
+query graphs themselves.}
 
-\item{max_graphlet_size}{Generate graphlets up to this size}
+\item{max_graphlet_size}{Generate graphlets up to this size.}
 
-\item{neighbourhood_size}{Ego network neighbourhood size}
+\item{neighbourhood_size}{Ego network neighbourhood size.}
 
 \item{min_ego_nodes}{Filter ego networks which have fewer
-than min_ego_nodes nodes}
+than min_ego_nodes nodes.}
 
 \item{min_ego_edges}{Filter ego networks which have fewer
-than min_ego_edges edges}
+than min_ego_edges edges.}
 
 \item{binning_fn}{Function used to bin ego network densities. Takes densities
 as its single argument, and returns a named list including keys \code{breaks}
@@ -41,7 +48,7 @@ ego network). (Default: \code{binned_densities_adaptive} with
 
 \item{bin_counts_fn}{Function used to calculate expected graphlet counts in
 each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-(bin indexes), \code{ego_networks} and \code{max_graphlet_size} as arguments.
+(bin indexes) and \code{max_graphlet_size} as arguments.
 (Default: \code{density_binned_counts} with \code{agg_fn = mean} and
 \code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
 approach used in the original netdis paper).}
@@ -53,12 +60,19 @@ Takes \code{ego_networks}, \code{density_bin_breaks},
 (Default: \code{netdis_expected_graphlet_counts_per_ego} with
 \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 the original netdis paper).}
+
+\item{graphlet_counts_1}{Pre-generated graphlet counts for the first query
+graph. If the \code{graphlet_counts_1} argument is defined then
+\code{graph_1} will not be used.}
+
+\item{graphlet_counts_compare}{Named list of pre-generated graphlet counts
+for the remaining query graphs. If the \code{graphlet_counts_compare}
+argument is defined then \code{graphs_compare} will not be used.}
 }
 \value{
 Netdis statistics between graph_1 and graph_2 for graphlet sizes
 up to and including max_graphlet_size
 }
 \description{
-FLAGUSED
-Netdis comparisons between one graph and many other graphs
+Netdis comparisons between one graph and many other graphs.
 }

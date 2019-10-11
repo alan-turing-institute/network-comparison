@@ -2,21 +2,19 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{count_graphlet_tuples}
 \alias{count_graphlet_tuples}
-\title{FLAGUSED
-For each graphlet calculate the number of possible sets of k nodes in the
+\title{For each graphlet calculate the number of possible sets of k nodes in the
 query graph, where k is the number of nodes in the graphlet.}
 \usage{
-count_graphlet_tuples(graph, max_graphlet_size)
+count_graphlet_tuples(graph_graphlet_counts, max_graphlet_size)
 }
 \arguments{
-\item{graph}{A connected, undirected, simple graph as an \code{igraph}
-object.}
-
 \item{max_graphlet_size}{Determines the maximum size of graphlets included
 in the tuple counts.}
+
+\item{graph}{A connected, undirected, simple graph as an \code{igraph}
+object.}
 }
 \description{
-FLAGUSED
 For each graphlet calculate the number of possible sets of k nodes in the
 query graph, where k is the number of nodes in the graphlet.
 }

@@ -2,8 +2,7 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis}
 \alias{netdis}
-\title{FLAGUSED
-Netdis}
+\title{Netdis}
 \usage{
 netdis(centred_graphlet_counts1, centred_graphlet_counts2, graphlet_size)
 }

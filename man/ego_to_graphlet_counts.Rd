@@ -2,11 +2,7 @@
 % Please edit documentation in R/orca_interface.R
 \name{ego_to_graphlet_counts}
 \alias{ego_to_graphlet_counts}
-\title{FLAGUSED
-ego_to_graphlet_counts
-JACK To follow through logic of paper steps, wanted to pass
-ego networks to the function for generating graphlet counts,
-not the input query graph directly (as in count_graphlets_ego above).}
+\title{ego_to_graphlet_counts}
 \usage{
 ego_to_graphlet_counts(ego_networks, max_graphlet_size = 4)
 }

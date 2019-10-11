@@ -2,18 +2,16 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{count_graphlet_tuples_ego}
 \alias{count_graphlet_tuples_ego}
-\title{FLAGUSED
-Run count_graphlet_tuples across pre-computed ego networks.}
+\title{Run count_graphlet_tuples across pre-computed ego networks.}
 \usage{
-count_graphlet_tuples_ego(ego_networks, max_graphlet_size)
+count_graphlet_tuples_ego(graphlet_counts, max_graphlet_size)
 }
 \arguments{
-\item{ego_networks}{Pre-generated ego networks for an input graph.}
-
 \item{max_graphlet_size}{Determines the maximum size of graphlets included
 in the tuple counts.}
+
+\item{ego_networks}{Pre-generated ego networks for an input graph.}
 }
 \description{
-FLAGUSED
 Run count_graphlet_tuples across pre-computed ego networks.
 }

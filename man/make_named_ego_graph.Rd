@@ -2,8 +2,7 @@
 % Please edit documentation in R/orca_interface.R
 \name{make_named_ego_graph}
 \alias{make_named_ego_graph}
-\title{FLAGUSED
-Get ego-networks for a graph as a named list}
+\title{Get ego-networks for a graph as a named list}
 \usage{
 make_named_ego_graph(graph, order, min_ego_nodes = 3,
   min_ego_edges = 1, ...)

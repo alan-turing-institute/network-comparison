@@ -52,8 +52,8 @@ graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graph
 ## ------------------------------------------------------------------------
 
 # Get ego-network densities
-densities_1 <- ego_network_density(ego_1)
-densities_2 <- ego_network_density(ego_2)
+densities_1 <- ego_network_density(graphlet_counts_1)
+densities_2 <- ego_network_density(graphlet_counts_2)
 
 # Adaptively bin ego-network densities
 binned_densities_1 <- binned_densities_adaptive(densities_1, 
@@ -122,22 +122,26 @@ binned_graphlet_counts_2 <- density_binned_counts_gp(graphlet_counts_2,
 
 ## ------------------------------------------------------------------------
 # Calculate expected graphlet counts for each ego network
-exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(ego_1, 
+exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(graphlet_counts_1, 
                                                                  ego_density_bins_1, 
                                                                  binned_graphlet_counts_1,
                                                                  max_graphlet_size,
                                                                  scale_fn = NULL)
 
 
-exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(ego_2, 
+exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(graphlet_counts_2, 
                                                                  ego_density_bins_2, 
                                                                  binned_graphlet_counts_2,
                                                                  max_graphlet_size,
                                                                  scale_fn = NULL)
 # Centre graphlet counts by subtracting expected counts
-centred_graphlet_counts_1 <- graphlet_counts_1 - exp_graphlet_counts_1
+centred_graphlet_counts_1 <- netdis_centred_graphlet_counts(graphlet_counts_1,
+                                                            exp_graphlet_counts_1,
+                                                            max_graphlet_size)
 
-centred_graphlet_counts_2 <- graphlet_counts_2 - exp_graphlet_counts_2
+centred_graphlet_counts_2 <- netdis_centred_graphlet_counts(graphlet_counts_2,
+                                                            exp_graphlet_counts_2,
+                                                            max_graphlet_size)
 
 ## ------------------------------------------------------------------------
 sum_graphlet_counts_1 <- colSums(centred_graphlet_counts_1)

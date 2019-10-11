@@ -2,8 +2,7 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{density_binned_counts_gp}
 \alias{density_binned_counts_gp}
-\title{FLAGUSED
-Calculate expected counts in density bins using
+\title{Calculate expected counts in density bins using
 geometric poisson (Polya-Aeppli) approximation.}
 \usage{
 density_binned_counts_gp(graphlet_counts, density_interval_indexes,
@@ -19,7 +18,6 @@ each ego network.}
 included in graphlet_counts.}
 }
 \description{
-FLAGUSED
 Calculate expected counts in density bins using
 geometric poisson (Polya-Aeppli) approximation.
 }

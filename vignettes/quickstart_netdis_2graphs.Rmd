@@ -71,7 +71,6 @@ graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graph
 ## Use a reference graph to calculate expected graphlet counts in ego network density bins
 ```{r}
 # Load reference graph
-# JACK - need to deal with case where ref graph not used.
 ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
                         package = "netdist")
 ref_graph <- read_simple_graph(ref_path, format = "ncol")

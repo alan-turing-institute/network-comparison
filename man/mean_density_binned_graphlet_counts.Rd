@@ -2,8 +2,7 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{mean_density_binned_graphlet_counts}
 \alias{mean_density_binned_graphlet_counts}
-\title{FLAGUSED
-INTERNAL FUNCTION - Do not call directly}
+\title{INTERNAL FUNCTION - Do not call directly}
 \usage{
 mean_density_binned_graphlet_counts(graphlet_counts,
   density_interval_indexes, agg_fn = mean)

@@ -2,16 +2,12 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis_expected_graphlet_counts_per_ego}
 \alias{netdis_expected_graphlet_counts_per_ego}
-\title{FLAGUSED
-INTERNAL FUNCTION - Do not call directly}
+\title{INTERNAL FUNCTION - Do not call directly}
 \usage{
-netdis_expected_graphlet_counts_per_ego(ego_networks, density_breaks,
+netdis_expected_graphlet_counts_per_ego(graphlet_counts, density_breaks,
   density_binned_reference_counts, max_graphlet_size, scale_fn = NULL)
 }
 \arguments{
-\item{ego_networks}{The number of steps from the source node to include
-node in ego-network.}
-
 \item{density_breaks}{Density values defining bin edges.}
 
 \item{density_binned_reference_counts}{Reference network graphlet counts for
@@ -27,13 +23,11 @@ be multiplied by.
 
 #' Temporarily accessible during development.
 TODO: Remove @export prior to publishing}
+
+\item{ego_networks}{The number of steps from the source node to include
+node in ego-network.}
 }
 \description{
-JACK To follow through logic of paper steps, wanted to pass
-ego networks to the function, not the input query graph
-(as in netdis_expected_graphlet_counts_ego above).
-}
-\details{
 Used by \code{netdis_expected_graphlet_counts_ego_fn} to
 generate a function for calculating expected ego-network graphlet counts
 from the statistics of a provided reference graph.

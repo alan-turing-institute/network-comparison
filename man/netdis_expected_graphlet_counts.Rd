@@ -2,16 +2,12 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis_expected_graphlet_counts}
 \alias{netdis_expected_graphlet_counts}
-\title{FLAGUSED
-INTERNAL FUNCTION - Do not call directly}
+\title{INTERNAL FUNCTION - Do not call directly}
 \usage{
-netdis_expected_graphlet_counts(graph, max_graphlet_size, density_breaks,
-  density_binned_reference_counts, scale_fn = NULL)
+netdis_expected_graphlet_counts(graphlet_counts, max_graphlet_size,
+  density_breaks, density_binned_reference_counts, scale_fn = NULL)
 }
 \arguments{
-\item{graph}{A connected, undirected, simple reference graph as an
-\code{igraph} object.}
-
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
 
@@ -26,6 +22,9 @@ factor that the looked up \code{density_binned_reference_counts} values will
 be multiplied by.
 Temporarily accessible during development.
 TODO: Remove @export prior to publishing}
+
+\item{graph}{A connected, undirected, simple reference graph as an
+\code{igraph} object.}
 }
 \description{
 Used by \code{netdis_expected_graphlet_counts_ego} to

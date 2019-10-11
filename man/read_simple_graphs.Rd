@@ -2,8 +2,7 @@
 % Please edit documentation in R/orca_interface.R
 \name{read_simple_graphs}
 \alias{read_simple_graphs}
-\title{FLAGUSED
-Read all graphs in a directory, simplifying as requested}
+\title{Read all graphs in a directory, simplifying as requested}
 \usage{
 read_simple_graphs(source_dir, format = "ncol", pattern = "*",
   as_undirected = TRUE, remove_loops = TRUE, remove_multiple = TRUE,

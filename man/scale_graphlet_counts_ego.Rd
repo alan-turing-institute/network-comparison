@@ -2,26 +2,24 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{scale_graphlet_counts_ego}
 \alias{scale_graphlet_counts_ego}
-\title{FLAGUSED
-Scale graphlet counts for an ego network by the n choose k possible
+\title{Scale graphlet counts for an ego network by the n choose k possible
 choices of k nodes in that ego-network, where n is the number of nodes
 in the ego network and k is the number of nodes in the graphlet.}
 \usage{
-scale_graphlet_counts_ego(ego_networks, graphlet_counts, max_graphlet_size)
+scale_graphlet_counts_ego(graphlet_counts, max_graphlet_size)
 }
 \arguments{
-\item{ego_networks}{Pre-generated ego networks for an input graph.}
-
 \item{graphlet_counts}{Pre-calculated graphlet counts for each ego_network.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets included
 in graphlet_counts.}
+
+\item{ego_networks}{Pre-generated ego networks for an input graph.}
 }
 \value{
 scaled graphlet counts.
 }
 \description{
-FLAGUSED
 Scale graphlet counts for an ego network by the n choose k possible
 choices of k nodes in that ego-network, where n is the number of nodes
 in the ego network and k is the number of nodes in the graphlet.

@@ -2,8 +2,7 @@
 % Please edit documentation in R/orca_interface.R
 \name{graphlet_ids_for_size}
 \alias{graphlet_ids_for_size}
-\title{FLAGUSED
-Graphlet IDs for size}
+\title{Graphlet IDs for size}
 \usage{
 graphlet_ids_for_size(graphlet_size)
 }

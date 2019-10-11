@@ -2,12 +2,10 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{density_binned_counts}
 \alias{density_binned_counts}
-\title{FLAGUSED
-INTERNAL FUNCTION - Do not call directly}
+\title{INTERNAL FUNCTION - Do not call directly}
 \usage{
 density_binned_counts(graphlet_counts, density_interval_indexes,
-  agg_fn = mean, scale_fn = NULL, ego_networks = NULL,
-  max_graphlet_size = NULL)
+  agg_fn = mean, scale_fn = NULL, max_graphlet_size = NULL)
 }
 \arguments{
 \item{graphlet_counts}{Graphlet counts for a number of ego_networks.}
@@ -22,9 +20,9 @@ each ego network.}
 to graphlet_counts, must have arguments graphlet_counts,
 ego_networks and max_graphlet_size.}
 
-\item{ego_networks}{Optionally passed and used by scale_fn.}
-
 \item{max_graphlet_size}{Optionally passed and used by scale_fn.}
+
+\item{ego_networks}{Optionally passed and used by scale_fn.}
 }
 \description{
 Used to calculate expected graphlet counts for each density bin.
