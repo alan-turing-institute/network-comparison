@@ -178,21 +178,22 @@ test_that("Ego-network 4-node density values match manually verified totals", {
   # Order 2 expected densities should be:
   # 0.33, 0.38, 0.50, 0.36, 0.50, 0.46, 0.46, 0.52, 0.60, 0.60
   
-  # Generate order 1 and 2 ego networks with previously tested function
-  ego_networks_o1 <- make_named_ego_graph(graph,
-                       order = 1,
+  # Generate order 1 and 2 ego network graphlet counts
+  # with previously tested function
+  graphlet_counts_ego_o1 <- count_graphlets_ego(graph,
+                       neighbourhood_size = 1,
                        min_ego_edges = min_ego_edges,
                        min_ego_nodes = min_ego_nodes
   )
-  ego_networks_o2 <- make_named_ego_graph(graph,
-                        order = 2,
+  graphlet_counts_ego_o2 <- count_graphlets_ego(graph,
+                        neighbourhood_size = 2,
                         min_ego_edges = min_ego_edges,
                         min_ego_nodes = min_ego_nodes
   )
   
   # Calculate densities
-  actual_densities_o1 <- ego_network_density(ego_networks_o1)
-  actual_densities_o2 <- ego_network_density(ego_networks_o2)
+  actual_densities_o1 <- ego_network_density(graphlet_counts_ego_o1)
+  actual_densities_o2 <- ego_network_density(graphlet_counts_ego_o2)
 
   # Check densities match expected values
   expect_equal(actual_densities_o1, expected_densities_o1)
