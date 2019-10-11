@@ -1215,10 +1215,10 @@ test_that("count_graphlets_for_graph works", {
   graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
 
   # Setgraphlet labels to use for names in expected counts
-  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  graphlet_labels <- c("N", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
 
   # Manually verified graphlet counts
-  expected_counts <- c(15, 18, 6, 21, 3, 1, 11, 1, 1)
+  expected_counts <- c(10, 15, 18, 6, 21, 3, 1, 11, 1, 1)
   names(expected_counts) <- graphlet_labels
 
   # Test

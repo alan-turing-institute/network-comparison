@@ -12,6 +12,12 @@ test_that(test_message, {
   graph_n11 <- igraph::erdos.renyi.game(11, p = 1, type = "gnp")
   graph_n37 <- igraph::erdos.renyi.game(37, p = 1, type = "gnp")
   graph_n73 <- igraph::erdos.renyi.game(73, p = 1, type = "gnp")
+  
+  # calculate graphlet counts object using previously tested function
+  graphlet_counts_n11 <- count_graphlets_for_graph(graph_n11, 5)
+  graphlet_counts_n37 <- count_graphlets_for_graph(graph_n37, 5)
+  graphlet_counts_n73 <- count_graphlets_for_graph(graph_n73, 5)
+  
   # Calculate expected graph tuple count for graphlets of various sizes. There
   # is 1 graphlet of size 1, 2 of size 3, 6 of size 4, and 21 of size 5
   graphlet_tuple_counts <- function(n, max_graphlet_size) {
@@ -39,13 +45,15 @@ test_that(test_message, {
   expected_tuple_count_n11_gs5 <- graphlet_tuple_counts(11, 5)
   expected_tuple_count_n37_gs5 <- graphlet_tuple_counts(37, 5)
   expected_tuple_count_n73_gs5 <- graphlet_tuple_counts(73, 5)
+  
   # Generate actual tuple counts for graphlets up to size 4 and 5
-  actual_tuple_count_n11_gs4 <- count_graphlet_tuples(graph_n11, 4)
-  actual_tuple_count_n37_gs4 <- count_graphlet_tuples(graph_n37, 4)
-  actual_tuple_count_n73_gs4 <- count_graphlet_tuples(graph_n73, 4)
-  actual_tuple_count_n11_gs5 <- count_graphlet_tuples(graph_n11, 5)
-  actual_tuple_count_n37_gs5 <- count_graphlet_tuples(graph_n37, 5)
-  actual_tuple_count_n73_gs5 <- count_graphlet_tuples(graph_n73, 5)
+  actual_tuple_count_n11_gs4 <- count_graphlet_tuples(graphlet_counts_n11, 4)
+  actual_tuple_count_n37_gs4 <- count_graphlet_tuples(graphlet_counts_n37, 4)
+  actual_tuple_count_n73_gs4 <- count_graphlet_tuples(graphlet_counts_n73, 4)
+  actual_tuple_count_n11_gs5 <- count_graphlet_tuples(graphlet_counts_n11, 5)
+  actual_tuple_count_n37_gs5 <- count_graphlet_tuples(graphlet_counts_n37, 5)
+  actual_tuple_count_n73_gs5 <- count_graphlet_tuples(graphlet_counts_n73, 5)
+  
   # Compare expected tuple counts with actual
   expect_equal(expected_tuple_count_n11_gs4, actual_tuple_count_n11_gs4)
   expect_equal(expected_tuple_count_n37_gs4, actual_tuple_count_n37_gs4)
@@ -57,18 +65,19 @@ test_that(test_message, {
   # === TEST count_graphlet_tuples_ego ===
   # NOTE: This test is not amazing, as graphlet_tuple_counts_ego is very similar
   # to the method under test. However, it's a simple method so maybe that's ok?
-  graphlet_tuple_counts_ego <- function(ego_networks, max_graphlet_size) {
-    t(sapply(ego_networks, FUN = function(g) {
-      graphlet_tuple_counts(length(igraph::V(g)), max_graphlet_size)
-    }))
+  graphlet_tuple_counts_ego <- function(graphlet_counts_ego, max_graphlet_size) {
+    t(apply(graphlet_counts_ego, 1,
+            count_graphlet_tuples, max_graphlet_size = max_graphlet_size))
+    
   }
-  # Generate ego networks for each graph
-  graph_n11_ego1 <- make_named_ego_graph(graph_n11, order = 1)
-  graph_n37_ego1 <- make_named_ego_graph(graph_n37, order = 1)
-  graph_n73_ego1 <- make_named_ego_graph(graph_n73, order = 1)
-  graph_n11_ego2 <- make_named_ego_graph(graph_n11, order = 2)
-  graph_n37_ego2 <- make_named_ego_graph(graph_n37, order = 2)
-  graph_n73_ego2 <- make_named_ego_graph(graph_n73, order = 2)
+  # Generate ego network graphlet counts for each graph
+  graph_n11_ego1 <- count_graphlets_ego(graph_n11, neighbourhood_size = 1)
+  graph_n37_ego1 <- count_graphlets_ego(graph_n37, neighbourhood_size = 1)
+  graph_n73_ego1 <- count_graphlets_ego(graph_n73, neighbourhood_size = 1)
+  graph_n11_ego2 <- count_graphlets_ego(graph_n11, neighbourhood_size = 2)
+  graph_n37_ego2 <- count_graphlets_ego(graph_n37, neighbourhood_size = 2)
+  graph_n73_ego2 <- count_graphlets_ego(graph_n73, neighbourhood_size = 2)
+  
   # Generate expected tuple counts for graphlets up to size 4 and 5
   # 1. For ego-networks of order 1
   expected_tuple_count_n11_ego1_gs4 <- graphlet_tuple_counts_ego(graph_n11_ego1, 4)
@@ -102,7 +111,6 @@ test_that(test_message, {
   actual_tuple_count_n73_ego2_gs5 <- count_graphlet_tuples_ego(graph_n73_ego2, 5)
 
   # Compare expected with actual
-  # 1. For ego-networks of order 1
   expect_equal(expected_tuple_count_n11_ego1_gs4, actual_tuple_count_n11_ego1_gs4)
   expect_equal(expected_tuple_count_n37_ego1_gs4, actual_tuple_count_n37_ego1_gs4)
   expect_equal(expected_tuple_count_n73_ego1_gs4, actual_tuple_count_n73_ego1_gs4)

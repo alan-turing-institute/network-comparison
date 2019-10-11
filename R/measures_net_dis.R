@@ -947,5 +947,5 @@ count_graphlet_tuples <- function(graph_graphlet_counts, max_graphlet_size) {
   )
   
   # add node counts back to object
-  graphlet_tuple_counts <- c(N, graphlet_tuple_counts)
+  # graphlet_tuple_counts <- c(N, graphlet_tuple_counts)
 }

@@ -328,7 +328,12 @@ count_graphlets_for_graph <- function(graph, max_graphlet_size) {
   # the graphlet counts by the number of nodes that contribute to
   # each graphlet type
   nodes_per_graphlet <- graphlet_key(max_graphlet_size)$node_count
-  return(total_counts / nodes_per_graphlet)
+  total_counts <- total_counts / nodes_per_graphlet
+  
+  # add overall graph node count to total_counts
+  N <- igraph::vcount(graph)
+  total_counts <- c(N = N, total_counts)
+  total_counts
 }
 
 #' Ego-network graphlet counts
@@ -379,14 +384,6 @@ count_graphlets_ego <- function(graph, max_graphlet_size = 4, neighbourhood_size
   }
 }
 
-#' ego_network_node_counts
-#'
-#' Calculates number of nodes in each ego network.
-#' @param ego_networks Named list of ego networks for a graph.
-ego_network_node_counts <- function(ego_networks) {
-  simplify2array(purrr::map(ego_networks, igraph::vcount))
-}
-
 #' ego_to_graphlet_counts
 #'
 #' Calculates graphlet counts for previously generated ego networks.
@@ -409,10 +406,6 @@ ego_to_graphlet_counts <- function(ego_networks, max_graphlet_size = 4) {
   # ORCA format graphlet count matrix with one row per node
   ego_graphlet_counts <- t(simplify2array(ego_graphlet_counts))
   
-  # Add node counts column
-  N <- ego_network_node_counts(ego_networks)
-  ego_graphlet_counts <- cbind(N, ego_graphlet_counts)
-
   # Return graphlet counts
   return(ego_graphlet_counts)
 }
