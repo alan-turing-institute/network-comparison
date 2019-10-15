@@ -1234,3 +1234,96 @@ test_that("netdis_one_to_many gives expected result", {
   # Check results as expected
   expect_equal(expected_netdis, actual_netdis, tolerance = .001, scale = 1)
 })
+
+context("Netdis: error if no query graphs or graphlet counts provided")
+test_that("netdis functions error when no query graphs provided", {
+  # dummy values to use for other parameters
+  ref_graph <- NULL
+  max_graphlet_size <- 4
+  neighbourhood_size <- 2
+  min_ego_nodes <- 3
+  min_ego_edges <- 1
+  comparisons <- "many-to-many"
+  
+  # one to one function
+  expect_error(
+    netdis_one_to_one(
+      graph_1 = NULL,
+      graph_2 = NULL,
+      ref_graph = ref_graph,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      graphlet_counts_1 = NULL,
+      graphlet_counts_2 = NULL
+    )
+  )
+
+  # one to many function
+  expect_error(
+    netdis_one_to_many(
+      graph_1 = NULL,
+      graphs_compare = NULL,
+      ref_graph = ref_graph,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      graphlet_counts_1 = NULL,
+      graphlet_counts_compare = NULL
+    )
+  )
+  
+  # many to many function
+  expect_error(
+    netdis_many_to_many(
+      graphs = NULL,
+      comparisons = comparisons,
+      ref_graph = ref_graph,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      graphlet_counts = NULL
+    )
+  )
+})
+
+context("Netdis: constant expected counts")
+test_that("netdis_many_to_many correctly interprets numeric ref_graph value", {
+  # TODO
+  
+})
+
+context("Netdis: expected counts using query networks")
+test_that("netdis_many_to_many calculates expected counts from query networks if
+          ref_graph is NULL", {
+  # TODO
+  
+})
+
+context("Netdis: error if max_graphlet_size is not 3, 4 or 5")
+test_that("netdis_uptok errors for unsupported max_graphlet_size", {
+  # dummy counts values
+  counts_1 <- c(11, 11, 13, 9, 12, 10, 14, 9, 13, 10, 10, 7, 9, 12, 6, 12, 9, 12,
+                9, 7, 15, 7, 5, 12, 16, 10, 10, 8, 9, 14)
+  counts_2 <- c(12, 11,  6, 10, 15,  7, 10,  8,  7,  7,  7, 13,  9, 14,  7, 12,
+                7, 10,  9, 11,  7,  7, 11,  8, 10, 14,  8, 16, 14, 10)
+  ids <- graphlet_key(5)$id
+  names(counts_1) <- ids
+  names(counts_2) <- ids
+  
+  # graphlet size greater than 5
+  expect_error(netdis_uptok(counts_1, counts_2, 6))
+  
+  #  graphlet size less than 3
+  expect_error(netdis_uptok(counts_1, counts_2, 2))
+  
+})
+
+context("Netdis: works correctly when using a single density bin")
+test_that("netdis single density bin works correctly", {
+            # TODO
+            
+})
