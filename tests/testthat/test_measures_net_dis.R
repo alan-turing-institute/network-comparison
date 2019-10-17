@@ -1245,10 +1245,29 @@ test_that("netdis functions error when no query graphs provided", {
   min_ego_edges <- 1
   comparisons <- "many-to-many"
   
+  elist <- rbind(
+    c("n1", "n2"),
+    c("n2", "n3"),
+    c("n1", "n4"),
+    c("n2", "n5"),
+    c("n1", "n6"),
+    c("n1", "n7"),
+    c("n2", "n4"),
+    c("n4", "n6"),
+    c("n6", "n8"),
+    c("n7", "n8"),
+    c("n7", "n9"),
+    c("n7", "n10"),
+    c("n8", "n9"),
+    c("n8", "n10"),
+    c("n9", "n10")
+  )
+  graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
+  
   # one to one function
   expect_error(
     netdis_one_to_one(
-      graph_1 = NULL,
+      graph_1 = graph,
       graph_2 = NULL,
       ref_graph = ref_graph,
       max_graphlet_size = max_graphlet_size,
@@ -1259,11 +1278,24 @@ test_that("netdis functions error when no query graphs provided", {
       graphlet_counts_2 = NULL
     )
   )
-
+  expect_error(
+    netdis_one_to_one(
+      graph_1 = NULL,
+      graph_2 = graph,
+      ref_graph = ref_graph,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      graphlet_counts_1 = NULL,
+      graphlet_counts_2 = NULL
+    )
+  )
+  
   # one to many function
   expect_error(
     netdis_one_to_many(
-      graph_1 = NULL,
+      graph_1 = graph,
       graphs_compare = NULL,
       ref_graph = ref_graph,
       max_graphlet_size = max_graphlet_size,
@@ -1274,7 +1306,19 @@ test_that("netdis functions error when no query graphs provided", {
       graphlet_counts_compare = NULL
     )
   )
-  
+  expect_error(
+    netdis_one_to_many(
+      graph_1 = NULL,
+      graphs_compare = list(graph_1 = graph, graph_2 = graph),
+      ref_graph = ref_graph,
+      max_graphlet_size = max_graphlet_size,
+      neighbourhood_size = neighbourhood_size,
+      min_ego_nodes = min_ego_nodes,
+      min_ego_edges = min_ego_edges,
+      graphlet_counts_1 = NULL,
+      graphlet_counts_compare = NULL
+    )
+  )  
   # many to many function
   expect_error(
     netdis_many_to_many(
