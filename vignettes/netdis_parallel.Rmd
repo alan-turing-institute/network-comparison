@@ -1,0 +1,373 @@
+---
+title: "Testing parallelisation of netdis"
+author: "Jack Roberts"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Netdis parallel}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# packages
+```{r}
+# Load libraries
+library("netdist")
+library("purrr")
+```
+
+```{r}
+library(future)
+library(furrr) # for future_map
+library(future.apply) # for future_mapply and future_lapply
+plan(multiprocess) # sets multicore plan, by default all cores
+```
+
+# inputs
+```{r}
+# Load query graphs
+source_dir <- system.file(file.path("extdata", "random"), package = "netdist")
+graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
+
+# Reference graph
+ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
+                        package = "netdist")
+ref_graph <- read_simple_graph(ref_path, format = "ncol")
+
+comparisons <- "many-to-many"
+max_graphlet_size <- 4
+neighbourhood_size <- 2
+min_ego_nodes <- 3
+min_ego_edges <- 1
+
+binning_fn <- purrr::partial(
+  binned_densities_adaptive,
+  min_counts_per_interval = 5,
+  num_intervals = 100)
+
+bin_counts_fn <- purrr::partial(
+  density_binned_counts,
+  agg_fn = mean,
+  scale_fn = scale_graphlet_counts_ego)
+
+exp_counts_fn <- purrr::partial(
+  netdis_expected_graphlet_counts_per_ego,
+  scale_fn = count_graphlet_tuples)
+
+```
+
+
+```{r}
+graphlet_counts_ref <- count_graphlets_ego(
+  ref_graph,
+  max_graphlet_size = max_graphlet_size,
+  neighbourhood_size = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges,
+  return_ego_networks = FALSE
+)
+
+# Get ego-network densities
+densities_ref <- ego_network_density(graphlet_counts_ref)
+
+# bin ref ego-network densities
+binned_densities <- binning_fn(densities_ref)
+
+ref_ego_density_bins <- binned_densities$breaks
+
+# Average ref graphlet counts across density bins
+ref_binned_graphlet_counts <- bin_counts_fn(
+                                graphlet_counts_ref,
+                                binned_densities$interval_indexes,
+                                max_graphlet_size = max_graphlet_size
+                              )
+```
+
+# generate ego networks and count graphlets
+```{r}
+ptm <- proc.time()
+
+graphlet_counts <- purrr::map(
+  graphs,
+  count_graphlets_ego,
+  max_graphlet_size = max_graphlet_size,
+  neighbourhood_size = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges,
+  return_ego_networks = FALSE
+)
+
+elapsed <- proc.time() - ptm
+
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+ptm <- proc.time()
+
+graphlet_counts <- future_map(
+  graphs,
+  count_graphlets_ego,
+  max_graphlet_size = max_graphlet_size,
+  neighbourhood_size = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges,
+  return_ego_networks = FALSE
+)
+elapsed <- proc.time() - ptm
+
+print(paste("multi core", elapsed["elapsed"], "seconds"))
+```
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!
+# EXP COUNTS FROM REF NETWORK
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+```{r}
+
+ptm <- proc.time()
+
+exp_graphlet_counts <- purrr::map(
+  graphlet_counts,
+  exp_counts_fn,
+  density_breaks = ref_ego_density_bins,
+  density_binned_reference_counts = ref_binned_graphlet_counts,
+  max_graphlet_size = max_graphlet_size
+)
+elapsed <- proc.time() - ptm
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+
+ptm <- proc.time()
+
+exp_graphlet_counts <- future_map(
+  graphlet_counts,
+  exp_counts_fn,
+  density_breaks = ref_ego_density_bins,
+  density_binned_reference_counts = ref_binned_graphlet_counts,
+  max_graphlet_size = max_graphlet_size
+)
+elapsed <- proc.time() - ptm
+
+print(paste("multi core", elapsed["elapsed"], "seconds"))
+
+```
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# EXP COUNTS FROM QUERY NETWORKS
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+```{r}
+# exp counts from query network
+
+ptm <- proc.time()
+# Get ego-network densities
+densities <- purrr::map(graphlet_counts,
+                        ego_network_density)
+elapsed <- proc.time() - ptm
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+ptm <- proc.time()
+# Get ego-network densities
+densities <- future_map(graphlet_counts,
+                        ego_network_density)
+elapsed <- proc.time() - ptm
+print(paste("multi core", elapsed["elapsed"], "seconds"))
+
+```
+
+```{r}
+# bin ref ego-network densities
+
+ptm <- proc.time()
+binned_densities <- purrr::map(densities,
+                               binning_fn)
+elapsed <- proc.time() - ptm
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+ptm <- proc.time()
+binned_densities <- future_map(densities,
+                               binning_fn)
+elapsed <- proc.time() - ptm
+print(paste("multi core", elapsed["elapsed"], "seconds"))
+
+```
+
+```{r}
+# extract bin breaks and indexes from binning results
+
+ptm <- proc.time()
+ego_density_bin_breaks <- purrr::map(binned_densities,
+                                      function(x) {
+                                        x$breaks
+                                      })
+ego_density_bin_indexes <- purrr::map(binned_densities,
+                                      function(x) {
+                                        x$interval_indexes
+                                      })
+elapsed <- proc.time() - ptm
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+
+ptm <- proc.time()
+ego_density_bin_breaks <- future_map(binned_densities,
+                                      function(x) {
+                                        x$breaks
+                                      })
+ego_density_bin_indexes <- future_map(binned_densities,
+                                      function(x) {
+                                        x$interval_indexes
+                                      })
+elapsed <- proc.time() - ptm
+print(paste("multi core", elapsed["elapsed"], "seconds"))
+
+```
+
+```{r}
+# Calculate expected counts in each bin
+
+ptm <- proc.time()
+binned_graphlet_counts <- mapply(bin_counts_fn,
+                                 graphlet_counts,
+                                 ego_density_bin_indexes,
+                                 max_graphlet_size = max_graphlet_size,
+                                 SIMPLIFY = FALSE)
+elapsed <- proc.time() - ptm
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+ptm <- proc.time()
+binned_graphlet_counts <- future_mapply(bin_counts_fn,
+                                 graphlet_counts,
+                                 ego_density_bin_indexes,
+                                 max_graphlet_size = max_graphlet_size,
+                                 SIMPLIFY = FALSE)
+elapsed <- proc.time() - ptm
+print(paste("multi core", elapsed["elapsed"], "seconds"))
+
+```
+
+```{r}
+# Calculate expected graphlet counts for each ego network
+
+ptm <- proc.time()
+exp_graphlet_counts <- mapply(exp_counts_fn,
+                              graphlet_counts,
+                              ego_density_bin_breaks,
+                              binned_graphlet_counts,
+                              max_graphlet_size = max_graphlet_size,
+                              SIMPLIFY = FALSE)
+elapsed <- proc.time() - ptm
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+ptm <- proc.time()
+exp_graphlet_counts <- future_mapply(exp_counts_fn,
+                              graphlet_counts,
+                              ego_density_bin_breaks,
+                              binned_graphlet_counts,
+                              max_graphlet_size = max_graphlet_size,
+                              SIMPLIFY = FALSE)
+elapsed <- proc.time() - ptm
+print(paste("multi core", elapsed["elapsed"], "seconds"))
+```
+
+# centring
+```{r}
+ptm <- proc.time()
+# Centre graphlet counts by subtracting expected counts
+centred_graphlet_counts <- mapply(netdis_centred_graphlet_counts,
+                                  graphlet_counts,
+                                  exp_graphlet_counts,
+                                  max_graphlet_size = max_graphlet_size)
+elapsed <- proc.time() - ptm
+
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+
+ptm <- proc.time()
+# Centre graphlet counts by subtracting expected counts
+centred_graphlet_counts <- future_mapply(netdis_centred_graphlet_counts,
+                                  graphlet_counts,
+                                  exp_graphlet_counts,
+                                  max_graphlet_size = max_graphlet_size)
+elapsed <- proc.time() - ptm
+
+print(paste("multi core", elapsed["elapsed"], "seconds"))
+
+```
+
+# sums
+```{r}
+ptm <- proc.time()
+
+# Sum centred graphlet counts across all ego networks
+sum_graphlet_counts <- lapply(centred_graphlet_counts, colSums)
+elapsed <- proc.time() - ptm
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+# Sum centred graphlet counts across all ego networks
+sum_graphlet_counts <- future_lapply(centred_graphlet_counts, colSums)
+elapsed <- proc.time() - ptm
+print(paste("multi core", elapsed["elapsed"], "seconds"))
+
+```
+
+# netdis statistic
+```{r}
+# Generate pairwise comparisons
+comp_spec <- cross_comparison_spec(sum_graphlet_counts, how = comparisons)
+
+ptm <- proc.time()
+
+# Calculate netdis statistics
+results <- mapply(
+    function(index_a, index_b) {
+      netdis_uptok(
+        sum_graphlet_counts[[index_a]],
+        sum_graphlet_counts[[index_b]],
+        max_graphlet_size = max_graphlet_size
+      )
+    },
+    comp_spec$index_a,
+    comp_spec$index_b,
+    SIMPLIFY = TRUE)
+
+elapsed <- proc.time() - ptm
+print(paste("single core", elapsed["elapsed"], "seconds"))
+
+ptm <- proc.time()
+
+# Calculate netdis statistics
+results <- parallel::mcmapply(
+    function(index_a, index_b) {
+      netdis_uptok(
+        sum_graphlet_counts[[index_a]],
+        sum_graphlet_counts[[index_b]],
+        max_graphlet_size = max_graphlet_size
+      )
+    },
+    comp_spec$index_a,
+    comp_spec$index_b,
+    SIMPLIFY = TRUE)
+
+elapsed <- proc.time() - ptm
+print(paste("parallel::mcmapply", elapsed["elapsed"], "seconds"))
+
+
+ptm <- proc.time()
+
+# Calculate netdis statistics
+results <- future_mapply(
+    function(index_a, index_b) {
+      netdis_uptok(
+        sum_graphlet_counts[[index_a]],
+        sum_graphlet_counts[[index_b]],
+        max_graphlet_size = max_graphlet_size
+      )
+    },
+    comp_spec$index_a,
+    comp_spec$index_b,
+    SIMPLIFY = TRUE)
+
+elapsed <- proc.time() - ptm
+print(paste("future_lapply", elapsed["elapsed"], "seconds"))
+
+```

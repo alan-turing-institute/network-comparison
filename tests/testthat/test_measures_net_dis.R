@@ -1318,7 +1318,8 @@ test_that("netdis functions error when no query graphs provided", {
       graphlet_counts_1 = NULL,
       graphlet_counts_compare = NULL
     )
-  )  
+  )
+  
   # many to many function
   expect_error(
     netdis_many_to_many(
