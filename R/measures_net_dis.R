@@ -512,10 +512,11 @@ netdis_many_to_many <- function(graphs = NULL,
 
 }
 
-#' Netdis
+#' Netdis - for one graphlet size
 #'
 #' Calculate Netdis statistic between two graphs from their Centred Graphlet
-#' Counts (generated using \code{netdis_centred_graphlet_counts}).
+#' Counts (generated using \code{netdis_centred_graphlet_counts}) for graphlets 
+#' of size \code{graphlet_size}.
 #' @param centred_graphlet_counts1 Centred Graphlet Counts for graph 1
 #' @param centred_graphlet_counts2 Centred Graphlet Counts for graph 2
 #' @param graphlet_size The size of graphlets to use for the Netdis calculation
@@ -543,10 +544,11 @@ netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2,
   0.5 * (1 - netds2)
 }
 
-#' Netdis - graphlets up to max_graphlet_size
+#' Netdis - for all graphlet sizes up to max_graphlet_size
 #'
 #' Calculate Netdis statistic between two graphs from their Centred Graphlet
-#' Counts (generated using \code{netdis_centred_graphlet_counts}).
+#' Counts (generated using \code{netdis_centred_graphlet_counts}) for all
+#' graphlet sizes up to \code{max_graphlet_size}.
 #' @param centred_graphlet_counts1 Centred Graphlet Counts for graph 1
 #' @param centred_graphlet_counts2 Centred Graphlet Counts for graph 2
 #' @param max_graphlet_size max graphlet size to calculate Netdis for.
@@ -586,8 +588,7 @@ netdis_uptok <- function(centred_graphlet_counts1, centred_graphlet_counts2,
 #' Centre counts by subtracting expected graphlet counts from actual graphlet
 #' counts.
 #' @param graphlet_counts Ego network graphlet counts for a query graph
-#' @param exp_graphlet_counts Pre-calculated expected counts for each graphlet
-#' type for each ego network.
+#' @param exp_graphlet_counts Expected graphlet counts for each ego network.
 #' @param max_graphlet_size max graphlet size to calculate centred counts for.
 #' @return graphlet_counts minus exp_graphlet_counts for graphlets up to size
 #' max_graphlet_size.
@@ -607,11 +608,10 @@ netdis_centred_graphlet_counts <- function(
 
 }
 
-#' INTERNAL FUNCTION - Do not call directly
-#'
-#' Used by \code{netdis_expected_graphlet_counts_ego_fn} to
-#' generate a function for calculating expected ego-network graphlet counts
-#' from the statistics of a provided reference graph.
+#' netdis_expected_graphlet_counts_per_ego
+#' 
+#' Calculates expected graphlet counts for each ego network based on its density
+#' and pre-calculated reference density bins and graphlet counts for each bin.
 #'
 #' @param graphlet_counts Matrix of graphlet and node counts (columns) for a
 #' nummber of ego networks (rows).
@@ -648,22 +648,23 @@ netdis_expected_graphlet_counts_per_ego <- function(
   expected_graphlet_counts
 }
 
+#' netdis_expected_graphlet_counts
 #' INTERNAL FUNCTION - Do not call directly
+#' 
+#' Calculates expected graphlet counts for one ego network based on its density
+#' and pre-calculated reference density bins and graphlet counts for each bin.
 #'
-#' Used by \code{netdis_expected_graphlet_counts_ego} to
-#' calculate expected graphlet counts for a query graph
-#' ego-network from the statistics of a provided reference
-#' graph.
-#' @param graphlet_counts Node and graphlet counts for a graph.
+#' @param graphlet_counts Node and graphlet counts for an ego network.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
 #' Only graphlets containing up to \code{max_graphlet_size} nodes are counted.
 #' @param density_breaks Density values defining bin edges.
 #' @param density_binned_reference_counts Reference network graphlet counts for
 #' each density bin.
 #' @param scale_fn Optional function to scale calculated expected counts, taking
-#' \code{graph} and \code{max_graphlet_size} as arguments, and returning a scale
-#' factor that the looked up \code{density_binned_reference_counts} values will
-#' be multiplied by.
+#' \code{graphlet_counts} and \code{max_graphlet_size} as arguments, and
+#' returning a scale factor that the looked up
+#' \code{density_binned_reference_counts} values will be multiplied by.
+#' 
 #' Temporarily accessible during development.
 #' TODO: Remove @export prior to publishing
 #' @export
@@ -692,18 +693,17 @@ netdis_expected_graphlet_counts <- function(graphlet_counts,
   matched_reference_counts
 }
 
-#' INTERNAL FUNCTION - Do not call directly
+#' mean_density_binned_graphlet_counts
 #'
-#' Used by \code{netdis_expected_graphlet_counts_ego_fn} to
-#' generate a function for calculating expected ego-network graphlet counts
-#' from the statistics of a provided reference graph.
+#' Calculate mean (dy default) graphlet counts for ego networks in each density
+#' bin.
+#'
 #' @param graphlet_counts Graphlet counts for a number of ego_networks.
 #' @param density_interval_indexes Density bin index for
-#' each ego network.
+#' each ego network in graphlet_counts.
 #' @param agg_fn Function to aggregate counts in each bin
 #' (default \code{agg_fn = mean}).
-#' Temporarily accessible during development.
-#' TODO: Remove @export prior to publishing
+#' 
 #' @export
 mean_density_binned_graphlet_counts <- function(graphlet_counts,
                                                 density_interval_indexes,
@@ -732,7 +732,7 @@ mean_density_binned_graphlet_counts <- function(graphlet_counts,
 }
 
 #' For case where don't want to use binning, return a single bin which covers
-#' the full range of possible density values.
+#' the full range of possible density values (0 to 1).
 #' @param densities Ego network density values (only used to return
 #' a list of indexes of the required length.)
 #' @export
@@ -742,19 +742,21 @@ single_density_bin <- function(densities) {
        breaks = c(0, 1))
 }
 
-#' INTERNAL FUNCTION - Do not call directly
-#'
-#' Used to calculate expected graphlet counts for each density bin.
+#' Used to calculate aggregated graphlet counts for each density bin.
+#' 
 #' @param graphlet_counts Graphlet and node counts (columns) for a number of
 #' ego_networks (rows).
 #' @param density_interval_indexes Density bin index for
 #' each ego network.
 #' @param agg_fn Function to aggregate counts in each bin
 #' (default \code{agg_fn = mean}).
-#' @param scale_fn Optional function to apply a transformation
-#' to graphlet_counts, must have arguments graphlet_counts and
-#' max_graphlet_size.
+#' @param scale_fn Optional function to apply a transformation/scaling
+#' to the raw graphlet_counts. Must have arguments \code{graphlet_counts} and
+#' \code{max_graphlet_size}, and return a transformed \code{graphlet_counts}
+#' object with the same number of rows as the input, and columns for all
+#' graphlets up to \code{max_graphlet_size}.
 #' @param max_graphlet_size Optionally passed and used by scale_fn.
+#' 
 #' @export
 density_binned_counts <- function(graphlet_counts,
                                   density_interval_indexes,
