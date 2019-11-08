@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martin O’Reilly, Jack Roberts" />
 
-<meta name="date" content="2019-10-11" />
+<meta name="date" content="2019-11-08" />
 
 <title>Quick start guide for Netdis - 2 graphs</title>
 
@@ -305,7 +305,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Quick start guide for Netdis - 2 graphs</h1>
 <h4 class="author">Martin O’Reilly, Jack Roberts</h4>
-<h4 class="date">2019-10-11</h4>
+<h4 class="date">2019-11-08</h4>
 
 
 
@@ -414,13 +414,13 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <span id="cb7-13"><a href="#cb7-13"></a>                                                                 <span class="dt">scale_fn=</span>count_graphlet_tuples)</span>
 <span id="cb7-14"><a href="#cb7-14"></a></span>
 <span id="cb7-15"><a href="#cb7-15"></a><span class="co"># Centre graphlet counts by subtracting expected counts</span></span>
-<span id="cb7-16"><a href="#cb7-16"></a>centred_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">netdis_centred_graphlet_counts</span>(graphlet_counts_<span class="dv">1</span>,</span>
-<span id="cb7-17"><a href="#cb7-17"></a>                                                            exp_graphlet_counts_<span class="dv">1</span>,</span>
-<span id="cb7-18"><a href="#cb7-18"></a>                                                            max_graphlet_size)</span>
+<span id="cb7-16"><a href="#cb7-16"></a>centred_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">netdis_subtract_exp_counts</span>(graphlet_counts_<span class="dv">1</span>,</span>
+<span id="cb7-17"><a href="#cb7-17"></a>                                                        exp_graphlet_counts_<span class="dv">1</span>,</span>
+<span id="cb7-18"><a href="#cb7-18"></a>                                                        max_graphlet_size)</span>
 <span id="cb7-19"><a href="#cb7-19"></a></span>
-<span id="cb7-20"><a href="#cb7-20"></a>centred_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">netdis_centred_graphlet_counts</span>(graphlet_counts_<span class="dv">2</span>,</span>
-<span id="cb7-21"><a href="#cb7-21"></a>                                                            exp_graphlet_counts_<span class="dv">2</span>,</span>
-<span id="cb7-22"><a href="#cb7-22"></a>                                                            max_graphlet_size)</span></code></pre></div>
+<span id="cb7-20"><a href="#cb7-20"></a>centred_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">netdis_subtract_exp_counts</span>(graphlet_counts_<span class="dv">2</span>,</span>
+<span id="cb7-21"><a href="#cb7-21"></a>                                                        exp_graphlet_counts_<span class="dv">2</span>,</span>
+<span id="cb7-22"><a href="#cb7-22"></a>                                                        max_graphlet_size)</span></code></pre></div>
 </div>
 <div id="sum-centred-graphlet-counts-across-all-ego-networks" class="section level2">
 <h2>Sum centred graphlet counts across all ego networks</h2>

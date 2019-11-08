@@ -2,7 +2,7 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis_expected_graphlet_counts_per_ego}
 \alias{netdis_expected_graphlet_counts_per_ego}
-\title{INTERNAL FUNCTION - Do not call directly}
+\title{netdis_expected_graphlet_counts_per_ego}
 \usage{
 netdis_expected_graphlet_counts_per_ego(graphlet_counts, density_breaks,
   density_binned_reference_counts, max_graphlet_size, scale_fn = NULL)
@@ -28,7 +28,6 @@ and returning a scale factor that the looked up
 TODO: Remove @export prior to publishing}
 }
 \description{
-Used by \code{netdis_expected_graphlet_counts_ego_fn} to
-generate a function for calculating expected ego-network graphlet counts
-from the statistics of a provided reference graph.
+Calculates expected graphlet counts for each ego network based on its density
+and pre-calculated reference density bins and graphlet counts for each bin.
 }

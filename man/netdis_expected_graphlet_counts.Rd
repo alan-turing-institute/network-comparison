@@ -2,13 +2,14 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis_expected_graphlet_counts}
 \alias{netdis_expected_graphlet_counts}
-\title{INTERNAL FUNCTION - Do not call directly}
+\title{netdis_expected_graphlet_counts
+INTERNAL FUNCTION - Do not call directly}
 \usage{
 netdis_expected_graphlet_counts(graphlet_counts, max_graphlet_size,
   density_breaks, density_binned_reference_counts, scale_fn = NULL)
 }
 \arguments{
-\item{graphlet_counts}{Node and graphlet counts for a graph.}
+\item{graphlet_counts}{Node and graphlet counts for an ego network.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
@@ -19,15 +20,14 @@ Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
 each density bin.}
 
 \item{scale_fn}{Optional function to scale calculated expected counts, taking
-\code{graph} and \code{max_graphlet_size} as arguments, and returning a scale
-factor that the looked up \code{density_binned_reference_counts} values will
-be multiplied by.
+\code{graphlet_counts} and \code{max_graphlet_size} as arguments, and
+returning a scale factor that the looked up
+\code{density_binned_reference_counts} values will be multiplied by.
+
 Temporarily accessible during development.
 TODO: Remove @export prior to publishing}
 }
 \description{
-Used by \code{netdis_expected_graphlet_counts_ego} to
-calculate expected graphlet counts for a query graph
-ego-network from the statistics of a provided reference
-graph.
+Calculates expected graphlet counts for one ego network based on its density
+and pre-calculated reference density bins and graphlet counts for each bin.
 }

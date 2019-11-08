@@ -135,13 +135,13 @@ exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(graphlet_counts
                                                                  max_graphlet_size,
                                                                  scale_fn = NULL)
 # Centre graphlet counts by subtracting expected counts
-centred_graphlet_counts_1 <- netdis_centred_graphlet_counts(graphlet_counts_1,
+centred_graphlet_counts_1 <- netdis_subtract_exp_counts(graphlet_counts_1,
                                                             exp_graphlet_counts_1,
                                                             max_graphlet_size)
 
-centred_graphlet_counts_2 <- netdis_centred_graphlet_counts(graphlet_counts_2,
-                                                            exp_graphlet_counts_2,
-                                                            max_graphlet_size)
+centred_graphlet_counts_2 <- netdis_subtract_exp_counts(graphlet_counts_2,
+                                                        exp_graphlet_counts_2,
+                                                        max_graphlet_size)
 
 ## ------------------------------------------------------------------------
 sum_graphlet_counts_1 <- colSums(centred_graphlet_counts_1)

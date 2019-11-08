@@ -3,7 +3,7 @@
 \name{single_density_bin}
 \alias{single_density_bin}
 \title{For case where don't want to use binning, return a single bin which covers
-the full range of possible density values.}
+the full range of possible density values (0 to 1).}
 \usage{
 single_density_bin(densities)
 }
@@ -13,5 +13,5 @@ a list of indexes of the required length.)}
 }
 \description{
 For case where don't want to use binning, return a single bin which covers
-the full range of possible density values.
+the full range of possible density values (0 to 1).
 }

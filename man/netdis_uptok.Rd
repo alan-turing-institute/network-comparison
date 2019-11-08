@@ -2,7 +2,7 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis_uptok}
 \alias{netdis_uptok}
-\title{Netdis - graphlets up to max_graphlet_size}
+\title{Netdis - for all graphlet sizes up to max_graphlet_size}
 \usage{
 netdis_uptok(centred_graphlet_counts1, centred_graphlet_counts2,
   max_graphlet_size)
@@ -22,5 +22,6 @@ the specified size
 }
 \description{
 Calculate Netdis statistic between two graphs from their Centred Graphlet
-Counts (generated using \code{netdis_centred_graphlet_counts}).
+Counts (generated using \code{netdis_centred_graphlet_counts}) for all
+graphlet sizes up to \code{max_graphlet_size}.
 }

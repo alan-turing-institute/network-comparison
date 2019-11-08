@@ -2,7 +2,7 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{mean_density_binned_graphlet_counts}
 \alias{mean_density_binned_graphlet_counts}
-\title{INTERNAL FUNCTION - Do not call directly}
+\title{mean_density_binned_graphlet_counts}
 \usage{
 mean_density_binned_graphlet_counts(graphlet_counts,
   density_interval_indexes, agg_fn = mean)
@@ -11,15 +11,12 @@ mean_density_binned_graphlet_counts(graphlet_counts,
 \item{graphlet_counts}{Graphlet counts for a number of ego_networks.}
 
 \item{density_interval_indexes}{Density bin index for
-each ego network.}
+each ego network in graphlet_counts.}
 
 \item{agg_fn}{Function to aggregate counts in each bin
-(default \code{agg_fn = mean}).
-Temporarily accessible during development.
-TODO: Remove @export prior to publishing}
+(default \code{agg_fn = mean}).}
 }
 \description{
-Used by \code{netdis_expected_graphlet_counts_ego_fn} to
-generate a function for calculating expected ego-network graphlet counts
-from the statistics of a provided reference graph.
+Calculate mean (dy default) graphlet counts for ego networks in each density
+bin.
 }
