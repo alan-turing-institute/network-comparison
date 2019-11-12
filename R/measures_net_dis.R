@@ -126,6 +126,7 @@ netdis_one_to_one <- function(graph_1 = NULL,
     min_ego_nodes = 3,
     min_ego_edges = 1,
     binning_fn = binning_fn,
+    bin_counts_fn = bin_counts_fn,
     exp_counts_fn = exp_counts_fn,
     graphlet_counts = graphlet_counts
   )
@@ -883,8 +884,51 @@ density_binned_counts <- function(graphlet_counts,
 
 }
 
+#' INTERNAL FUNCTION - DO NOT CALL DIRECTLY
+#' Used by \code{density_binned_counts_gp}
+#' Calculate expected counts with geometric poisson (Polya-Aeppli)
+#' approximation for a single density bin.
+#' @param bin_idx Density bin index to calculate expected counts for.
+#' @param graphlet_counts Graphlet counts for a number of ego_networks.
+#' @param density_interval_indexes Density bin index for
+#' each ego network.
+exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
+                              density_interval_indexes,
+                              mean_binned_graphlet_counts,
+                              max_graphlet_size) {
+  # extract ego networks belonging to input density bin index
+  counts <- graphlet_counts[density_interval_indexes == bin_idx, ]
+  
+  # mean graphlet counts in this density bin
+  means <- mean_binned_graphlet_counts[bin_idx, ]
+  
+  # subtract mean graphlet counts from actual graphlet counts
+  mean_sub_counts <- sweep(counts, 2, means)
+  
+  # variance in graphlet counts across ego networks in this density bin
+  Vd_sq <- colSums(mean_sub_counts^2) / (nrow(mean_sub_counts) - 1)
+  
+  # GP theta parameter for each graphlet id in this density bin
+  theta_d <- 2 * means / (Vd_sq + means)
+  
+  exp_counts_dk <- vector()
+  for (k in 2:max_graphlet_size) {
+    graphlet_idx <- graphlet_ids_for_size(k)
+    
+    # GP lambda parameter for graphlet size k in this density bin
+    lambda_dk <- mean(2 * means[graphlet_idx]^2 /
+                        (Vd_sq[graphlet_idx] + means[graphlet_idx]),
+                      na.rm = TRUE)
+    
+    # Expected counts for graphlet size k in this density bin
+    exp_counts_dk <- append(exp_counts_dk,
+                            lambda_dk / theta_d[graphlet_idx])
+  }
+  
+  exp_counts_dk
+}
 
-#' Calculate expected counts in density bins using
+#' Calculate expected counts in density bins using the
 #' geometric poisson (Polya-Aeppli) approximation.
 #' @param graphlet_counts Graphlet counts for a number of ego_networks.
 #' @param density_interval_indexes Density bin index for
@@ -895,46 +939,27 @@ density_binned_counts <- function(graphlet_counts,
 density_binned_counts_gp <- function(graphlet_counts,
                                      density_interval_indexes,
                                      max_graphlet_size) {
-
+  # mean graphlet counts in each ego network density bin
   mean_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
     graphlet_counts,
     density_interval_indexes)
-
-  exp_counts_bin <- function(bin_idx) {
-    counts <- graphlet_counts[density_interval_indexes == bin_idx, ]
-    means <- mean_binned_graphlet_counts[bin_idx, ]
-
-    mean_sub_counts <- sweep(counts, 2, means)
-
-    Vd_sq <- colSums(mean_sub_counts^2) / (nrow(mean_sub_counts) - 1)
-    theta_d <- 2 * means / (Vd_sq + means)
-
-    exp_counts_dk <- vector()
-    for (k in 2:max_graphlet_size) {
-      graphlet_idx <- graphlet_ids_for_size(k)
-
-      lambda_dk <- (1 / length(graphlet_idx)) *
-        sum(
-          2 * means[graphlet_idx]^2 /
-            (Vd_sq[graphlet_idx] + means[graphlet_idx])
-        )
-
-      exp_counts_dk <- append(exp_counts_dk,
-                              lambda_dk / theta_d[graphlet_idx])
-    }
-
-    exp_counts_dk
-  }
-
+  
+  # calculate expected counts for each density bin index
   nbins <- length(unique(density_interval_indexes))
-  expected_counts_bin <- t(mapply(exp_counts_bin, bin_idx = 1:nbins))
-
-  # deal with NAs caused by bins with zero counts for a graphlet
+  expected_counts_bin <- t(sapply(
+    1:nbins,
+    exp_counts_bin_gp,
+    graphlet_counts = graphlet_counts,
+    density_interval_indexes = density_interval_indexes,
+    mean_binned_graphlet_counts = mean_binned_graphlet_counts,
+    max_graphlet_size = max_graphlet_size
+  ))
+  
+  # remove NAs caused by bins with zero counts for a graphlet
   expected_counts_bin[is.nan(expected_counts_bin)] <- 0
-
+  
   expected_counts_bin
 }
-
 
 #' Create matrix of constant value to use as expected counts.
 #' @param graphlet_counts Ego network graphlet counts matrix to create expected

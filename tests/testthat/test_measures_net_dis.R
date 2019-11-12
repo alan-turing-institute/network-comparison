@@ -1340,11 +1340,49 @@ test_that("netdis_many_to_many correctly interprets numeric ref_graph value", {
   
 })
 
-context("Netdis: expected counts using query networks")
-test_that("netdis_many_to_many calculates expected counts from query networks if
-          ref_graph is NULL", {
-  # TODO
+context("Netdis: Geometric Poisson Approximation")
+test_that("netdis_one_to_one gives expected result when using geometric Poisson
+          approximation", {
+  # TODO This test is not robust. Rewrite with basic network that gives known
+  # result.
   
+  # Set source directory for Virus PPI graph edge files
+  source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+  
+  # Load query and reference graphs
+  graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
+                               format = "ncol")
+  
+  graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
+                               format = "ncol")
+  
+  # set parameters
+  max_graphlet_size <- 4
+  neighbourhood_size <- 2
+  min_ego_nodes <- 3
+  min_ego_edges <- 1
+  
+  # manually verified result for graphlets of size 4
+  expected_netdis4 <- 0.1892716
+  
+  # check function to test
+  bin_counts_fn <- density_binned_counts_gp
+  
+  exp_counts_fn <- purrr::partial(netdis_expected_graphlet_counts_per_ego,
+                                  scale_fn = NULL)
+  
+  actual_netdis <- netdis_one_to_one(graph_1,
+                                     graph_2,
+                                     ref_graph = NULL,
+                                     max_graphlet_size = max_graphlet_size,
+                                     neighbourhood_size = neighbourhood_size,
+                                     min_ego_nodes = min_ego_nodes,
+                                     min_ego_edges = min_ego_edges,
+                                     bin_counts_fn = bin_counts_fn,
+                                     exp_counts_fn = exp_counts_fn)
+  print(actual_netdis)
+  expect_equal(expected_netdis4, actual_netdis[["netdis4"]],
+               tolerance = .0001, scale = 1)
 })
 
 context("Netdis: error if max_graphlet_size is not 3, 4 or 5")
