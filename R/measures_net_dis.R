@@ -771,9 +771,6 @@ netdis_expected_graphlet_counts_per_ego <- function(
 #' returning a scale factor that the looked up
 #' \code{density_binned_reference_counts} values will be multiplied by.
 #' 
-#' Temporarily accessible during development.
-#' TODO: Remove @export prior to publishing
-#' @export
 netdis_expected_graphlet_counts <- function(graphlet_counts,
                                             max_graphlet_size,
                                             density_breaks,
@@ -890,17 +887,18 @@ density_binned_counts <- function(graphlet_counts,
 #' approximation for a single density bin.
 #' @param bin_idx Density bin index to calculate expected counts for.
 #' @param graphlet_counts Graphlet counts for a number of ego_networks.
-#' @param density_interval_indexes Density bin index for
-#' each ego network.
+#' @param density_interval_indexes Density bin indexes for each ego network in
+#' \code{graphlet_counts}.
+#' @param max_graphlet_size Determines the maximum size of graphlets
+#' included in graphlet_counts.
 exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
                               density_interval_indexes,
-                              mean_binned_graphlet_counts,
                               max_graphlet_size) {
   # extract ego networks belonging to input density bin index
   counts <- graphlet_counts[density_interval_indexes == bin_idx, ]
   
   # mean graphlet counts in this density bin
-  means <- mean_binned_graphlet_counts[bin_idx, ]
+  means <- colMeans(counts)
   
   # subtract mean graphlet counts from actual graphlet counts
   mean_sub_counts <- sweep(counts, 2, means)
@@ -939,11 +937,7 @@ exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
 density_binned_counts_gp <- function(graphlet_counts,
                                      density_interval_indexes,
                                      max_graphlet_size) {
-  # mean graphlet counts in each ego network density bin
-  mean_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
-    graphlet_counts,
-    density_interval_indexes)
-  
+
   # calculate expected counts for each density bin index
   nbins <- length(unique(density_interval_indexes))
   expected_counts_bin <- t(sapply(
@@ -951,7 +945,6 @@ density_binned_counts_gp <- function(graphlet_counts,
     exp_counts_bin_gp,
     graphlet_counts = graphlet_counts,
     density_interval_indexes = density_interval_indexes,
-    mean_binned_graphlet_counts = mean_binned_graphlet_counts,
     max_graphlet_size = max_graphlet_size
   ))
   
@@ -1034,7 +1027,6 @@ ego_network_density <- function(graphlet_counts) {
 #' choices of k nodes in that ego-network, where n is the number of nodes
 #' in the ego network and k is the number of nodes in the graphlet.
 #'
-#' @param ego_networks Pre-generated ego networks for an input graph.
 #' @param graphlet_counts Pre-calculated graphlet counts for each ego_network.
 #' @param max_graphlet_size Determines the maximum size of graphlets included
 #' in graphlet_counts.

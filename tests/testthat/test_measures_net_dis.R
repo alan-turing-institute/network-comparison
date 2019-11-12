@@ -1024,16 +1024,8 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
   )
 })
 
-context("Netdis: Geometric Poisson")
-test_that("expected counts using geometric poisson approximation are correct", {
-  # TODO write this test
-  
-})
-
 context("Netdis: Statistic calculation")
 test_that("netdis statistic function output matches manually verified result", {
-  # TODO Rewrite with more realistic counts.
-  
   # arbitrary counts of correct size for graphlets up to size 5
   counts_1 <- c(11, 11, 13, 9, 12, 10, 14, 9, 13, 10, 10, 7, 9, 12, 6, 12, 9, 12,
                 9, 7, 15, 7, 5, 12, 16, 10, 10, 8, 9, 14)
@@ -1061,8 +1053,6 @@ test_that("netdis statistic function output matches manually verified result", {
   
 })
 test_that("netdis_uptok gives expected netdis result for graphlets up to size k", {
-  # TODO Rewrite with more realistic counts.
-  
   # arbitrary counts of correct size for graphlets up to size 5
   counts_1 <- c(11, 11, 13, 9, 12, 10, 14, 9, 13, 10, 10, 7, 9, 12, 6, 12, 9, 12,
                 9, 7, 15, 7, 5, 12, 16, 10, 10, 8, 9, 14)
@@ -1086,9 +1076,6 @@ test_that("netdis_uptok gives expected netdis result for graphlets up to size k"
 
 context("Netdis: full calculation pipeline")
 test_that("netdis_many_to_many gives expected result", {
-  # TODO This test is not robust. Rewrite with basic network that gives known
-  # result.
-
   # Set source directory for Virus PPI graph edge files
   source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
@@ -1153,9 +1140,6 @@ test_that("netdis_many_to_many gives expected result", {
 
 context("Netdis: functions for different pairwise comparisons")
 test_that("netdis_one_to_one gives expected result", {
-  # TODO This test is not robust. Rewrite with basic network that gives known
-  # result.
-  
   # Set source directory for Virus PPI graph edge files
   source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
   
@@ -1192,9 +1176,6 @@ test_that("netdis_one_to_one gives expected result", {
   expect_equal(expected_netdis, actual_netdis, tolerance = .001, scale = 1)
 })
 test_that("netdis_one_to_many gives expected result", {
-  # TODO This test is not robust. Rewrite with basic network that gives known
-  # result.
-  
   # Set source directory for Virus PPI graph edge files
   source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
   
@@ -1335,17 +1316,45 @@ test_that("netdis functions error when no query graphs provided", {
 })
 
 context("Netdis: constant expected counts")
-test_that("netdis_many_to_many correctly interprets numeric ref_graph value", {
-  # TODO
+test_that("netdis_centred_graphlet_counts correctly interprets numeric
+          ref_binned_graphlet_counts value", {
+  # dummy counts
+  graphlet_counts <- rbind(
+    c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+    c(11, 12, 13, 14, 15, 16, 17, 18, 19),
+    c(21, 22, 23, 24, 25, 26, 27, 28, 29),
+    c(31, 32, 33, 34, 35, 36, 37, 38, 39),
+    c(41, 42, 43, 44, 45, 46, 47, 48, 49),
+    c(51, 52, 53, 54, 55, 56, 57, 58, 59),
+    c(61, 62, 63, 64, 65, 66, 67, 68, 69),
+    c(71, 72, 73, 74, 75, 76, 77, 78, 79),
+    c(81, 82, 83, 84, 85, 86, 87, 88, 89),
+    c(91, 92, 93, 94, 95, 96, 97, 98, 99)
+  )
+  graphlet_labels <- c("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
+  colnames(graphlet_counts) <- graphlet_labels
+  rownames(graphlet_counts) <- 1:10
+  max_graphlet_size <- 4
+  
+  # netdis_centred_graphlet_counts with ref_binned_graphlet_counts=0 should
+  # perform no centring, i.e. centred_counts should equal input graphlet_counts
+  centred_counts <- netdis_centred_graphlet_counts(
+                      graphlet_counts = graphlet_counts,
+                      ref_ego_density_bins = NULL,
+                      ref_binned_graphlet_counts = 0,
+                      binning_fn = NULL,
+                      bin_counts_fn = NULL,
+                      exp_counts_fn = NULL,
+                      max_graphlet_size = 4
+                    )
+  
+  expect_equal(centred_counts, graphlet_counts)
   
 })
 
 context("Netdis: Geometric Poisson Approximation")
 test_that("netdis_one_to_one gives expected result when using geometric Poisson
           approximation", {
-  # TODO This test is not robust. Rewrite with basic network that gives known
-  # result.
-  
   # Set source directory for Virus PPI graph edge files
   source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
   
@@ -1363,6 +1372,8 @@ test_that("netdis_one_to_one gives expected result when using geometric Poisson
   min_ego_edges <- 1
   
   # manually verified result for graphlets of size 4
+  # verified using a different implementation of geometric poisson with these
+  # networks.
   expected_netdis4 <- 0.1892716
   
   # check function to test
@@ -1380,7 +1391,7 @@ test_that("netdis_one_to_one gives expected result when using geometric Poisson
                                      min_ego_edges = min_ego_edges,
                                      bin_counts_fn = bin_counts_fn,
                                      exp_counts_fn = exp_counts_fn)
-  print(actual_netdis)
+  
   expect_equal(expected_netdis4, actual_netdis[["netdis4"]],
                tolerance = .0001, scale = 1)
 })
