@@ -38,10 +38,10 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
    i=0;
    j=0;
    double cdfLower=0;
-   double loc1SegStart=loc1[0];
-   double loc1SegEnd=loc1[0]+binWidth1;
-   double loc1SegValStart=0;
-   double loc1SegValEnd=val1[0];
+   double loc1SegStart=loc1[0]; // x value of start of segment for seq1
+   double loc1SegEnd=loc1[0]+binWidth1; // x value of end of segment for seq1 
+   double loc1SegValStart=0; // y value of start of segment for seq1
+   double loc1SegValEnd=val1[0]; // y value of end of segment for seq1 
    double loc2SegStart=loc2[0];
    double loc2SegEnd=loc2[0]+binWidth2;
    double loc2SegValStart=0;
@@ -59,29 +59,35 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         // lets compute the area for these segments
         if (loc1SegValStart<loc2SegValStart)
         {
+            // this is the case where the second hist segment starts after the first hist segment
             curStartVal=loc2SegValStart;
             loc2Start=loc2SegStart;
             loc1Start=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValStart-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
         }
         else
         {
+            // this is the case where the first hist segment starts after the second hist segment
             curStartVal=loc1SegValStart;
             loc1Start=loc1SegStart;
+	    // adjust the segment start y value to account for the differences 
             loc2Start=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
         }
         if (loc1SegValEnd<loc2SegValEnd)
         {
             curEndVal=loc1SegValEnd;
             loc1End=loc1SegEnd;
+	    // adjust the segment end y value to account for the differences 
             loc2End=loc2SegStart+(loc2SegEnd-loc2SegValStart)*(loc1SegValEnd-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
         }
         else
         {
             curEndVal=loc2SegValEnd;
             loc2End=loc2SegEnd;
+	    // adjust the segment end y value to account for the differences 
             loc1End=loc1SegStart+(loc1SegEnd-loc1SegValStart)*(loc2SegValEnd-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
         }
         // okay so we now have our bounds
+        // This is the difference in x we are moving
         h=curEndVal-curStartVal;
         if (loc1Start<loc2Start)
         {
@@ -108,14 +114,18 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
             }
         }
         // update the segment under consideration
+        //
+        // Checks to see if we are at the end of the sequence
         if (i==val1.size()-1)
         {
             if (j==val2.size()-1)
             {
+		// we are at the end of both sequences 
                 break;
             }
             else
             {
+	       // Update the 2nd sequence 
                j+=1;
                loc2SegStart=loc2[j];
                loc2SegEnd=loc2[j]+binWidth2;
@@ -125,6 +135,8 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         }
         else if (j==val2.size()-1)
         {
+           // At the end of sequence 2
+	   // Update sequence 1 
            loc1SegStart=loc1[i];
            loc1SegEnd=loc1[i]+binWidth1;
            loc1SegValStart=loc1SegValEnd;
@@ -133,7 +145,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         else if (val1[i+1]<val2[j+1])
         {
             i+=1;
-            // update the i segment
+	   // Update sequence 1 
            loc1SegStart=loc1[i];
            loc1SegEnd=loc1[i]+binWidth1;
            loc1SegValStart=loc1SegValEnd;
@@ -141,6 +153,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         }
         else
         {
+	   // Update sequence 2 
            j+=1;
            loc2SegStart=loc2[j];
            loc2SegEnd=loc2[j]+binWidth2;
