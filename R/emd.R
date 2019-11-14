@@ -53,7 +53,7 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     # range defined by the minimum and maximum offset. This guards against a
     # couple of issues that arise if the optimise range is exactly min_offset 
     # to max_offset
-    # 1) If lower and upper are equal, the optimise method will throw and error
+    # 1) If lower and upper are equal, the optimise method will throw an error
     # 2) It seems that optimise is not guaranteed to explore its lower and upper
     #    bounds, even in the case where one of them is the offset with minimum
     #    EMD

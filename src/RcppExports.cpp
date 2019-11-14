@@ -47,10 +47,13 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP run_testthat_tests();
+
 static const R_CallMethodDef CallEntries[] = {
     {"_netdist_counts_from_observations", (DL_FUNC) &_netdist_counts_from_observations, 1},
     {"_netdist_emd_fast_no_smoothing", (DL_FUNC) &_netdist_emd_fast_no_smoothing, 4},
     {"_netdist_NetEmdSmooth", (DL_FUNC) &_netdist_NetEmdSmooth, 6},
+    {"run_testthat_tests",                (DL_FUNC) &run_testthat_tests,                0},
     {NULL, NULL, 0}
 };
 

@@ -8,27 +8,8 @@
 #'
 #' @export
 counts_from_observations <- function(features) {
-    .Call('_netdist_counts_from_observations', PACKAGE = 'netdist', features)
+    .Call(`_netdist_counts_from_observations`, features)
 }
-
-#' @title
-#' Numerically safe addition using Kahan summation
-#' @description
-#' Uses Kahan summation algorithm to limit numerical error caused by adding
-#' lots of very small things to a big thing to O(1) rather than O(N)
-#' See: https://en.wikipedia.org/wiki/Kahan_summation_algorithm
-#' 
-#' Note that particularly agressive compiler optimisations can result in the
-#' Kahan compensation being optimised away. We believe that this requires the
-#' -ffast-math compiler flag to be explicitly set, and we attempt to ensure it
-#' to override any local setting for this flag by adding the -fno-fast-math 
-#' flag to PKG_CPPFLAGS in src/Makevars.
-#' @param &sum Current accumulated sum. Updated by function.
-#' @param element Element to add to the accumulated sum. Not updated.
-#' @param &compensation Current adjustment to compensate for floating point
-#' summation error. Updated by function.
-#'
-NULL
 
 #' @title
 #' Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
@@ -41,7 +22,7 @@ NULL
 #'
 #' @export
 emd_fast_no_smoothing <- function(locations1, values1, locations2, values2) {
-    .Call('_netdist_emd_fast_no_smoothing', PACKAGE = 'netdist', locations1, values1, locations2, values2)
+    .Call(`_netdist_emd_fast_no_smoothing`, locations1, values1, locations2, values2)
 }
 
 #' @title
