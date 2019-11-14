@@ -63,7 +63,6 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
    // need to know if first y segment ends with hist1 or hist2 
    // Need to set the first start locations 
    // Commented this section as they are both set to zero
-   /*
    if (loc1SegValStart<loc2SegValStart)
    {
      
@@ -75,12 +74,11 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
      loc1Start=loc1SegStart;
      loc2Start=loc2SegStart+(loc2SegEnd-loc2SegStart)*(loc1SegValStart-loc2SegValStart)/(loc2SegValEnd-loc2SegValStart);
    }
-*/
-   
    loc1Start=loc1SegStart;
    loc2Start=loc2SegStart;
    while (1)
    {
+	std::cout << res << "\n"; 
         // lets compute the area for this segments
         //
         // Case where hist1  ends first 

@@ -32,6 +32,6 @@ NULL
 #'
 #' @export
 NetEmdSmooth <- function(loc1, val1, binWidth1, loc2, val2, binWidth2) {
-    .Call('_netdist_NetEmdSmooth', PACKAGE = 'netdist', loc1, val1, binWidth1, loc2, val2, binWidth2)
+    .Call(`_netdist_NetEmdSmooth`, loc1, val1, binWidth1, loc2, val2, binWidth2)
 }
 
