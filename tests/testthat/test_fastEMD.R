@@ -113,7 +113,6 @@ test_that("2 element test w1=0.1, w2=0.2", {
 
 test_that("3 element test Mixture", {
   
-            sourceCpp("~/Documents/network-comparison/src/fastSmoothV2.cpp")
             for (w1 in (1:10)/10.0)
             {
               for (w2 in (1:10)/10.0)
@@ -138,7 +137,6 @@ test_that("3 element test Mixture", {
 
 test_that("3 element test w1=0.1, w2=0.2", {
   
-            sourceCpp("~/Documents/network-comparison/src/fastSmoothV2.cpp")
   w1 = 0.1
   w2 = 0.2
               x1 <- c(1,2,3)
