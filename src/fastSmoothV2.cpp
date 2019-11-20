@@ -152,10 +152,13 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
   double valStart2;
   double valEnd2;
   double tempDouble;
+  int secondStart=-1;
+  int h;
   for (index1=-1;index1<loc1.size();index1++) 
   {
-    for (index2=-1;index2<loc2.size();index2++) 
+    for (index2=secondStart;index2<loc2.size();index2++) 
     {
+              h=0;
               for (i123=0;i123<2;i123++) 
               {
               if (index1==-1)
@@ -255,6 +258,7 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
             std::cout << "\n        valEnd2:     " << valEnd2 <<" ";
             std::cout << "\n        res: " << tempDouble <<" \n";
             res += tempDouble;  
+            h=1;
           }
 //          else
 //          {
