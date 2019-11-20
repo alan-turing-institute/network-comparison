@@ -35,3 +35,13 @@ NetEmdSmooth <- function(loc1, val1, binWidth1, loc2, val2, binWidth2) {
     .Call(`_netdist_NetEmdSmooth`, loc1, val1, binWidth1, loc2, val2, binWidth2)
 }
 
+#' @title
+#' Compute EMD
+NULL
+
+#'
+#' @export
+NetEmdSmoothV2 <- function(loc1, val1, binWidth1, loc2, val2, binWidth2) {
+    .Call(`_netdist_NetEmdSmoothV2`, loc1, val1, binWidth1, loc2, val2, binWidth2)
+}
+
