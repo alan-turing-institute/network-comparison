@@ -14,7 +14,7 @@ test_that("cost_matrix returns zeros along diagonal when both sets of bin
             bin_centres2 <- bin_centres1
             expected <- rep(0, length(bin_centres1))
             expect_equal(diag(cost_matrix(bin_centres1, bin_centres2)), expected)
-            })
+          })
 
 test_that("cost_matrix returns zeros along diagonal and taxicab distance from 
           all zeros for all other elements when both sets of bin locations are  
@@ -24,7 +24,7 @@ test_that("cost_matrix returns zeros along diagonal and taxicab distance from
             num_bins <- length(bin_centres1)
             expected <- toeplitz(1:num_bins)-1
             expect_equal(cost_matrix(bin_centres1, bin_centres2), expected)
-            })
+          })
 
 test_that("cost_matrix is correct size when the two histograms are of different 
           lengths", {
@@ -35,7 +35,7 @@ test_that("cost_matrix is correct size when the two histograms are of different
             
             expect_equal(nrow(cm), length(bin_centres1))
             expect_equal(ncol(cm), length(bin_centres2))
-            })
+          })
 
 context("EMD: EMD")
 # EMD: Property-based tests
@@ -53,7 +53,7 @@ test_that("EMD methods return 0 when comparing a 1D feature distribution to
                                 bin_centres1, bin_centres2), expected)
             expect_equal(emd_cs(histogram1, histogram2), expected)
             expect_equal(emd(histogram1, histogram2), expected)
-            })
+          })
 
 test_that("EMD methods return numBins/2 when offsetting a symmetric discrete 
           triangle distribution by 1", {
@@ -170,7 +170,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
             expect_equal(emd_cs(histogram1, histogram2), expected)
             expect_equal(emd(histogram1, histogram2), expected)
             
-            })
+          })
 
 test_that("EMD methods return same result for densely and sparsely specified 
           bins", {
@@ -203,7 +203,7 @@ test_that("EMD methods return same result for densely and sparsely specified
                          emd_cs(sparse_histogram1,sparse_histogram2))
             expect_equal(emd(dense_histogram1, dense_histogram2),
                          emd(sparse_histogram1, sparse_histogram2))
-            })
+          })
 
 test_that("EMD methods return same result when order of densely specified bins 
           is changed", {
