@@ -24,7 +24,7 @@ double get_segment(double start,double end,double val1_start,double val1_end,dou
     {
      // They are in the same order no bowtie
      // top triangle  
-     std::cout << "\n       Path1";
+//     std::cout << "\n       Path1";
       topTriangle = 0.5*length*(val1_end-val1_start);
       topRectangle = length*(val1_start-val2_start);
       bottomTriangle = 0.5*length*(val2_end-val2_start); 
@@ -32,14 +32,14 @@ double get_segment(double start,double end,double val1_start,double val1_end,dou
     }
     else
     {
-        std::cout << "\n       Path2";
+//        std::cout << "\n       Path2";
         //bowtie
         // lets make this really simple as the compiler 
         // will combine the expressions as needed
         midPoint = (val1_start-val2_start)/((val2_end-val2_start) - (val1_end-val1_start));
         midValue = val1_start + midPoint*(val1_end-val1_start);
         midPoint = midPoint*length;
-        std::cout << "\n       midPoint: " << midPoint << " midValue: " << midValue << "\n";
+//        std::cout << "\n       midPoint: " << midPoint << " midValue: " << midValue << "\n";
         
         topTriangle = 0.5*midPoint*(midValue-val1_start);
         topRectangle = midPoint*(val1_start-val2_start);
@@ -58,12 +58,12 @@ double get_segment(double start,double end,double val1_start,double val1_end,dou
     {
       if (val1_end > val2_end) 
       {
-     std::cout << "\n       Path3";
+//     std::cout << "\n       Path3";
         //bowtie
         midPoint = (val2_start-val1_start)/((val1_end-val1_start) - (val2_end-val2_start));
         midValue = val2_start + midPoint*(val2_end-val2_start);
         midPoint = midPoint*length;
-        std::cout << "\n       midPoint: " << midPoint << " midValue: " << midValue << "\n";
+//        std::cout << "\n       midPoint: " << midPoint << " midValue: " << midValue << "\n";
         
         topTriangle = 0.5*midPoint*(midValue-val2_start);
         topRectangle = midPoint*(val2_start-val1_start);
@@ -80,7 +80,7 @@ double get_segment(double start,double end,double val1_start,double val1_end,dou
       }
       else // same order
       {
-        std::cout << "\n       Path4";
+//        std::cout << "\n       Path4";
         topTriangle = 0.5*length*(val2_end-val2_start);
         topRectangle = length*(val2_start-val1_start);
         bottomTriangle = 0.5*length*(val1_end-val1_start); 
@@ -154,61 +154,80 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
   double tempDouble;
   int secondStart=-1;
   int h;
+  
+auto start = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> t1=start-start; 
+int count=0; 
+double avCount=0;
   for (index1=-1;index1<loc1.size();index1++) 
   {
-    for (index2=secondStart;index2<loc2.size();index2++) 
-    {
               h=0;
               for (i123=0;i123<2;i123++) 
               {
-              if (index1==-1)
-              {
-                  if (i123==1)
-                  {continue;}
-                          curSeg1Loc1=std::min(loc1[0],loc2[0]); 
-                          curSeg1Loc2=loc1[0]; 
-                          curSeg1Val1=0;
-                          curSeg1Val2=0;
-              }
-              else
-              {
-                  if (i123==0)
-                  {
-                    curSeg1Loc1=loc1[index1]; 
-                    curSeg1Loc2=loc1[index1]+binWidth1; 
-                    if (index1==0)
-                      {curSeg1Val1=0;}
+                if (index1==-1)
+                {
+                    if (i123==1)
+                    {continue;}
+                    curSeg1Loc1=std::min(loc1[0],loc2[0]); 
+                    curSeg1Loc2=loc1[0]; 
+                    curSeg1Val1=0;
+                    curSeg1Val2=0;
+                }
+                else
+                {
+                    if (i123==0)
+                    {
+                      curSeg1Loc1=loc1[index1]; 
+                      curSeg1Loc2=loc1[index1]+binWidth1; 
+                      if (index1==0)
+                        {curSeg1Val1=0;}
+                      else
+                        {curSeg1Val1=val1[index1-1];}
+                    }
                     else
-                      {curSeg1Val1=val1[index1-1];}
+                    {
+                      curSeg1Loc1=loc1[index1]+binWidth1; 
+                      if (index1==loc1.size()-1)
+                        {curSeg1Loc2=std::max(loc1[loc1.size()-1] +binWidth1,loc2[loc2.size()-1]+binWidth2 ); }
+                      else
+                        {curSeg1Loc2=loc1[index1+1];}
+                      curSeg1Val1=val1[index1]; 
+                    }
                     curSeg1Val2=val1[index1]; 
-                  }
-                  else
-                  {
-                    curSeg1Loc1=loc1[index1]+binWidth1; 
-                    if (index1==loc1.size()-1)
-                      {curSeg1Loc2=std::max(loc1[loc1.size()-1] +binWidth1,loc2[loc2.size()-1]+binWidth2 ); }
-                    else
-                      {curSeg1Loc2=loc1[index1+1];}
-                    curSeg1Val1=val1[index1]; 
-                    curSeg1Val2=val1[index1]; 
-                  }
-              }
-        
-        
-        for (j123=0;j123<2;j123++) 
+                 }
+                if (curSeg1Loc1==curSeg1Loc2)
+                {continue;}
+    h=0;
+    avCount+=count/loc1.size();
+//    std::cout << count << ", ";
+    count =0;
+    for (index2=secondStart;index2<loc2.size();index2++) 
+    {
+      count+=1;
+      if (index2>0)
+      {
+        if (index2<loc2.size()-2)
+        {
+        if (loc2[index2+2]+binWidth2<curSeg1Loc1)
+        {
+          secondStart=index2;
+          continue;
+          }
+        }
+      }
+        for (j123=0;j123<1;j123++) 
         {
             if (index2==-1)
             {
               if (j123==1)
-              {continue;}
-                        curSeg2Loc1=std::min(loc1[0],loc2[0]); 
-                        curSeg2Loc2=loc2[0]; 
-                        curSeg2Val1=0;
-                        curSeg2Val2=0;
+                {continue;}
+              curSeg2Loc1=std::min(loc1[0],loc2[0]); 
+              curSeg2Loc2=loc2[0]; 
+              curSeg2Val1=0;
+              curSeg2Val2=0;
             }
             else
             {
-          
               if (j123==0)
               {
                 curSeg2Loc1=loc2[index2]; 
@@ -229,44 +248,84 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
                 curSeg2Val1=val2[index2]; 
                 curSeg2Val2=val2[index2]; 
               }
-          }
+            }
           
           tempStart = std::max(curSeg1Loc1,curSeg2Loc1); 
           tempEnd   = std::min(curSeg1Loc2,curSeg2Loc2); 
+          if (curSeg2Loc1==curSeg2Loc2)
+            {break;}
+          if (curSeg2Loc1>curSeg1Loc2)
+            {break;}
           if (tempStart<tempEnd)
           {
             //We have a valid range
-          // double get_segment(double start,double end,double val1_start,double val1_end,double val2_start,double val2_end)
-          
             valStart1 = curSeg1Val1 + (curSeg1Val2-curSeg1Val1)*(tempStart - curSeg1Loc1)/(curSeg1Loc2 - curSeg1Loc1);
             valEnd1   = curSeg1Val1 + (curSeg1Val2-curSeg1Val1)*(tempEnd   - curSeg1Loc1)/(curSeg1Loc2 - curSeg1Loc1);
             valStart2 = curSeg2Val1 + (curSeg2Val2-curSeg2Val1)*(tempStart - curSeg2Loc1)/(curSeg2Loc2 - curSeg2Loc1);
             valEnd2   = curSeg2Val1 + (curSeg2Val2-curSeg2Val1)*(tempEnd   - curSeg2Loc1)/(curSeg2Loc2 - curSeg2Loc1);
-            std::cout << "\nSeg1 : " << curSeg1Loc1 << ", " << curSeg1Loc2 << "";
-            std::cout << "\n    Seg2 : " << curSeg2Loc1 << ", " << curSeg2Loc2 << "";
             tempDouble = get_segment(tempStart,tempEnd,valStart1,valEnd1,valStart2,valEnd2);
-            std::cout << "\n        curSeg1Val1: " << curSeg1Val1 <<" ";
-            std::cout << "\n        curSeg1Val2: " << curSeg1Val2 <<" ";
-            std::cout << "\n        curSeg2Val1: " << curSeg2Val1 <<" ";
-            std::cout << "\n        curSeg2Val2: " << curSeg2Val2 <<" ";
-            std::cout << "\n        valEnd1:     " << valEnd1 <<" ";
-            std::cout << "\n        tempStart:   " << tempStart <<" ";
-            std::cout << "\n        tempEnd:     " << tempEnd <<" ";
-            std::cout << "\n        valStart1:   " << valStart1 <<" ";
-            std::cout << "\n        valEnd1:     " << valEnd1 <<" ";
-            std::cout << "\n        valStart2:   " << valStart2 <<" ";
-            std::cout << "\n        valEnd2:     " << valEnd2 <<" ";
-            std::cout << "\n        res: " << tempDouble <<" \n";
             res += tempDouble;  
             h=1;
           }
-//          else
-//          {
-//            std::cout << "\n        res: " << 0 <<" \n";
-//          }
+        }
+        
+        for (j123=1;j123<2;j123++) 
+        {
+            if (index2==-1)
+            {
+              if (j123==1)
+                {continue;}
+              curSeg2Loc1=std::min(loc1[0],loc2[0]); 
+              curSeg2Loc2=loc2[0]; 
+              curSeg2Val1=0;
+              curSeg2Val2=0;
+            }
+            else
+            {
+              if (j123==0)
+              {
+                curSeg2Loc1=loc2[index2]; 
+                curSeg2Loc2=loc2[index2]+binWidth2; 
+                if (index2==0)
+                  {curSeg2Val1=0;}
+                else
+                  {curSeg2Val1=val2[index2-1];}
+                curSeg2Val2=val2[index2]; 
+              }
+              else
+              {
+                curSeg2Loc1=loc2[index2]+binWidth2; 
+                if (index2==loc2.size()-1)
+                  {curSeg2Loc2=std::max(loc1[loc1.size()-1] +binWidth1,loc2[loc2.size()-1]+binWidth2 ); }
+                else
+                  {curSeg2Loc2=loc2[index2+1];}
+                curSeg2Val1=val2[index2]; 
+                curSeg2Val2=val2[index2]; 
+              }
+            }
+          
+          tempStart = std::max(curSeg1Loc1,curSeg2Loc1); 
+          tempEnd   = std::min(curSeg1Loc2,curSeg2Loc2); 
+          if (curSeg2Loc1==curSeg2Loc2)
+            {break;}
+          if (curSeg2Loc1>curSeg1Loc2)
+            {break;}
+          if (tempStart<tempEnd)
+          {
+            //We have a valid range
+            valStart1 = curSeg1Val1 + (curSeg1Val2-curSeg1Val1)*(tempStart - curSeg1Loc1)/(curSeg1Loc2 - curSeg1Loc1);
+            valEnd1   = curSeg1Val1 + (curSeg1Val2-curSeg1Val1)*(tempEnd   - curSeg1Loc1)/(curSeg1Loc2 - curSeg1Loc1);
+            valStart2 = curSeg2Val1 + (curSeg2Val2-curSeg2Val1)*(tempStart - curSeg2Loc1)/(curSeg2Loc2 - curSeg2Loc1);
+            valEnd2   = curSeg2Val1 + (curSeg2Val2-curSeg2Val1)*(tempEnd   - curSeg2Loc1)/(curSeg2Loc2 - curSeg2Loc1);
+            tempDouble = get_segment(tempStart,tempEnd,valStart1,valEnd1,valStart2,valEnd2);
+            res += tempDouble;  
+            h=1;
+          }
         }
       }
     }
   }
+//  std::cout << t1.count() << "\n";
+//  std::cout << avCount << "\n";
   return res;
 }
