@@ -144,7 +144,7 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
   double h1,h2;
   h1=0;
   h2=0;
-  int i123,j123;
+  int i123;
   double tempStart;
   double tempEnd;
   double valStart1;
@@ -155,15 +155,10 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
   int secondStart=-1;
   int h;
   
-auto start = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> t1=start-start; 
-int count=0; 
-double avCount=0;
   for (index1=-1;index1<loc1.size();index1++) 
   {
-              h=0;
-              for (i123=0;i123<2;i123++) 
-              {
+      for (i123=0;i123<2;i123++) 
+      {
                 if (index1==-1)
                 {
                     if (i123==1)
@@ -197,30 +192,21 @@ double avCount=0;
                  }
                 if (curSeg1Loc1==curSeg1Loc2)
                 {continue;}
-    h=0;
-    avCount+=count/loc1.size();
-//    std::cout << count << ", ";
-    count =0;
     for (index2=secondStart;index2<loc2.size();index2++) 
     {
-      count+=1;
-      if (index2>0)
-      {
-        if (index2<loc2.size()-2)
-        {
-        if (loc2[index2+2]+binWidth2<curSeg1Loc1)
-        {
-          secondStart=index2;
-          continue;
-          }
-        }
-      }
-        for (j123=0;j123<1;j123++) 
-        {
+            if (index2>0)
+            {
+              if (index2<loc2.size()-2)
+              {
+                  if (loc2[index2+2]+binWidth2<curSeg1Loc1)
+                  {
+                    secondStart=index2;
+                    continue;
+                  }
+              }
+            }
             if (index2==-1)
             {
-              if (j123==1)
-                {continue;}
               curSeg2Loc1=std::min(loc1[0],loc2[0]); 
               curSeg2Loc2=loc2[0]; 
               curSeg2Val1=0;
@@ -228,34 +214,17 @@ double avCount=0;
             }
             else
             {
-              if (j123==0)
-              {
                 curSeg2Loc1=loc2[index2]; 
                 curSeg2Loc2=loc2[index2]+binWidth2; 
                 if (index2==0)
                   {curSeg2Val1=0;}
                 else
                   {curSeg2Val1=val2[index2-1];}
-                curSeg2Val2=val2[index2]; 
-              }
-              else
-              {
-                curSeg2Loc1=loc2[index2]+binWidth2; 
-                if (index2==loc2.size()-1)
-                  {curSeg2Loc2=std::max(loc1[loc1.size()-1] +binWidth1,loc2[loc2.size()-1]+binWidth2 ); }
-                else
-                  {curSeg2Loc2=loc2[index2+1];}
-                curSeg2Val1=val2[index2]; 
-                curSeg2Val2=val2[index2]; 
-              }
+                curSeg2Val2 = val2[index2]; 
             }
           
           tempStart = std::max(curSeg1Loc1,curSeg2Loc1); 
           tempEnd   = std::min(curSeg1Loc2,curSeg2Loc2); 
-          if (curSeg2Loc1==curSeg2Loc2)
-            {break;}
-          if (curSeg2Loc1>curSeg1Loc2)
-            {break;}
           if (tempStart<tempEnd)
           {
             //We have a valid range
@@ -267,33 +236,10 @@ double avCount=0;
             res += tempDouble;  
             h=1;
           }
-        }
-        
-        for (j123=1;j123<2;j123++) 
-        {
             if (index2==-1)
-            {
-              if (j123==1)
-                {continue;}
-              curSeg2Loc1=std::min(loc1[0],loc2[0]); 
-              curSeg2Loc2=loc2[0]; 
-              curSeg2Val1=0;
-              curSeg2Val2=0;
-            }
+              {continue;}
             else
             {
-              if (j123==0)
-              {
-                curSeg2Loc1=loc2[index2]; 
-                curSeg2Loc2=loc2[index2]+binWidth2; 
-                if (index2==0)
-                  {curSeg2Val1=0;}
-                else
-                  {curSeg2Val1=val2[index2-1];}
-                curSeg2Val2=val2[index2]; 
-              }
-              else
-              {
                 curSeg2Loc1=loc2[index2]+binWidth2; 
                 if (index2==loc2.size()-1)
                   {curSeg2Loc2=std::max(loc1[loc1.size()-1] +binWidth1,loc2[loc2.size()-1]+binWidth2 ); }
@@ -301,15 +247,10 @@ double avCount=0;
                   {curSeg2Loc2=loc2[index2+1];}
                 curSeg2Val1=val2[index2]; 
                 curSeg2Val2=val2[index2]; 
-              }
             }
           
           tempStart = std::max(curSeg1Loc1,curSeg2Loc1); 
           tempEnd   = std::min(curSeg1Loc2,curSeg2Loc2); 
-          if (curSeg2Loc1==curSeg2Loc2)
-            {break;}
-          if (curSeg2Loc1>curSeg1Loc2)
-            {break;}
           if (tempStart<tempEnd)
           {
             //We have a valid range
@@ -319,13 +260,14 @@ double avCount=0;
             valEnd2   = curSeg2Val1 + (curSeg2Val2-curSeg2Val1)*(tempEnd   - curSeg2Loc1)/(curSeg2Loc2 - curSeg2Loc1);
             tempDouble = get_segment(tempStart,tempEnd,valStart1,valEnd1,valStart2,valEnd2);
             res += tempDouble;  
-            h=1;
           }
-        }
+          if (curSeg1Loc2<curSeg2Loc1)
+          {
+            break;
+          }
       }
     }
   }
 //  std::cout << t1.count() << "\n";
-//  std::cout << avCount << "\n";
   return res;
 }
