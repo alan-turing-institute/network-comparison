@@ -304,3 +304,18 @@ test_that("3 element test w1=0.1, w2=0.2", {
               
               expect_lt(abs(res1-res2),10**(-4))
             })
+
+test_that("Old failure case", {
+  d1 = list()
+  attr(d1,'class') <- "dhist"
+  d1$locations <- 0 
+  d1$masses <- 1000 
+  d2 = list()
+  attr(d2,'class') <- "dhist"
+  d2$locations <- c(0,1,2,3) 
+  d2$masses <- c(8634,1242,114,10) 
+  sq1 <- net_emd_single_pair(d1,d2,method='optimise',smoothing_window_width = 1)
+  sq2 <- net_emd_single_pair(d1,d2,method='optimiseRonly',smoothing_window_width = 1)
+  expect_lt(abs(sq1$min_emd-sq2$min_emd),10**(-4))
+})
+  

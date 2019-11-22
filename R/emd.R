@@ -82,10 +82,19 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
   }
   else #if ((dhist1$smoothing_window_width==1) && (dhist2$smoothing_window_width==1))
   {
+    val1 <- cumsum(dhist1$masses)
+    val2 <- cumsum(dhist2$masses)
+    val1 <- val1/val1[length(val1)]
+    val2 <- val2/val2[length(val2)]
+    loc1=dhist1$locations
+    loc2=dhist2$locations
+    binWidth1=dhist1$smoothing_window_width
+    binWidth2=dhist2$smoothing_window_width
+    count=0
     # Determine minimum and maximum offset of range in which histograms overlap
     # (based on sliding histogram 1)
-    min_offset <- min(dhist2$locations) - max(dhist1$locations)
-    max_offset <- max(dhist2$locations) - min(dhist1$locations)
+    min_offset <- min(dhist2$locations) - max(dhist1$locations) - max(binWidth1,binWidth2)
+    max_offset <- max(dhist2$locations) - min(dhist1$locations) + max(binWidth1,binWidth2)
     # Set lower and upper range for optimise algorithm to be somewhat wider than
     # range defined by the minimum and maximum offset. This guards against a
     # couple of issues that arise if the optimise range is exactly min_offset 
@@ -97,18 +106,10 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     buffer <- 0.1
     min_offset <- min_offset - buffer
     max_offset <- max_offset + buffer
+    
     # Define a single parameter function to minimise emd as a function of offset
-    val1 <- cumsum(dhist1$masses)
-    val2 <- cumsum(dhist2$masses)
-    val1 <- val1/val1[length(val1)]
-    val2 <- val2/val2[length(val2)]
-    loc1=dhist1$locations
-    loc2=dhist2$locations
-    binWidth1=dhist1$smoothing_window_width
-    binWidth2=dhist2$smoothing_window_width
-    count=0
     emd_offset <- function(offset) {
-      temp1<- NetEmdSmooth(loc1+offset,val1,binWidth1,loc2,val2,binWidth2)
+      temp1<- NetEmdSmoothV2(loc1+offset,val1,binWidth1,loc2,val2,binWidth2)
       temp1
     }
     # Get solution from optimiser
