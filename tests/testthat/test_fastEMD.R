@@ -86,7 +86,6 @@ getVal <- function(x1,v1,w1,x2,v2,w2)
 
 test_that("3 element test", {
   
-            sourceCpp("~/Documents/network-comparison/src/fastSmoothV3.cpp")
             for (w1 in (1:10)/10.0)
             {
               for (w2 in (1:10)/10.0)
@@ -108,7 +107,6 @@ test_that("3 element test", {
 
 test_that("2 element test w1=0.1, w2=0.2", {
   
-  sourceCpp("~/Documents/network-comparison/src/fastSmoothV3.cpp")
   w1 = 0.1
   w2 = 0.2
   x1 <- c(1,2)
@@ -164,7 +162,6 @@ test_that("1 element vs many test Mixture", {
 
 
 test_that("3 element test Mixture", { 
-            sourceCpp("~/Documents/network-comparison/src/fastSmoothV3.cpp")
             for (w1 in (1:10)/10.0)
             {
               for (w2 in (1:10)/10.0)
@@ -185,7 +182,6 @@ test_that("3 element test Mixture", {
             })
 
 test_that("3 element test Mixture MidPoint", { 
-            sourceCpp("~/Documents/network-comparison/src/fastSmoothV3.cpp")
             w1 = 1
             w2 = 1
             for (v1_2 in (1:10)/10.0)
@@ -209,7 +205,6 @@ test_that("3 element test Mixture MidPoint", {
 
 
 test_that("3 element test Mixture StartPoint", { 
-            sourceCpp("~/Documents/network-comparison/src/fastSmoothV3.cpp")
             w1 = 1
             w2 = 1
             for (v1_1 in (1:5)/10.0)
@@ -233,7 +228,6 @@ test_that("3 element test Mixture StartPoint", {
 
 
 test_that("3 element test Mixture StartLoc", { 
-            sourceCpp("~/Documents/network-comparison/src/fastSmoothV3.cpp")
             w1 = 1
             w2 = 1
             for (x1_1 in (1:9)/10.0)
@@ -257,7 +251,6 @@ test_that("3 element test Mixture StartLoc", {
 
 
 test_that("many element test Mixture ", { 
-            sourceCpp("~/Documents/network-comparison/src/fastSmoothV3.cpp")
             w1 = 1
             w2 = 1
             for (i in (2:10)*1)
@@ -300,7 +293,6 @@ test_that("many element test Mixture ", {
 
 test_that("3 element test w1=0.1, w2=0.2", {
   
-           sourceCpp("~/Documents/network-comparison/src/fastSmoothV3.cpp")
   w1 = 0.1
   w2 = 0.2
               x1 <- c(1,2,3)
