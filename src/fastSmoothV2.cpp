@@ -7,7 +7,7 @@
 #include <math.h>
 using namespace Rcpp;
 
-
+//compute segment
 inline double get_segment(double start,double end,double val1_start,double val1_end,double val2_start,double val2_end)
 {
   double length;
@@ -23,8 +23,6 @@ inline double get_segment(double start,double end,double val1_start,double val1_
     if (val1_end >= val2_end) 
     {
      // They are in the same order no bowtie
-     // top triangle  
-//     std::cout << "\n       Path1";
       topTriangle = 0.5*length*(val1_end-val1_start);
       topRectangle = length*(val1_start-val2_start);
       bottomTriangle = 0.5*length*(val2_end-val2_start); 
@@ -32,7 +30,6 @@ inline double get_segment(double start,double end,double val1_start,double val1_
     }
     else
     {
-//        std::cout << "\n       Path2";
         //bowtie
         // lets make this really simple as the compiler 
         // will combine the expressions as needed
@@ -89,15 +86,26 @@ inline double get_segment(double start,double end,double val1_start,double val1_
     }
 }
 
-inline double get_segment_constrained(double start,double end, double seg1L1, double seg1L2, double seg2L1, double seg2L2, double seg1V1, double seg1V2, double seg2V1, double seg2V2)  
+// cut down and compute segment
+inline double get_segment_constrained(double seg1L1, double seg1L2, double seg2L1, double seg2L2, double seg1V1, double seg1V2, double seg2V1, double seg2V2)  
 {
-            //We have a valid range
-            double valStart1, valEnd1, valStart2, valEnd2;   
-            valStart1 = seg1V1 + (seg1V2-seg1V1)*(start - seg1L1)/(seg1L2 - seg1L1);
-            valEnd1   = seg1V1 + (seg1V2-seg1V1)*(end   - seg1L1)/(seg1L2 - seg1L1);
-            valStart2 = seg2V1 + (seg2V2-seg2V1)*(start - seg2L1)/(seg2L2 - seg2L1);
-            valEnd2   = seg2V1 + (seg2V2-seg2V1)*(end   - seg2L1)/(seg2L2 - seg2L1);
-            return get_segment(start,end,valStart1,valEnd1,valStart2,valEnd2);
+    //We have a valid range
+    double valStart1, valEnd1, valStart2, valEnd2;   
+    double start,end; 
+    start = std::max(seg1L1,seg2L1); 
+    end   = std::min(seg1L2,seg2L2); 
+    if (start<end)
+    {
+      valStart1 = seg1V1 + (seg1V2-seg1V1)*(start - seg1L1)/(seg1L2 - seg1L1);
+      valEnd1   = seg1V1 + (seg1V2-seg1V1)*(end   - seg1L1)/(seg1L2 - seg1L1);
+      valStart2 = seg2V1 + (seg2V2-seg2V1)*(start - seg2L1)/(seg2L2 - seg2L1);
+      valEnd2   = seg2V1 + (seg2V2-seg2V1)*(end   - seg2L1)/(seg2L2 - seg2L1);
+      return get_segment(start,end,valStart1,valEnd1,valStart2,valEnd2);
+    }
+    else
+    {
+      return 0;
+    } 
 }
 
 //' @title
@@ -137,41 +145,26 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
   double maxLoc = std::max(loc1[loc1.size()-1] +binWidth1,loc2[loc2.size()-1]+binWidth2 );
   double minLoc = std::min(loc1[0],loc2[0]);
  
+ // Dealing with the non overlapping piece at the beginning
   if (loc2[0]<loc1[0]) 
   {
-    
-    curSeg1Loc1=std::min(loc1[0],loc2[0]); 
+    curSeg1Loc1=minLoc; 
     curSeg1Loc2=loc1[0]; 
     curSeg1Val1=0;
     curSeg1Val2=0;
-    for (index2=secondStart;index2<loc2.size();index2++) 
+    for (index2=0;index2<loc2.size();index2++) 
     {
-              if (index2==-1)
-              {
-                curSeg2Loc1=minLoc;
-                curSeg2Loc2=loc2[0]; 
-                curSeg2Val1=0;
-                curSeg2Val2=0;
-              }
-              else
-              {
-                  curSeg2Loc1=loc2[index2]; 
-                  curSeg2Loc2=loc2[index2]+binWidth2; 
-                  if (index2==0)
-                    {curSeg2Val1=0;}
-                  else
-                    {curSeg2Val1=val2[index2-1];}
-                  curSeg2Val2 = val2[index2]; 
-              }
+            curSeg2Loc1=loc2[index2]; 
+            curSeg2Loc2=loc2[index2]+binWidth2; 
+            if (index2==0)
+              {curSeg2Val1=0;}
+            else
+              {curSeg2Val1=val2[index2-1];}
+            curSeg2Val2 = val2[index2]; 
             
-            tempStart = std::max(curSeg1Loc1,curSeg2Loc1); 
-            tempEnd   = std::min(curSeg1Loc2,curSeg2Loc2); 
-            if (tempStart<tempEnd)
-            {
-              res += get_segment_constrained(tempStart,tempEnd,curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
-            }
-            if (index2==-1)
-              {continue;}
+            // add this segment 
+            res += get_segment_constrained(curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
+            
             curSeg2Loc1=loc2[index2]+binWidth2; 
             if (index2==loc2.size()-1)
               {curSeg2Loc2= maxLoc;}
@@ -180,107 +173,84 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
             curSeg2Val1=val2[index2]; 
             curSeg2Val2=val2[index2]; 
         
-            tempStart = std::max(curSeg1Loc1,curSeg2Loc1); 
-            tempEnd   = std::min(curSeg1Loc2,curSeg2Loc2); 
-            if (tempStart<tempEnd)
-            {
-              res += get_segment_constrained(tempStart,tempEnd,curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
-            }
+            res += get_segment_constrained(curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
+            
             if (curSeg1Loc2<curSeg2Loc1)
               {break;}
         }
     }
     
   
-  
-  
-  
   for (index1=0;index1<loc1.size();index1++) 
   {
+      // loop over the linear and constant section of segment 
+      // 0 is linear, 1 is the constant
       for (i123=0;i123<2;i123++) 
       {
-            if (i123==0)
-            {
-              curSeg1Loc1=loc1[index1]; 
-              curSeg1Loc2=loc1[index1]+binWidth1; 
-              if (index1==0)
-                {curSeg1Val1=0;}
-              else
-                {curSeg1Val1=val1[index1-1];}
-            }
-            else
-            {
-              curSeg1Loc1=loc1[index1]+binWidth1; 
-              if (index1==loc1.size()-1)
-                {curSeg1Loc2=maxLoc; }
-              else
-                {curSeg1Loc2=loc1[index1+1];}
-              curSeg1Val1=val1[index1]; 
-            }
-            curSeg1Val2=val1[index1]; 
-            if (curSeg1Loc1==curSeg1Loc2)
-              {continue;}
-    for (index2=secondStart;index2<loc2.size();index2++) 
-    {
-            if (index2>0)
-            {
-              if (index2<loc2.size()-2)
+        if (i123==0)
+        {
+          curSeg1Loc1=loc1[index1]; 
+          curSeg1Loc2=loc1[index1]+binWidth1; 
+          if (index1==0)
+            {curSeg1Val1=0;}
+          else
+            {curSeg1Val1=val1[index1-1];}
+        }
+        else
+        {
+          curSeg1Loc1=loc1[index1]+binWidth1; 
+          if (index1==loc1.size()-1)
+            {curSeg1Loc2=maxLoc; }
+          else
+            {curSeg1Loc2=loc1[index1+1];}
+          curSeg1Val1=val1[index1]; 
+        }
+        curSeg1Val2=val1[index1]; 
+        // shortcut out of this section
+        if (curSeg1Loc1==curSeg1Loc2)
+          {continue;}
+        for (index2=secondStart;index2<loc2.size();index2++) 
+        {
+                if (index2==-1)
+                {
+                  curSeg2Loc1=minLoc;
+                  curSeg2Loc2=loc2[0]; 
+                  curSeg2Val1=0;
+                  curSeg2Val2=0;
+                }
+                else
+                {
+                    curSeg2Loc1=loc2[index2]; 
+                    curSeg2Loc2=loc2[index2]+binWidth2; 
+                    if (index2==0)
+                      {curSeg2Val1=0;}
+                    else
+                      {curSeg2Val1=val2[index2-1];}
+                    curSeg2Val2 = val2[index2]; 
+                }
+              
+                res += get_segment_constrained(curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
+                
+                if (index2==-1)
+                  {continue;}
+                else
+                {
+                    curSeg2Loc1=loc2[index2]+binWidth2; 
+                    if (index2==loc2.size()-1)
+                      {curSeg2Loc2=maxLoc; }
+                    else
+                      {curSeg2Loc2=loc2[index2+1];}
+                    curSeg2Val1=val2[index2]; 
+                    curSeg2Val2=val2[index2]; 
+                }
+              
+              res += get_segment_constrained(curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
+              
+              if (curSeg1Loc2<curSeg2Loc1)
               {
-                  if (loc2[index2+2]+binWidth2<curSeg1Loc1)
-                  {
-                    secondStart=index2;
-                    continue;
-                  }
+                break;
               }
-            }
-            if (index2==-1)
-            {
-              curSeg2Loc1=minLoc;
-              curSeg2Loc2=loc2[0]; 
-              curSeg2Val1=0;
-              curSeg2Val2=0;
-            }
-            else
-            {
-                curSeg2Loc1=loc2[index2]; 
-                curSeg2Loc2=loc2[index2]+binWidth2; 
-                if (index2==0)
-                  {curSeg2Val1=0;}
-                else
-                  {curSeg2Val1=val2[index2-1];}
-                curSeg2Val2 = val2[index2]; 
-            }
-          
-          tempStart = std::max(curSeg1Loc1,curSeg2Loc1); 
-          tempEnd   = std::min(curSeg1Loc2,curSeg2Loc2); 
-          if (tempStart<tempEnd)
-          {
-            res += get_segment_constrained(tempStart,tempEnd,curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
           }
-            if (index2==-1)
-              {continue;}
-            else
-            {
-                curSeg2Loc1=loc2[index2]+binWidth2; 
-                if (index2==loc2.size()-1)
-                  {curSeg2Loc2=maxLoc; }
-                else
-                  {curSeg2Loc2=loc2[index2+1];}
-                curSeg2Val1=val2[index2]; 
-                curSeg2Val2=val2[index2]; 
-            }
-          
-          tempStart = std::max(curSeg1Loc1,curSeg2Loc1); 
-          tempEnd   = std::min(curSeg1Loc2,curSeg2Loc2); 
-          if (tempStart<tempEnd)
-          {
-            res += get_segment_constrained(tempStart,tempEnd,curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
-          }
-          if (curSeg1Loc2<curSeg2Loc1)
-          {
-            break;
-          }
-      }
     }
   }
   return res;
