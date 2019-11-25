@@ -118,7 +118,7 @@ inline double get_segment_constrained(double seg1L1, double seg1L2, double seg2L
 //'
 //' @export
 // [[Rcpp::export]]
-double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,NumericVector loc2,NumericVector val2,double binWidth2)
+double NetEmdSmoothV2_old(NumericVector loc1,NumericVector val1,double binWidth1,NumericVector loc2,NumericVector val2,double binWidth2)
 {
   int index1,index2;
   
@@ -138,8 +138,6 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
   
   // need to iterate through regions of constant gradient
   int i123;
-  double tempStart;
-  double tempEnd;
   double secondStart=-1;
   
   double maxLoc = std::max(loc1[loc1.size()-1] +binWidth1,loc2[loc2.size()-1]+binWidth2 );
@@ -178,9 +176,41 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
             if (curSeg1Loc2<curSeg2Loc1)
               {break;}
         }
-    }
-    
-  
+  }
+  else
+  {
+    curSeg2Loc1=minLoc; 
+    curSeg2Loc2=loc2[0]; 
+    curSeg2Val1=0;
+    curSeg2Val2=0;
+    for (index1=0;index1<loc1.size();index1++) 
+    {
+            curSeg1Loc1=loc1[index1]; 
+            curSeg1Loc2=loc1[index1]+binWidth2; 
+            if (index1==0)
+              {curSeg1Val1=0;}
+            else
+              {curSeg1Val1=val1[index1-1];}
+            curSeg1Val2 = val1[index1]; 
+            
+            // add this segment 
+            res += get_segment_constrained(curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
+            
+            curSeg1Loc1=loc1[index1]+binWidth1; 
+            if (index1==loc1.size()-1)
+              {curSeg1Loc2= maxLoc;}
+            else
+              {curSeg1Loc2=loc1[index1+1];}
+            curSeg1Val1=val1[index1]; 
+            curSeg1Val2=val1[index1]; 
+        
+            res += get_segment_constrained(curSeg1Loc1, curSeg1Loc2, curSeg2Loc1, curSeg2Loc2, curSeg1Val1, curSeg1Val2, curSeg2Val1, curSeg2Val2); 
+            
+            if (curSeg2Loc2<curSeg1Loc1)
+              {break;}
+        }
+  }
+  secondStart = 0; 
   for (index1=0;index1<loc1.size();index1++) 
   {
       // loop over the linear and constant section of segment 
