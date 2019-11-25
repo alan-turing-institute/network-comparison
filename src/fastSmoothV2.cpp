@@ -237,7 +237,12 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
             {break;}
       }
   }
+  std::cout << "res = " << res <<"\n";
   // Add both the  overlapping sections and the non overlapping section on the right
+  // Note we reiterate over the first few sections loc1
+  // Could store where we are upto from above to save time
+  // Reset Val counter
+  curSeg1Val2=0;
   for (index1=0;index1<loc1.size();index1++) 
   {
         //  Get the three relevant locations
@@ -270,7 +275,6 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
               { curSeg2Loc3=loc2[index2+1]; }
             //update values
             curSeg2Val1=curSeg2Val2;
-            curSeg2Val2=val2[index2]; 
             curSeg2Val2 = val2[index2]; 
             // If this section is behind Seg1 
             // Do not consider again
@@ -280,9 +284,9 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
               continue;
             }
             // If current Seg2 is beyond Seg1 break out of loop
+            res += get_double_segment_constrained(curSeg1Loc1,curSeg1Loc2,curSeg1Loc3,curSeg1Val1,curSeg1Val2,curSeg2Loc1,curSeg2Loc2,curSeg2Loc3,curSeg2Val1,curSeg2Val2);
             if (curSeg2Loc1>curSeg1Loc3)
               {break;}
-            res += get_double_segment_constrained(curSeg1Loc1,curSeg1Loc2,curSeg1Loc3,curSeg1Val1,curSeg1Val2,curSeg2Loc1,curSeg2Loc2,curSeg2Loc3,curSeg2Val1,curSeg2Val2);
         }
   }
   return res;

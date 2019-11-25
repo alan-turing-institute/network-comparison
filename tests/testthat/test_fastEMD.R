@@ -94,7 +94,6 @@ test_that("3 element test", {
                 v1 <- c(0.25,0.70,1.00)
                 x2 <- c(1,2,3)
                 v2 <- c(0.25,0.70,1.00)
-                print(x1)
                 f1 <- makeFunction(x1,v1,w1,x2,v2,w2)
                 res2 <- integrate(f1,0,max(x2[3],x1[3])+max(w1,w2),abs.tol=0.000000001)[[1]]
                 
@@ -113,7 +112,6 @@ test_that("2 element test w1=0.1, w2=0.2", {
   v1 <- c(0.25,0.75)
   x2 <- c(1,2)
   v2 <- c(0.5,1.00)
-  print(x1)
   f1 <- makeFunction(x1,v1,w1,x2,v2,w2)
   res2 <- integrate(f1,0,max(x2[2],x1[2])+max(w1,w2),abs.tol=0.000000001)[[1]]
   res1 <- NetEmdSmoothV2(x1,v1,w1,x2,v2,w2)
@@ -130,7 +128,6 @@ test_that("1 element at 0 vs many test Mixture", {
       v1 <- c(1.00)
       x2 <- 1:w1
       v2 <- (1:w1)/w1
-      print(x1)
       f1 <- makeFunction(x1,v1,1,x2,v2,1)
       res2 <- integrate(f1,0,w1+1,abs.tol=0.000000001)[[1]]
       
@@ -149,7 +146,6 @@ test_that("1 element vs many test Mixture", {
       v1 <- c(1.00)
       x2 <- 1:w1
       v2 <- (1:w1)/w1
-      print(x1)
       f1 <- makeFunction(x1,v1,1,x2,v2,1)
       res2 <- integrate(f1,0,w1+1,abs.tol=0.000000001)[[1]]
       
@@ -170,7 +166,6 @@ test_that("3 element test Mixture", {
                 v1 <- c(0.65,0.70,1.00)
                 x2 <- c(1,2,3)
                 v2 <- c(0.25,0.70,1.00)
-                print(x1)
                 f1 <- makeFunction(x1,v1,w1,x2,v2,w2)
                 res2 <- integrate(f1,0,max(x2[3],x1[3])+max(w1,w2),abs.tol=0.000000001)[[1]]
                 
@@ -192,7 +187,6 @@ test_that("3 element test Mixture MidPoint", {
                 v1 <- c(0.1,v1_2,1.00)
                 x2 <- c(1,2,3)
                 v2 <- c(0.1,v2_2,1.00)
-                print(x1)
                 f1 <- makeFunction(x1,v1,w1,x2,v2,w2)
                 res2 <- integrate(f1,0,max(x2[3],x1[3])+max(w1,w2),abs.tol=0.000000001)[[1]]
                 
@@ -215,7 +209,6 @@ test_that("3 element test Mixture StartPoint", {
                 v1 <- c(v1_1,0.5,1.00)
                 x2 <- c(1,2,3)
                 v2 <- c(v2_1,0.5,1.00)
-                print(x1)
                 f1 <- makeFunction(x1,v1,w1,x2,v2,w2)
                 res2 <- integrate(f1,0,max(x2[3],x1[3])+max(w1,w2),abs.tol=0.000000001)[[1]]
                 
@@ -238,7 +231,6 @@ test_that("3 element test Mixture StartLoc", {
                 v1 <- c(0.25,0.5,1.00)
                 x2 <- c(x2_1,2,4)
                 v2 <- c(0.3,0.5,1.00)
-                print(x1)
                 f1 <- makeFunction(x1,v1,w1,x2,v2,w2)
                 res2 <- integrate(f1,0,max(x2[3],x1[3])+max(w1,w2),abs.tol=0.000000001)[[1]]
                 
@@ -269,7 +261,6 @@ test_that("many element test Mixture ", {
                     w2 <- min(diff(x2))/y123
                     v2 <- cumsum(abs(rnorm(j)))
                     v2 = v2/v2[length(v2)]
-                    print(x1)
                     f1 <- makeFunction(x1,v1,w1,x2,v2,w2)
                     top1 = max(x2[length(x2)],x1[length(x1)])+max(w1,w2)
                     bottom1 = min(x2[1],x1[1])
@@ -299,7 +290,6 @@ test_that("3 element test w1=0.1, w2=0.2", {
               v1 <- c(0.25,0.70,1.00)
               x2 <- c(1,2,3)
               v2 <- c(0.25,0.70,1.00)
-              print(x1)
               f1 <- makeFunction(x1,v1,w1,x2,v2,w2)
               res2 <- integrate(f1,0,max(x2[3],x1[3])+max(w1,w2),abs.tol=0.0000000001)[[1]]
               res1 <- NetEmdSmoothV2(x1,v1,w1,x2,v2,w2)
