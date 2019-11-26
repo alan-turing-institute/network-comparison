@@ -130,7 +130,7 @@ double get_double_segment_constrained(double seg1Loc1, double seg1Loc2, double s
     // This could be easily special cased (saving ~1 if statements ).
     res += get_segment_constrained(seg1Loc2, seg1Loc3, seg2Loc1, seg2Loc2, seg1Val2, seg1Val2, seg2Val1, seg2Val2); 
     
-    // compare the flat section with the linear section
+    // compare the flat section with the flat section
     // This could be easily special cased (saving ~2 if statements ).
     res += get_segment_constrained(seg1Loc2, seg1Loc3, seg2Loc2, seg2Loc3, seg1Val2, seg1Val2, seg2Val2, seg2Val2); 
     return res;
@@ -157,28 +157,28 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
   double res=0;
   
   // Hist 1
-  double curSeg1Loc1; 
-  double curSeg1Loc2; 
-  double curSeg1Loc3; 
-  double curSeg1Val1; 
-  double curSeg1Val2; 
+  double curSeg1Loc1; // Start of the gradient section in Seg1
+  double curSeg1Loc2; // End of the gradient section in Seg1
+  double curSeg1Loc3; // End of the flat section in Seg1
+  double curSeg1Val1; // Start value in Seg1
+  double curSeg1Val2; // End value in Seg1
   
-  // Hist 1
-  double curSeg2Loc1; 
-  double curSeg2Loc2; 
-  double curSeg2Loc3; 
-  double curSeg2Val1; 
-  double curSeg2Val2; 
+  // Hist 2
+  double curSeg2Loc1; // Start of the gradient section in Seg2
+  double curSeg2Loc2; // End of the gradient section in Seg2
+  double curSeg2Loc3; // End of the flat section in Seg2
+  double curSeg2Val1; // Start value in Seg2
+  double curSeg2Val2; // End value in Seg2
  
   
-  double tempDouble;
-  // need to iterate through regions of constant gradient
+  // Starting index for the second histogram
   double secondStart=0;
-  
+ 
+  // Smallest and largest location values 
   double maxLoc = std::max(loc1[loc1.size()-1] +binWidth1,loc2[loc2.size()-1]+binWidth2 );
   double minLoc = std::min(loc1[0],loc2[0]);
   
-  // warning index1==-1 case is not well tested
+  // warning area before loc2[0] is not well tested
   // As values outside of the range appear to be zero
   
   // Dealing with segments which are to the left of the region covered by both
@@ -189,10 +189,11 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
       // Fix the position of Seg1 and then interate over Seg2 until we have all
       // of the segments of Seg2 before Seg1 starts.
       curSeg1Loc1=minLoc;
-      curSeg1Loc2=loc1[0]; 
+      curSeg1Loc2=minLoc; 
       curSeg1Loc3=loc1[0]; 
       curSeg1Val1=0;
       curSeg1Val2=0;
+      // Set this value so we can update in the loop 
       curSeg2Val2=0;
       for (index2=0;index2<loc2.size();index2++) 
       {
@@ -202,11 +203,9 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
               { curSeg2Loc3=maxLoc; }
             else
               { curSeg2Loc3=loc2[index2+1]; }
-            
             curSeg2Val1 = curSeg2Val2; 
             curSeg2Val2 = val2[index2]; 
-            tempDouble = get_double_segment_constrained(curSeg1Loc1,curSeg1Loc2,curSeg1Loc3,curSeg1Val1,curSeg1Val2,curSeg2Loc1,curSeg2Loc2,curSeg2Loc3,curSeg2Val1,curSeg2Val2);
-            res+= tempDouble;
+            res+= get_double_segment_constrained(curSeg1Loc1,curSeg1Loc2,curSeg1Loc3,curSeg1Val1,curSeg1Val2,curSeg2Loc1,curSeg2Loc2,curSeg2Loc3,curSeg2Val1,curSeg2Val2);
             if (curSeg1Loc1>curSeg2Loc3)
               {break;}
       }
@@ -217,10 +216,11 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
       // Fix the position of Seg2 and then interate over Seg1 until we have all
       // of the segments of Seg1 before Seg2 starts.
       curSeg2Loc1=minLoc;
-      curSeg2Loc2=loc2[0]; 
+      curSeg2Loc2=minLoc; 
       curSeg2Loc3=loc2[0]; 
       curSeg2Val1=0;
       curSeg2Val2=0;
+      // Set this value so we can update in the lopp 
       curSeg1Val2=0;
       for (index1=0;index1<loc1.size();index1++) 
       {
@@ -237,7 +237,6 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
             {break;}
       }
   }
-  std::cout << "res = " << res <<"\n";
   // Add both the  overlapping sections and the non overlapping section on the right
   // Note we reiterate over the first few sections loc1
   // Could store where we are upto from above to save time
@@ -285,7 +284,7 @@ double NetEmdSmoothV2(NumericVector loc1,NumericVector val1,double binWidth1,Num
             }
             // If current Seg2 is beyond Seg1 break out of loop
             res += get_double_segment_constrained(curSeg1Loc1,curSeg1Loc2,curSeg1Loc3,curSeg1Val1,curSeg1Val2,curSeg2Loc1,curSeg2Loc2,curSeg2Loc3,curSeg2Val1,curSeg2Val2);
-            if (curSeg2Loc1>curSeg1Loc3)
+            if (curSeg2Loc3>curSeg1Loc3)
               {break;}
         }
   }
