@@ -100,7 +100,20 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     max_offset <- max(loc2Mod) - min(loc1Mod) + max(binWidth1,binWidth2)
     # Set lower and upper range for optimise algorithm to be somewhat wider than
     # range defined by the minimum and maximum offset. This guards against a
-    # couple of issues that arise if the op
+    # couple of issues that arise if the optimise range is exactly min_offset 
+    # to max_offset
+    # 1) If lower and upper are equal, the optimise method will throw and error
+    # 2) It seems that optimise is not guaranteed to explore its lower and upper
+    #    bounds, even in the case where one of them is the offset with minimum
+    #    EMD
+    buffer <- 0.1
+    min_offset <- min_offset - buffer
+    max_offset <- max_offset + buffer
+    # Define a single parameter function to minimise emd as a function of offset
+    emd_offset <- function(offset) {
+      temp1<- NetEmdSmoothV2(loc1Mod+offset,val1,binWidth1,loc2Mod,val2,binWidth2)
+      temp1
+    }
     # Get solution from optimiser
     soln <- stats::optimise(emd_offset, lower = min_offset, upper = max_offset, 
                             tol = .Machine$double.eps*1000)
