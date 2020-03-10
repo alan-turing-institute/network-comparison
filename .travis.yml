@@ -12,10 +12,11 @@ os:
 after_success:
 - Rscript -e 'library(covr); codecov()'
 
+# Build documentation and deploy to github pages
 before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
 deploy:
-  provider: scripts
-  script: Rscript -e 'pkgdown::deploy_site_github()'
+  provider: script
+  script: Rscript -e 'pkgdown::deploy_site_github(ssh_id = Sys.getenv("TRAVIS_DEPLOY_KEY", ""))'
   skip_cleanup: true
   on:
     branch: 59-documentation-site
