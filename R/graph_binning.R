@@ -1,9 +1,7 @@
-#' INTERNAL FUNCTION - Do not call directly
+#' binned_densities_adaptive
 #'
-#' Used by \code{netdis_expected_graphlet_counts_ego_fn} to
-#' generate a function for calculating expected ego-network graphlet counts
-#' from the statistics of a provided reference graph.
-#' Temporarily accessible during development.
+#' Adaptive binning function guaranteeing a minimum number of entries in each
+#' bin.
 #' @param densities Density values to use for binning.
 #' @param min_counts_per_interval Minimum count for each bin. 
 #' @param num_intervals Initial number of density bins to generate.

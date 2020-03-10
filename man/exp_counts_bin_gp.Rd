@@ -8,15 +8,18 @@ Calculate expected counts with geometric poisson (Polya-Aeppli)
 approximation for a single density bin.}
 \usage{
 exp_counts_bin_gp(bin_idx, graphlet_counts, density_interval_indexes,
-  mean_binned_graphlet_counts, max_graphlet_size)
+  max_graphlet_size)
 }
 \arguments{
 \item{bin_idx}{Density bin index to calculate expected counts for.}
 
 \item{graphlet_counts}{Graphlet counts for a number of ego_networks.}
 
-\item{density_interval_indexes}{Density bin index for
-each ego network.}
+\item{density_interval_indexes}{Density bin indexes for each ego network in
+\code{graphlet_counts}.}
+
+\item{max_graphlet_size}{Determines the maximum size of graphlets
+included in graphlet_counts.}
 }
 \description{
 INTERNAL FUNCTION - DO NOT CALL DIRECTLY

@@ -747,7 +747,7 @@ test_that("density_binned_counts output matches manually verified totals with di
 })
 
 context("Measures Netdis: Expected graphlet counts")
-test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
+test_that("netdis_expected_counts_ego works for graphlets up to 4 nodes", {
   # Helper function to generate graphs with known density and number of nodes
   rand_graph <- function(num_nodes, density) {
     max_edges <- choose(num_nodes, 2)
@@ -794,7 +794,7 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
   expected_expected_graphlet_counts <-
     purrr::map(density_indexes, expected_expected_graphlet_counts_fn)
   actual_expected_graphlet_counts <-
-    purrr::map(graphlet_counts, netdis_expected_graphlet_counts,
+    purrr::map(graphlet_counts, netdis_expected_counts_ego,
                max_graphlet_size = max_graphlet_size,
                density_breaks = density_breaks,
                density_binned_reference_counts = scaled_reference_counts,
@@ -822,7 +822,7 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
   expected_expected_graphlet_counts <-
     purrr::map2(density_indexes, num_nodes, expected_expected_graphlet_counts_fn)
   actual_expected_graphlet_counts <-
-    purrr::map(graphlet_counts, netdis_expected_graphlet_counts,
+    purrr::map(graphlet_counts, netdis_expected_counts_ego,
       max_graphlet_size = max_graphlet_size,
       density_breaks = density_breaks,
       density_binned_reference_counts = scaled_reference_counts,
@@ -840,7 +840,7 @@ test_that("netdis_expected_graphlet_counts works for graphlets up to 4 nodes", {
   }
 })
 
-test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 nodes", {
+test_that("netdis_expected_counts works for graphlets up to 4 nodes", {
   # Helper function to generate graphs with known density and number of nodes
   # Set up a small sample network with at least one ego-network that contains
   # at least one of each graphlets
@@ -943,7 +943,7 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
   
   # Calculate actual output of function under test
   actual_expected_graphlet_counts_ego_o1 <-
-    netdis_expected_graphlet_counts_per_ego(
+    netdis_expected_counts(
       graphlet_counts_ego_o1,
       breaks,
       scaled_reference_counts,
@@ -951,7 +951,7 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
       scale_fn = count_graphlet_tuples
     )
   actual_expected_graphlet_counts_ego_o2 <-
-    netdis_expected_graphlet_counts_per_ego(
+    netdis_expected_counts(
       graphlet_counts_ego_o2,
       breaks,
       scaled_reference_counts,
@@ -997,7 +997,7 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
   
   # Calculate actual output of function under test
   actual_expected_graphlet_counts_ego_o1 <-
-    netdis_expected_graphlet_counts_per_ego(
+    netdis_expected_counts(
       graphlet_counts_ego_o1,
       breaks,
       scaled_reference_counts,
@@ -1005,7 +1005,7 @@ test_that("netdis_expected_graphlet_counts_per_ego works for graphlets up to 4 n
       scale_fn = NULL
     )
   actual_expected_graphlet_counts_ego_o2 <-
-    netdis_expected_graphlet_counts_per_ego(
+    netdis_expected_counts(
       graphlet_counts_ego_o2,
       breaks,
       scaled_reference_counts,
@@ -1379,7 +1379,7 @@ test_that("netdis_one_to_one gives expected result when using geometric Poisson
   # check function to test
   bin_counts_fn <- density_binned_counts_gp
   
-  exp_counts_fn <- purrr::partial(netdis_expected_graphlet_counts_per_ego,
+  exp_counts_fn <- purrr::partial(netdis_expected_counts,
                                   scale_fn = NULL)
   
   actual_netdis <- netdis_one_to_one(graph_1,

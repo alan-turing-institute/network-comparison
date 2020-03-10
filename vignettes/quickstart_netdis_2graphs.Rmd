@@ -109,14 +109,14 @@ ref_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
 ## Centre graphlet counts of query graphs based on statistics of reference graph
 ```{r}
 # Calculate expected graphlet counts (using ref graph ego network density bins)
-exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(graphlet_counts_1, 
+exp_graphlet_counts_1 <- netdis_expected_counts(graphlet_counts_1, 
                                                                  ref_ego_density_bins, 
                                                                  ref_binned_graphlet_counts,
                                                                  max_graphlet_size,
                                                                  scale_fn=count_graphlet_tuples)
 
 
-exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(graphlet_counts_2, 
+exp_graphlet_counts_2 <- netdis_expected_counts(graphlet_counts_2, 
                                                                  ref_ego_density_bins, 
                                                                  ref_binned_graphlet_counts,
                                                                  max_graphlet_size,

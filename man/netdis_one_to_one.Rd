@@ -11,8 +11,8 @@ netdis_one_to_one(graph_1 = NULL, graph_2 = NULL, ref_graph = 0,
   min_counts_per_interval = 5, num_intervals = 100),
   bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean,
   scale_fn = scale_graphlet_counts_ego),
-  exp_counts_fn = purrr::partial(netdis_expected_graphlet_counts_per_ego,
-  scale_fn = count_graphlet_tuples), graphlet_counts_1 = NULL,
+  exp_counts_fn = purrr::partial(netdis_expected_counts, scale_fn =
+  count_graphlet_tuples), graphlet_counts_1 = NULL,
   graphlet_counts_2 = NULL)
 }
 \arguments{
@@ -55,7 +55,7 @@ approach used in the original netdis paper).}
 expected counts for each graphlet in each ego network of the query graphs.
 Takes \code{ego_networks}, \code{density_bin_breaks},
 \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-(Default: \code{netdis_expected_graphlet_counts_per_ego} with
+(Default: \code{netdis_expected_counts} with
 \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 the original netdis paper).}
 

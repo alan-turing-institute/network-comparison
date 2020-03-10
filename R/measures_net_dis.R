@@ -39,7 +39,7 @@
 #' expected counts for each graphlet in each ego network of the query graphs.
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
 #' \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-#' (Default: \code{netdis_expected_graphlet_counts_per_ego} with
+#' (Default: \code{netdis_expected_counts} with
 #' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 #' the original netdis paper).
 #'
@@ -71,7 +71,7 @@ netdis_one_to_one <- function(graph_1 = NULL,
                                 agg_fn = mean,
                                 scale_fn = scale_graphlet_counts_ego),
                               exp_counts_fn = purrr::partial(
-                                netdis_expected_graphlet_counts_per_ego,
+                                netdis_expected_counts,
                                 scale_fn = count_graphlet_tuples),
                               graphlet_counts_1 = NULL,
                               graphlet_counts_2 = NULL) {
@@ -179,7 +179,7 @@ netdis_one_to_one <- function(graph_1 = NULL,
 #' expected counts for each graphlet in each ego network of the query graphs.
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
 #' \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-#' (Default: \code{netdis_expected_graphlet_counts_per_ego} with
+#' (Default: \code{netdis_expected_counts} with
 #' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 #' the original netdis paper).
 #'
@@ -210,7 +210,7 @@ netdis_one_to_many <- function(graph_1 = NULL,
                                  agg_fn = mean,
                                  scale_fn = scale_graphlet_counts_ego),
                                exp_counts_fn = purrr::partial(
-                                 netdis_expected_graphlet_counts_per_ego,
+                                 netdis_expected_counts,
                                  scale_fn = count_graphlet_tuples),
                                graphlet_counts_1 = NULL,
                                graphlet_counts_compare = NULL) {
@@ -324,7 +324,7 @@ netdis_one_to_many <- function(graph_1 = NULL,
 #' expected counts for each graphlet in each ego network of the query graphs.
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
 #' \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-#' (Default: \code{netdis_expected_graphlet_counts_per_ego} with
+#' (Default: \code{netdis_expected_counts} with
 #' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
 #' the original netdis paper).
 #'
@@ -362,7 +362,7 @@ netdis_many_to_many <- function(graphs = NULL,
                                   agg_fn = mean,
                                   scale_fn = scale_graphlet_counts_ego),
                                 exp_counts_fn = purrr::partial(
-                                  netdis_expected_graphlet_counts_per_ego,
+                                  netdis_expected_counts,
                                   scale_fn = count_graphlet_tuples),
                                 graphlet_counts = NULL,
                                 graphlet_counts_ref = NULL) {
@@ -696,9 +696,6 @@ netdis_centred_graphlet_counts <- function(
 #' nummber of ego networks (rows).
 #' @param max_graphlet_size Do the subtraction for graphlets up to this size.
 #'
-#' #' Temporarily accessible during development.
-#' TODO: Remove @export prior to publishing
-#' @export
 netdis_subtract_exp_counts <- function(
   graphlet_counts,
   exp_graphlet_counts,
@@ -714,7 +711,7 @@ netdis_subtract_exp_counts <- function(
   
 }
 
-#' netdis_expected_graphlet_counts_per_ego
+#' netdis_expected_counts
 #' 
 #' Calculates expected graphlet counts for each ego network based on its density
 #' and pre-calculated reference density bins and graphlet counts for each bin.
@@ -731,10 +728,8 @@ netdis_subtract_exp_counts <- function(
 #' and returning a scale factor that the looked up
 #' \code{density_binned_reference_counts} values will be multiplied by.
 #'
-#' #' Temporarily accessible during development.
-#' TODO: Remove @export prior to publishing
 #' @export
-netdis_expected_graphlet_counts_per_ego <- function(
+netdis_expected_counts <- function(
                                               graphlet_counts,
                                               density_breaks,
                                               density_binned_reference_counts,
@@ -745,7 +740,7 @@ netdis_expected_graphlet_counts_per_ego <- function(
   # Map over query graph ego-networks, using reference graph statistics to
   # calculate expected graphlet counts for each ego-network.
   expected_graphlet_counts <- t(apply(
-    graphlet_counts, 1, netdis_expected_graphlet_counts,
+    graphlet_counts, 1, netdis_expected_counts_ego,
     max_graphlet_size = max_graphlet_size,
     density_breaks = density_breaks,
     density_binned_reference_counts = density_binned_reference_counts,
@@ -754,7 +749,7 @@ netdis_expected_graphlet_counts_per_ego <- function(
   expected_graphlet_counts
 }
 
-#' netdis_expected_graphlet_counts
+#' netdis_expected_counts_ego
 #' INTERNAL FUNCTION - Do not call directly
 #' 
 #' Calculates expected graphlet counts for one ego network based on its density
@@ -771,7 +766,7 @@ netdis_expected_graphlet_counts_per_ego <- function(
 #' returning a scale factor that the looked up
 #' \code{density_binned_reference_counts} values will be multiplied by.
 #' 
-netdis_expected_graphlet_counts <- function(graphlet_counts,
+netdis_expected_counts_ego <- function(graphlet_counts,
                                             max_graphlet_size,
                                             density_breaks,
                                             density_binned_reference_counts,
@@ -970,8 +965,6 @@ netdis_const_expected_counts <- function(graphlet_counts, const) {
 #' \code{scale_graphlet_count} to prevent divide by
 #' zero errors.
 #' @param v A vector.
-#' TODO remove export
-#' @export
 zeros_to_ones <- function(v) {
   zero_index <- which(v == 0)
   v[zero_index] <- 1
