@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>An implementation of the NetEMD alignment-free network distance measure • netdist</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="An implementation of the NetEMD alignment-free network distance measure">
 <meta property="og:description" content="An implementation of the NetEMD alignment-free network
     distance measure. The NetEMD measure is the minimal earth-mover's distance
@@ -41,7 +42,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -73,6 +74,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="contents col-md-9">
 <div id="network-comparison" class="section level1">
@@ -100,12 +102,12 @@
 <div id="installing-package-from-source" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installing-package-from-source" class="anchor"></a>Installing package from source</h2>
-<p>When published to the CRAN package repository, the library and all documentation will be installed in the standard manner using <code><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages("netdist")</a></code>, which will also install all dependencies from CRAN. However, prior to publication on CRAN, the package can be installed from Github using the <code>devtools</code> package.</p>
+<p>When published to the CRAN package repository, the library and all documentation will be installed in the standard manner using <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("netdist")</a></code>, which will also install all dependencies from CRAN. However, prior to publication on CRAN, the package can be installed from Github using the <code>devtools</code> package.</p>
 <div id="prerequisites" class="section level3">
 <h3 class="hasAnchor">
 <a href="#prerequisites" class="anchor"></a>Prerequisites</h3>
 <ul>
-<li>Install the <code>devtools</code> package using <code><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages("devtools")</a></code>
+<li>Install the <code>devtools</code> package using <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("devtools")</a></code>
 </li>
 </ul>
 </div>
@@ -115,20 +117,20 @@
 <p>Core dependencies are listed in the <code>Imports</code> section of the package <code>DEPENDENCIES</code> file and will be automatically installed when installing / updating the package using <code>devtools</code> as described below.</p>
 <p>Install the latest package from GitHub using:</p>
 <ul>
-<li><code><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">devtools::install_github("alan-turing-institute/network-comparison")</a></code></li>
+<li><code><a href="https://rdrr.io/pkg/devtools/man/reexports.html">devtools::install_github("alan-turing-institute/network-comparison")</a></code></li>
 </ul>
 </div>
 <div id="installing-additional-optional-dependencies" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installing-additional-optional-dependencies" class="anchor"></a>Installing additional optional dependencies</h3>
-<p>Additional optional packages required to generate documentation, run tests or develop the package are listed in the <code>Suggests</code> section of the package <code>DEPENDENCIES</code> file. These will not be automatically installed by <code><a href="https://www.rdocumentation.org/packages/devtools/topics/install">devtools::install()</a></code> and, if required, each optional package will need to be separately installed using <code><a href="https://www.rdocumentation.org/packages/devtools/topics/install">devtools::install("&lt;package_name&gt;")</a></code>.</p>
+<p>Additional optional packages required to generate documentation, run tests or develop the package are listed in the <code>Suggests</code> section of the package <code>DEPENDENCIES</code> file. These will not be automatically installed by <code><a href="https://rdrr.io/pkg/devtools/man/install.html">devtools::install()</a></code> and, if required, each optional package will need to be separately installed using <code><a href="https://rdrr.io/pkg/devtools/man/install.html">devtools::install("&lt;package_name&gt;")</a></code>.</p>
 <p>Example optional libraries are:</p>
 <ul>
 <li>
-<code>testthat</code> for running tests via <code><a href="https://www.rdocumentation.org/packages/devtools/topics/test">devtools::test()</a></code> or generating package documentation using <code><a href="https://www.rdocumentation.org/packages/devtools/topics/document">devtools::document()</a></code>
+<code>testthat</code> for running tests via <code><a href="https://rdrr.io/pkg/devtools/man/test.html">devtools::test()</a></code> or generating package documentation using <code><a href="https://rdrr.io/pkg/devtools/man/document.html">devtools::document()</a></code>
 </li>
 <li>
-<code>knitr</code> for building the package long-form documentation vignettes using <code><a href="https://www.rdocumentation.org/packages/devtools/topics/build_vignettes">devtools::build_vignettes()</a></code>
+<code>knitr</code> for building the package long-form documentation vignettes using <code><a href="https://rdrr.io/pkg/devtools/man/build_vignettes.html">devtools::build_vignettes()</a></code>
 </li>
 </ul>
 </div>
@@ -136,8 +138,8 @@
 <div id="documentation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#documentation" class="anchor"></a>Documentation</h2>
-<p>You can browse a list of long form examples illustrating how to use the package using <code><a href="https://www.rdocumentation.org/packages/utils/topics/browseVignettes">browseVignettes(package = "netdist")</a></code>.</p>
-<p>You can list the functions available in the package with <code><a href="https://www.rdocumentation.org/packages/base/topics/library">library(help = "netdist")</a></code> and get more detailed help on individual functions using <code>?function_name</code> (e.g. <code><a href="reference/net_emd.html">?net_emd</a></code>). In RStudio, typing <code>?netdist::</code> should also provide a drop down list of functions you can select to load the more detailed help.</p>
+<p>You can browse a list of long form examples illustrating how to use the package using <code><a href="https://rdrr.io/r/utils/browseVignettes.html">browseVignettes(package = "netdist")</a></code>.</p>
+<p>You can list the functions available in the package with <code><a href="https://rdrr.io/r/base/library.html">library(help = "netdist")</a></code> and get more detailed help on individual functions using <code>?function_name</code> (e.g. <code><a href="reference/net_emd.html">?net_emd</a></code>). In RStudio, typing <code>?netdist::</code> should also provide a drop down list of functions you can select to load the more detailed help.</p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -175,17 +177,20 @@
   </div>
 </div>
 
+
       <footer><div class="copyright">
   <p>Developed by Martin O'Reilly.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

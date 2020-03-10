@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quick start guide for Netdis • netdist</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Quick start guide for Netdis">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
@@ -38,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -70,13 +71,14 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Quick start guide for Netdis</h1>
                         <h4 class="author">Martin O’Reilly</h4>
             
-            <h4 class="date">2019-07-29</h4>
+            <h4 class="date">2020-03-10</h4>
       
       
       <div class="hidden name"><code>Quick_start_net_dis.Rmd</code></div>
@@ -91,55 +93,55 @@
 <div id="load-graphs" class="section level3">
 <h3 class="hasAnchor">
 <a href="#load-graphs" class="anchor"></a>Load graphs</h3>
-<p>Use <code>read_simple_graphs</code> to read graph data from all files in a directory that match a specific filename pattern in a format suitable for calculating graphlet-based feature counts using the <a href="https://CRAN.R-project.org/package=orca">ORCA package</a>. We use <code><a href="https://www.rdocumentation.org/packages/igraph/topics/read_graph">igraph::read_graph</a></code> to read graph data from files, so support all file formats it supports. See help for <code><a href="https://www.rdocumentation.org/packages/igraph/topics/read_graph">igraph::read_graph</a></code> for a list of supported values for the <code>format</code> parameter and the <a href="http://igraph.org/c/doc/igraph-Foreign.html#igraph_read_graph_edgelist">igraph documentation</a> for descriptions of each of the supported file formats.</p>
+<p>Use <code>read_simple_graphs</code> to read graph data from all files in a directory that match a specific filename pattern in a format suitable for calculating graphlet-based feature counts using the <a href="https://CRAN.R-project.org/package=orca">ORCA package</a>. We use <code><a href="https://rdrr.io/pkg/igraph/man/read_graph.html">igraph::read_graph</a></code> to read graph data from files, so support all file formats it supports. See help for <code><a href="https://rdrr.io/pkg/igraph/man/read_graph.html">igraph::read_graph</a></code> for a list of supported values for the <code>format</code> parameter and the <a href="http://igraph.org/c/doc/igraph-Foreign.html#igraph_read_graph_edgelist">igraph documentation</a> for descriptions of each of the supported file formats.</p>
 <p>The ORCA package we use to efficiently calculate graphlet and orbit counts requires that graphs are <em>undirected</em>, <em>simple</em> (i.e. have no self-loops or multiple edges) and <em>connected</em> (i.e. have no isolated vertices). Therefore, by default, graphs loaded by <code>read_simple_graphs</code> will be coerced to have the above properties. This can be avoided by setting the relevant <code>as_undirected</code>, <code>remove_loops</code>, <code>remove_multiple</code> or <code>remove_isolates</code> parameters to <code>FALSE</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"netdist"</span>)</a>
-<a class="sourceLine" id="cb1-2" title="2">edge_format =<span class="st"> "ncol"</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co"># Load reference graph (used for Netdis. Not required for NetEMD)</span></a>
-<a class="sourceLine" id="cb1-4" title="4">ref_path =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(<span class="st">"extdata"</span>, <span class="st">"random"</span>), <span class="dt">package =</span> <span class="st">"netdist"</span>), <span class="st">"ER_1250_10_1"</span>)</a>
-<a class="sourceLine" id="cb1-5" title="5">ref_graph &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_simple_graph.html">read_simple_graph</a></span>(ref_path, <span class="dt">format =</span> edge_format)</a>
-<a class="sourceLine" id="cb1-6" title="6"></a>
-<a class="sourceLine" id="cb1-7" title="7"><span class="co"># Set source directory and file properties for Virus PPI graph edge files</span></a>
-<a class="sourceLine" id="cb1-8" title="8">source_dir &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(<span class="st">"extdata"</span>, <span class="st">"VRPINS"</span>), <span class="dt">package =</span> <span class="st">"netdist"</span>)</a>
-<a class="sourceLine" id="cb1-9" title="9">edge_format =<span class="st"> "ncol"</span></a>
-<a class="sourceLine" id="cb1-10" title="10">file_pattern =<span class="st"> "*"</span></a>
-<a class="sourceLine" id="cb1-11" title="11"></a>
-<a class="sourceLine" id="cb1-12" title="12"><span class="co"># Load all graphs in the source folder matching the filename pattern</span></a>
-<a class="sourceLine" id="cb1-13" title="13">query_graphs &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_simple_graphs.html">read_simple_graphs</a></span>(source_dir, <span class="dt">format =</span> edge_format, </a>
-<a class="sourceLine" id="cb1-14" title="14">                             <span class="dt">pattern =</span> file_pattern)</a>
-<a class="sourceLine" id="cb1-15" title="15"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(query_graphs))</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"netdist"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a>edge_format =<span class="st"> "ncol"</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># Load reference graph (used for Netdis. Not required for NetEMD)</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>ref_path =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="st">"extdata"</span>, <span class="st">"random"</span>), <span class="dt">package =</span> <span class="st">"netdist"</span>), <span class="st">"ER_1250_10_1"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5"></a>ref_graph &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_simple_graph.html">read_simple_graph</a></span>(ref_path, <span class="dt">format =</span> edge_format)</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># Set source directory and file properties for Virus PPI graph edge files</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>source_dir &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="st">"extdata"</span>, <span class="st">"VRPINS"</span>), <span class="dt">package =</span> <span class="st">"netdist"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9"></a>edge_format =<span class="st"> "ncol"</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a>file_pattern =<span class="st"> "*"</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co"># Load all graphs in the source folder matching the filename pattern</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a>query_graphs &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_simple_graphs.html">read_simple_graphs</a></span>(source_dir, <span class="dt">format =</span> edge_format, </span>
+<span id="cb1-14"><a href="#cb1-14"></a>                             <span class="dt">pattern =</span> file_pattern)</span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(query_graphs))</span></code></pre></div>
 <pre><code>## [1] "EBV"   "ECL"   "HSV-1" "KSHV"  "VZV"</code></pre>
 <p>In this example we will use counts of graphlets containing up to 4 nodes and consider ego-network neighbourhoods of size 2 (i.e. the immediate neighbours of each node plus their immediate neighbours).</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Set the maximum graphlet size to compute counts for</span></a>
-<a class="sourceLine" id="cb3-2" title="2">max_graphlet_size &lt;-<span class="st"> </span><span class="dv">4</span></a>
-<a class="sourceLine" id="cb3-3" title="3">neighbourhood_size &lt;-<span class="st"> </span><span class="dv">2</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Set the maximum graphlet size to compute counts for</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>max_graphlet_size &lt;-<span class="st"> </span><span class="dv">4</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>neighbourhood_size &lt;-<span class="st"> </span><span class="dv">2</span></span></code></pre></div>
 </div>
 </div>
 <div id="generate-a-function-to-generate-expected-graphlet-counts" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-a-function-to-generate-expected-graphlet-counts" class="anchor"></a>Generate a function to generate expected graphlet counts</h2>
 <p>Use <code>netdis_expected_graphlet_counts_ego_fn</code> to generate a function that calculates expected ego-network graphlet counts for query graphs based on the statistics of a provided reference graph.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">expected_count_fn &lt;-<span class="st"> </span><span class="kw"><a href="../reference/netdis_expected_graphlet_counts_ego_fn.html">netdis_expected_graphlet_counts_ego_fn</a></span>(</a>
-<a class="sourceLine" id="cb4-2" title="2">  ref_graph, max_graphlet_size, neighbourhood_size) </a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>expected_count_fn &lt;-<span class="st"> </span><span class="kw"><a href="../reference/netdis_expected_graphlet_counts_ego_fn.html">netdis_expected_graphlet_counts_ego_fn</a></span>(</span>
+<span id="cb4-2"><a href="#cb4-2"></a>  ref_graph, max_graphlet_size, neighbourhood_size) </span></code></pre></div>
 </div>
 <div id="generate-centred-graphlet-counts-for-a-set-of-query-graphs" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-centred-graphlet-counts-for-a-set-of-query-graphs" class="anchor"></a>Generate centred graphlet counts for a set of query graphs</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">centred_counts &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(query_graphs, netdis_centred_graphlet_counts,</a>
-<a class="sourceLine" id="cb5-2" title="2">                             <span class="dt">max_graphlet_size =</span> max_graphlet_size, </a>
-<a class="sourceLine" id="cb5-3" title="3">                             <span class="dt">neighbourhood_size =</span> neighbourhood_size,</a>
-<a class="sourceLine" id="cb5-4" title="4">                             <span class="dt">expected_ego_count_fn =</span> expected_count_fn)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>centred_counts &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(query_graphs, netdis_centred_graphlet_counts,</span>
+<span id="cb5-2"><a href="#cb5-2"></a>                             <span class="dt">max_graphlet_size =</span> max_graphlet_size, </span>
+<span id="cb5-3"><a href="#cb5-3"></a>                             <span class="dt">neighbourhood_size =</span> neighbourhood_size,</span>
+<span id="cb5-4"><a href="#cb5-4"></a>                             <span class="dt">expected_ego_count_fn =</span> expected_count_fn)</span></code></pre></div>
 </div>
 <div id="generate-netdis-measures-between-each-pair-of-query-graphs" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-netdis-measures-between-each-pair-of-query-graphs" class="anchor"></a>Generate NetDis measures between each pair of query graphs</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co"># Netdis measure for graphlets of size 3</span></a>
-<a class="sourceLine" id="cb6-2" title="2">res3 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/netdis_for_all_graphs.html">netdis_for_all_graphs</a></span>(centred_counts, <span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb6-3" title="3">netdis3_mat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cross_comp_to_matrix.html">cross_comp_to_matrix</a></span>(res3<span class="op">$</span>netdis, res3<span class="op">$</span>comp_spec)</a>
-<a class="sourceLine" id="cb6-4" title="4"><span class="co"># Netdis measure for graphlets of size 4</span></a>
-<a class="sourceLine" id="cb6-5" title="5">res4 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/netdis_for_all_graphs.html">netdis_for_all_graphs</a></span>(centred_counts, <span class="dv">4</span>)</a>
-<a class="sourceLine" id="cb6-6" title="6">netdis4_mat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cross_comp_to_matrix.html">cross_comp_to_matrix</a></span>(res4<span class="op">$</span>netdis, res4<span class="op">$</span>comp_spec)</a>
-<a class="sourceLine" id="cb6-7" title="7">netdis4_mat</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Netdis measure for graphlets of size 3</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>res3 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/netdis_for_all_graphs.html">netdis_for_all_graphs</a></span>(centred_counts, <span class="dv">3</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>netdis3_mat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cross_comp_to_matrix.html">cross_comp_to_matrix</a></span>(res3<span class="op">$</span>netdis, res3<span class="op">$</span>comp_spec)</span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co"># Netdis measure for graphlets of size 4</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>res4 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/netdis_for_all_graphs.html">netdis_for_all_graphs</a></span>(centred_counts, <span class="dv">4</span>)</span>
+<span id="cb6-6"><a href="#cb6-6"></a>netdis4_mat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cross_comp_to_matrix.html">cross_comp_to_matrix</a></span>(res4<span class="op">$</span>netdis, res4<span class="op">$</span>comp_spec)</span>
+<span id="cb6-7"><a href="#cb6-7"></a>netdis4_mat</span></code></pre></div>
 <pre><code>##              EBV       ECL      HSV-1       KSHV        VZV
 ## EBV   0.00000000 0.1749835 0.16526412 0.01969246 0.15971116
 ## ECL   0.17498347 0.0000000 0.29176120 0.22155786 0.41716144
@@ -150,34 +152,35 @@
 <div id="generate-dendrograms" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-dendrograms" class="anchor"></a>Generate dendrograms</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">graphdists&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/dist">as.dist</a></span>(netdis4_mat)</a>
-<a class="sourceLine" id="cb8-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/par">par</a></span>(<span class="dt">mfrow=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb8-3" title="3">cex=<span class="dv">1</span></a>
-<a class="sourceLine" id="cb8-4" title="4"><span class="co"># Dendrogram based on Netdis measure for graphlets of size 3</span></a>
-<a class="sourceLine" id="cb8-5" title="5">title =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Netdis: graphlet size = "</span>, <span class="dv">3</span>, <span class="dt">sep =</span> <span class="st">""</span>)</a>
-<a class="sourceLine" id="cb8-6" title="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(phangorn<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/phangorn/topics/upgma">upgma</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/dist">as.dist</a></span>(netdis3_mat), <span class="dt">method=</span><span class="st">"average"</span>), <span class="dt">use.edge.length=</span><span class="ot">FALSE</span>, </a>
-<a class="sourceLine" id="cb8-7" title="7">     <span class="dt">edge.width=</span>cex<span class="op">*</span><span class="dv">2</span>, <span class="dt">main=</span>title, <span class="dt">cex.lab=</span>cex, <span class="dt">cex.axis=</span>cex, <span class="dt">cex.main=</span>cex, </a>
-<a class="sourceLine" id="cb8-8" title="8">     <span class="dt">cex.sub=</span>cex, <span class="dt">cex=</span>cex)</a>
-<a class="sourceLine" id="cb8-9" title="9"><span class="co"># Dendrogram based on Netdis measure for graphlets of size 4</span></a>
-<a class="sourceLine" id="cb8-10" title="10">title =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Netdis: graphlet size = "</span>, <span class="dv">4</span>, <span class="dt">sep =</span> <span class="st">""</span>)</a>
-<a class="sourceLine" id="cb8-11" title="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(phangorn<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/phangorn/topics/upgma">upgma</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/dist">as.dist</a></span>(netdis4_mat), <span class="dt">method=</span><span class="st">"average"</span>), <span class="dt">use.edge.length=</span><span class="ot">FALSE</span>, </a>
-<a class="sourceLine" id="cb8-12" title="12">     <span class="dt">edge.width=</span>cex<span class="op">*</span><span class="dv">2</span>, <span class="dt">main=</span>title, <span class="dt">cex.lab=</span>cex, <span class="dt">cex.axis=</span>cex, <span class="dt">cex.main=</span>cex, </a>
-<a class="sourceLine" id="cb8-13" title="13">     <span class="dt">cex.sub=</span>cex, <span class="dt">cex=</span>cex)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>graphdists&lt;-<span class="kw"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span>(netdis4_mat)</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfrow=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb8-3"><a href="#cb8-3"></a>cex=<span class="dv">1</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co"># Dendrogram based on Netdis measure for graphlets of size 3</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>title =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Netdis: graphlet size = "</span>, <span class="dv">3</span>, <span class="dt">sep =</span> <span class="st">""</span>)</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(phangorn<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/phangorn/man/upgma.html">upgma</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span>(netdis3_mat), <span class="dt">method=</span><span class="st">"average"</span>), <span class="dt">use.edge.length=</span><span class="ot">FALSE</span>, </span>
+<span id="cb8-7"><a href="#cb8-7"></a>     <span class="dt">edge.width=</span>cex<span class="op">*</span><span class="dv">2</span>, <span class="dt">main=</span>title, <span class="dt">cex.lab=</span>cex, <span class="dt">cex.axis=</span>cex, <span class="dt">cex.main=</span>cex, </span>
+<span id="cb8-8"><a href="#cb8-8"></a>     <span class="dt">cex.sub=</span>cex, <span class="dt">cex=</span>cex)</span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co"># Dendrogram based on Netdis measure for graphlets of size 4</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a>title =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Netdis: graphlet size = "</span>, <span class="dv">4</span>, <span class="dt">sep =</span> <span class="st">""</span>)</span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(phangorn<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/phangorn/man/upgma.html">upgma</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span>(netdis4_mat), <span class="dt">method=</span><span class="st">"average"</span>), <span class="dt">use.edge.length=</span><span class="ot">FALSE</span>, </span>
+<span id="cb8-12"><a href="#cb8-12"></a>     <span class="dt">edge.width=</span>cex<span class="op">*</span><span class="dv">2</span>, <span class="dt">main=</span>title, <span class="dt">cex.lab=</span>cex, <span class="dt">cex.axis=</span>cex, <span class="dt">cex.main=</span>cex, </span>
+<span id="cb8-13"><a href="#cb8-13"></a>     <span class="dt">cex.sub=</span>cex, <span class="dt">cex=</span>cex)</span></code></pre></div>
 <p><img src="Quick_start_net_dis_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">cex=<span class="fl">1.5</span></a>
-<a class="sourceLine" id="cb9-2" title="2">col &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/colorRamp">colorRampPalette</a></span>(<span class="dt">colors =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"blue"</span>,<span class="st">"white"</span>))(<span class="dv">100</span>)</a>
-<a class="sourceLine" id="cb9-3" title="3">title =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Netdis: graphlet size = "</span>, <span class="dv">3</span>, <span class="dt">sep =</span> <span class="st">""</span>)</a>
-<a class="sourceLine" id="cb9-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/heatmap">heatmap</a></span>(netdis3_mat, <span class="dt">Rowv =</span> <span class="ot">NULL</span>, <span class="dt">Colv =</span> <span class="ot">NULL</span>, <span class="dt">col =</span> col, <span class="dt">main =</span> title, <span class="dt">cexRow =</span> cex, <span class="dt">cexCol =</span> cex, <span class="dt">symm =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>cex=<span class="fl">1.5</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>col &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span>(<span class="dt">colors =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"blue"</span>,<span class="st">"white"</span>))(<span class="dv">100</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a>title =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Netdis: graphlet size = "</span>, <span class="dv">3</span>, <span class="dt">sep =</span> <span class="st">""</span>)</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="kw"><a href="https://rdrr.io/r/stats/heatmap.html">heatmap</a></span>(netdis3_mat, <span class="dt">Rowv =</span> <span class="ot">NULL</span>, <span class="dt">Colv =</span> <span class="ot">NULL</span>, <span class="dt">col =</span> col, <span class="dt">main =</span> title, <span class="dt">cexRow =</span> cex, <span class="dt">cexCol =</span> cex, <span class="dt">symm =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <p><img src="Quick_start_net_dis_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">cex=<span class="fl">1.5</span></a>
-<a class="sourceLine" id="cb10-2" title="2">col &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/colorRamp">colorRampPalette</a></span>(<span class="dt">colors =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"blue"</span>,<span class="st">"white"</span>))(<span class="dv">100</span>)</a>
-<a class="sourceLine" id="cb10-3" title="3">title =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Netdis: graphlet size = "</span>, <span class="dv">4</span>, <span class="dt">sep =</span> <span class="st">""</span>)</a>
-<a class="sourceLine" id="cb10-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/heatmap">heatmap</a></span>(netdis4_mat, <span class="dt">Rowv =</span> <span class="ot">NULL</span>, <span class="dt">Colv =</span> <span class="ot">NULL</span>, <span class="dt">col =</span> col, <span class="dt">main =</span> title, <span class="dt">cexRow =</span> cex, <span class="dt">cexCol =</span> cex, <span class="dt">symm =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>cex=<span class="fl">1.5</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>col &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span>(<span class="dt">colors =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"blue"</span>,<span class="st">"white"</span>))(<span class="dv">100</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a>title =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Netdis: graphlet size = "</span>, <span class="dv">4</span>, <span class="dt">sep =</span> <span class="st">""</span>)</span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="kw"><a href="https://rdrr.io/r/stats/heatmap.html">heatmap</a></span>(netdis4_mat, <span class="dt">Rowv =</span> <span class="ot">NULL</span>, <span class="dt">Colv =</span> <span class="ot">NULL</span>, <span class="dt">col =</span> col, <span class="dt">main =</span> title, <span class="dt">cexRow =</span> cex, <span class="dt">cexCol =</span> cex, <span class="dt">symm =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <p><img src="Quick_start_net_dis_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
@@ -194,17 +197,20 @@
 </div>
 
 
+
       <footer><div class="copyright">
   <p>Developed by Martin O'Reilly.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>
