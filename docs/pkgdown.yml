@@ -1,7 +1,0 @@
-pandoc: 2.7.3
-pkgdown: 1.4.1
-pkgdown_sha: ~
-articles:
-  Quick_start_net_dis: Quick_start_net_dis.html
-  Quick_start_net_emd: Quick_start_net_emd.html
-
