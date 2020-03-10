@@ -4,7 +4,8 @@
 \alias{mean_density_binned_graphlet_counts}
 \title{INTERNAL FUNCTION - Do not call directly}
 \usage{
-mean_density_binned_graphlet_counts(graphlet_counts, density_interval_indexes)
+mean_density_binned_graphlet_counts(graphlet_counts,
+  density_interval_indexes)
 }
 \description{
 Used by \code{netdis_expected_graphlet_counts_ego_fn} to 

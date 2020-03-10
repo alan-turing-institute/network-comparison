@@ -9,3 +9,6 @@ counts_from_observations(features)
 \arguments{
 \item{features}{A Matrix with doubles.}
 }
+\description{
+Count number of occurences
+}

@@ -4,7 +4,8 @@
 \alias{binned_densities_adaptive}
 \title{INTERNAL FUNCTION - Do not call directly}
 \usage{
-binned_densities_adaptive(densities, min_counts_per_interval, num_intervals)
+binned_densities_adaptive(densities, min_counts_per_interval,
+  num_intervals)
 }
 \description{
 Used by \code{netdis_expected_graphlet_counts_ego_fn} to 
