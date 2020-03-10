@@ -12,7 +12,7 @@ os:
 after_success:
 - Rscript -e 'library(covr); codecov()'
 
-# Build documentation and deploy to github pages
+# Build documentation with pgkdown and deploy to github pages
 before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
 deploy:
   provider: script
