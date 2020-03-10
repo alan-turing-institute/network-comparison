@@ -17,6 +17,8 @@ deploy:
   provider: scripts
   script: Rscript -e 'pkgdown::deploy_site_github()'
   skip_cleanup: true
+  on:
+    branch: 59-documentation-site
 
 notifications:
   slack:
