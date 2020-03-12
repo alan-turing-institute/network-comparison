@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martin O’Reilly, Jack Roberts" />
 
-<meta name="date" content="2019-11-08" />
+<meta name="date" content="2020-03-12" />
 
 <title>Quick start guide for Netdis - 2 graphs</title>
 
@@ -305,7 +305,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Quick start guide for Netdis - 2 graphs</h1>
 <h4 class="author">Martin O’Reilly, Jack Roberts</h4>
-<h4 class="date">2019-11-08</h4>
+<h4 class="date">2020-03-12</h4>
 
 
 
@@ -400,14 +400,14 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="centre-graphlet-counts-of-query-graphs-based-on-statistics-of-reference-graph" class="section level2">
 <h2>Centre graphlet counts of query graphs based on statistics of reference graph</h2>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Calculate expected graphlet counts (using ref graph ego network density bins)</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a>exp_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">netdis_expected_graphlet_counts_per_ego</span>(graphlet_counts_<span class="dv">1</span>, </span>
+<span id="cb7-2"><a href="#cb7-2"></a>exp_graphlet_counts_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">netdis_expected_counts</span>(graphlet_counts_<span class="dv">1</span>, </span>
 <span id="cb7-3"><a href="#cb7-3"></a>                                                                 ref_ego_density_bins, </span>
 <span id="cb7-4"><a href="#cb7-4"></a>                                                                 ref_binned_graphlet_counts,</span>
 <span id="cb7-5"><a href="#cb7-5"></a>                                                                 max_graphlet_size,</span>
 <span id="cb7-6"><a href="#cb7-6"></a>                                                                 <span class="dt">scale_fn=</span>count_graphlet_tuples)</span>
 <span id="cb7-7"><a href="#cb7-7"></a></span>
 <span id="cb7-8"><a href="#cb7-8"></a></span>
-<span id="cb7-9"><a href="#cb7-9"></a>exp_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">netdis_expected_graphlet_counts_per_ego</span>(graphlet_counts_<span class="dv">2</span>, </span>
+<span id="cb7-9"><a href="#cb7-9"></a>exp_graphlet_counts_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">netdis_expected_counts</span>(graphlet_counts_<span class="dv">2</span>, </span>
 <span id="cb7-10"><a href="#cb7-10"></a>                                                                 ref_ego_density_bins, </span>
 <span id="cb7-11"><a href="#cb7-11"></a>                                                                 ref_binned_graphlet_counts,</span>
 <span id="cb7-12"><a href="#cb7-12"></a>                                                                 max_graphlet_size,</span>

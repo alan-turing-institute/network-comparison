@@ -14,10 +14,7 @@ nummber of ego networks (rows).}
 \item{exp_graphlet_counts}{Matrix of expected graphlet counts (columns) for a
 nummber of ego networks (rows).}
 
-\item{max_graphlet_size}{Do the subtraction for graphlets up to this size.
-
-#' Temporarily accessible during development.
-TODO: Remove @export prior to publishing}
+\item{max_graphlet_size}{Do the subtraction for graphlets up to this size.}
 }
 \description{
 Subtract expected graphlet counts from actual graphlet counts.

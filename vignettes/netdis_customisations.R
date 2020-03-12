@@ -61,7 +61,7 @@ print(results$comp_spec)
 ## ------------------------------------------------------------------------
 bin_counts_fn <- density_binned_counts_gp
 
-exp_counts_fn <- purrr::partial(netdis_expected_graphlet_counts_per_ego,
+exp_counts_fn <- purrr::partial(netdis_expected_counts,
                                 scale_fn = NULL)
 
 # Calculate netdis statistics
@@ -80,7 +80,7 @@ print(results$comp_spec)
 ## ------------------------------------------------------------------------
 binning_fn <- single_density_bin
 bin_counts_fn <- density_binned_counts
-exp_counts_fn <- netdis_expected_graphlet_counts_per_ego
+exp_counts_fn <- netdis_expected_counts
 
 # Calculate netdis statistics
 results <- netdis_many_to_many(graphs,

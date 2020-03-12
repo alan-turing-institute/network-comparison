@@ -12,7 +12,7 @@
 
 <meta name="author" content="Jack Roberts" />
 
-<meta name="date" content="2019-09-11" />
+<meta name="date" content="2020-03-12" />
 
 <title>Usage of netdis with binning and expected counts customisations.</title>
 
@@ -305,7 +305,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Usage of netdis with binning and expected counts customisations.</h1>
 <h4 class="author">Jack Roberts</h4>
-<h4 class="date">2019-09-11</h4>
+<h4 class="date">2020-03-12</h4>
 
 
 
@@ -407,7 +407,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <h2>With Modified Expected Counts: Geometric Poisson</h2>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>bin_counts_fn &lt;-<span class="st"> </span>density_binned_counts_gp</span>
 <span id="cb12-2"><a href="#cb12-2"></a></span>
-<span id="cb12-3"><a href="#cb12-3"></a>exp_counts_fn &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">partial</span>(netdis_expected_graphlet_counts_per_ego,</span>
+<span id="cb12-3"><a href="#cb12-3"></a>exp_counts_fn &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">partial</span>(netdis_expected_counts,</span>
 <span id="cb12-4"><a href="#cb12-4"></a>                                <span class="dt">scale_fn =</span> <span class="ot">NULL</span>)</span>
 <span id="cb12-5"><a href="#cb12-5"></a></span>
 <span id="cb12-6"><a href="#cb12-6"></a><span class="co"># Calculate netdis statistics</span></span>
@@ -423,10 +423,10 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <span id="cb12-16"><a href="#cb12-16"></a><span class="kw">print</span>(results<span class="op">$</span>netdis)</span></code></pre></div>
 <pre><code>##              [,1]      [,2]      [,3]       [,4]       [,5]       [,6]
 ## netdis3 0.8822527 0.9101084 0.8838054 0.96266771 0.04173551 0.03585169
-## netdis4 0.1892755 0.5752533 0.3719671 0.04604718 0.60705460 0.20370907
+## netdis4 0.1892716 0.5735233 0.3719671 0.04604718 0.60270399 0.20370737
 ##               [,7]         [,8]        [,9]       [,10]
 ## netdis3 0.06271238 0.0004211575 0.005364888 0.009114229
-## netdis4 0.12978965 0.7178967193 0.490256248 0.371848474</code></pre>
+## netdis4 0.12978637 0.7173089685 0.487688692 0.371848474</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">print</span>(results<span class="op">$</span>comp_spec)</span></code></pre></div>
 <pre><code>##    name_a name_b index_a index_b
 ## 1     EBV    ECL       1       2
@@ -444,7 +444,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <h2>With Modified Expected Counts: Simple Mean</h2>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>binning_fn &lt;-<span class="st"> </span>single_density_bin</span>
 <span id="cb16-2"><a href="#cb16-2"></a>bin_counts_fn &lt;-<span class="st"> </span>density_binned_counts</span>
-<span id="cb16-3"><a href="#cb16-3"></a>exp_counts_fn &lt;-<span class="st"> </span>netdis_expected_graphlet_counts_per_ego</span>
+<span id="cb16-3"><a href="#cb16-3"></a>exp_counts_fn &lt;-<span class="st"> </span>netdis_expected_counts</span>
 <span id="cb16-4"><a href="#cb16-4"></a></span>
 <span id="cb16-5"><a href="#cb16-5"></a><span class="co"># Calculate netdis statistics</span></span>
 <span id="cb16-6"><a href="#cb16-6"></a>results &lt;-<span class="st"> </span><span class="kw">netdis_many_to_many</span>(graphs,</span>

@@ -22,10 +22,7 @@ Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
 \item{scale_fn}{Optional function to scale calculated expected counts, taking
 \code{graphlet_counts} and \code{max_graphlet_size} as arguments,
 and returning a scale factor that the looked up
-\code{density_binned_reference_counts} values will be multiplied by.
-
-#' Temporarily accessible during development.
-TODO: Remove @export prior to publishing}
+\code{density_binned_reference_counts} values will be multiplied by.}
 }
 \description{
 Calculates expected graphlet counts for each ego network based on its density

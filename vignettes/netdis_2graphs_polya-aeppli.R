@@ -79,7 +79,8 @@ ego_density_bins_2 <- binned_densities_2$breaks
 #' each ego network.
 exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
                               density_interval_indexes,
-                              mean_binned_graphlet_counts) {
+                              mean_binned_graphlet_counts,
+                              max_graphlet_size) {
   counts <- graphlet_counts[density_interval_indexes == bin_idx, ]
   means <- mean_binned_graphlet_counts[bin_idx, ]
   
@@ -124,7 +125,8 @@ density_binned_counts_gp <- function(graphlet_counts,
                                   exp_counts_bin_gp,
                                   graphlet_counts = graphlet_counts,
                                   density_interval_indexes = density_interval_indexes,
-                                  mean_binned_graphlet_counts = mean_binned_graphlet_counts))
+                                  mean_binned_graphlet_counts = mean_binned_graphlet_counts,
+                                  max_graphlet_size = max_graphlet_size))
 
   # deal with NAs caused by bins with zero counts for a graphlet
   expected_counts_bin[is.nan(expected_counts_bin)] <- 0
@@ -142,22 +144,22 @@ binned_graphlet_counts_2 <- density_binned_counts_gp(graphlet_counts_2,
 
 ## ------------------------------------------------------------------------
 # Calculate expected graphlet counts for each ego network
-exp_graphlet_counts_1 <- netdis_expected_graphlet_counts_per_ego(graphlet_counts_1, 
+exp_graphlet_counts_1 <- netdis_expected_counts(graphlet_counts_1, 
                                                                  ego_density_bins_1, 
                                                                  binned_graphlet_counts_1,
                                                                  max_graphlet_size,
                                                                  scale_fn = NULL)
 
 
-exp_graphlet_counts_2 <- netdis_expected_graphlet_counts_per_ego(graphlet_counts_2, 
+exp_graphlet_counts_2 <- netdis_expected_counts(graphlet_counts_2, 
                                                                  ego_density_bins_2, 
                                                                  binned_graphlet_counts_2,
                                                                  max_graphlet_size,
                                                                  scale_fn = NULL)
 # Centre graphlet counts by subtracting expected counts
 centred_graphlet_counts_1 <- netdis_subtract_exp_counts(graphlet_counts_1,
-                                                            exp_graphlet_counts_1,
-                                                            max_graphlet_size)
+                                                        exp_graphlet_counts_1,
+                                                        max_graphlet_size)
 
 centred_graphlet_counts_2 <- netdis_subtract_exp_counts(graphlet_counts_2,
                                                         exp_graphlet_counts_2,

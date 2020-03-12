@@ -695,7 +695,7 @@ netdis_centred_graphlet_counts <- function(
 #' @param exp_graphlet_counts Matrix of expected graphlet counts (columns) for a
 #' nummber of ego networks (rows).
 #' @param max_graphlet_size Do the subtraction for graphlets up to this size.
-#'
+#' @export
 netdis_subtract_exp_counts <- function(
   graphlet_counts,
   exp_graphlet_counts,

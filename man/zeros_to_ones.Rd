@@ -9,8 +9,7 @@ zero errors.}
 zeros_to_ones(v)
 }
 \arguments{
-\item{v}{A vector.
-TODO remove export}
+\item{v}{A vector.}
 }
 \description{
 Replace zero values in a vector with ones. Used by
