@@ -129,6 +129,57 @@ double get_double_segment_constrained(
 }
 
 
+// Dealing with segments which are to the left of the region covered by both
+// segs
+inline double leftmost_segments(const NumericVector& loc1,
+                                const NumericVector& loc2,
+                                const NumericVector& val1,
+                                const NumericVector& val2,
+                                double binWidth1,
+                                double maxLoc)
+{
+  double res = 0.0;
+
+  assert(loc1[0] < loc2[0]);
+
+  // Fix the position of Seg2 and then interate over Seg1 until we have all
+  // of the segments of Seg1 before Seg2 starts.
+
+  // are these all used?
+  
+  double curSeg2Loc1 = loc1[0];
+  double curSeg2Loc2 = loc1[0];
+  double curSeg2Loc3 = loc2[0];
+  double curSeg2Val1 = 0;
+  double curSeg2Val2 = 0;
+
+  // Set this value so we can update in the lopp
+  double curSeg1Val2 = 0;
+  for (int index = 0; index < loc1.size(); index++) {
+    double curSeg1Loc1 = loc1[index];
+    double curSeg1Loc2 = loc1[index] + binWidth1;
+    double curSeg1Loc3;
+    if (index == loc1.size() - 1) {
+      curSeg1Loc3 = maxLoc;
+    }
+    else {
+      curSeg1Loc3 = loc1[index + 1];
+    }
+    double curSeg1Val1 = curSeg1Val2;
+    curSeg1Val2 = val1[index];
+    res += get_double_segment_constrained(
+      curSeg1Loc1, curSeg1Loc2, curSeg1Loc3, curSeg1Val1, curSeg1Val2,
+      curSeg2Loc1, curSeg2Loc2, curSeg2Loc3, curSeg2Val1, curSeg2Val2);
+
+    if (curSeg2Loc1 > curSeg1Loc3) {
+      break;
+    }
+  }
+
+  return res;
+}
+
+
 //' @title
 //' Compute EMD
 ////'
@@ -166,76 +217,16 @@ double NetEmdSmoothV2(NumericVector loc1, NumericVector val1, double binWidth1,
   double maxLoc = std::max(loc1[loc1.size()-1] + binWidth1,
                            loc2[loc2.size()-1] + binWidth2);
 
-  double minLoc = std::min(loc1[0], loc2[0]);
 
   // warning area before loc2[0] is not well tested
   // As values outside of the range appear to be zero
 
-  // Dealing with segments which are to the left of the region covered by both
-  // segs
   if (loc2[0] < loc1[0]) {
-    // loc2 starts before loc1 so lets deal with those segments first
-    // Fix the position of Seg1 and then interate over Seg2 until we have all
-    // of the segments of Seg2 before Seg1 starts.
-    curSeg1Loc1 = minLoc;
-    curSeg1Loc2 = minLoc;
-    curSeg1Loc3 = loc1[0];
-    curSeg1Val1 = 0;
-    curSeg1Val2 = 0;
-
-    // Set this value so we can update in the loop
-    curSeg2Val2 = 0;
-    for (int index = 0; index < loc2.size(); index++) {
-      curSeg2Loc1 = loc2[index];
-      curSeg2Loc2 = loc2[index] + binWidth2;
-      if (index == loc2.size() - 1) {
-        curSeg2Loc3 = maxLoc;
-      }
-      else {
-        curSeg2Loc3 = loc2[index + 1];
-      }
-      curSeg2Val1 = curSeg2Val2;
-      curSeg2Val2 = val2[index];
-      res += get_double_segment_constrained(
-        curSeg1Loc1, curSeg1Loc2, curSeg1Loc3, curSeg1Val1, curSeg1Val2,
-        curSeg2Loc1, curSeg2Loc2, curSeg2Loc3, curSeg2Val1, curSeg2Val2);
-
-      if (curSeg1Loc1 > curSeg2Loc3) {
-        break;
-      }
-    }
+    res += leftmost_segments(loc2, loc1, val2, val1, binWidth2, maxLoc);
   }
   else
   {
-    // loc2 starts before loc1 so lets deal with those segments first
-    // Fix the position of Seg2 and then interate over Seg1 until we have all
-    // of the segments of Seg1 before Seg2 starts.
-    curSeg2Loc1 = minLoc;
-    curSeg2Loc2 = minLoc;
-    curSeg2Loc3 = loc2[0];
-    curSeg2Val1 = 0;
-    curSeg2Val2 = 0;
-
-    // Set this value so we can update in the lopp
-    curSeg1Val2 = 0;
-    for (int index = 0; index < loc1.size(); index++) {
-      curSeg1Loc1 = loc1[index];
-      curSeg1Loc2 = loc1[index] + binWidth1;
-      if (index == loc1.size() - 1) {
-        curSeg1Loc3 = maxLoc;
-      }
-      else {
-        curSeg1Loc3 = loc1[index + 1];
-      }
-      curSeg1Val1 = curSeg1Val2;
-      curSeg1Val2 = val1[index];
-      res += get_double_segment_constrained(
-        curSeg1Loc1, curSeg1Loc2, curSeg1Loc3, curSeg1Val1, curSeg1Val2,
-        curSeg2Loc1, curSeg2Loc2, curSeg2Loc3, curSeg2Val1, curSeg2Val2);
-      if (curSeg2Loc1 > curSeg1Loc3) {
-        break;
-      }
-    }
+    res += leftmost_segments(loc1, loc2, val1, val2, binWidth1, maxLoc);
   }
 
   // Add both the  overlapping sections and the non overlapping section on the right
