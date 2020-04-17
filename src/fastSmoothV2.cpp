@@ -8,7 +8,36 @@
 
 using namespace Rcpp;
 
-//compute segment
+int signum(double val) {
+  return (0.0 < val) - (val < 0.0);
+}
+
+inline double bowtie_area(double length, double val1_start, double val1_end,
+                          double val2_start, double val2_end)
+{
+  double midPoint = (val1_start - val2_start) /
+    ((val2_end - val2_start) - (val1_end - val1_start));
+
+  const double midValue = val1_start + midPoint * (val1_end - val1_start);
+    
+  midPoint = midPoint * length;
+    
+  double topTriangle = 0.5 * midPoint * (midValue - val1_start);
+  double topRectangle = midPoint * (val1_start - val2_start);
+  double bottomTriangle = 0.5 * midPoint * (midValue - val2_start);
+    
+  double res = topTriangle + topRectangle - bottomTriangle;
+    
+  topTriangle = 0.5 * (length - midPoint) * (val2_end - midValue);
+  topRectangle = 0; // midPoint*(val1_start-val2_start);
+  bottomTriangle = 0.5 * (length - midPoint) * (val1_end - midValue);
+
+  res += topTriangle + topRectangle - bottomTriangle;
+  return res;
+}
+
+// Compute the unsigned area between two line segments
+// assumes that val1_end > val1_start and val2_end > val2_start
 inline double get_segment(double start, double end, double val1_start,
                           double val1_end, double val2_start, double val2_end)
 {
@@ -21,75 +50,27 @@ inline double get_segment(double start, double end, double val1_start,
   double midValue;
   double res = 0;
 
-  if (val1_start > val2_start) {
-    if (val1_end >= val2_end) {
-      // They are in the same order no bowtie
-      // seg1 is above seg2
-      // triangle of seg1
-      topTriangle = 0.5*length * (val1_end - val1_start);
-      // rectangle between seg1 and seg2
-      topRectangle = length * (val1_start - val2_start);
-      // triangle of seg2 (to be removed)
-      bottomTriangle = 0.5 * length * (val2_end - val2_start);
-      return topTriangle + topRectangle - bottomTriangle;
-    }
-    else {
-      //bowtie
-      // lets make this really simple as the compiler
-      // will combine the expressions as needed
-      midPoint = (val1_start - val2_start) /
-        ((val2_end - val2_start) - (val1_end - val1_start));
+  bool both_differences_positive = val1_start > val2_start && val1_end >= val2_end;
+  bool both_differences_negative = val1_start <= val2_start && val1_end <= val2_end;
+  
+  if (both_differences_positive || both_differences_negative)
+  {
+    // They are in the same order: no bowtie
+    // triangle of seg1
+    topTriangle = 0.5 * length * (val1_end - val1_start);
+    // rectangle between seg1 and seg2
+    topRectangle = length * (val1_start - val2_start);
+    // triangle of seg2 (to be removed)
+    bottomTriangle = 0.5 * length * (val2_end - val2_start);
 
-      midValue = val1_start + midPoint * (val1_end - val1_start);
-
-      midPoint = midPoint * length;
-
-      topTriangle = 0.5 * midPoint * (midValue - val1_start);
-      topRectangle = midPoint * (val1_start - val2_start);
-      bottomTriangle = 0.5 * midPoint * (midValue - val2_start);
-
-      res = topTriangle + topRectangle - bottomTriangle;
-
-      topTriangle = 0.5 * (length - midPoint) * (val2_end - midValue);
-      topRectangle = 0; // midPoint*(val1_start-val2_start);
-      bottomTriangle = 0.5 * (length - midPoint) * (val1_end - midValue);
-      res += topTriangle + topRectangle - bottomTriangle;
-      return res;
-    }
+    const double sign = both_differences_positive?1.0:-1.0;
+    return sign * (topTriangle + topRectangle - bottomTriangle);
   }
-  else {
-    if (val1_end > val2_end) {
-      //bowtie
-      // Find the point where they cross.
-      // (Solution of linear equations)
-      midPoint = (val2_start - val1_start) /
-        ((val1_end - val1_start) - (val2_end - val2_start));
-
-      midValue = val2_start + midPoint * (val2_end - val2_start);
-      midPoint = midPoint * length;
-
-      topTriangle = 0.5 * midPoint * (midValue - val2_start);
-      topRectangle = midPoint * (val2_start - val1_start);
-      bottomTriangle = 0.5 * midPoint * (midValue - val1_start);
-
-      res = topTriangle + topRectangle - bottomTriangle;
-
-      topTriangle = 0.5 * (length - midPoint) * (val1_end - midValue);
-      topRectangle = 0; // midPoint*(val1_start-val2_start);
-      bottomTriangle = 0.5 * (length - midPoint) * (val2_end - midValue);
-      res += topTriangle + topRectangle - bottomTriangle;
-      return res;
-    }
-    else { // same order
-      // seg2 is above seg1
-      // Triangle seg2 above seg1
-      topTriangle = 0.5 * length * (val2_end - val2_start);
-      // rectangle between seg2 and seg1
-      topRectangle = length * (val2_start - val1_start);
-      // Seg1 triangle to be removed
-      bottomTriangle = 0.5 * length * (val1_end - val1_start);
-      return topTriangle + topRectangle - bottomTriangle;
-    }
+  else if (val1_start > val2_start) { // bowtie, first case
+    return bowtie_area(length, val1_start, val1_end, val2_start, val2_end);
+  }
+  else { // bowtie, second case
+    return bowtie_area(length, val2_start, val2_end, val1_start, val1_end);
   }
 }
 
