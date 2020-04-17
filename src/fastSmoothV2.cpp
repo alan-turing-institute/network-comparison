@@ -8,7 +8,7 @@
 
 using namespace Rcpp;
 
-inline double bowtie_area(double length, double val1_start, double val1_end,
+double bowtie_area(double length, double val1_start, double val1_end,
                           double val2_start, double val2_end)
 {
   double midPoint = (val1_start - val2_start) /
@@ -34,7 +34,7 @@ inline double bowtie_area(double length, double val1_start, double val1_end,
 
 // Compute the unsigned area between two line segments
 // assumes that val1_end > val1_start and val2_end > val2_start
-inline double get_segment(double start, double end, double val1_start,
+double get_segment(double start, double end, double val1_start,
                           double val1_end, double val2_start, double val2_end)
 {
   const double length = end - start;
@@ -71,7 +71,7 @@ inline double get_segment(double start, double end, double val1_start,
 }
 
 // cut down and compute segment
-inline double get_segment_constrained(double seg1L1, double seg1L2,
+double get_segment_constrained(double seg1L1, double seg1L2,
                                       double seg2L1, double seg2L2,
                                       double seg1V1, double seg1V2,
                                       double seg2V1, double seg2V2)
@@ -127,7 +127,7 @@ double get_double_segment_constrained(
 
 // Dealing with segments which are to the left of the region covered by both
 // segs
-inline double leftmost_segments(const NumericVector& loc1,
+double leftmost_segments(const NumericVector& loc1,
                                 const NumericVector& loc2,
                                 const NumericVector& val1,
                                 const NumericVector& val2,
