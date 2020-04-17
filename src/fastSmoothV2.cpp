@@ -230,21 +230,21 @@ double NetEmdSmoothV2(NumericVector loc1, NumericVector val1, double binWidth1,
   // Could store where we are upto from above to save time
   // Reset Val counter
   curSeg1Val2 = 0;
-  for (int index = 0; index < loc1.size(); index++) {
+  for (int index1 = 0; index1 < loc1.size(); index1++) {
     //  Get the three relevant locations
     // Start; end of linear section; end of flat section
-    curSeg1Loc1 = loc1[index];
-    curSeg1Loc2 = loc1[index] + binWidth1;
+    curSeg1Loc1 = loc1[index1];
+    curSeg1Loc2 = loc1[index1] + binWidth1;
     // could pull this check outside of the loop with final case not sure if worth it
-    if (index == loc1.size() - 1) {
+    if (index1 == loc1.size() - 1) {
       curSeg1Loc3 = maxLoc;
     }
     else {
-      curSeg1Loc3 = loc1[index + 1];
+      curSeg1Loc3 = loc1[index1 + 1];
     }
     // Update value to the start and end of the current section
     curSeg1Val1 = curSeg1Val2;
-    curSeg1Val2 = val1[index];
+    curSeg1Val2 = val1[index1];
     // Setting up the previous value for the next loop
     // Could replace this loop with a while
     // but if so would need to be careful about overlaps
@@ -254,23 +254,23 @@ double NetEmdSmoothV2(NumericVector loc1, NumericVector val1, double binWidth1,
     else {
       curSeg2Val2 = val2[secondStart - 1];
     }
-    for (int index = secondStart; index < loc2.size(); index++) {
+    for (int index2 = secondStart; index2 < loc2.size(); index2++) {
       // Construct 3 sections for second seg.
-      curSeg2Loc1 = loc2[index];
-      curSeg2Loc2 = loc2[index] + binWidth2;
-      if (index == loc2.size() - 1) {
+      curSeg2Loc1 = loc2[index2];
+      curSeg2Loc2 = loc2[index2] + binWidth2;
+      if (index2 == loc2.size() - 1) {
         curSeg2Loc3 = maxLoc;
       }
       else {
-        curSeg2Loc3 = loc2[index + 1];
+        curSeg2Loc3 = loc2[index2 + 1];
       }
       //update values
       curSeg2Val1 = curSeg2Val2;
-      curSeg2Val2 = val2[index];
+      curSeg2Val2 = val2[index2];
       // If this section is behind Seg1
       // Do not consider again
       if (curSeg2Loc3 < curSeg1Loc1) {
-        secondStart = index + 1;
+        secondStart = index2 + 1;
         continue;
       }
       // If current Seg2 is beyond Seg1 break out of loop
