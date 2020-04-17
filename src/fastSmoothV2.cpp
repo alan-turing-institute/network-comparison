@@ -8,10 +8,6 @@
 
 using namespace Rcpp;
 
-int signum(double val) {
-  return (0.0 < val) - (val < 0.0);
-}
-
 inline double bowtie_area(double length, double val1_start, double val1_end,
                           double val2_start, double val2_end)
 {
