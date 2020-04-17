@@ -26,12 +26,12 @@ inline double get_segment(double start, double end, double val1_start,
       // They are in the same order no bowtie
       // seg1 is above seg2
       // triangle of seg1
-      topTriangle = 0.5*length*(val1_end-val1_start);
+      topTriangle = 0.5*length * (val1_end - val1_start);
       // rectangle between seg1 and seg2
-      topRectangle = length*(val1_start-val2_start);
+      topRectangle = length * (val1_start - val2_start);
       // triangle of seg2 (to be removed)
-      bottomTriangle = 0.5*length*(val2_end-val2_start);
-      return topTriangle+topRectangle-bottomTriangle;
+      bottomTriangle = 0.5 * length * (val2_end - val2_start);
+      return topTriangle + topRectangle - bottomTriangle;
     }
     else {
       //bowtie
