@@ -167,7 +167,6 @@ min_emd_optimise <- function(dhist1, dhist2) {
   soln <- stats::optimise(emd_offset, lower = min_offset, upper = max_offset, 
                           tol = .Machine$double.eps*1000)
   
-  browser()
   # Return mnimum EMD and associated offset
   min_emd <- soln$objective
   min_offset <- soln$minimum
