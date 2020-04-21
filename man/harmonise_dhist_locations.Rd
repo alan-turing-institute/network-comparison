@@ -16,6 +16,6 @@ Harmonised histograms
 }
 \description{
 Where a location only exists in one histogram, add this location to the other
-histogram with zero mass. This ensures that all location exist in both 
+histogram with zero mass. This ensures that all location exist in both
 histograms.
 }

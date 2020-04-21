@@ -15,7 +15,7 @@ using \code{cross_comparison_spec}}
 \value{
 A square symmetric matrix with a zero diagonal, with elements
 Cij and Cji populated from the element from \code{measure} corresponding to
-the row of \code{cross_comparison_spec} with \code{index_a = i} and 
+the row of \code{cross_comparison_spec} with \code{index_a = i} and
 \code{index_b = j}
 }
 \description{

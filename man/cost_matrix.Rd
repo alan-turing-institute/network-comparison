@@ -15,6 +15,6 @@ cost_matrix(bin_centres1, bin_centres2)
 Cost matrix
 }
 \description{
-Generates a matrix for the cost of moving a unit of mass between each bin in 
+Generates a matrix for the cost of moving a unit of mass between each bin in
 histogram 1 and each bin in histogram 2.
 }

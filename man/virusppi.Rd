@@ -17,7 +17,7 @@
 virusppi
 }
 \description{
-A dataset containing the protein-protein interaction networks for the 
+A dataset containing the protein-protein interaction networks for the
 following 5 microorganisms
 \itemize{
  \item EBV

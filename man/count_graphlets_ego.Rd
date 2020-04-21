@@ -5,29 +5,36 @@
 \title{Ego-network graphlet counts}
 \usage{
 count_graphlets_ego(graph, max_graphlet_size = 4, neighbourhood_size,
-  return_ego_networks = FALSE)
+  min_ego_nodes = 3, min_ego_edges = 1, return_ego_networks = FALSE)
 }
 \arguments{
-\item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
+\item{graph}{A connected, undirected, simple graph as an \code{igraph} object}
 
-\item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
-Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count.
+Only graphlets containing up to \code{max_graphlet_size} nodes will be
+counted.}
 
 \item{neighbourhood_size}{The number of steps from the source node to include
 nodes for each ego-network.}
 
-\item{return_ego_networks}{If \code{TRUE}, return ego-networks alongside 
+\item{min_ego_nodes}{Only ego networks with at least \code{min_ego_nodes}
+nodes are returned.}
+
+\item{min_ego_edges}{Only ego networks with at least \code{min_ego_edges}
+edges are returned.}
+
+\item{return_ego_networks}{If \code{TRUE}, return ego-networks alongside
 graphlet counts to enable further processing.}
 }
 \value{
-If \code{return_ego_networks = FALSE}, returns an RxC matrix 
-containing counts of each graphlet (columns, C) for each ego-network in the 
-input graph (rows, R). Columns are labelled with graphlet IDs and rows are 
+If \code{return_ego_networks = FALSE}, returns an RxC matrix
+containing counts of each graphlet (columns, C) for each ego-network in the
+input graph (rows, R). Columns are labelled with graphlet IDs and rows are
 labelled with the ID of the central node in each ego-network (if nodes in the
 input graph are labelled). If \code{return_ego_networks = TRUE}, returns a
 list with the following elements:
 \itemize{
-  \item \code{graphlet_counts}: A matrix containing graphlet counts for each 
+  \item \code{graphlet_counts}: A matrix containing graphlet counts for each
   ego-network in the input graph as described above.
   \item \code{ego_networks}: The ego-networks of the query graph.
 }

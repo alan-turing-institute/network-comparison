@@ -7,14 +7,14 @@
 indexed_edges_to_graph(indexed_edges)
 }
 \arguments{
-\item{indexed_edges}{A 2 x numEdges edgelist with vertices labelled with 
+\item{indexed_edges}{A 2 x numEdges edgelist with vertices labelled with
 integer indices, with an optional "vertex_names" attribute}
 }
 \value{
 An igraph graph object
 }
 \description{
-Takes an integer indexed edgelist (where each edge is represented by the 
+Takes an integer indexed edgelist (where each edge is represented by the
 integer indexes of its vertices) and converts it to an igraph format graph.
 If the edge list has a "vertex_names" attribute, this will be used to name
 the vertices in the resultant graph.
