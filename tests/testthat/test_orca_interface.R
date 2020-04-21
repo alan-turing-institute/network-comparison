@@ -1413,11 +1413,11 @@ test_that("ego_to_graphlet_counts: Ego-network 4-node graphlet counts match manu
     c("n9", "n10")
   )
   graph <- igraph::graph_from_edgelist(elist, directed = FALSE)
-  
+
   # Set node and graphlet labels to use for row and col names in expected counts
   node_labels <- igraph::V(graph)$name
   graphlet_labels <- c("N", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
-  
+
   max_graphlet_size <- 4
   graphlet_key <- graphlet_key(max_graphlet_size)
   k <- graphlet_key$node_count
@@ -1452,7 +1452,7 @@ test_that("ego_to_graphlet_counts: Ego-network 4-node graphlet counts match manu
   )
   rownames(expected_counts_order_2) <- node_labels
   colnames(expected_counts_order_2) <- graphlet_labels
-  
+
   # Count graphlets in each ego network of the graph with only counts requested
   min_ego_nodes <- 0
   min_ego_edges <- 0
@@ -1460,30 +1460,29 @@ test_that("ego_to_graphlet_counts: Ego-network 4-node graphlet counts match manu
   # Test that actual and returned ego graphlet counts match
   # 1. Generate ego networks with previously tested function.
   ego_networks_order_1 <- make_named_ego_graph(graph,
-                                               order = 1,
-                                               min_ego_nodes = min_ego_nodes,
-                                               min_ego_edges = min_ego_edges
+    order = 1,
+    min_ego_nodes = min_ego_nodes,
+    min_ego_edges = min_ego_edges
   )
   ego_networks_order_2 <- make_named_ego_graph(graph,
-                                               order = 2,
-                                               min_ego_nodes = min_ego_nodes,
-                                               min_ego_edges = min_ego_edges
+    order = 2,
+    min_ego_nodes = min_ego_nodes,
+    min_ego_edges = min_ego_edges
   )
-  
-  #2. Calculate counts with ego_to_graphlet_counts.
+
+  # 2. Calculate counts with ego_to_graphlet_counts.
   actual_counts_order_1 <-
     ego_to_graphlet_counts(ego_networks_order_1,
-                          max_graphlet_size = max_graphlet_size
+      max_graphlet_size = max_graphlet_size
     )
   actual_counts_order_2 <-
     ego_to_graphlet_counts(ego_networks_order_2,
-                           max_graphlet_size = max_graphlet_size
+      max_graphlet_size = max_graphlet_size
     )
-  
+
   # 3. Test that actual counts match expected
   expect_equal(actual_counts_order_1, expected_counts_order_1)
   expect_equal(actual_counts_order_2, expected_counts_order_2)
-  
 })
 
 # context("ORCA interface: Graphlet-based degree distributions")

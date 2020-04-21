@@ -251,7 +251,8 @@ gdd <- function(graph, feature_type = "orbit", max_graphlet_size = 4,
     out <- count_orbits_per_node(graph, max_graphlet_size = max_graphlet_size)
   } else if (feature_type == "graphlet") {
     out <- count_graphlets_per_node(graph,
-                                    max_graphlet_size = max_graphlet_size)
+      max_graphlet_size = max_graphlet_size
+    )
   }
   else {
     stop("gdd: unrecognised feature_type")
@@ -309,7 +310,8 @@ count_orbits_per_node <- function(graph, max_graphlet_size) {
 #' @export
 count_graphlets_per_node <- function(graph, max_graphlet_size) {
   orbit_counts <- count_orbits_per_node(graph,
-                                        max_graphlet_size = max_graphlet_size)
+    max_graphlet_size = max_graphlet_size
+  )
   orbit_to_graphlet_counts(orbit_counts)
 }
 
@@ -388,8 +390,10 @@ count_graphlets_ego <- function(graph,
 
   # Return either graphlet counts, or graphlet counts and ego_networks
   if (return_ego_networks) {
-    return(list(graphlet_counts = ego_graphlet_counts,
-                ego_networks = ego_networks))
+    return(list(
+      graphlet_counts = ego_graphlet_counts,
+      ego_networks = ego_networks
+    ))
   } else {
     return(ego_graphlet_counts)
   }
@@ -537,9 +541,11 @@ graphlet_key <- function(max_graphlet_size) {
     paste("G", index, sep = "")
   }))
   name <-
-    return(list(max_nodes = max_graphlet_size,
-                id = id,
-                node_count = node_count))
+    return(list(
+      max_nodes = max_graphlet_size,
+      id = id,
+      node_count = node_count
+    ))
 }
 
 #' Orbit key
@@ -571,9 +577,11 @@ orbit_key <- function(max_graphlet_size) {
     paste("O", index, sep = "")
   }))
   name <-
-    return(list(max_nodes = max_graphlet_size,
-                id = id,
-                node_count = node_count))
+    return(list(
+      max_nodes = max_graphlet_size,
+      id = id,
+      node_count = node_count
+    ))
 }
 
 #' Graphlet IDs for size
@@ -689,24 +697,34 @@ cross_comparison_spec <- function(named_list, how = "many-to-many") {
 #' \code{index_b = j}
 #' @export
 cross_comp_to_matrix <- function(measure, cross_comparison_spec) {
-  num_items <- max(c(cross_comparison_spec$index_a,
-                     cross_comparison_spec$index_b))
+  num_items <- max(c(
+    cross_comparison_spec$index_a,
+    cross_comparison_spec$index_b
+  ))
   out <- matrix(data = 0, nrow = num_items, ncol = num_items)
-  out[cbind(cross_comparison_spec$index_a,
-            cross_comparison_spec$index_b)] <- measure
-  out[cbind(cross_comparison_spec$index_b,
-            cross_comparison_spec$index_a)] <- measure
+  out[cbind(
+    cross_comparison_spec$index_a,
+    cross_comparison_spec$index_b
+  )] <- measure
+  out[cbind(
+    cross_comparison_spec$index_b,
+    cross_comparison_spec$index_a
+  )] <- measure
   row_labels <- rep("<MISSING>", num_items)
   row_labels[cross_comparison_spec$index_a] <- as.character(
-    cross_comparison_spec$name_a)
+    cross_comparison_spec$name_a
+  )
   row_labels[cross_comparison_spec$index_b] <- as.character(
-    cross_comparison_spec$name_b)
+    cross_comparison_spec$name_b
+  )
   rownames(out) <- row_labels
   col_labels <- rep("<MISSING>", num_items)
   col_labels[cross_comparison_spec$index_a] <- as.character(
-    cross_comparison_spec$name_a)
+    cross_comparison_spec$name_a
+  )
   col_labels[cross_comparison_spec$index_b] <- as.character(
-    cross_comparison_spec$name_b)
+    cross_comparison_spec$name_b
+  )
   colnames(out) <- col_labels
   return(out)
 }

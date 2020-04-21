@@ -101,7 +101,7 @@ context("Graph binning:  Adaptively binned densities")
 test_that("binned_densities_adaptive works", {
   # Helper function
   test_binning <- function(densities, min_counts_per_interval, num_intervals,
-                             breaks, expected_breaks, expected_interval_indexes) {
+                           breaks, expected_breaks, expected_interval_indexes) {
     # Set up expected output
     expected <- list(
       densities = densities,

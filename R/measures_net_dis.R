@@ -65,14 +65,17 @@ netdis_one_to_one <- function(graph_1 = NULL,
                               binning_fn = purrr::partial(
                                 binned_densities_adaptive,
                                 min_counts_per_interval = 5,
-                                num_intervals = 100),
+                                num_intervals = 100
+                              ),
                               bin_counts_fn = purrr::partial(
                                 density_binned_counts,
                                 agg_fn = mean,
-                                scale_fn = scale_graphlet_counts_ego),
+                                scale_fn = scale_graphlet_counts_ego
+                              ),
                               exp_counts_fn = purrr::partial(
                                 netdis_expected_counts,
-                                scale_fn = count_graphlet_tuples),
+                                scale_fn = count_graphlet_tuples
+                              ),
                               graphlet_counts_1 = NULL,
                               graphlet_counts_2 = NULL) {
 
@@ -113,8 +116,10 @@ netdis_one_to_one <- function(graph_1 = NULL,
   }
   rm(graph_2)
 
-  graphlet_counts <- list(graph_1 = graphlet_counts_1,
-                          graph_2 = graphlet_counts_2)
+  graphlet_counts <- list(
+    graph_1 = graphlet_counts_1,
+    graph_2 = graphlet_counts_2
+  )
 
   ## ------------------------------------------------------------------------
   # calculate netdis
@@ -204,14 +209,17 @@ netdis_one_to_many <- function(graph_1 = NULL,
                                binning_fn = purrr::partial(
                                  binned_densities_adaptive,
                                  min_counts_per_interval = 5,
-                                 num_intervals = 100),
+                                 num_intervals = 100
+                               ),
                                bin_counts_fn = purrr::partial(
                                  density_binned_counts,
                                  agg_fn = mean,
-                                 scale_fn = scale_graphlet_counts_ego),
+                                 scale_fn = scale_graphlet_counts_ego
+                               ),
                                exp_counts_fn = purrr::partial(
                                  netdis_expected_counts,
-                                 scale_fn = count_graphlet_tuples),
+                                 scale_fn = count_graphlet_tuples
+                               ),
                                graphlet_counts_1 = NULL,
                                graphlet_counts_compare = NULL) {
   ## ------------------------------------------------------------------------
@@ -253,8 +261,9 @@ netdis_one_to_many <- function(graph_1 = NULL,
   rm(graphs_compare)
 
   graphlet_counts <- append(graphlet_counts_compare,
-                            list(graph_1 = graphlet_counts_1),
-                            after = 0)
+    list(graph_1 = graphlet_counts_1),
+    after = 0
+  )
 
   ## ------------------------------------------------------------------------
   # calculate netdis
@@ -356,14 +365,17 @@ netdis_many_to_many <- function(graphs = NULL,
                                 binning_fn = purrr::partial(
                                   binned_densities_adaptive,
                                   min_counts_per_interval = 5,
-                                  num_intervals = 100),
+                                  num_intervals = 100
+                                ),
                                 bin_counts_fn = purrr::partial(
                                   density_binned_counts,
                                   agg_fn = mean,
-                                  scale_fn = scale_graphlet_counts_ego),
+                                  scale_fn = scale_graphlet_counts_ego
+                                ),
                                 exp_counts_fn = purrr::partial(
                                   netdis_expected_counts,
-                                  scale_fn = count_graphlet_tuples),
+                                  scale_fn = count_graphlet_tuples
+                                ),
                                 graphlet_counts = NULL,
                                 graphlet_counts_ref = NULL) {
 
@@ -394,7 +406,6 @@ netdis_many_to_many <- function(graphs = NULL,
   # If a number has been passed as ref_graph, treat it as a constant expected
   # counts value (e.g. if ref_graph = 0 then no centring of counts).
   if (is.numeric(ref_graph) && length(ref_graph) == 1) {
-    
     centred_graphlet_counts <- purrr::map(
       graphlet_counts,
       netdis_centred_graphlet_counts,
@@ -403,11 +414,12 @@ netdis_many_to_many <- function(graphs = NULL,
       binning_fn = NULL,
       bin_counts_fn = NULL,
       exp_counts_fn = NULL,
-      max_graphlet_size = max_graphlet_size)
+      max_graphlet_size = max_graphlet_size
+    )
 
-  ## ------------------------------------------------------------------------
-  # If a reference graph passed, use it to calculate expected counts for all
-  # query graphs.
+    ## ------------------------------------------------------------------------
+    # If a reference graph passed, use it to calculate expected counts for all
+    # query graphs.
   } else if (!is.null(ref_graph) || !is.null(graphlet_counts_ref)) {
 
     # Generate ego networks and calculate graphlet counts
@@ -434,11 +446,11 @@ netdis_many_to_many <- function(graphs = NULL,
 
     # Average ref graphlet counts across density bins
     ref_binned_graphlet_counts <- bin_counts_fn(
-                                    graphlet_counts_ref,
-                                    binned_densities$interval_indexes,
-                                    max_graphlet_size = max_graphlet_size
-                                  )
-    
+      graphlet_counts_ref,
+      binned_densities$interval_indexes,
+      max_graphlet_size = max_graphlet_size
+    )
+
     # Calculate centred counts using ref graph
     centred_graphlet_counts <- purrr::map(
       graphlet_counts,
@@ -448,13 +460,13 @@ netdis_many_to_many <- function(graphs = NULL,
       binning_fn = binning_fn,
       bin_counts_fn = bin_counts_fn,
       exp_counts_fn = exp_counts_fn,
-      max_graphlet_size = max_graphlet_size)
+      max_graphlet_size = max_graphlet_size
+    )
 
-  ## ------------------------------------------------------------------------
-  # If no reference passed, calculate expected counts using query networks
-  # themselves.
+    ## ------------------------------------------------------------------------
+    # If no reference passed, calculate expected counts using query networks
+    # themselves.
   } else {
-    
     centred_graphlet_counts <- purrr::map(
       graphlet_counts,
       netdis_centred_graphlet_counts,
@@ -463,17 +475,17 @@ netdis_many_to_many <- function(graphs = NULL,
       binning_fn = binning_fn,
       bin_counts_fn = bin_counts_fn,
       exp_counts_fn = exp_counts_fn,
-      max_graphlet_size = max_graphlet_size)
-    
+      max_graphlet_size = max_graphlet_size
+    )
   }
   rm(graphlet_counts)
-  
+
   ## ------------------------------------------------------------------------
   # Sum centred graphlet counts across all ego networks
   sum_graphlet_counts <- lapply(centred_graphlet_counts, colSums)
-  
+
   rm(centred_graphlet_counts)
-  
+
   ## ------------------------------------------------------------------------
   # Generate pairwise comparisons
   comp_spec <- cross_comparison_spec(sum_graphlet_counts, how = comparisons)
@@ -481,25 +493,25 @@ netdis_many_to_many <- function(graphs = NULL,
   ## ------------------------------------------------------------------------
   # Calculate netdis statistics
   results <- parallel::mcmapply(
-      function(index_a, index_b) {
-        netdis_uptok(
-          sum_graphlet_counts[[index_a]],
-          sum_graphlet_counts[[index_b]],
-          max_graphlet_size = max_graphlet_size
-        )
-      },
-      comp_spec$index_a,
-      comp_spec$index_b,
-      SIMPLIFY = TRUE)
+    function(index_a, index_b) {
+      netdis_uptok(
+        sum_graphlet_counts[[index_a]],
+        sum_graphlet_counts[[index_b]],
+        max_graphlet_size = max_graphlet_size
+      )
+    },
+    comp_spec$index_a,
+    comp_spec$index_b,
+    SIMPLIFY = TRUE
+  )
 
   list(netdis = results, comp_spec = comp_spec)
-
 }
 
 #' Netdis - for one graphlet size
 #'
 #' Calculate Netdis statistic between two graphs from their Centred Graphlet
-#' Counts (generated using \code{netdis_centred_graphlet_counts}) for graphlets 
+#' Counts (generated using \code{netdis_centred_graphlet_counts}) for graphlets
 #' of size \code{graphlet_size}.
 #' @param centred_graphlet_counts1 Centred Graphlet Counts for graph 1
 #' @param centred_graphlet_counts2 Centred Graphlet Counts for graph 2
@@ -573,18 +585,18 @@ netdis_uptok <- function(centred_graphlet_counts1, centred_graphlet_counts2,
 #' centre the actual counts by subtracting those calculated expected count
 #' values.
 #' @param graphlet_counts Ego network graphlet counts for a query graph
-#' 
+#'
 #' @param ref_ego_density_bins Either a list of previously calculated ego
 #' network density bin edges from a reference network, or \code{NULL}, in
 #' which case density bins are generated using the query graph itself.
-#' 
+#'
 #' @param ref_binned_graphlet_counts Either expected graphlet counts for each
 #' ego network density bin from a reference network (a matrix with columns
 #' labelled by graphlet ID and rows by density bin index), \code{NULL}, in
 #' which case density binned counts are generated using the query graph itself,
 #' or a constant numeric value to subtract from all graphlet counts.
 #'
-#' @param binning_fn Function used to bin ego network densities. Only needed if 
+#' @param binning_fn Function used to bin ego network densities. Only needed if
 #' \code{ref_ego_density_bins} and \code{ref_binned_graphlet_counts} are
 #' \code{NULL}. Takes densities as its single argument, and returns a named list
 #' including keys \code{breaks} (list of bin edges) and \code{interval_indexes}
@@ -602,72 +614,76 @@ netdis_uptok <- function(centred_graphlet_counts1, centred_graphlet_counts2,
 #' \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
 #'
 #' @param max_graphlet_size max graphlet size to calculate centred counts for.
-#' 
+#'
 #' @return graphlet_counts minus exp_graphlet_counts for graphlets up to size
 #' max_graphlet_size.
 #' @export
 netdis_centred_graphlet_counts <- function(
-  graphlet_counts,
-  ref_ego_density_bins,
-  ref_binned_graphlet_counts,
-  binning_fn,
-  bin_counts_fn,
-  exp_counts_fn,
-  max_graphlet_size) {
-  
+                                           graphlet_counts,
+                                           ref_ego_density_bins,
+                                           ref_binned_graphlet_counts,
+                                           binning_fn,
+                                           bin_counts_fn,
+                                           exp_counts_fn,
+                                           max_graphlet_size) {
+
   ## ------------------------------------------------------------------------
   # If a number has been passed as ref_binned_graphlet_counts, treat it as a
-  # constant expected counts value (e.g. if ref_binned_graphlet_counts = 0 
+  # constant expected counts value (e.g. if ref_binned_graphlet_counts = 0
   # then no centring of counts).
   if (is.numeric(ref_binned_graphlet_counts) &&
-      length(ref_binned_graphlet_counts) == 1) {
+    length(ref_binned_graphlet_counts) == 1) {
     exp_graphlet_counts <- netdis_const_expected_counts(
-                              graphlet_counts,
-                              const = ref_binned_graphlet_counts)
-    
-  ## ------------------------------------------------------------------------
-  # If reference bins and counts passed, use them to calculate
-  # expected counts
-  }  else if (!is.null(ref_ego_density_bins) &&
-              !is.null(ref_binned_graphlet_counts)) {
+      graphlet_counts,
+      const = ref_binned_graphlet_counts
+    )
+
+    ## ------------------------------------------------------------------------
+    # If reference bins and counts passed, use them to calculate
+    # expected counts
+  } else if (!is.null(ref_ego_density_bins) &&
+    !is.null(ref_binned_graphlet_counts)) {
     # Calculate expected graphlet counts (using ref
     # graph ego network density bins)
     exp_graphlet_counts <- exp_counts_fn(
-                                  graphlet_counts,
-                                  ref_ego_density_bins,
-                                  ref_binned_graphlet_counts,
-                                  max_graphlet_size = max_graphlet_size)
-  
-  ## ------------------------------------------------------------------------
-  # If NULL passed as ref bins and counts, calculate expected counts using
-  # query network itself.
-  }  else if (is.null(ref_ego_density_bins) &&
-              is.null(ref_binned_graphlet_counts)) {
+      graphlet_counts,
+      ref_ego_density_bins,
+      ref_binned_graphlet_counts,
+      max_graphlet_size = max_graphlet_size
+    )
+
+    ## ------------------------------------------------------------------------
+    # If NULL passed as ref bins and counts, calculate expected counts using
+    # query network itself.
+  } else if (is.null(ref_ego_density_bins) &&
+    is.null(ref_binned_graphlet_counts)) {
     # Get ego-network densities
     densities <- ego_network_density(graphlet_counts)
 
     # bin ref ego-network densities
     binned_densities <- binning_fn(densities)
-    
+
     # extract bin breaks and indexes from binning results
     ego_density_bin_breaks <- binned_densities$breaks
     ego_density_bin_indexes <- binned_densities$interval_indexes
-    
+
     # Calculate expected counts in each bin
     binned_graphlet_counts <- bin_counts_fn(
-                                graphlet_counts,
-                                ego_density_bin_indexes,
-                                max_graphlet_size = max_graphlet_size)
-    
+      graphlet_counts,
+      ego_density_bin_indexes,
+      max_graphlet_size = max_graphlet_size
+    )
+
     # Calculate expected graphlet counts for each ego network
     exp_graphlet_counts <- exp_counts_fn(
-                                  graphlet_counts,
-                                  ego_density_bin_breaks,
-                                  binned_graphlet_counts,
-                                  max_graphlet_size = max_graphlet_size)
-  
-  ## ------------------------------------------------------------------------
-  # Invalid combination of ref_ego_density_bins and ref_binned_graphlet_counts
+      graphlet_counts,
+      ego_density_bin_breaks,
+      binned_graphlet_counts,
+      max_graphlet_size = max_graphlet_size
+    )
+
+    ## ------------------------------------------------------------------------
+    # Invalid combination of ref_ego_density_bins and ref_binned_graphlet_counts
   } else {
     stop("Invalid combination of ref_ego_density_bins and
          ref_binned_graphlet_counts. Options are:
@@ -677,17 +693,19 @@ netdis_centred_graphlet_counts <- function(
          - Constant numeric ref_binned_graphlet_counts: Use as constant expected
          counts value.")
   }
-  
-  ## ------------------------------------------------------------------------  
+
+  ## ------------------------------------------------------------------------
   # Subtract expected counts from actual graphlet counts
-  netdis_subtract_exp_counts(graphlet_counts,
-                             exp_graphlet_counts,
-                             max_graphlet_size)
+  netdis_subtract_exp_counts(
+    graphlet_counts,
+    exp_graphlet_counts,
+    max_graphlet_size
+  )
 }
 
 
 #' netdis_subtract_exp_counts
-#' 
+#'
 #' Subtract expected graphlet counts from actual graphlet counts.
 #'
 #' @param graphlet_counts Matrix of graphlet counts (columns) for a
@@ -697,22 +715,21 @@ netdis_centred_graphlet_counts <- function(
 #' @param max_graphlet_size Do the subtraction for graphlets up to this size.
 #' @export
 netdis_subtract_exp_counts <- function(
-  graphlet_counts,
-  exp_graphlet_counts,
-  max_graphlet_size) {
-  
+                                       graphlet_counts,
+                                       exp_graphlet_counts,
+                                       max_graphlet_size) {
+
   # select columns for graphlets up to size max_graphlet_size
   id <- graphlet_key(max_graphlet_size)$id
   graphlet_counts <- graphlet_counts[, id]
   exp_graphlet_counts <- exp_graphlet_counts[, id]
-  
+
   # Subtract expected counts from actual graphlet counts
   graphlet_counts - exp_graphlet_counts
-  
 }
 
 #' netdis_expected_counts
-#' 
+#'
 #' Calculates expected graphlet counts for each ego network based on its density
 #' and pre-calculated reference density bins and graphlet counts for each bin.
 #'
@@ -730,11 +747,11 @@ netdis_subtract_exp_counts <- function(
 #'
 #' @export
 netdis_expected_counts <- function(
-                                              graphlet_counts,
-                                              density_breaks,
-                                              density_binned_reference_counts,
-                                              max_graphlet_size,
-                                              scale_fn=NULL) {
+                                   graphlet_counts,
+                                   density_breaks,
+                                   density_binned_reference_counts,
+                                   max_graphlet_size,
+                                   scale_fn = NULL) {
 
 
   # Map over query graph ego-networks, using reference graph statistics to
@@ -744,14 +761,15 @@ netdis_expected_counts <- function(
     max_graphlet_size = max_graphlet_size,
     density_breaks = density_breaks,
     density_binned_reference_counts = density_binned_reference_counts,
-    scale_fn = scale_fn))
+    scale_fn = scale_fn
+  ))
 
   expected_graphlet_counts
 }
 
 #' netdis_expected_counts_ego
 #' INTERNAL FUNCTION - Do not call directly
-#' 
+#'
 #' Calculates expected graphlet counts for one ego network based on its density
 #' and pre-calculated reference density bins and graphlet counts for each bin.
 #'
@@ -765,12 +783,12 @@ netdis_expected_counts <- function(
 #' \code{graphlet_counts} and \code{max_graphlet_size} as arguments, and
 #' returning a scale factor that the looked up
 #' \code{density_binned_reference_counts} values will be multiplied by.
-#' 
+#'
 netdis_expected_counts_ego <- function(graphlet_counts,
-                                            max_graphlet_size,
-                                            density_breaks,
-                                            density_binned_reference_counts,
-                                            scale_fn=NULL) {
+                                       max_graphlet_size,
+                                       density_breaks,
+                                       density_binned_reference_counts,
+                                       scale_fn = NULL) {
 
   # Look up average scaled graphlet counts for graphs of similar density
   # in the reference graph
@@ -786,7 +804,7 @@ netdis_expected_counts_ego <- function(graphlet_counts,
     # of possible sets of k nodes in the query graph,
     # where k is the number of nodes in the graphlet.
     matched_reference_counts <- matched_reference_counts *
-                                scale_fn(graphlet_counts, max_graphlet_size)
+      scale_fn(graphlet_counts, max_graphlet_size)
   }
   matched_reference_counts
 }
@@ -801,7 +819,7 @@ netdis_expected_counts_ego <- function(graphlet_counts,
 #' each ego network in graphlet_counts.
 #' @param agg_fn Function to aggregate counts in each bin
 #' (default \code{agg_fn = mean}).
-#' 
+#'
 #' @export
 mean_density_binned_graphlet_counts <- function(graphlet_counts,
                                                 density_interval_indexes,
@@ -835,13 +853,15 @@ mean_density_binned_graphlet_counts <- function(graphlet_counts,
 #' a list of indexes of the required length.)
 #' @export
 single_density_bin <- function(densities) {
-  list(densities = densities,
-       interval_indexes = rep(1, length(densities)),
-       breaks = c(0, 1))
+  list(
+    densities = densities,
+    interval_indexes = rep(1, length(densities)),
+    breaks = c(0, 1)
+  )
 }
 
 #' Used to calculate aggregated graphlet counts for each density bin.
-#' 
+#'
 #' @param graphlet_counts Graphlet and node counts (columns) for a number of
 #' ego_networks (rows).
 #' @param density_interval_indexes Density bin index for
@@ -854,26 +874,26 @@ single_density_bin <- function(densities) {
 #' object with the same number of rows as the input, and columns for all
 #' graphlets up to \code{max_graphlet_size}.
 #' @param max_graphlet_size Optionally passed and used by scale_fn.
-#' 
+#'
 #' @export
 density_binned_counts <- function(graphlet_counts,
                                   density_interval_indexes,
                                   agg_fn = mean,
                                   scale_fn = NULL,
                                   max_graphlet_size = NULL) {
-
   if (!is.null(scale_fn)) {
     # Scale ego-network graphlet counts e.g.
     # by dividing by total number of k-tuples in
     # ego-network (where k is graphlet size)
     graphlet_counts <- scale_fn(graphlet_counts,
-                                max_graphlet_size = max_graphlet_size)
+      max_graphlet_size = max_graphlet_size
+    )
   }
 
   mean_density_binned_graphlet_counts(graphlet_counts,
-                                      density_interval_indexes,
-                                      agg_fn = agg_fn)
-
+    density_interval_indexes,
+    agg_fn = agg_fn
+  )
 }
 
 #' INTERNAL FUNCTION - DO NOT CALL DIRECTLY
@@ -891,33 +911,36 @@ exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
                               max_graphlet_size) {
   # extract ego networks belonging to input density bin index
   counts <- graphlet_counts[density_interval_indexes == bin_idx, ]
-  
+
   # mean graphlet counts in this density bin
   means <- colMeans(counts)
-  
+
   # subtract mean graphlet counts from actual graphlet counts
   mean_sub_counts <- sweep(counts, 2, means)
-  
+
   # variance in graphlet counts across ego networks in this density bin
   Vd_sq <- colSums(mean_sub_counts^2) / (nrow(mean_sub_counts) - 1)
-  
+
   # GP theta parameter for each graphlet id in this density bin
   theta_d <- 2 * means / (Vd_sq + means)
-  
+
   exp_counts_dk <- vector()
   for (k in 2:max_graphlet_size) {
     graphlet_idx <- graphlet_ids_for_size(k)
-    
+
     # GP lambda parameter for graphlet size k in this density bin
     lambda_dk <- mean(2 * means[graphlet_idx]^2 /
-                        (Vd_sq[graphlet_idx] + means[graphlet_idx]),
-                      na.rm = TRUE)
-    
+      (Vd_sq[graphlet_idx] + means[graphlet_idx]),
+    na.rm = TRUE
+    )
+
     # Expected counts for graphlet size k in this density bin
-    exp_counts_dk <- append(exp_counts_dk,
-                            lambda_dk / theta_d[graphlet_idx])
+    exp_counts_dk <- append(
+      exp_counts_dk,
+      lambda_dk / theta_d[graphlet_idx]
+    )
   }
-  
+
   exp_counts_dk
 }
 
@@ -942,10 +965,10 @@ density_binned_counts_gp <- function(graphlet_counts,
     density_interval_indexes = density_interval_indexes,
     max_graphlet_size = max_graphlet_size
   ))
-  
+
   # remove NAs caused by bins with zero counts for a graphlet
   expected_counts_bin[is.nan(expected_counts_bin)] <- 0
-  
+
   expected_counts_bin
 }
 
@@ -986,14 +1009,16 @@ scale_graphlet_count <- function(graphlet_count, graphlet_tuples) {
 
 #' Run count_graphlet_tuples across pre-computed ego networks.
 #' @param graphlet_counts Matrix of graphlet and node counts (columns) for a
-#' number of ego networks (rows). 
+#' number of ego networks (rows).
 #' @param max_graphlet_size Determines the maximum size of graphlets included
 #' in the tuple counts.
 #' @export
 count_graphlet_tuples_ego <- function(graphlet_counts, max_graphlet_size) {
   graphlet_tuple_counts <-
     t(apply(graphlet_counts, 1,
-            count_graphlet_tuples, max_graphlet_size = max_graphlet_size))
+      count_graphlet_tuples,
+      max_graphlet_size = max_graphlet_size
+    ))
 
   graphlet_tuple_counts
 }

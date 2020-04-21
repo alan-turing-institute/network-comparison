@@ -61,7 +61,7 @@ dhist <- function(locations, masses, smoothing_window_width = 0, sorted = TRUE) 
 
 update_dhist <-
   function(dhist, locations = dhist$locations, masses = dhist$masses,
-             smoothing_window_width = dhist$smoothing_window_width) {
+           smoothing_window_width = dhist$smoothing_window_width) {
     dhist$locations <- locations
     dhist$masses <- masses
     dhist$smoothing_window_width <- smoothing_window_width

@@ -3,7 +3,7 @@
 #' Adaptive binning function guaranteeing a minimum number of entries in each
 #' bin.
 #' @param densities Density values to use for binning.
-#' @param min_counts_per_interval Minimum count for each bin. 
+#' @param min_counts_per_interval Minimum count for each bin.
 #' @param num_intervals Initial number of density bins to generate.
 #' TODO: Remove @export prior to publishing
 #' @export
