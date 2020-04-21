@@ -9,8 +9,9 @@ r_packages:
 os:
 - linux
 
-after_success:
-- Rscript -e 'library(covr); codecov()'
+# Temporarily remove code coverage analysis as it doubles the build time
+# after_success:
+# - Rscript -e 'library(covr); codecov()'
 
 notifications:
   slack:
