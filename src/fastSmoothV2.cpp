@@ -79,6 +79,7 @@ double get_segment_constrained(double seg1L1, double seg1L2,
   //We have a valid range
   double valStart1, valEnd1, valStart2, valEnd2;
   double start,end;
+  double result;
   start = std::max(seg1L1,seg2L1);
   end   = std::min(seg1L2,seg2L2);
   if (start < end) {
@@ -86,8 +87,8 @@ double get_segment_constrained(double seg1L1, double seg1L2,
     valEnd1   = seg1V1 + (seg1V2 - seg1V1)*(end   - seg1L1)/(seg1L2 - seg1L1);
     valStart2 = seg2V1 + (seg2V2 - seg2V1)*(start - seg2L1)/(seg2L2 - seg2L1);
     valEnd2   = seg2V1 + (seg2V2 - seg2V1)*(end   - seg2L1)/(seg2L2 - seg2L1);
-
-    return get_segment(start, end, valStart1, valEnd1, valStart2, valEnd2);
+    result = get_segment(start, end, valStart1, valEnd1, valStart2, valEnd2);
+    return result;
   }
   else {
     return 0;

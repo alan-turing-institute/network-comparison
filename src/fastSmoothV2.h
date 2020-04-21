@@ -8,11 +8,11 @@
 
 using namespace Rcpp;
 
-inline double bowtie_area(double length, double val1_start, double val1_end,
+double bowtie_area(double length, double val1_start, double val1_end,
                           double val2_start, double val2_end);
-inline double get_segment(double start, double end, double val1_start,
+double get_segment(double start, double end, double val1_start,
                           double val1_end, double val2_start, double val2_end);
-inline double get_segment_constrained(double seg1L1, double seg1L2,
+double get_segment_constrained(double seg1L1, double seg1L2,
                                       double seg2L1, double seg2L2,
                                       double seg1V1, double seg1V2,
                                       double seg2V1, double seg2V2);
