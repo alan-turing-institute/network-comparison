@@ -12,9 +12,9 @@ interval_index(x, breaks, out_of_range_intervals = FALSE)
 \item{breaks}{The boundaries between bins}
 
 \item{out_of_range_intervals}{If \code{TRUE}, "out of range" values lying
-below the first break or above the last break will be assigned to additional 
-unbounded lower and upper extrema intervals. If \code{FALSE} these "out of 
-range" values will be assigned to intervals bounded by the lowest or 
+below the first break or above the last break will be assigned to additional
+unbounded lower and upper extrema intervals. If \code{FALSE} these "out of
+range" values will be assigned to intervals bounded by the lowest or
 uppermost break respectively.}
 }
 \value{

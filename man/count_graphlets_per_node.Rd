@@ -7,17 +7,18 @@
 count_graphlets_per_node(graph, max_graphlet_size)
 }
 \arguments{
-\item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
+\item{graph}{A connected, undirected, simple graph as an \code{igraph} object}
 
-\item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
-Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count.
+Only graphlets containing up to \code{max_graphlet_size} nodes will be
+counted.}
 }
 \value{
-ORCA-format matrix containing counts of each graphlet (columns) at 
+ORCA-format matrix containing counts of each graphlet (columns) at
 each node in the graph (rows).
 }
 \description{
-Calculates graphlet counts for each node in an \code{igraph} graph object, 
-using the ORCA fast graphlet orbit counting package. by summing orbits over 
+Calculates graphlet counts for each node in an \code{igraph} graph object,
+using the ORCA fast graphlet orbit counting package. by summing orbits over
 graphlets.
 }

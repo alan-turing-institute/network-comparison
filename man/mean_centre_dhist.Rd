@@ -13,6 +13,6 @@ mean_centre_dhist(dhist)
 The mass-weighted mean location
 }
 \description{
-Centres a discrete histogram around its mass-weighted mean location by 
+Centres a discrete histogram around its mass-weighted mean location by
 subtracting the mass-weighted mean from each location.
 }

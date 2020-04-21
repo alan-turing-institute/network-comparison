@@ -18,7 +18,7 @@ A copy of a \code{dhist} object with its \code{smoothing_window_width}
 attribute set  to the value provided \code{smoothing_window_width} parameter.
 }
 \description{
-Returns a "smoothed" copy of a \code{dhist} object with its 
-\code{smoothing_window_width} attribute set to the value provided 
+Returns a "smoothed" copy of a \code{dhist} object with its
+\code{smoothing_window_width} attribute set to the value provided
 \code{smoothing_window_width} parameter.
 }

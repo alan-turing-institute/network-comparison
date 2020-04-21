@@ -8,23 +8,24 @@ gdd(graph, feature_type = "orbit", max_graphlet_size = 4,
   ego_neighbourhood_size = 0)
 }
 \arguments{
-\item{graph}{A connected, undirected, simple graph as an \code{igraph} object.}
+\item{graph}{A connected, undirected, simple graph as an \code{igraph} object}
 
 \item{feature_type}{Type of graphlet-based feature to count: "graphlet"
 counts the number of graphlets each node participates in; "orbit" calculates
 the number of graphlet orbits each node participates in.}
 
-\item{max_graphlet_size}{Determines the maximum size of graphlets to count. 
-Only graphlets containing up to \code{max_graphlet_size} nodes will be counted.}
+\item{max_graphlet_size}{Determines the maximum size of graphlets to count.
+Only graphlets containing up to \code{max_graphlet_size} nodes will be
+counted.}
 
-\item{ego_neighbourhood_size}{The number of steps from the source node to include
-nodes for each ego-network.}
+\item{ego_neighbourhood_size}{The number of steps from the source node to
+include nodes for each ego-network.}
 }
 \value{
 List of graphlet-based degree distributions, with each distribution
 represented as a \code{dhist} discrete histogram object.
 }
 \description{
-Generates graphlet-based degree distributions from \code{igraph} graph object,
+Generates graphlet-based degree distributions from \code{igraph} graph object
 using the ORCA fast graphlet orbit counting package.
 }
