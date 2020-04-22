@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <numeric>
 #include <math.h>
+#include "fastSmoothV2.h"
 
 using namespace Rcpp;
 
@@ -168,6 +169,10 @@ double leftmost_segments(const NumericVector& loc1,
       curSeg1Loc1, curSeg1Loc2, curSeg1Loc3, curSeg1Val1, curSeg1Val2,
       curSeg2Loc1, curSeg2Loc2, curSeg2Loc3, curSeg2Val1, curSeg2Val2);
 
+    std::cerr << "%% " << index << " : " << curSeg1Loc1 << " " << curSeg1Loc2 << " " << curSeg1Loc3 << " "
+              << curSeg1Val1 << " " << curSeg1Val2 << " " << curSeg2Loc1 << " " << curSeg2Loc2
+              << " " << curSeg2Loc3 << " " << curSeg2Val1 << " " << curSeg2Val2 << std::endl;
+    
     if (curSeg2Loc1 > curSeg1Loc3) {
       break;
     }
@@ -190,99 +195,160 @@ double leftmost_segments(const NumericVector& loc1,
 double NetEmdSmoothV2(NumericVector loc1, NumericVector val1, double binWidth1,
                       NumericVector loc2, NumericVector val2, double binWidth2)
 {
-  double res = 0;
+  // double res = 0;
 
-  // Hist 1
-  double curSeg1Loc1; // Start of the gradient section in Seg1
-  double curSeg1Loc2; // End of the gradient section in Seg1
-  double curSeg1Loc3; // End of the flat section in Seg1
-  double curSeg1Val1; // Start value in Seg1
-  double curSeg1Val2; // End value in Seg1
+  // // Hist 1
+  // double curSeg1Loc1; // Start of the gradient section in Seg1
+  // double curSeg1Loc2; // End of the gradient section in Seg1
+  // double curSeg1Loc3; // End of the flat section in Seg1
+  // double curSeg1Val1; // Start value in Seg1
+  // double curSeg1Val2; // End value in Seg1
 
-  // Hist 2
-  double curSeg2Loc1; // Start of the gradient section in Seg2
-  double curSeg2Loc2; // End of the gradient section in Seg2
-  double curSeg2Loc3; // End of the flat section in Seg2
-  double curSeg2Val1; // Start value in Seg2
-  double curSeg2Val2; // End value in Seg2
-
-
-  // Starting index for the second histogram
-  double secondStart = 0;
-
-  // Smallest and largest location values
-  double maxLoc = std::max(loc1[loc1.size()-1] + binWidth1,
-                           loc2[loc2.size()-1] + binWidth2);
+  // // Hist 2
+  // double curSeg2Loc1; // Start of the gradient section in Seg2
+  // double curSeg2Loc2; // End of the gradient section in Seg2
+  // double curSeg2Loc3; // End of the flat section in Seg2
+  // double curSeg2Val1; // Start value in Seg2
+  // double curSeg2Val2; // End value in Seg2
 
 
-  // warning area before loc2[0] is not well tested
-  // As values outside of the range appear to be zero
+  // // Starting index for the second histogram
+  // double secondStart = 0;
 
-  if (loc2[0] < loc1[0]) {
-    res += leftmost_segments(loc2, loc1, val2, val1, binWidth2, maxLoc);
-  }
-  else
+  // // Smallest and largest location values
+  // double maxLoc = std::max(loc1[loc1.size()-1] + binWidth1,
+  //                          loc2[loc2.size()-1] + binWidth2);
+
+
+  // // warning area before loc2[0] is not well tested
+  // // As values outside of the range appear to be zero
+
+  // std::cerr << "===============\n";
+  
+  // if (loc2[0] < loc1[0]) {
+  //   res += leftmost_segments(loc2, loc1, val2, val1, binWidth2, maxLoc);
+  // }
+  // else
+  // {
+  //   res += leftmost_segments(loc1, loc2, val1, val2, binWidth1, maxLoc);
+  // }
+
+  // // Add both the  overlapping sections and the non overlapping section on the right
+  // // Note we reiterate over the first few sections loc1
+  // // Could store where we are upto from above to save time
+  // // Reset Val counter
+  // curSeg1Val2 = 0;
+  // for (int index1 = 0; index1 < loc1.size(); index1++) {
+  //   //  Get the three relevant locations
+  //   // Start; end of linear section; end of flat section
+  //   curSeg1Loc1 = loc1[index1];
+  //   curSeg1Loc2 = loc1[index1] + binWidth1;
+  //   // could pull this check outside of the loop with final case not sure if worth it
+  //   if (index1 == loc1.size() - 1) {
+  //     curSeg1Loc3 = maxLoc;
+  //   }
+  //   else {
+  //     curSeg1Loc3 = loc1[index1 + 1];
+  //   }
+  //   // Update value to the start and end of the current section
+  //   curSeg1Val1 = curSeg1Val2;
+  //   curSeg1Val2 = val1[index1];
+  //   // Setting up the previous value for the next loop
+  //   // Could replace this loop with a while
+  //   // but if so would need to be careful about overlaps
+  //   if (secondStart == 0) {
+  //     curSeg2Val2 = 0;
+  //   }
+  //   else {
+  //     curSeg2Val2 = val2[secondStart - 1];
+  //   }
+  //   for (int index2 = secondStart; index2 < loc2.size(); index2++) {
+  //     // Construct 3 sections for second seg.
+  //     curSeg2Loc1 = loc2[index2];
+  //     curSeg2Loc2 = loc2[index2] + binWidth2;
+  //     if (index2 == loc2.size() - 1) {
+  //       curSeg2Loc3 = maxLoc;
+  //     }
+  //     else {
+  //       curSeg2Loc3 = loc2[index2 + 1];
+  //     }
+  //     //update values
+  //     curSeg2Val1 = curSeg2Val2;
+  //     curSeg2Val2 = val2[index2];
+  //     // If this section is behind Seg1
+  //     // Do not consider again
+  //     if (curSeg2Loc3 < curSeg1Loc1) {
+  //       secondStart = index2 + 1;
+  //       continue;
+  //     }
+  //     // If current Seg2 is beyond Seg1 break out of loop
+  //     res += get_double_segment_constrained(
+  //       curSeg1Loc1, curSeg1Loc2, curSeg1Loc3, curSeg1Val1, curSeg1Val2,
+  //       curSeg2Loc1, curSeg2Loc2, curSeg2Loc3, curSeg2Val1, curSeg2Val2);
+
+  //     std::cerr << "%% " << index1 << " " << index2 << " : " << curSeg1Loc1 << " " << curSeg1Loc2 << " " << curSeg1Loc3 << " "
+  //               << curSeg1Val1 << " " << curSeg1Val2 << " " << curSeg2Loc1 << " " << curSeg2Loc2
+  //               << " " << curSeg2Loc3 << " " << curSeg2Val1 << " " << curSeg2Val2 << std::endl;
+      
+  //     if (curSeg2Loc3 > curSeg1Loc3) {
+  //       break;
+  //     }
+  //   }
+  // }
+
+  // std::cerr << "---------------\n";
+ 
   {
-    res += leftmost_segments(loc1, loc2, val1, val2, binWidth1, maxLoc);
-  }
+    OverlappingSegments segs(loc1, loc2, binWidth1, binWidth2);
 
-  // Add both the  overlapping sections and the non overlapping section on the right
-  // Note we reiterate over the first few sections loc1
-  // Could store where we are upto from above to save time
-  // Reset Val counter
-  curSeg1Val2 = 0;
-  for (int index1 = 0; index1 < loc1.size(); index1++) {
-    //  Get the three relevant locations
-    // Start; end of linear section; end of flat section
-    curSeg1Loc1 = loc1[index1];
-    curSeg1Loc2 = loc1[index1] + binWidth1;
-    // could pull this check outside of the loop with final case not sure if worth it
-    if (index1 == loc1.size() - 1) {
-      curSeg1Loc3 = maxLoc;
-    }
-    else {
-      curSeg1Loc3 = loc1[index1 + 1];
-    }
-    // Update value to the start and end of the current section
-    curSeg1Val1 = curSeg1Val2;
-    curSeg1Val2 = val1[index1];
-    // Setting up the previous value for the next loop
-    // Could replace this loop with a while
-    // but if so would need to be careful about overlaps
-    if (secondStart == 0) {
-      curSeg2Val2 = 0;
-    }
-    else {
-      curSeg2Val2 = val2[secondStart - 1];
-    }
-    for (int index2 = secondStart; index2 < loc2.size(); index2++) {
-      // Construct 3 sections for second seg.
-      curSeg2Loc1 = loc2[index2];
-      curSeg2Loc2 = loc2[index2] + binWidth2;
-      if (index2 == loc2.size() - 1) {
-        curSeg2Loc3 = maxLoc;
-      }
-      else {
-        curSeg2Loc3 = loc2[index2 + 1];
-      }
-      //update values
-      curSeg2Val1 = curSeg2Val2;
-      curSeg2Val2 = val2[index2];
-      // If this section is behind Seg1
-      // Do not consider again
-      if (curSeg2Loc3 < curSeg1Loc1) {
-        secondStart = index2 + 1;
-        continue;
-      }
-      // If current Seg2 is beyond Seg1 break out of loop
+    double res = 0.0;
+  
+    for (OverlappingSegments::iterator it = segs.begin(), endIt = segs.end();
+         it != endIt; ++it)
+    {
+      // Hist 1
+      // Start of the gradient section in Seg1
+      double curSeg1Loc1 = it.get_loc1(it->first);
+
+      // End of the gradient section in Seg1
+      double curSeg1Loc2 = (it->first < 0) ? curSeg1Loc1 : (curSeg1Loc1 + binWidth1);
+
+      // End of the flat section in Seg1
+      double curSeg1Loc3 = it.get_loc1(it->first + 1);
+
+      // Start value in Seg1
+      double curSeg1Val1 = (it->first <= 0) ? 0.0 : val1[it->first - 1];
+
+      // End value in Seg1
+      double curSeg1Val2 = (it->first < 0) ? 0.0 : val1[it->first];
+
+      // Hist 2
+      // Start of the gradient section in Seg2
+      double curSeg2Loc1 = it.get_loc2(it->second);
+
+      // End of the gradient section in Seg2
+      double curSeg2Loc2 = (it->second < 0) ? curSeg2Loc1 : (curSeg2Loc1 + binWidth2);
+
+      // End of the flat section in Seg2
+      double curSeg2Loc3 = it.get_loc2(it->second + 1); 
+
+      // Start value in Seg2
+      double curSeg2Val1 = (it->second <= 0) ? 0.0 : val2[it->second - 1];
+
+      // End value in Seg2
+      double curSeg2Val2 = (it->second < 0) ? 0.0 : val2[it->second];
+
+      // std::cerr << "%% " << it->first << " " << it->second << " : " << curSeg1Loc1 << " " << curSeg1Loc2 << " " << curSeg1Loc3 << " "
+      //           << curSeg1Val1 << " " << curSeg1Val2 << " " << curSeg2Loc1 << " " << curSeg2Loc2
+      //           << " " << curSeg2Loc3 << " " << curSeg2Val1 << " " << curSeg2Val2 << std::endl;
+
       res += get_double_segment_constrained(
         curSeg1Loc1, curSeg1Loc2, curSeg1Loc3, curSeg1Val1, curSeg1Val2,
-        curSeg2Loc1, curSeg2Loc2, curSeg2Loc3, curSeg2Val1, curSeg2Val2);
-
-      if (curSeg2Loc3 > curSeg1Loc3) {
-        break;
-      }
+        curSeg2Loc1, curSeg2Loc2, curSeg2Loc3, curSeg2Val1, curSeg2Val2);    
     }
+
+    return res;
   }
-  return res;
+
+  // std::cerr << "===============\n";
 }
