@@ -12,7 +12,6 @@
 // header file.
 #include "fastSmoothV2.h"
 #include "emd_fast_no_smoothing.h"
-#include "interleaved_iterator.h"
 
 #include <math.h>
 #include <vector>
@@ -137,72 +136,72 @@ void runIntervalOverlapTest(Container1T& actual, Container2T& expected)
 context("emd_fast_smooth overlapping interval iterator") {
   test_that("emd_fast_smooth overlapping interval iterator") {
     {
-      std::vector<double> xs {1.0, 3.0, 5.0};
-      std::vector<double> ys {2.0, 4.0, 6.0};
-      OverlappingSegments<std::vector<double> > actual(xs, ys);
+      NumericVector xs {1.0, 3.0, 5.0};
+      NumericVector ys {2.0, 4.0, 6.0};
+      OverlappingSegments actual(xs, ys);
       std::vector<std::pair<long, long> > expected {
         {0, -1}, {0, 0}, {1, 0}, {1, 1}, {2, 1}, {2, 2}};
       runIntervalOverlapTest(actual, expected);
     }
 
     {
-      std::vector<double> xs {1.0, 3.0};
-      std::vector<double> ys {4.0, 6.0, 8.0};
-      OverlappingSegments<std::vector<double> > actual(xs, ys);
+      NumericVector xs {1.0, 3.0};
+      NumericVector ys {4.0, 6.0, 8.0};
+      OverlappingSegments actual(xs, ys);
       std::vector<std::pair<long, long> > expected {
         {0, -1}, {1, -1}, {1, 0}, {1, 1}, {1, 2}};
       runIntervalOverlapTest(actual, expected);
     }
 
     {
-      std::vector<double> xs {5.0, 5.5};
-      std::vector<double> ys {4.0, 6.0, 8.0};
-      OverlappingSegments<std::vector<double> > actual(xs, ys);
+      NumericVector xs {5.0, 5.5};
+      NumericVector ys {4.0, 6.0, 8.0};
+      OverlappingSegments actual(xs, ys);
       std::vector<std::pair<long, long> > expected {
         {-1, 0}, {0, 0}, {1, 0}, {1, 1}, {1, 2}};
       runIntervalOverlapTest(actual, expected);
     }
 
     {
-      std::vector<double> xs {1.0, 2.0};
-      std::vector<double> ys {1.0, 3.0};
-      OverlappingSegments<std::vector<double> > actual(xs, ys);
+      NumericVector xs {1.0, 2.0};
+      NumericVector ys {1.0, 3.0};
+      OverlappingSegments actual(xs, ys);
       std::vector<std::pair<long, long> > expected {
         {0, 0}, {1, 0}, {1, 1}};
       runIntervalOverlapTest(actual, expected);
     }
 
     {
-      std::vector<double> xs {1.0, 3.0};
-      std::vector<double> ys {1.0, 2.0};
-      OverlappingSegments<std::vector<double> > actual(xs, ys);
+      NumericVector xs {1.0, 3.0};
+      NumericVector ys {1.0, 2.0};
+      OverlappingSegments actual(xs, ys);
       std::vector<std::pair<long, long> > expected {
         {0, 0}, {0, 1}, {1, 1}};
       runIntervalOverlapTest(actual, expected);
     }
 
     {
-      std::vector<double> xs {1.0, 2.0};
-      std::vector<double> ys {1.5, 2.0, 3.0};
-      OverlappingSegments<std::vector<double> > actual(xs, ys);
+      NumericVector xs {1.0, 2.0};
+      NumericVector ys {1.5, 2.0, 3.0};
+      OverlappingSegments actual(xs, ys);
       std::vector<std::pair<long, long> > expected {
         {0, -1}, {0, 0}, {1, 1}, {1, 2}};
       runIntervalOverlapTest(actual, expected);
     }
 
     {
-      std::vector<double> xs {1.0, 2.0};
-      std::vector<double> ys {1.0, 2.0};
-      OverlappingSegments<std::vector<double> > actual(xs, ys);
+      NumericVector xs {1.0, 2.0};
+      NumericVector ys {1.0, 2.0};
+      OverlappingSegments actual(xs, ys);
       std::vector<std::pair<long, long> > expected {
         {0, 0}, {1, 1}};
       runIntervalOverlapTest(actual, expected);
     }
 
     {
-      std::vector<double> xs {1.0, 2.0};
-      std::vector<double> ys {1.5, 2.0};
-      OverlappingSegments<std::vector<double> > actual(xs, ys);
+      NumericVector xs {1.0, 2.0};
+      NumericVector ys {1.5, 2.0};
+      OverlappingSegments actual(xs, ys);
       std::vector<std::pair<long, long> > expected {
         {0, -1}, {0, 0}, {1, 1}};
       runIntervalOverlapTest(actual, expected);
