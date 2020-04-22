@@ -1,29 +1,48 @@
-#ifndef INTERLEAVED_ITERATOR_H
-#define INTERLEAVED_ITERATOR_H
+#ifndef OVERLAPPING_SEGMENTS_H
+#define OVERLAPPING_SEGMENTS_H
 
 #include <cstddef>
+#include <cassert>
 #include <utility>
 #include <iterator>
 #include <vector>
 #include <iostream>
+#include <stdexcept>
+#include <limits>
 
-// Interleave two containers of ordered elements in a particular way.
+// Class used to support iteration (with OverlappingSegments::iterator)
+// over pairs of overlapping segments within two sequences.
 //
-// Supports iteration with Interleave::iterator
 template <typename Container>
-class Interleaved {
+class OverlappingSegments {
   // short alias for the value type of the container
-  typedef typename Container::value_type CvalT;
+  typedef typename std::remove_reference<typename Container::value_type>::type CvalT;
   typedef long int IndexT;
 
-  Container& xs;
-  Container& ys;
+  // references the two sequences
+  const Container& loc1;
+  const Container& loc2;
 
 public:
-  Interleaved(Container& xs_, Container& ys_) : xs(xs_), ys(ys_) { }
-  
+  OverlappingSegments(Container& loc1_, Container& loc2_)
+    : loc1(loc1_), loc2(loc2_) {
+    // check the requirement that loc1 and loc2 are nonempty and
+    // (strictly) sorted
+
+    if (loc1.size() == 0 || loc2.size() == 0)
+      throw std::invalid_argument("Input vectors must be nonempty");
+    
+    for (int i = 0; i < loc1.size() - 1; i++)
+      if (loc1[i] > loc1[i + 1])
+        throw std::invalid_argument("Input vectors must be sorted in strict ascending order");
+
+    for (int i = 0; i < loc2.size() - 1; i++)
+      if (loc2[i] > loc2[i + 1])
+        throw std::invalid_argument("Input vectors must be sorted in strict ascending order");
+  }
+
   class iterator {
-    const Interleaved * const xys;
+    const OverlappingSegments * const segs;
 
     IndexT Nx, Ny;
 
@@ -39,102 +58,126 @@ public:
     typedef value_type* pointer;
     typedef value_type& reference;
     typedef std::input_iterator_tag iterator_category;
-          
-    explicit iterator(Interleaved *xys_)
-      : xys(xys_), Nx(xys_->xs.size()), Ny(xys_->ys.size())
-    {
-      //// this slightly simpler version assumes both xs and ys are
-      //// nonempty:
-      
-      // if (xys->xs[0] <= xys->ys[0]) {
-      //   minloc = xys->xs[0];
-      //   idx.first = 0;
-      //   idx.second = -1;
-      // }
-      // else {
-      //   minloc = xys->ys[0];
-      //   idx.first = -1;
-      //   idx.second = 0;
-      // }
-      // maxloc = std::max(xys->xs.back(), xys->ys.back());
 
-      //// no such assumption:
+    // Iterate over pairs of indices (i,j) into the sequences loc1 and
+    // loc2, where the intervals [loc1[i], loc1[i+1]] and [loc2[j],
+    // loc2[j+1]] overlap.
+    //
+    // These indices are returned from the iterator as
+    //   std::pair<long, long>.
+    //
+    // A sequence has an implicit segment from minloc (with index -1)
+    // to its zeroth element.  The elements loc1[0] and loc2[0] are
+    // compared to determine whether, for either sequence, this
+    // initial implicit segment overlaps the zeroth segment of the
+    // other one.  If both sequences start with the same value, the
+    // iteration starts at (0,0).
+    //
+    explicit iterator(OverlappingSegments *segs_)
+      : segs(segs_), Nx(segs_->loc1.size()), Ny(segs_->loc2.size())
+    {
+      // The initial state of the iterator
       
-      if (Nx != 0 && Ny != 0) {
-        maxloc = std::max(xys->xs.back(), xys->ys.back());
-      }
-      else if (Nx != 0) {
-        maxloc = xys->xs.back();
-      }
-      else if (Ny != 0) {
-        maxloc = xys->ys.back();
-      }
-      else {
-        maxloc = 0;
-        minloc = 0;
-        idx.first = -1;
-        idx.second = -1;
-      }
-      
-      if (Nx != 0 && (Ny == 0 || Ny != 0 && xys->xs[0] <= xys->ys[0])) {
-        minloc = xys->xs[0];
+      if (segs->loc1[0] < segs->loc2[0]) {
+        minloc = segs->loc1[0];
         idx.first = 0;
         idx.second = -1;
       }
-      else if (Ny != 0) {
-        minloc = xys->ys[0];
+      else if (segs->loc1[0] == segs->loc2[0]) {
+        minloc = segs->loc1[0]; // == segs->loc2[0]
+        idx.first = 0;
+        idx.second = 0;
+      }
+      else {
+        minloc = segs->loc2[0];
         idx.first = -1;
         idx.second = 0;
       }
+
+      // maxloc is used to signal the end of the current segment:
+      // since we consider only left-hand endpoints, the only
+      // requirement is that it compares greater than any real loc in
+      // either sequence - in reality it will be the largest loc plus
+      // the corresponding binwidth
+      maxloc = std::numeric_limits<double>::infinity();
     }
 
-    CvalT get_x(IndexT i) const {
+    CvalT get_loc1(IndexT i) const {
       if (i < 0) return minloc;
       else if (i >= Nx) return maxloc;
-      else return xys->xs[i];
+      else return segs->loc1[i];
     }
 
-    CvalT get_y(IndexT i) const {
+    CvalT get_loc2(IndexT i) const {
       if (i < 0) return minloc;
       else if (i >= Ny) return maxloc;
-      else return xys->ys[i];
-    }
-    
-    std::pair<CvalT, CvalT> get_loc(const std::pair<IndexT, IndexT>& i) const {
-      CvalT x(get_x(i.first));
-      CvalT y(get_y(i.second));
-
-      return std::make_pair(x, y);
+      else return segs->loc2[i];
     }
 
-    std::pair<CvalT, CvalT> get_current_loc() const {
-      return get_loc(idx);
+    // Does interval i (from the first collection of segments) overlap
+    // interval j (from the second)?
+    bool intervals_overlap(IndexT i, IndexT j) const {
+      return (get_loc1(i) < get_loc2(j + 1) && get_loc2(j) < get_loc1(i + 1));
     }
+
+    bool at_end() const { return idx.first == Nx && idx.second == Ny - 1; }
 
     iterator& advance_to_end() {
       idx.first = Nx;
-      idx.second = Ny;
+      idx.second = Ny - 1;
       return *this;
     }
+    
+    value_type operator*() const { return idx; }
 
-    value_type operator*() const {
-      return idx;
-    }
-
-    const value_type *operator->() const {
-      return &idx;
-    }
+    const value_type *operator->() const { return &idx; }
 
     iterator& operator++() {
-      std::pair<CvalT, CvalT> loc(get_current_loc());
-      while (idx.second < Ny && get_y(++idx.second) < loc.first) { }
 
-      if (get_y(idx.second + 1) > get_x(idx.first + 1) || idx.second >= Ny) {
-        if (idx.first < Nx) idx.first++;
-      } else {
-        if (idx.second < Ny) idx.second++;
+#if !NDEBUG
+      // Verify precondition
+      if (!intervals_overlap(idx.first, idx.second)) {
+        throw std::logic_error("Iterator precondition not satisfied: "
+                               "current intervals do not overlap");
       }
-      
+#endif
+
+      // Advance the second segment if it would still overlap the first
+      // 
+      // The condition below is equivalent to
+      //   idx.second < Ny - 1 && intervals_overlap(idx.first, idx.second + 1)
+      //
+      // For the right-hand condition, we know that (by precondition)
+      //   get_loc1(idx.first) < get_loc2(idx.second + 1)
+      //
+      // and therefore that
+      //   get_loc1(idx.first) < get_loc2(idx.second + 2),
+      //
+      // so this inequality is all that remains to be checked.
+      //
+      if (idx.second < Ny - 1
+          && get_loc2(idx.second + 1) < get_loc1(idx.first + 1)) {
+        idx.second++;
+      }
+      // Could not advance the second segment above: advance the first instead,
+      // and the second as well if they share an endpoint
+      else {
+        if (idx.second < Ny - 1
+            && get_loc1(idx.first + 1) == get_loc2(idx.second + 1)) {
+          idx.second++;
+        }
+        idx.first++;
+      }
+
+#if !NDEBUG
+      // Verify postcondition
+      if (!(at_end() || intervals_overlap(idx.first, idx.second))) {
+        throw std::logic_error("Iterator postcondition not satisfied: "
+                               "current intervals do not overlap (not at end)");
+      }
+#endif
+
+      return *this;
     }
 
     iterator& operator++(int) {
@@ -156,4 +199,4 @@ public:
   iterator end() { return iterator(this).advance_to_end(); };
 };
 
-#endif // INTERLEAVED_ITERATOR_H
+#endif // OVERLAPPING_SEGMENTS_H
