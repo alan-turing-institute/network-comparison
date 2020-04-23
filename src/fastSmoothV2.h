@@ -88,9 +88,6 @@ public:
     return (loc1_left(i) < loc2_right(j) && loc2_left(j) < loc1_right(i));
   }
 
-  iterator begin() { return iterator(*this); };
-  iterator end() { return iterator(*this).advance_to_end(); };
-
   // OverlappingSegments iterator
   class iterator {
     const OverlappingSegments& segs;
@@ -210,6 +207,9 @@ public:
       return !(lhs == rhs);
     }
   };
+
+  iterator begin() { return iterator(*this); }
+  iterator end() { return iterator(*this).advance_to_end(); }  
 };
 
 
