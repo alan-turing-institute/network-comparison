@@ -119,7 +119,9 @@ public:
     // other one.  If both sequences start with the same value, the
     // iteration starts at (0,0).
     //
-    explicit iterator(const OverlappingSegments& segs_) : segs(segs_) {
+    explicit iterator(const OverlappingSegments& segs_)
+      : segs(segs_)
+    {
       if (segs.loc1[0] < segs.loc2[0]) {
         idx.first = 0;
         idx.second = -1;
@@ -136,7 +138,9 @@ public:
 
     // Is the current iterator at one-past-the-end?  Equivalent to an
     // equality comparison with segs.end().
-    bool at_end() const { return idx.first == segs.N1 && idx.second == segs.N2 - 1; }
+    bool at_end() const {
+      return idx.first == segs.N1 && idx.second == segs.N2 - 1;
+    }
 
     // Update the current iterator to point to one-past-the-end
     iterator& advance_to_end() {
