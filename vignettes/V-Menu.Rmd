@@ -16,6 +16,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(netdist)
-```
+
+#Introduction to Netdis
+
+This package contains multiple vignettes that illustrate the simple ways of employing the network comparison methods 'Netdis' and 'NetEmd', and also the large flexibility of these methodologies. The following is a list of the avialable vignettes:
+
+[Simple and quick use](netdis_pairwise_comparisons.html).
+[Dendrogram Examples](dendrogram_example_net_dis.Rmd).
+
+
+
+
