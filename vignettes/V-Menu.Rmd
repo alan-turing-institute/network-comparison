@@ -1,0 +1,21 @@
+---
+title: "Netdis Vignette's Menu"
+date: "`r Sys.Date()`"
+author: "Luis Ospina-Forero"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{V-Menu}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(netdist)
+```
