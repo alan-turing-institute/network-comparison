@@ -1,6 +1,6 @@
 ---
 title: "Netdis Vignette's Menu"
-date: "`r Sys.Date()`"
+date: "`10-06-2020`"
 author: "Luis Ospina-Forero"
 output: rmarkdown::html_vignette
 vignette: >
@@ -17,13 +17,13 @@ knitr::opts_chunk$set(
 ```
 
 
-#Introduction to Netdis
+#  Netdis introductory Vignettes
 
-This package contains multiple vignettes that illustrate the simple ways of employing the network comparison methods 'Netdis' and 'NetEmd', and also the large flexibility of these methodologies. The following is a list of the avialable vignettes:
-
-[Simple and quick use](netdis_pairwise_comparisons.html).
-[Dendrogram Examples](dendrogram_example_net_dis.Rmd).
+This package contains multiple vignettes that illustrate the simple ways of employing the network comparison methods 'Netdis', 'NetEmd' and their variants (e.g. `Netdis Geometric-Poisson'), and also the large flexibility of these methodologies. The following is a list of the available vignettes:
 
 
+* [Default usage](default_pairwise_usage.html):
+* [Simple and quick use](netdis_pairwise_comparisons.html):
+* [Dendrogram Examples](dendrogram_example_net_dis.html).
 
 
