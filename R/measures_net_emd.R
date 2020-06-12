@@ -39,7 +39,6 @@
 #' counted. Possible values are 3,4, and 5 (default).
 #' @param ego_neighbourhood_size The number of steps from the source node to
 #' include nodes for each ego-network. NetEmd was proposed for individual nodes alone, hence the default value is 0.
-#' @export
 #' @examples
 #'  require(igraph)
 #'  goldstd_1 <- graph.lattice(c(8,8)) 
@@ -48,6 +47,7 @@
 #'  
 #'  plot(goldstd_1,vertex.size=0.8,vertex.label=NA)
 #'  plot(goldstd_2,vertex.size=0.8,vertex.label=NA)
+#' @export
 net_emd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=NULL, method = "optimise",
                                return_details = FALSE, smoothing_window_width = 0,feature_type="orbit",max_graphlet_size = 5,ego_neighbourhood_size = 0) {
   ## ------------------------------------------------------------------------

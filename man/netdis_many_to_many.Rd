@@ -4,16 +4,23 @@
 \alias{netdis_many_to_many}
 \title{Netdis between all graph pairs}
 \usage{
-netdis_many_to_many(graphs = NULL, ref_graph = 0,
-  comparisons = "many-to-many", max_graphlet_size = 4,
-  neighbourhood_size = 2, min_ego_nodes = 3, min_ego_edges = 1,
-  binning_fn = purrr::partial(binned_densities_adaptive,
-  min_counts_per_interval = 5, num_intervals = 100),
-  bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean,
-  scale_fn = scale_graphlet_counts_ego),
+netdis_many_to_many(
+  graphs = NULL,
+  ref_graph = 0,
+  comparisons = "many-to-many",
+  max_graphlet_size = 4,
+  neighbourhood_size = 2,
+  min_ego_nodes = 3,
+  min_ego_edges = 1,
+  binning_fn = purrr::partial(binned_densities_adaptive, min_counts_per_interval = 5,
+    num_intervals = 100),
+  bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean, scale_fn =
+    scale_graphlet_counts_ego),
   exp_counts_fn = purrr::partial(netdis_expected_counts, scale_fn =
-  count_graphlet_tuples), graphlet_counts = NULL,
-  graphlet_counts_ref = NULL)
+    count_graphlet_tuples),
+  graphlet_counts = NULL,
+  graphlet_counts_ref = NULL
+)
 }
 \arguments{
 \item{graphs}{A named list of simplified igraph graph objects (undirected
