@@ -5,8 +5,13 @@
 \title{netdis_expected_counts_ego
 INTERNAL FUNCTION - Do not call directly}
 \usage{
-netdis_expected_counts_ego(graphlet_counts, max_graphlet_size,
-  density_breaks, density_binned_reference_counts, scale_fn = NULL)
+netdis_expected_counts_ego(
+  graphlet_counts,
+  max_graphlet_size,
+  density_breaks,
+  density_binned_reference_counts,
+  scale_fn = NULL
+)
 }
 \arguments{
 \item{graphlet_counts}{Node and graphlet counts for an ego network.}

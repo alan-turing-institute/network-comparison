@@ -4,8 +4,11 @@
 \alias{netdis_subtract_exp_counts}
 \title{netdis_subtract_exp_counts}
 \usage{
-netdis_subtract_exp_counts(graphlet_counts, exp_graphlet_counts,
-  max_graphlet_size)
+netdis_subtract_exp_counts(
+  graphlet_counts,
+  exp_graphlet_counts,
+  max_graphlet_size
+)
 }
 \arguments{
 \item{graphlet_counts}{Matrix of graphlet counts (columns) for a

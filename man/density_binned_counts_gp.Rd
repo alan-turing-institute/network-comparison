@@ -5,8 +5,11 @@
 \title{Calculate expected counts in density bins using the
 geometric poisson (Polya-Aeppli) approximation.}
 \usage{
-density_binned_counts_gp(graphlet_counts, density_interval_indexes,
-  max_graphlet_size)
+density_binned_counts_gp(
+  graphlet_counts,
+  density_interval_indexes,
+  max_graphlet_size
+)
 }
 \arguments{
 \item{graphlet_counts}{Graphlet counts for a number of ego_networks.}

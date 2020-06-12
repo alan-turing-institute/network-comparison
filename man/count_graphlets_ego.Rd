@@ -4,8 +4,14 @@
 \alias{count_graphlets_ego}
 \title{Ego-network graphlet counts}
 \usage{
-count_graphlets_ego(graph, max_graphlet_size = 4, neighbourhood_size,
-  min_ego_nodes = 3, min_ego_edges = 1, return_ego_networks = FALSE)
+count_graphlets_ego(
+  graph,
+  max_graphlet_size = 4,
+  neighbourhood_size,
+  min_ego_nodes = 3,
+  min_ego_edges = 1,
+  return_ego_networks = FALSE
+)
 }
 \arguments{
 \item{graph}{A connected, undirected, simple graph as an \code{igraph} object}

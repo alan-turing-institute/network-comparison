@@ -5,9 +5,13 @@
 \title{NetEMDs between all graph pairs using provided Graphlet-based Degree
 Distributions}
 \usage{
-net_emds_for_all_graphs(gdds, method = "optimise",
-  smoothing_window_width = 0, return_details = FALSE,
-  mc.cores = getOption("mc.cores", 2L))
+net_emds_for_all_graphs(
+  gdds,
+  method = "optimise",
+  smoothing_window_width = 0,
+  return_details = FALSE,
+  mc.cores = getOption("mc.cores", 2L)
+)
 }
 \arguments{
 \item{gdds}{List containing sets of Graphlet-based Degree Distributions for

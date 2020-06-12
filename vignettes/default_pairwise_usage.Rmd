@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Load required packages/libraries
+# Load required packages/libraries
 ```{r, packages}
 # Load libraries
 library("netdist")
@@ -88,9 +88,8 @@ The use of gold standard graph as a substitute for $E_w$ can be used when such g
 
 ```{r,netdisgoldstand,fig.align='center'}
 # Lattice graphs graph
-goldstd_1 <- igraph::graph.lattice(c(round(sqrt(vcount(graph_1))),round(sqrt(vcount(graph_1))))) 
-
-goldstd_2 <- igraph::graph.lattice(c(round(sqrt(vcount(graph_2))),round(sqrt(vcount(graph_2))))) 
+goldstd_1 <- igraph::graph.lattice(c(round(sqrt(igraph::vcount(graph_1))),round(sqrt(igraph::vcount(graph_1))))) 
+goldstd_2 <- igraph::graph.lattice(c(round(sqrt(igraph::vcount(graph_2))),round(sqrt(igraph::vcount(graph_2))))) 
 
 plot(goldstd_1,vertex.size=0.8,vertex.label=NA)
 plot(goldstd_2,vertex.size=0.5,vertex.label=NA)
@@ -161,7 +160,6 @@ and where $p_{t_i}(G)$ and $p_{t_i}(G')$ are the distributions of ${t_i}$ on $G$
 ```{r, graphs2,fig.align='center'}
 # Set source directory for Virus PPI graph edge files stored in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
-print(source_dir)
 
 # Load query graphs as igraph objects
 # Herpes virus EBV protein-protein interaction graph with 60 nodes and 208 edges.
@@ -172,8 +170,7 @@ graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
 graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
                              format = "ncol")
 
-
-net_emd()
+net_emd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",max_graphlet_size=5)
 ```
 
 

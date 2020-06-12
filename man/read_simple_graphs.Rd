@@ -4,9 +4,15 @@
 \alias{read_simple_graphs}
 \title{Read all graphs in a directory, simplifying as requested}
 \usage{
-read_simple_graphs(source_dir, format = "ncol", pattern = "*",
-  as_undirected = TRUE, remove_loops = TRUE, remove_multiple = TRUE,
-  remove_isolates = TRUE)
+read_simple_graphs(
+  source_dir,
+  format = "ncol",
+  pattern = "*",
+  as_undirected = TRUE,
+  remove_loops = TRUE,
+  remove_multiple = TRUE,
+  remove_isolates = TRUE
+)
 }
 \arguments{
 \item{source_dir}{Path to directory containing files with graph data}

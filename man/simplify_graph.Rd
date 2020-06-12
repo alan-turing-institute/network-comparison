@@ -4,8 +4,13 @@
 \alias{simplify_graph}
 \title{Simplify an igraph}
 \usage{
-simplify_graph(graph, as_undirected = TRUE, remove_loops = TRUE,
-  remove_multiple = TRUE, remove_isolates = TRUE)
+simplify_graph(
+  graph,
+  as_undirected = TRUE,
+  remove_loops = TRUE,
+  remove_multiple = TRUE,
+  remove_isolates = TRUE
+)
 }
 \arguments{
 \item{graph}{An graph or list of graphs in igraph format}

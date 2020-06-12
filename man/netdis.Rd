@@ -21,6 +21,6 @@ the specified size
 }
 \description{
 Calculate Netdis statistic between two graphs from their Centred Graphlet
-Counts (generated using \code{netdis_centred_graphlet_counts}) for graphlets 
+Counts (generated using \code{netdis_centred_graphlet_counts}) for graphlets
 of size \code{graphlet_size}.
 }

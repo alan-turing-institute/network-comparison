@@ -4,16 +4,23 @@
 \alias{netdis_one_to_many}
 \title{Netdis comparisons between one graph and many other graphs.}
 \usage{
-netdis_one_to_many(graph_1 = NULL, graphs_compare = NULL,
-  ref_graph = 0, max_graphlet_size = 4, neighbourhood_size = 2,
-  min_ego_nodes = 3, min_ego_edges = 1,
-  binning_fn = purrr::partial(binned_densities_adaptive,
-  min_counts_per_interval = 5, num_intervals = 100),
-  bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean,
-  scale_fn = scale_graphlet_counts_ego),
+netdis_one_to_many(
+  graph_1 = NULL,
+  graphs_compare = NULL,
+  ref_graph = 0,
+  max_graphlet_size = 4,
+  neighbourhood_size = 2,
+  min_ego_nodes = 3,
+  min_ego_edges = 1,
+  binning_fn = purrr::partial(binned_densities_adaptive, min_counts_per_interval = 5,
+    num_intervals = 100),
+  bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean, scale_fn =
+    scale_graphlet_counts_ego),
   exp_counts_fn = purrr::partial(netdis_expected_counts, scale_fn =
-  count_graphlet_tuples), graphlet_counts_1 = NULL,
-  graphlet_counts_compare = NULL)
+    count_graphlet_tuples),
+  graphlet_counts_1 = NULL,
+  graphlet_counts_compare = NULL
+)
 }
 \arguments{
 \item{graph_1}{Query graph - this graph will be compared with

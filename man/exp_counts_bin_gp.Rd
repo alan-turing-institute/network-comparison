@@ -7,8 +7,12 @@ Used by \code{density_binned_counts_gp}
 Calculate expected counts with geometric poisson (Polya-Aeppli)
 approximation for a single density bin.}
 \usage{
-exp_counts_bin_gp(bin_idx, graphlet_counts, density_interval_indexes,
-  max_graphlet_size)
+exp_counts_bin_gp(
+  bin_idx,
+  graphlet_counts,
+  density_interval_indexes,
+  max_graphlet_size
+)
 }
 \arguments{
 \item{bin_idx}{Density bin index to calculate expected counts for.}

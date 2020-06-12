@@ -4,8 +4,13 @@
 \alias{netdis_expected_counts}
 \title{netdis_expected_counts}
 \usage{
-netdis_expected_counts(graphlet_counts, density_breaks,
-  density_binned_reference_counts, max_graphlet_size, scale_fn = NULL)
+netdis_expected_counts(
+  graphlet_counts,
+  density_breaks,
+  density_binned_reference_counts,
+  max_graphlet_size,
+  scale_fn = NULL
+)
 }
 \arguments{
 \item{graphlet_counts}{Matrix of graphlet and node counts (columns) for a

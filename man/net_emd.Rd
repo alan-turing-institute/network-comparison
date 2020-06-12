@@ -4,13 +4,18 @@
 \alias{net_emd}
 \title{NetEMD Network Earth Mover's Distance}
 \usage{
-net_emd(dhists1, dhists2, method = "optimise", return_details = FALSE,
-  smoothing_window_width = 0)
+net_emd(
+  dhists_1,
+  dhists_2,
+  method = "optimise",
+  return_details = FALSE,
+  smoothing_window_width = 0
+)
 }
 \arguments{
-\item{dhists1}{A \code{dhist} discrete histogram object or a list of such objects}
+\item{dhists_1}{A \code{dhist} discrete histogram object or a list of such objects}
 
-\item{dhists2}{A \code{dhist} discrete histogram object or a list of such objects}
+\item{dhists_2}{A \code{dhist} discrete histogram object or a list of such objects}
 
 \item{method}{The method to use to find the minimum EMD across all potential
 offsets for each pair of histograms. Default is "optimise" to use

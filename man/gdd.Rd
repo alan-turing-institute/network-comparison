@@ -4,8 +4,12 @@
 \alias{gdd}
 \title{Graphlet-based degree distributions (GDDs)}
 \usage{
-gdd(graph, feature_type = "orbit", max_graphlet_size = 4,
-  ego_neighbourhood_size = 0)
+gdd(
+  graph,
+  feature_type = "orbit",
+  max_graphlet_size = 4,
+  ego_neighbourhood_size = 0
+)
 }
 \arguments{
 \item{graph}{A connected, undirected, simple graph as an \code{igraph} object}

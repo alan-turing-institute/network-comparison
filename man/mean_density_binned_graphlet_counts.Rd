@@ -4,8 +4,11 @@
 \alias{mean_density_binned_graphlet_counts}
 \title{mean_density_binned_graphlet_counts}
 \usage{
-mean_density_binned_graphlet_counts(graphlet_counts,
-  density_interval_indexes, agg_fn = mean)
+mean_density_binned_graphlet_counts(
+  graphlet_counts,
+  density_interval_indexes,
+  agg_fn = mean
+)
 }
 \arguments{
 \item{graphlet_counts}{Graphlet counts for a number of ego_networks.}

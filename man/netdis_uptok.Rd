@@ -4,8 +4,11 @@
 \alias{netdis_uptok}
 \title{Netdis - for all graphlet sizes up to max_graphlet_size}
 \usage{
-netdis_uptok(centred_graphlet_counts1, centred_graphlet_counts2,
-  max_graphlet_size)
+netdis_uptok(
+  centred_graphlet_counts1,
+  centred_graphlet_counts2,
+  max_graphlet_size
+)
 }
 \arguments{
 \item{centred_graphlet_counts1}{Centred Graphlet Counts for graph 1}
