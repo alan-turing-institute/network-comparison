@@ -113,7 +113,7 @@ net_emd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2
   else {
     # Wrap each member of a single pair of histograms is a list and recursively
     # call this net_emd function. This ensures they are treated the same.
-    return(net_emd(list(dhists_1), list(dhists_2),
+    return(net_emd_one_to_one(dhists_1 = list(dhists_1), dhists_2 = list(dhists_2),
                    method = method,
                    return_details = return_details,
                    smoothing_window_width = smoothing_window_width
@@ -184,8 +184,7 @@ net_emds_for_all_graphs <- function(
   }
   num_features <- length(gdds[[1]])
   out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {
-    net_emd(
-      gdds[[index_a]], gdds[[index_b]],
+    net_emd_one_to_one(dhists_1 =  gdds[[index_a]], dhists_2 =  gdds[[index_b]],
       method = method, return_details = return_details,
       smoothing_window_width = smoothing_window_width
     )
@@ -205,14 +204,14 @@ net_emds_for_all_graphs <- function(
   }
 }
 
-#' NetEMD Network Earth Mover's Distance
+
+#' Internal function to compute the minimum Earth Mover's Distance between standarized and translated histograms
 #'
-#' Calculates the mean minimum Earth Mover's Distance (EMD) between two sets of
+#' Calculates the minimum Earth Mover's Distance (EMD) between two
 #' discrete histograms after normalising each histogram to unit mass and variance.
 #' This is calculated as follows:
 #'   1. Normalise each histogram to have unit mass and unit variance
-#'   2. Find the minimum EMD between each pair of histograms
-#'   3. Take the average minimum EMD across all histogram pairs
+#'   2. Find the minimum EMD between the histograms
 #' @param dhists_1 A \code{dhist} discrete histogram object or a list of such objects
 #' @param dhists_2 A \code{dhist} discrete histogram object or a list of such objects
 #' @param method The method to use to find the minimum EMD across all potential
@@ -222,66 +221,25 @@ net_emds_for_all_graphs <- function(
 #' minimum if multiple local minima EMDs exist. You can alternatively specify the
 #' "exhaustive" method, which will exhaustively evaluate the EMD between the
 #' histograms at all offsets that are candidates for the minimal EMD.
-#' @param return_details Logical indicating whether to return the individual
-#' minimal EMDs and associated offsets for all pairs of histograms
 #' @param smoothing_window_width Width of "top-hat" smoothing window to apply to
 #' "smear" point masses across a finite width in the real domain. Default is 0,
 #' which  results in no smoothing. Care should be taken to select a
 #' \code{smoothing_window_width} that is appropriate for the discrete domain
 #' (e.g.for the integer domain a width of 1 is the natural choice)
-#' @return NetEMD measure for the two sets of discrete histograms
-#' (\code{return_details = FALSE}) or a list with the following named elements
-#' \code{net_emd}: the NetEMD for the set of histogram pairs, \code{min_emds}:
-#' the minimal EMD for each pair of histograms, \code{min_offsets}: the associated
-#' offsets giving the minimal EMD for each pair of histograms
-# Luis: replaced by net_emd_one_to_one 
-net_emd <- function(dhists_1, dhists_2, method = "optimise",
-                    return_details = FALSE, smoothing_window_width = 0) {
-  # Require either a pair of "dhist" discrete histograms or two lists of "dhist"
-  # discrete histograms
-  pair_of_dhist_lists <- all(purrr::map_lgl(dhists_1, is_dhist)) && all(purrr::map_lgl(dhists_2, is_dhist))
-
-  # If input is two lists of "dhist" discrete histograms, determine the minimum
-  # EMD and associated offset for pairs of histograms taken from the same
-  # position in each list
-  if (pair_of_dhist_lists) {
-    details <- purrr::map2(dhists_1, dhists_2, function(dhist1, dhist2) {
-      net_emd_single_pair(dhist1, dhist2,
-        method = method,
-        smoothing_window_width = smoothing_window_width
-      )
-    })
-    # Collect the minimum EMDs and associated offsets for all histogram pairs
-    min_emds <- purrr::simplify(purrr::transpose(details)$min_emd)
-    min_offsets <- purrr::simplify(purrr::transpose(details)$min_offset)
-    min_offsets_std <- purrr::simplify(purrr::transpose(details)$min_offset_std)
-    # The NetEMD is the arithmetic mean of the minimum EMDs for each pair of
-    # histograms
-    arithmetic_mean <- sum(min_emds) / length(min_emds)
-    net_emd <- arithmetic_mean
-    # Return just the NetEMD or a list including the NetEMD plus the details of
-    # the minumum EMD and associated offsets for the individual histograms
-    # Note that the offsets represent shifts after the histograms have been
-    # scaled to unit variance
-    if (return_details) {
-      return(list(net_emd = net_emd, min_emds = min_emds, min_offsets = min_offsets, min_offsets_std = min_offsets_std))
-    } else {
-      return(arithmetic_mean)
-    }
-  }
-  else {
-    # Wrap each member of a single pair of histograms is a list and recursively
-    # call this net_emd function. This ensures they are treated the same.
-    return(net_emd(list(dhists_1), list(dhists_2),
-      method = method,
-      return_details = return_details,
-      smoothing_window_width = smoothing_window_width
-    ))
-  }
-}
-
-
-
+#' @return A list with the following named elements
+#' \code{net_emd}: the NetEMD for the set of histogram pairs, \code{min_offsets}: the associated
+#' offsets giving the minimal EMD for each pair of histograms and \code{min_offset_std}: Offset used in the standardised histograms.
+#' @examples 
+#'  require(igraph)
+#'  goldstd_1 <- graph.lattice(c(8,8)) 
+#'  goldstd_2 <- graph.lattice(c(44,44)) 
+#'  props_1 <- count_orbits_per_node(graph = goldstd_1,max_graphlet_size = 5)
+#'  props_2 <- count_orbits_per_node(graph = goldstd_2,max_graphlet_size = 5)
+#'  dhists_1<- graph_features_to_histograms(props_1)
+#'  dhists_2<- graph_features_to_histograms(props_2)
+#'  # Obtain the minimum NetEMD_edges between the histograms 
+#'  net_emd_single_pair(dhists_1[[1]],dhists_2[[1]],method = "optimise",smoothing_window_width = 0)
+#' @export
 net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
                                 smoothing_window_width = 0) {
   # Present dhists as smoothed or unsmoothed histograms depending on the value
