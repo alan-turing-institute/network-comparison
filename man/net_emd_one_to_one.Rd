@@ -22,9 +22,9 @@ net_emd_one_to_one(
 
 \item{graph_2}{A network/graph object from the \code{igraph} package. \code{graph_2} can be set to \code{NULL} (default) if dhists_2 is provided.}
 
-\item{dhists_1}{A \code{dhist} discrete histogram object or a list of such objects. \code{dhists_1} can be set to \code{NULL} (default) if \code{graph_1} is provided.}
+\item{dhists_1}{A \code{dhist} discrete histogram object, a list of such objects or a matrix of network features (each column representing a feature). \code{dhists_1} can be set to \code{NULL} (default) if \code{graph_1} is provided.}
 
-\item{dhists_2}{A \code{dhist} discrete histogram object or a list of such objects.  \code{dhists_2} can be set to \code{NULL} (default) if \code{graph_2} is provided.}
+\item{dhists_2}{A \code{dhist} discrete histogram object, a list of such objects or a matrix of network features (each column representing a feature). \code{dhists_2} can be set to \code{NULL} (default) if \code{graph_1} is provided.}
 
 \item{method}{The method to use to find the minimum EMD across all potential
 offsets for each pair of histograms. Default is "optimise" to use
@@ -76,6 +76,15 @@ This is calculated as follows:
  goldstd_2 <- graph.lattice(c(44,44)) 
  net_emd_one_to_one(graph_1=goldstd_1,graph_2=goldstd_2,feature_type="orbit",max_graphlet_size=5)
  
- plot(goldstd_1,vertex.size=0.8,vertex.label=NA)
- plot(goldstd_2,vertex.size=0.8,vertex.label=NA)
+ #Providing a matrix of network features
+ props_a= count_orbits_per_node(graph = goldstd_1,max_graphlet_size = 5)
+ props_b= count_orbits_per_node(graph = goldstd_2,max_graphlet_size = 5)
+ 
+ net_emd_one_to_one(dhists_1=props_a, dhists_2=props_b)
+ 
+ #Providing the network features as lists of dhist objects
+ dhists_1<- graph_features_to_histograms(props_a)
+ dhists_2<- graph_features_to_histograms(props_b)
+ 
+ net_emd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2)
 }
