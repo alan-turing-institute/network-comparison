@@ -1,5 +1,5 @@
 ---
-title: "default_pairwise_usage"
+title: "Default pairwise usage of the network comparison methods"
 date: "`10-06-2020`"
 author: "Luis Ospina-Forero"
 output: rmarkdown::html_vignette
@@ -8,22 +8,28 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
+  
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+collapse = TRUE,
+comment = "#>"
 )
 ```
 
+# Introduction
+
+The \code{netdist} package currently considers to broad methodologies for network comparison, namely Netdis and NetEmd. Netdis considers multiple variants (via background expectations) to capture the dissimilarity between the local structure of networks exhibited by the occurrence of small subgraphs. NetEmd is also a method to capture the dissimilarity between networks using subgraph counts, but it has also been defined for any type of network features that the user defines; for example eigen distributions. The variantes of Netdis are controlled by the input selected for the background expectations, whereas the variants of NetEmd are controlled directly by the user in the selection of the network features being compared (by default this pacakge uses subgraph counts).
+
+The following shows a quick introduction to the most simple functions of the package, and to some of the variants of Netdis and NetEmd.
+
 # Load required packages/libraries
-```{r, packages}
-# Load libraries
+```{r, packages, message= FALSE}
+# Load packages/libraries
 library("netdist")
 library("igraph")
 ```
 
-## Load graphs
+## Load graphs included in the netdist package
 ```{r, graphs,fig.align='center'}
 # Set source directory for Virus PPI graph edge files stored in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
@@ -49,6 +55,66 @@ plot(graph_2,vertex.size=0.5,vertex.label=NA)
 ```
 
 
+
+# Compare two networks via NetEmd.
+
+## What is NetEmd?
+(Extracted from Wegner et al. (2017)):
+NetEmd is based on  the idea that the information encapsulated in the shape of the degree distribution and other network properties reflects the topological organization of the network. From an abstract point of view NetEmd views the shape of a distribution as a property that is invariant under linear deformations i.e$.$ translations and re-scalings of the axis.
+
+Based on these NetEmd uses the following measure between distributions $p$ and $q$ that are supported on $\mathbb{R}$ and have non-zero, finite variances:
+\begin{equation}\label{emdmet}
+EMD^*(p,q)=\mathrm{inf}_{c\in\mathbb{R}}\left( EMD\big(\tilde{p}(\cdot+c),\tilde{q}(\cdot)\big)\right),
+\end{equation}
+where $EMD$ is the earth mover's distance and $\tilde{p}$ and $\tilde{q}$ are the distributions obtained by rescaling $p$ and $q$ to have variance 1. More precisely, $\tilde{p}$ is the distribution obtained from $p$ by the transformation $x\rightarrow \frac{x}{\sigma(p)}$, where $\sigma(p)$ is the standard deviation of $p$. For probability distributions $p$ and $q$ with support in $\mathbb{R}$ and bounded absolute first moment, the $EMD$ between $p$ and $q$ is given by $EMD(p,q)=\int_{-\infty}^\infty|F(x)-G(x)|\,\mathrm{d}x$, where $F$ and $G$ are the cumulative distribution functions of $p$ and $q$ respectively.
+
+Now, for two networks $G$ and $G'$ and for a given set $T=\{t_1,t_2,...,t_m\}$ of network features, the $NetEmd$ measure corresponding to $T$ is: 
+\begin{equation}\label{eq:def_netemd}
+NetEmd_T(G,G')=\frac{1}{m}\sum_{j=1}^{m} NetEmd_{t_j} (G,G'),
+\end{equation}
+where 
+\begin{equation}
+NetEmd_{t_i} (G,G')=EMD^*(p_{t_i}(G),p_{t_i}(G')),
+\end{equation}
+and where $p_{t_i}(G)$ and $p_{t_i}(G')$ are the distributions of ${t_i}$ on $G$ and $G'$ respectively. $NetEmd_{t_i}$ can be shown to be a pseudometric between graphs for any feature $t$, that is it is non-negative, symmetric and satisfies the triangle inequality.
+
+
+## Comparing two graphs with NetEmd.
+```{r, netemd,fig.align='center'}
+# Set source directory for Virus PPI graph edge files stored in the netdist package.
+source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+
+# Load query graphs as igraph objects
+# Herpes virus EBV protein-protein interaction graph with 60 nodes and 208 edges.
+graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
+                             format = "ncol")
+
+# Herpes virus ECL protein-protein interaction graph with 1941 nodes and 3989 edges.
+graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
+                             format = "ncol")
+
+#The one to one network comparison.
+net_emd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",max_graphlet_size=5)
+```
+
+## Comparing two graphs with NetEmd via their Laplacian spectrum.
+```{r, netemdEigen,fig.align='center'}
+#Laplacian
+Lapg_1 <- igraph::laplacian_matrix(graph = graph_1,normalized = FALSE,sparse = FALSE)
+Lapg_2 <- igraph::laplacian_matrix(graph = graph_2,normalized = FALSE,sparse = FALSE)
+
+#Normalized Laplacian
+NLapg_1 <- igraph::laplacian_matrix(graph = graph_1,normalized = TRUE,sparse = FALSE)
+NLapg_2 <- igraph::laplacian_matrix(graph = graph_2,normalized = TRUE,sparse = FALSE)
+
+#Spectra (This may take a couple of minutes).
+props_1 <- cbind(L.Spectra= eigen(Lapg_1)$values, NL.Spectra= eigen(NLapg_1)$values) 
+props_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values) 
+
+net_emd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width = 0)
+```
+-------------------------
+
 # Compare two networks via Netdis and its variants.
 
 ## What is Netdis?
@@ -66,17 +132,17 @@ Now, to compare networks $G_1$ and $G_2$, set
 $$
 \displaystyle
 netD_2^S(k) = \tfrac{1}{ \sqrt{ M(k)} } \sum\limits_{w \in A(k)}
- \bigg ({ \tfrac{S_w(G_1)  S_w(G_2)} {\sqrt{S_w(G_1)^2 + S_w(G_2)^2}}
- }\bigg ), \quad k=3,4, 5, 
+\bigg ({ \tfrac{S_w(G_1)  S_w(G_2)} {\sqrt{S_w(G_1)^2 + S_w(G_2)^2}}
+}\bigg ), \quad k=3,4, 5, 
 $$
 where $A(k)$ is the set of connected subgraphs of size $k$, and where $M(k)$ is a normalising constant so that $netD_2^S(k)\in[-1,1]$. $M(k)$ is equal to
 \[
- M(k)  = \sum\limits_{w \in A(k)}
-  \left( \tfrac{ S_w(G_1)^2 }{\sqrt{S_w(G_1)^2 + S_w(G_2)^2}} \right)
-    \sum\limits_{w \in A(k)}
-  \left(\tfrac{ S_w(G_2)^2 } {\sqrt{S_w(G_1)^2 + S_w(G_2)^2}}
-  \right)
-  .
+M(k)  = \sum\limits_{w \in A(k)}
+\left( \tfrac{ S_w(G_1)^2 }{\sqrt{S_w(G_1)^2 + S_w(G_2)^2}} \right)
+\sum\limits_{w \in A(k)}
+\left(\tfrac{ S_w(G_2)^2 } {\sqrt{S_w(G_1)^2 + S_w(G_2)^2}}
+\right)
+.
 \]
 The corresponding Netdis statistic is defined as
 $$Netdis(k)=netd_2^S(k)=\tfrac{1}{2}(1-netD_2^S(k)) \in [0,1].$$
@@ -87,7 +153,7 @@ Small values of Netdis suggest higher `similarity' between the networks. By defa
 The use of gold standard graph as a substitute for $E_w$ can be used when such graph is known to be a good proxy for $E_w$, or alternatively a good reference point of comparison.
 
 ```{r,netdisgoldstand,fig.align='center'}
-# Lattice graphs graph
+# Lattice graphs tto be used as reference point comparison.
 goldstd_1 <- igraph::graph.lattice(c(round(sqrt(igraph::vcount(graph_1))),round(sqrt(igraph::vcount(graph_1))))) 
 goldstd_2 <- igraph::graph.lattice(c(round(sqrt(igraph::vcount(graph_2))),round(sqrt(igraph::vcount(graph_2))))) 
 
@@ -119,59 +185,20 @@ where $q$ is the number of ego-networks in density bin $d$. Then,
 where $l$ is the number of connected subgraphs of size $k$, for example, $l=6$ for $k=4$. These estimators are based on the moment estimators of a GP random variable and the proposal made by (Picard et al.(2008)), where  the total count of each individual subgraph could be thought as the sum of the total subgraph counts over multiple ``clumps'' of edges that appear across the network.
 
 ```{r, netdisGP}
-#Netdis using no expecations
+#Netdis using the Geometric Poisson approximation for the background subgraph expectations.
 netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = NULL)
 ```
 
 
-## Using Netdis with no expecation ($E_w=0$)
+## Using Netdis with no expectation ($E_w=0$)
 ```{r,netdiszero}
-#Netdis using no expecations
+#Netdis using no expecations (or equivalently, expectation equal to zero).
 netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
 
 ```
 
 -------------------------
 
-# Compare two networks via NetEmd and its variants.
-
-## What is NetEmd?
-(Extracted from Wegner et al. (2017)):
-NetEmd is based on  the idea that the information encapsulated in the shape of the degree distribution and other network properties reflects the topological organization of the network. From an abstract point of view NetEmd views the shape of a distribution as a property that is invariant under linear deformations i.e$.$ translations and re-scalings of the axis.
-
-Based on these NetEmd uses the following measure between distributions $p$ and $q$ that are supported on $\mathbb{R}$ and have non-zero, finite variances:
-\begin{equation}\label{emdmet}
-EMD^*(p,q)=\mathrm{inf}_{c\in\mathbb{R}}\left( EMD\big(\tilde{p}(\cdot+c),\tilde{q}(\cdot)\big)\right),
-\end{equation}
-where $EMD$ is the earth mover's distance and $\tilde{p}$ and $\tilde{q}$ are the distributions obtained by rescaling $p$ and $q$ to have variance 1. More precisely, $\tilde{p}$ is the distribution obtained from $p$ by the transformation $x\rightarrow \frac{x}{\sigma(p)}$, where $\sigma(p)$ is the standard deviation of $p$. For probability distributions $p$ and $q$ with support in $\mathbb{R}$ and bounded absolute first moment, the $EMD$ between $p$ and $q$ is given by $EMD(p,q)=\int_{-\infty}^\infty|F(x)-G(x)|\,\mathrm{d}x$, where $F$ and $G$ are the cumulative distribution functions of $p$ and $q$ respectively.
-
-Now, for two networks $G$ and $G'$ and for a given set $T=\{t_1,t_2,...,t_m\}$ of network features, the $NetEmd$ measure corresponding to $T$ is: 
-\begin{equation}\label{eq:def_netemd}
-NetEmd_T(G,G')=\frac{1}{m}\sum_{j=1}^{m} NetEmd_{t_j} (G,G'),
-\end{equation}
-where 
-\begin{equation}
-NetEmd_{t_i} (G,G')=EMD^*(p_{t_i}(G),p_{t_i}(G')),
-\end{equation}
-and where $p_{t_i}(G)$ and $p_{t_i}(G')$ are the distributions of ${t_i}$ on $G$ and $G'$ respectively. $NetEmd_{t_i}$ can be shown to be a pseudometric between graphs for any feature $t$, that is it is non-negative, symmetric and satisfies the triangle inequality.
-
-
-## Load graphs
-```{r, graphs2,fig.align='center'}
-# Set source directory for Virus PPI graph edge files stored in the netdist package.
-source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
-
-# Load query graphs as igraph objects
-# Herpes virus EBV protein-protein interaction graph with 60 nodes and 208 edges.
-graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
-                             format = "ncol")
-
-# Herpes virus ECL protein-protein interaction graph with 1941 nodes and 3989 edges.
-graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
-                             format = "ncol")
-
-net_emd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",max_graphlet_size=5)
-```
 
 
 

@@ -10,8 +10,8 @@
 #'   3. Take the average minimum EMD across all histogram pairs.
 #' @param graph_1 A network/graph object from the \code{igraph} package. \code{graph_1} can be set to \code{NULL} (default) if dhists_1 is provided.
 #' @param graph_2 A network/graph object from the \code{igraph} package. \code{graph_2} can be set to \code{NULL} (default) if dhists_2 is provided.
-#' @param dhists_1 A \code{dhist} discrete histogram object or a list of such objects. \code{dhists_1} can be set to \code{NULL} (default) if \code{graph_1} is provided.
-#' @param dhists_2 A \code{dhist} discrete histogram object or a list of such objects.  \code{dhists_2} can be set to \code{NULL} (default) if \code{graph_2} is provided.
+#' @param dhists_1 A \code{dhist} discrete histogram object, a list of such objects or a matrix of network features (each column representing a feature). \code{dhists_1} can be set to \code{NULL} (default) if \code{graph_1} is provided.
+#' @param dhists_2 A \code{dhist} discrete histogram object, a list of such objects or a matrix of network features (each column representing a feature). \code{dhists_2} can be set to \code{NULL} (default) if \code{graph_1} is provided.
 #' @param method The method to use to find the minimum EMD across all potential
 #' offsets for each pair of histograms. Default is "optimise" to use
 #' R's built-in \code{stats::optimise} method to efficiently find the offset
@@ -45,13 +45,22 @@
 #'  goldstd_2 <- graph.lattice(c(44,44)) 
 #'  net_emd_one_to_one(graph_1=goldstd_1,graph_2=goldstd_2,feature_type="orbit",max_graphlet_size=5)
 #'  
-#'  plot(goldstd_1,vertex.size=0.8,vertex.label=NA)
-#'  plot(goldstd_2,vertex.size=0.8,vertex.label=NA)
+#'  #Providing a matrix of network features
+#'  props_a= count_orbits_per_node(graph = goldstd_1,max_graphlet_size = 5)
+#'  props_b= count_orbits_per_node(graph = goldstd_2,max_graphlet_size = 5)
+#'  
+#'  net_emd_one_to_one(dhists_1=props_a, dhists_2=props_b)
+#'  
+#'  #Providing the network features as lists of dhist objects
+#'  dhists_1<- graph_features_to_histograms(props_a)
+#'  dhists_2<- graph_features_to_histograms(props_b)
+#'  
+#'  net_emd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2)
 #' @export
 net_emd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=NULL, method = "optimise",
                                return_details = FALSE, smoothing_window_width = 0,feature_type="orbit",max_graphlet_size = 5,ego_neighbourhood_size = 0) {
   ## ------------------------------------------------------------------------
-  # Check arguments
+  # Check arguments 1
   if (!igraph::is.igraph(graph_1) & is.null(dhists_1)) {
     stop("One of graph_1 or dhists_1 must be supplied.")
   }
@@ -59,7 +68,17 @@ net_emd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2
     stop("One of graph_2 or dhists_2 must be supplied.")
   }
   ## ------------------------------------------------------------------------
-  
+  # Check arguments 2
+  # If dhists_1 is a matrix of network features then transform them to dhist objects.
+  if(is.matrix(dhists_1)){
+    dhists_1 <- graph_features_to_histograms(dhists_1)
+  }
+  if(is.matrix(dhists_2)){
+    dhists_2 <- graph_features_to_histograms(dhists_2)
+  }
+  ## ------------------------------------------------------------------------
+  # Check arguments 3
+  #If input is graph then get graphlet counts
   if(igraph::is.igraph(graph_1)){
     if(!is.null(dhists_1)){warning("dhists_1 will be calculated from graph_1.")}
     dhists_1 <- gdd(graph = graph_1, feature_type = feature_type,
@@ -77,7 +96,6 @@ net_emd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2
   
   rm(graph_1,graph_2)
   ## ------------------------------------------------------------------------
-  
   # Require either a pair of "dhist" discrete histograms or two lists of "dhist"
   # discrete histograms
   pair_of_dhist_lists <- all(purrr::map_lgl(dhists_1, is_dhist)) && all(purrr::map_lgl(dhists_2, is_dhist))
