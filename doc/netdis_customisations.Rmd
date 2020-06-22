@@ -1,9 +1,23 @@
-## -----------------------------------------------------------------------------
+---
+title: "Usage of netdis with binning and expected counts customisations."
+author: "Jack Roberts"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Netdis function customisations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Load required libraries
+```{r}
 # Load libraries
 library("netdist")
 library("purrr")
+```
 
-## -----------------------------------------------------------------------------
+## Set Netdis parameters
+```{r}
 # Maximum graphlet size to calculate counts and netdis statistic for.
 max_graphlet_size <- 4
 
@@ -19,12 +33,16 @@ ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"),
                         package = "netdist")
 ref_graph <- read_simple_graph(ref_path, format = "ncol")
 
+```
 
-## -----------------------------------------------------------------------------
+## Load query graphs
+```{r}
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
+```
 
-## -----------------------------------------------------------------------------
+## Default Expected Counts with Reference Graph
+```{r}
 
 # Calculate netdis statistics
 results <- netdis_many_to_many(graphs,
@@ -36,8 +54,10 @@ results <- netdis_many_to_many(graphs,
 
 print(results$netdis)
 print(results$comp_spec)
+```
 
-## -----------------------------------------------------------------------------
+## With Modified Binning Parameters
+```{r}
 
 binning_fn <- purrr::partial(binned_densities_adaptive,
                              min_counts_per_interval = 10,
@@ -57,8 +77,10 @@ print(results$netdis)
 print(results$comp_spec)
 
 
+```
 
-## -----------------------------------------------------------------------------
+## With Modified Expected Counts: Geometric Poisson
+```{r}
 bin_counts_fn <- density_binned_counts_gp
 
 exp_counts_fn <- purrr::partial(netdis_expected_counts,
@@ -76,8 +98,10 @@ results <- netdis_many_to_many(graphs,
 
 print(results$netdis)
 print(results$comp_spec)
+```
 
-## -----------------------------------------------------------------------------
+## With Modified Expected Counts: Simple Mean
+```{r}
 binning_fn <- single_density_bin
 bin_counts_fn <- density_binned_counts
 exp_counts_fn <- netdis_expected_counts
@@ -95,4 +119,4 @@ results <- netdis_many_to_many(graphs,
 
 print(results$netdis)
 print(results$comp_spec)
-
+```

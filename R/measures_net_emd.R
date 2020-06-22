@@ -43,21 +43,21 @@
 #'  require(igraph)
 #'  goldstd_1 <- graph.lattice(c(8,8)) 
 #'  goldstd_2 <- graph.lattice(c(44,44)) 
-#'  net_emd_one_to_one(graph_1=goldstd_1,graph_2=goldstd_2,feature_type="orbit",max_graphlet_size=5)
+#'  netemd_one_to_one(graph_1=goldstd_1,graph_2=goldstd_2,feature_type="orbit",max_graphlet_size=5)
 #'  
 #'  #Providing a matrix of network features
 #'  props_a= count_orbits_per_node(graph = goldstd_1,max_graphlet_size = 5)
 #'  props_b= count_orbits_per_node(graph = goldstd_2,max_graphlet_size = 5)
 #'  
-#'  net_emd_one_to_one(dhists_1=props_a, dhists_2=props_b)
+#'  netemd_one_to_one(dhists_1=props_a, dhists_2=props_b)
 #'  
 #'  #Providing the network features as lists of dhist objects
 #'  dhists_1<- graph_features_to_histograms(props_a)
 #'  dhists_2<- graph_features_to_histograms(props_b)
 #'  
-#'  net_emd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2)
+#'  netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2)
 #' @export
-net_emd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=NULL, method = "optimise",
+netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=NULL, method = "optimise",
                                return_details = FALSE, smoothing_window_width = 0,feature_type="orbit",max_graphlet_size = 5,ego_neighbourhood_size = 0) {
   ## ------------------------------------------------------------------------
   # Check arguments 1
@@ -105,7 +105,7 @@ net_emd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2
   # position in each list
   if (pair_of_dhist_lists) {
     details <- purrr::map2(dhists_1, dhists_2, function(dhist1, dhist2) {
-      net_emd_single_pair(dhist1, dhist2,
+      netemd_single_pair(dhist1, dhist2,
                           method = method,
                           smoothing_window_width = smoothing_window_width
       )
@@ -131,7 +131,7 @@ net_emd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2
   else {
     # Wrap each member of a single pair of histograms is a list and recursively
     # call this net_emd function. This ensures they are treated the same.
-    return(net_emd_one_to_one(dhists_1 = list(dhists_1), dhists_2 = list(dhists_2),
+    return(netemd_one_to_one(dhists_1 = list(dhists_1), dhists_2 = list(dhists_2),
                    method = method,
                    return_details = return_details,
                    smoothing_window_width = smoothing_window_width
@@ -202,7 +202,7 @@ net_emds_for_all_graphs <- function(
   }
   num_features <- length(gdds[[1]])
   out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {
-    net_emd_one_to_one(dhists_1 =  gdds[[index_a]], dhists_2 =  gdds[[index_b]],
+    netemd_one_to_one(dhists_1 =  gdds[[index_a]], dhists_2 =  gdds[[index_b]],
       method = method, return_details = return_details,
       smoothing_window_width = smoothing_window_width
     )
@@ -256,9 +256,9 @@ net_emds_for_all_graphs <- function(
 #'  dhists_1<- graph_features_to_histograms(props_1)
 #'  dhists_2<- graph_features_to_histograms(props_2)
 #'  # Obtain the minimum NetEMD_edges between the histograms 
-#'  net_emd_single_pair(dhists_1[[1]],dhists_2[[1]],method = "optimise",smoothing_window_width = 0)
+#'  netemd_single_pair(dhists_1[[1]],dhists_2[[1]],method = "optimise",smoothing_window_width = 0)
 #' @export
-net_emd_single_pair <- function(dhist1, dhist2, method = "optimise",
+netemd_single_pair <- function(dhist1, dhist2, method = "optimise",
                                 smoothing_window_width = 0) {
   # Present dhists as smoothed or unsmoothed histograms depending on the value
   # of smoothing_window_width
