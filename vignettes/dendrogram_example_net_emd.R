@@ -1,15 +1,4 @@
----
-title: "Quick start guide for NetEMD"
-author: "Martin O'Reilly"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Quick start for NetEMD}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-## Virus PPI example for NetEMD
-```{r, fig.show='hold'}
+## ---- fig.show='hold'----------------------------------------------------
 library("netdist")
 # Set source directory and file properties for Virus PPI graph edge files
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
@@ -53,9 +42,8 @@ res <- net_emds_for_all_graphs(virus_gdds, smoothing_window_width = 0)
 # Convert to matrix for input to dendrogram method
 netemd_mat <- cross_comp_to_matrix(res$net_emds, res$comp_spec)
 netemd_mat
-```
 
-```{r}
+## ------------------------------------------------------------------------
 cex=1
 title = paste("NetEMD: max graphlet size = ", 4, sep = "")
 plot(phangorn::upgma(as.dist(netemd_mat), method="average"), use.edge.length=FALSE, 
@@ -69,12 +57,10 @@ plot(phangorn::upgma(as.dist(netemd_mat), method="average"), use.edge.length=FAL
 # options("mc.cores" = <num_cores>). To fully utilise a modern consumer
 # processor, this should be set to 2x the number of available processor 
 # cores as each core supports two threads.
-```
 
-```{r}
+## ------------------------------------------------------------------------
 cex=1.5
 col <- colorRampPalette(colors = c("blue","white"))(100)
 title = paste("NetEMD: max graphlet size = ", 4, sep = "")
 heatmap(netemd_mat, Rowv = NULL, Colv = NULL, col = col, main = title, cexRow = cex, cexCol = cex, symm = TRUE)
-```
 

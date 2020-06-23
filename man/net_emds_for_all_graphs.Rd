@@ -2,7 +2,7 @@
 % Please edit documentation in R/measures_net_emd.R
 \name{net_emds_for_all_graphs}
 \alias{net_emds_for_all_graphs}
-\title{NetEMDs between all graph pairs using provided Graphlet-based Degree 
+\title{NetEMDs between all graph pairs using provided Graphlet-based Degree
 Distributions}
 \usage{
 net_emds_for_all_graphs(gdds, method = "optimise",
@@ -10,21 +10,21 @@ net_emds_for_all_graphs(gdds, method = "optimise",
   mc.cores = getOption("mc.cores", 2L))
 }
 \arguments{
-\item{gdds}{List containing sets of Graphlet-based Degree Distributions for 
+\item{gdds}{List containing sets of Graphlet-based Degree Distributions for
 all graphs being compared}
 
-\item{method}{The method to use to find the minimum EMD across all potential 
+\item{method}{The method to use to find the minimum EMD across all potential
 offsets for each pair of histograms. Default is "optimise" to use
-R's built-in \code{stats::optimise} method to efficiently find the offset 
-with the minimal EMD. However, this is not guaranteed to find the global 
-minimum if multiple local minima EMDs exist. You can alternatively specify the 
-"exhaustive" method, which will exhaustively evaluate the EMD between the 
+R's built-in \code{stats::optimise} method to efficiently find the offset
+with the minimal EMD. However, this is not guaranteed to find the global
+minimum if multiple local minima EMDs exist. You can alternatively specify the
+"exhaustive" method, which will exhaustively evaluate the EMD between the
 histograms at all offsets that are candidates for the minimal EMD.}
 
 \item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
-"smear" point masses across a finite width in the real domain. Default is 0, 
-which  results in no smoothing. Care should be taken to select a 
-\code{smoothing_window_width} that is appropriate for the discrete domain 
+"smear" point masses across a finite width in the real domain. Default is 0,
+which  results in no smoothing. Care should be taken to select a
+\code{smoothing_window_width} that is appropriate for the discrete domain
 (e.g.for the integer domain a width of 1 is the natural choice)}
 
 \item{return_details}{Logical indicating whether to return the individual
@@ -34,18 +34,18 @@ minimal EMDs and associated offsets for all pairs of histograms}
 the \code{mc.cores} option set in the R environment.}
 }
 \value{
-NetEMD measures between all pairs of graphs for which GDDs 
+NetEMD measures between all pairs of graphs for which GDDs
 were provided. Format of returned data depends on the \code{return_details}
 parameter. If set to FALSE, a list is returned with the following named
-elements:\code{net_emd}: a vector of NetEMDs for each pair of graphs, 
-\code{comp_spec}: a comaprison specification table containing the graph names 
+elements:\code{net_emd}: a vector of NetEMDs for each pair of graphs,
+\code{comp_spec}: a comaprison specification table containing the graph names
 and indices within the input GDD list for each pair of graphs compared.
 If \code{return_details} is set to FALSE, the list also contains the following
-matrices for each graph pair: \code{min_emds}: the minimal EMD for each GDD 
+matrices for each graph pair: \code{min_emds}: the minimal EMD for each GDD
 used to compute the NetEMD, \code{min_offsets}: the associated offsets giving
 the minimal EMD for each GDD
 }
 \description{
-NetEMDs between all graph pairs using provided Graphlet-based Degree 
+NetEMDs between all graph pairs using provided Graphlet-based Degree
 Distributions
 }

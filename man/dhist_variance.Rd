@@ -14,7 +14,7 @@ Variance of histogram
 }
 \description{
 Calculates variance directly from the discrete histogram by using locations
-weighted by  masses. 
-NOTE: Does not apply bias correction (i.e. N-1 denominator) as masses 
+weighted by  masses.
+NOTE: Does not apply bias correction (i.e. N-1 denominator) as masses
 may not represent counts so N is not necessarily known
 }

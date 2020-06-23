@@ -13,6 +13,6 @@ normalise_dhist_mass(dhist)
 A discrete histogram normalised to have mass 1
 }
 \description{
-Normalises a discrete histogram to unit mass by dividing each mass by the 
+Normalises a discrete histogram to unit mass by dividing each mass by the
 total of the non-normalised masses
 }

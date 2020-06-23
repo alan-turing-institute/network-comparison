@@ -14,6 +14,6 @@ A discrete histogram normalised to have variance 1
 }
 \description{
 Normalises a discrete histogram to unit variance by dividing each centred
-location by the standard deviation of the discrete histogram before 
+location by the standard deviation of the discrete histogram before
 decentering
 }

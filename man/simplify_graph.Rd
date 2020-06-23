@@ -14,10 +14,10 @@ simplify_graph(graph, as_undirected = TRUE, remove_loops = TRUE,
 
 \item{remove_loops}{If TRUE, remove edgeds that connect a vertex to itself}
 
-\item{remove_multiple}{If TRUE remove multiple edges connencting the same 
+\item{remove_multiple}{If TRUE remove multiple edges connencting the same
 pair of vertices}
 
-\item{remove_isolates}{If TRUE, remove vertices with no edges after the 
+\item{remove_isolates}{If TRUE, remove vertices with no edges after the
 previous alterations have been made}
 }
 \value{
@@ -28,8 +28,8 @@ Takes a igraph graph object and makes the requested subset of the following
 simplifications in the following order:
   1. Makes the graph undirected
   2. Removes loops (where both endpoints of an edge are the same vertex)
-  3. Removes multiple edges (i.e. ensuring only one edge exists for each 
+  3. Removes multiple edges (i.e. ensuring only one edge exists for each
      pair of endpoints)
-  4. Removes isolated vertices (i.e. vertices with no edges after the 
+  4. Removes isolated vertices (i.e. vertices with no edges after the
      previous alterations)
 }

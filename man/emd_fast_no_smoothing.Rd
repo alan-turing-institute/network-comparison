@@ -16,3 +16,7 @@ emd_fast_no_smoothing(locations1, values1, locations2, values2)
 
 \item{values2}{Cumulative masses for ECDF 2}
 }
+\description{
+Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
+Density Functions (ECDFs)
+}

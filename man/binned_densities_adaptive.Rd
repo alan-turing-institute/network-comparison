@@ -2,14 +2,20 @@
 % Please edit documentation in R/graph_binning.R
 \name{binned_densities_adaptive}
 \alias{binned_densities_adaptive}
-\title{INTERNAL FUNCTION - Do not call directly}
+\title{binned_densities_adaptive}
 \usage{
-binned_densities_adaptive(densities, min_counts_per_interval, num_intervals)
+binned_densities_adaptive(densities, min_counts_per_interval,
+  num_intervals)
+}
+\arguments{
+\item{densities}{Density values to use for binning.}
+
+\item{min_counts_per_interval}{Minimum count for each bin.}
+
+\item{num_intervals}{Initial number of density bins to generate.
+TODO: Remove @export prior to publishing}
 }
 \description{
-Used by \code{netdis_expected_graphlet_counts_ego_fn} to 
-generate a function for calculating expected ego-network graphlet counts
-from the statistics of a provided reference graph.
-Temporarily accessible during development. 
-TODO: Remove @export prior to publishing
+Adaptive binning function guaranteeing a minimum number of entries in each
+bin.
 }

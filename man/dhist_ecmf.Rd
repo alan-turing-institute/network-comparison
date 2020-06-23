@@ -2,7 +2,7 @@
 % Please edit documentation in R/dhist.R
 \name{dhist_ecmf}
 \alias{dhist_ecmf}
-\title{Generate interpolating empirical cumulative mass function (ECMF) for 
+\title{Generate interpolating empirical cumulative mass function (ECMF) for
 a discrete histogram}
 \usage{
 dhist_ecmf(dhist)
@@ -12,13 +12,13 @@ dhist_ecmf(dhist)
 }
 \value{
 An interpolating ECMF as an \code{approxfun} object. This function
-will return the interpolated cumulative mass for a vector of arbitrary 
+will return the interpolated cumulative mass for a vector of arbitrary
 locations. If \code{dhist$smoothing_window_width} is zero, the ECMF will be
 piecewise constant. If \code{dhist$smoothing_window_width} is one, the ECMF
 will be piece-wise linear. If \code{dhist$smoothing_window_width} is any
 other value, the ECMF will not correctly represent the cumulative mass.
 }
 \description{
-Generate interpolating empirical cumulative mass function (ECMF) for 
+Generate interpolating empirical cumulative mass function (ECMF) for
 a discrete histogram
 }

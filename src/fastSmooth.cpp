@@ -59,7 +59,31 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
    res=0;
    // set as 0 as at bottom of hist
    curStartVal=0;
-
+   
+   std::cout <<  "Loc1: "; 
+  for (i=0;i<loc1.size();i++)
+  {
+   std::cout << loc1[i] << ", "; 
+  }
+   std::cout <<  "\n"; 
+   std::cout <<  "Val1: "; 
+  for (i=0;i<val1.size();i++)
+  {
+   std::cout << val1[i] << ", "; 
+  }
+   std::cout <<  "\n"; 
+   std::cout <<  "\nLoc2 "; 
+  for (i=0;i<loc2.size();i++)
+  {
+   std::cout << loc2[i] << ", "; 
+  }
+   std::cout <<  "\n"; 
+   std::cout <<  "Val2: "; 
+  for (i=0;i<val2.size();i++)
+  {
+   std::cout << val2[i] << ", "; 
+  }
+   std::cout <<  "\n"; 
    // need to know if first y segment ends with hist1 or hist2 
    // Need to set the first start locations 
    // Commented this section as they are both set to zero
@@ -95,13 +119,14 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
             // compute where end of current segment will be in x in dhist1 proportionally
             loc1End=loc1SegStart+(loc1SegEnd-loc1SegStart)*(loc2SegValEnd-loc1SegValStart)/(loc1SegValEnd-loc1SegValStart);
         }
+       std::cout << loc1End << " "<< loc2End << "\n"; 
         h=(curEndVal-curStartVal)/2.0;
         if (loc1Start<loc2Start)
         {
             //case1 they is no overlap
             if (loc1End<=loc2End)
             {
-		// difference between two right triangles
+		            // difference between two right triangles
                 res+=(h)*(loc2Start+loc2End-loc1Start-loc1End);
             }
             else // we have a bowtie
@@ -114,7 +139,7 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
             //case1 they is no overlap
             if (loc2End<=loc1End)
             {
-		// difference between two right triangles
+		            // difference between two right triangles
                 res+=(h)*(loc1Start+loc1End-loc2Start-loc2End);
             }
             else // we have a bowtie
@@ -127,12 +152,12 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         {
             if (j==val2.size()-1)
             {
-		// we are at the end of both segments
+		            // we are at the end of both segments
                 break;
             }
             else
             {
-	       // at the end of dhist 1 so move dhist2
+	             // at the end of dhist 1 so move dhist2
                j+=1;
                loc2SegStart=loc2[j];
                loc2SegEnd=loc2[j]+binWidth2;
@@ -142,27 +167,27 @@ double NetEmdSmooth(NumericVector loc1,NumericVector val1,double binWidth1,Numer
         }
         else if ((j==val2.size()-1) || (val1[i+1]<val2[j+1]))
         {
-	  // at the end of dhist 2 so move dhist1
-	  // OR
-	  // Next segment in dhist1 is smaller than the next segment in dhist2
-          i+=1;
-           loc1SegStart=loc1[i];
-           loc1SegEnd=loc1[i]+binWidth1;
-           loc1SegValStart=loc1SegValEnd;
-           loc1SegValEnd=val1[i];
+	          // at the end of dhist 2 so move dhist1
+	          // OR
+	          // Next segment in dhist1 is smaller than the next segment in dhist2
+            i+=1;
+            loc1SegStart=loc1[i];
+            loc1SegEnd=loc1[i]+binWidth1;
+            loc1SegValStart=loc1SegValEnd;
+            loc1SegValEnd=val1[i];
         }
         else
         {
-	  // Next segment in dhist2 is smaller than the next segment in dhist1
+	         // Next segment in dhist2 is smaller than the next segment in dhist1
            j+=1;
            loc2SegStart=loc2[j];
            loc2SegEnd=loc2[j]+binWidth2;
            loc2SegValStart=loc2SegValEnd;
            loc2SegValEnd=val2[j];
         }
-	// Move the start of the segment under consideration 
+	      // Move the start of the segment under consideration 
         curStartVal=curEndVal;
-	// Move the start of the x value under consideration 
+	      // Move the start of the x value under consideration 
         loc2Start=loc2End;
         loc1Start=loc1End;
    }

@@ -13,10 +13,10 @@ shift_to_next_alignment(x1, x2, distance_matrix_prev = NULL,
 \item{x2}{Second location vector. This vector is remaining unchanged.}
 }
 \value{
-Minimum non-zero right-shift to apply to x1 to align at least one 
+Minimum non-zero right-shift to apply to x1 to align at least one
 element of x1 with at least one element of x2
 }
 \description{
-Calculate minimum right shift of first location vector to make any pair of 
+Calculate minimum right shift of first location vector to make any pair of
 locations from the two vectors equal
 }

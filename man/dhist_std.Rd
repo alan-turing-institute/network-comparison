@@ -13,8 +13,8 @@ dhist_std(dhist)
 Standard deviation of histogram
 }
 \description{
-Calculates standard deviation directly from the discrete histogram by using 
+Calculates standard deviation directly from the discrete histogram by using
 locations weighted by masses.
-NOTE: Does not apply bias correction (i.e. N-1 denominator) as masses 
+NOTE: Does not apply bias correction (i.e. N-1 denominator) as masses
 may not represent counts so N is not necessarily known
 }

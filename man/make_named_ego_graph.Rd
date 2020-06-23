@@ -4,7 +4,8 @@
 \alias{make_named_ego_graph}
 \title{Get ego-networks for a graph as a named list}
 \usage{
-make_named_ego_graph(graph, order, ...)
+make_named_ego_graph(graph, order, min_ego_nodes = 3,
+  min_ego_edges = 1, ...)
 }
 \arguments{
 \item{graph}{An \code{igraph} object}
@@ -12,7 +13,13 @@ make_named_ego_graph(graph, order, ...)
 \item{order}{The number of steps from the source node to include
 nodes for each ego-network.}
 
-\item{...}{Additional parameters to be passed to the underlying 
+\item{min_ego_nodes}{Only ego networks with at least \code{min_ego_nodes}
+nodes are returned.}
+
+\item{min_ego_edges}{Only ego networks with at least \code{min_ego_edges}
+edges are returned.}
+
+\item{...}{Additional parameters to be passed to the underlying
 \code{igraph::make_ego_graph} function used.}
 }
 \description{

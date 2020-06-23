@@ -4,19 +4,24 @@
 \alias{cross_comparison_spec}
 \title{Generate a cross-comparison specification}
 \usage{
-cross_comparison_spec(named_list)
+cross_comparison_spec(named_list, how = "many-to-many")
 }
 \arguments{
 \item{named_list}{A named list of items for which an exhaustive pair-wise
 cross-comparison is required.}
+
+\item{how}{How to generate pair-wise combinations. Either "many-to-many"
+(default) which generates all possible pair-wise combinations, or
+"one-to-many" which generates all combinations between the first element
+in named_list and the rest of the elements only.}
 }
 \value{
 A matrix with one row for each possible pair-wise combination
-of elements from the provided named list. The first and second columns  
-contain the names of the elements in the pair and the third and fourth  
+of elements from the provided named list. The first and second columns
+contain the names of the elements in the pair and the third and fourth
 columns contain the indexes of these elements in the provided list.
 }
 \description{
-Creates a cross-comparison matrix with all possible pair-wise combinations
+Creates a cross-comparison matrix with pair-wise combinations
 of elements from the provided list.
 }

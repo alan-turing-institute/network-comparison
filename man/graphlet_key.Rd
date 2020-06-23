@@ -13,7 +13,7 @@ graphlet_key(max_graphlet_size)
 Metadata list with the following named fields:
 \itemize{
   \item \code{max_nodes}: Maximum number of nodes graphlets can contain
-  \item \code{id}: ID of each graphlet in format Gn, where n is in range 0 to 
+  \item \code{id}: ID of each graphlet in format Gn, where n is in range 0 to
  num_graphlets
   \item \code{node_count}: Number of nodes contained within each graphlet
 }

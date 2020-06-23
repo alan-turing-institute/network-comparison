@@ -7,17 +7,17 @@
 area_between_offset_ecmfs(ecmf1, ecmf2, offset)
 }
 \arguments{
-\item{ecmf1}{An Empirical Cululative Mass Function (ECMF) object of class 
+\item{ecmf1}{An Empirical Cululative Mass Function (ECMF) object of class
 \code{dhist_ecmf}}
 
-\item{ecmf2}{An Empirical Cululative Mass Function (ECMF) object of class 
+\item{ecmf2}{An Empirical Cululative Mass Function (ECMF) object of class
 \code{dhist_ecmf}}
 
 \item{offset}{An offset to add to all locations of the first ECMF. Postive
 offsets will shift the ECMF to the right and negative ones to the left.}
 }
 \value{
-area The area between the two ECMFs, calculated as the integral of 
+area The area between the two ECMFs, calculated as the integral of
 the absolute difference between the two ECMFs
 }
 \description{

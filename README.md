@@ -1,5 +1,6 @@
 # Network Comparison
-An R package implementing the Netdis and NetEMD alignment-free network comparison measures.
+An R package implementing the Netdis and NetEMD alignment-free network comparison measures.   
+
 
 ### :warning: BETA: Package under construction (pre-release) :warning:
 Until this package hits release 1.0 anything can change with no notice.

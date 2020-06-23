@@ -15,6 +15,6 @@ shift_dhist(dhist, shift)
 A shifted discrete histogram as a \code{dhist} object
 }
 \description{
-Shift the locations of a discrete histogram rightwards on the x-axis by the 
+Shift the locations of a discrete histogram rightwards on the x-axis by the
 specified amount
 }

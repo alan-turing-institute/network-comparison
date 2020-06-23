@@ -12,27 +12,27 @@ net_emd(dhists1, dhists2, method = "optimise", return_details = FALSE,
 
 \item{dhists2}{A \code{dhist} discrete histogram object or a list of such objects}
 
-\item{method}{The method to use to find the minimum EMD across all potential 
+\item{method}{The method to use to find the minimum EMD across all potential
 offsets for each pair of histograms. Default is "optimise" to use
-R's built-in \code{stats::optimise} method to efficiently find the offset 
-with the minimal EMD. However, this is not guaranteed to find the global 
-minimum if multiple local minima EMDs exist. You can alternatively specify the 
-"exhaustive" method, which will exhaustively evaluate the EMD between the 
+R's built-in \code{stats::optimise} method to efficiently find the offset
+with the minimal EMD. However, this is not guaranteed to find the global
+minimum if multiple local minima EMDs exist. You can alternatively specify the
+"exhaustive" method, which will exhaustively evaluate the EMD between the
 histograms at all offsets that are candidates for the minimal EMD.}
 
 \item{return_details}{Logical indicating whether to return the individual
 minimal EMDs and associated offsets for all pairs of histograms}
 
 \item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
-"smear" point masses across a finite width in the real domain. Default is 0, 
-which  results in no smoothing. Care should be taken to select a 
-\code{smoothing_window_width} that is appropriate for the discrete domain 
+"smear" point masses across a finite width in the real domain. Default is 0,
+which  results in no smoothing. Care should be taken to select a
+\code{smoothing_window_width} that is appropriate for the discrete domain
 (e.g.for the integer domain a width of 1 is the natural choice)}
 }
 \value{
-NetEMD measure for the two sets of discrete histograms 
+NetEMD measure for the two sets of discrete histograms
 (\code{return_details = FALSE}) or a list with the following named elements
-\code{net_emd}: the NetEMD for the set of histogram pairs, \code{min_emds}:  
+\code{net_emd}: the NetEMD for the set of histogram pairs, \code{min_emds}:
 the minimal EMD for each pair of histograms, \code{min_offsets}: the associated
 offsets giving the minimal EMD for each pair of histograms
 }

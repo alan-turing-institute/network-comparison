@@ -16,7 +16,7 @@ Earth Mover's Distance between the two input histograms
 }
 \description{
 Takes two discrete histograms and calculates the Wasserstein / Earth Mover's
-Distance between the two histograms by summing the absolute difference 
+Distance between the two histograms by summing the absolute difference
 between the two cumulative histograms.
 }
 \references{

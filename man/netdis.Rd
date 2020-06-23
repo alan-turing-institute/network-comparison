@@ -2,7 +2,7 @@
 % Please edit documentation in R/measures_net_dis.R
 \name{netdis}
 \alias{netdis}
-\title{Netdis}
+\title{Netdis - for one graphlet size}
 \usage{
 netdis(centred_graphlet_counts1, centred_graphlet_counts2, graphlet_size)
 }
@@ -16,10 +16,11 @@ netdis(centred_graphlet_counts1, centred_graphlet_counts2, graphlet_size)
 a graphlet is the number of nodes it contains.}
 }
 \value{
-Netdis statistic calculated using centred counts for graphlets of 
+Netdis statistic calculated using centred counts for graphlets of
 the specified size
 }
 \description{
 Calculate Netdis statistic between two graphs from their Centred Graphlet
-Counts (generated using \code{netdis_centred_graphlet_counts}).
+Counts (generated using \code{netdis_centred_graphlet_counts}) for graphlets 
+of size \code{graphlet_size}.
 }

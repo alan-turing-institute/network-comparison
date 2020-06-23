@@ -11,7 +11,7 @@ read_simple_graphs(source_dir, format = "ncol", pattern = "*",
 \arguments{
 \item{source_dir}{Path to directory containing files with graph data}
 
-\item{format}{Format of graph data. Any format supported by 
+\item{format}{Format of graph data. Any format supported by
 \code{igraph::read_graph} can be used.}
 
 \item{pattern}{Pattern to use to filter filenames. Any pattern supported by
@@ -21,10 +21,10 @@ read_simple_graphs(source_dir, format = "ncol", pattern = "*",
 
 \item{remove_loops}{If TRUE, remove edgeds that connect a vertex to itself}
 
-\item{remove_multiple}{If TRUE remove multiple edges connencting the same 
+\item{remove_multiple}{If TRUE remove multiple edges connencting the same
 pair of vertices}
 
-\item{remove_isolates}{If TRUE, remove vertices with no edges after the 
+\item{remove_isolates}{If TRUE, remove vertices with no edges after the
 previous alterations have been made}
 }
 \value{
@@ -34,12 +34,12 @@ graph set to the name of the file it was read from.
 \description{
 Reads graph data from all files in a directory matching the specified
 filename pattern. From each file, an a igraph graph object is constructed
-and the requested subset of the following simplifications is made in the 
+and the requested subset of the following simplifications is made in the
 following order:
   1. Makes the graph undirected
   2. Removes loops (where both endpoints of an edge are the same vertex)
-  3. Removes multiple edges (i.e. ensuring only one edge exists for each 
+  3. Removes multiple edges (i.e. ensuring only one edge exists for each
      pair of endpoints)
-  4. Removes isolated vertices (i.e. vertices with no edges after the 
+  4. Removes isolated vertices (i.e. vertices with no edges after the
      previous alterations)
 }

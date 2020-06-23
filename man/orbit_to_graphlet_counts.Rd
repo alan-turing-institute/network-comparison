@@ -15,6 +15,6 @@ An ORCA-style matrix containing counts of each graphlet (columns) at
 each vertex in the graph (rows)
 }
 \description{
-Converts graphlet orbit counts at each vertex to graphlet counts at each 
+Converts graphlet orbit counts at each vertex to graphlet counts at each
 vertex by summing over all orbits contained within each graphlet
 }

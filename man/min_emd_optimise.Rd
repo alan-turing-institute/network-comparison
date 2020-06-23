@@ -15,7 +15,7 @@ min_emd_optimise(dhist1, dhist2)
 Earth Mover's Distance between the two discrete histograms
 }
 \description{
-Calculates the minimum Earth Mover's Distance (EMD) between two discrete 
-histograms by minimising the offset parameter of the \code{emd} function 
+Calculates the minimum Earth Mover's Distance (EMD) between two discrete
+histograms by minimising the offset parameter of the \code{emd} function
 using the built-in \code{stats::optimise} method.
 }
