@@ -194,7 +194,7 @@ netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = NULL)
 ## Using Netdis with no expectation ($E_w=0$)
 Comparing the networks via their observed ego counts without centering them, (equivalent to using expectation equal to zero). This variant thus focuses on detecting small discrepancies between the networks.
 
-#' netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
+
 ```{r,netdiszero}
 #Netdis using no expectations (or equivalently, expectation equal to zero).
 netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
