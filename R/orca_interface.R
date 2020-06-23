@@ -67,6 +67,13 @@ indexed_edges_to_graph <- function(indexed_edges) {
 #' previous alterations have been made
 #' @return A named list of simplified igraph graph object, with the name of each
 #' graph set to the name of the file it was read from.
+#' @examples 
+#' # Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
+#' source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+#' print(source_dir) 
+#' # Load query graphs as igraph objects
+#' graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"), format = "ncol")
+#' graph_1
 #' @export
 read_simple_graphs <- function(source_dir,
                                format = "ncol",
@@ -373,7 +380,7 @@ count_graphlets_for_graph <- function(graph, max_graphlet_size) {
 #' @export
 count_graphlets_ego <- function(graph,
                                 max_graphlet_size = 4,
-                                neighbourhood_size,
+                                neighbourhood_size = 2,
                                 min_ego_nodes = 3,
                                 min_ego_edges = 1,
                                 return_ego_networks = FALSE) {

@@ -1,4 +1,3 @@
-
 #' NetEMD Network Earth Mover's Distance between a pair of networks.
 #'
 #' Calculates the mean minimum Earth Mover's Distance (EMD) between 

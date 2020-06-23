@@ -49,3 +49,11 @@ following order:
   4. Removes isolated vertices (i.e. vertices with no edges after the
      previous alterations)
 }
+\examples{
+# Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
+source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+print(source_dir) 
+# Load query graphs as igraph objects
+graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"), format = "ncol")
+graph_1
+}

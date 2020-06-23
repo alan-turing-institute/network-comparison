@@ -19,7 +19,8 @@ netdis_one_to_one(
   exp_counts_fn = purrr::partial(netdis_expected_counts, scale_fn =
     count_graphlet_tuples),
   graphlet_counts_1 = NULL,
-  graphlet_counts_2 = NULL
+  graphlet_counts_2 = NULL,
+  graphlet_counts_ref = NULL
 )
 }
 \arguments{
@@ -37,7 +38,7 @@ query graphs themselves.}
 
 \item{max_graphlet_size}{Generate graphlets up to this size.}
 
-\item{neighbourhood_size}{Ego network neighbourhood size.}
+\item{neighbourhood_size}{Ego network neighborhood size.}
 
 \item{min_ego_nodes}{Filter ego networks which have fewer
 than min_ego_nodes nodes.}
@@ -73,11 +74,56 @@ graph. If the \code{graphlet_counts_1} argument is defined then
 \item{graphlet_counts_2}{Pre-generated graphlet counts for the second query
 graph. If the \code{graphlet_counts_2} argument is defined then
 \code{graph_2} will not be used.}
+
+\item{graphlet_counts_ref}{Pre-generated reference graphlet counts. If the
+\code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
+be used.}
 }
 \value{
 Netdis statistics between graph_1 and graph_2 for graphlet sizes
-up to and including max_graphlet_size
+up to and including max_graphlet_size.
 }
 \description{
-Netdis between two graphs
+Calculates the different variants of the network dissimilarity statistic Netdis between two graphs. The variants currently supported are Netdis using a gold-standard network, Netdis using no expecations (\code{ref_graph = 0}), and Netdis using a Geometric Poisson  approximation for the expectation (\code{ref_graph = NULL}).
+}
+\examples{
+require(netdist)
+require(igraph)
+#Set source directory for Virus PPI graph edge files stored in the netdist package.
+source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+# Load query graphs as igraph objects
+graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),format = "ncol")
+graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),format = "ncol")
+
+#Netdis variant using the Geometric Poisson approximation to remove the background expectation of each network.
+netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = NULL) #This option will focus on detecting more general and global discrepancies between the ego-network structures.
+
+#Comparing the networks via their observed ego counts without centering them (equivalent to using expectation equal to zero). This option, will focus on detecting small discrepancies.
+netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
+
+# Example of the use of netdis with a reference graph.This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard.
+# Two lattice networks of different sizes are used for this example. 
+ goldstd_1 <- graph.lattice(c(8,8)) #A reference net
+ goldstd_2 <- graph.lattice(c(44,44)) #A reference net
+ 
+ netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_1)
+ netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_2)
+ 
+ 
+ #Imputing pre-calculated subgraph counts instead of subgraphs.
+ 
+ props_1 <- count_graphlets_ego(graph = graph_1)
+ props_2 <- count_graphlets_ego(graph = graph_2)
+ props_goldstd_1 <- count_graphlets_ego(graph = goldstd_1)
+ props_goldstd_2 <- count_graphlets_ego(graph = goldstd_2)
+ 
+#Netdis Geometric-Poisson.
+netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_graph = NULL)
+
+#Netdis Zero Expectation.
+netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_graph = 0)
+
+#Netdis using gold-standard network
+netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_1)
+netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_2)
 }

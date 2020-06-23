@@ -7,7 +7,7 @@
 count_graphlets_ego(
   graph,
   max_graphlet_size = 4,
-  neighbourhood_size,
+  neighbourhood_size = 2,
   min_ego_nodes = 3,
   min_ego_edges = 1,
   return_ego_networks = FALSE

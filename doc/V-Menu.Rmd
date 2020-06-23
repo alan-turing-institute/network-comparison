@@ -23,7 +23,5 @@ This package contains multiple vignettes that illustrate the simple ways of empl
 
 
 * [Default, simple and quick use usage 1](default_pairwise_usage.html):
-* [Default, simple and quick use usage 2](netdis_pairwise_comparisons.html):
-* [Dendrogram Examples](dendrogram_example_net_dis.html).
 
 

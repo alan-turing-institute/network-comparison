@@ -18,7 +18,7 @@ comment = "#>"
 
 # Introduction
 
-The \code{netdist} package currently considers to broad methodologies for network comparison, namely Netdis and NetEmd. Netdis considers multiple variants (via background expectations) to capture the dissimilarity between the local structure of networks exhibited by the occurrence of small subgraphs. NetEmd is also a method to capture the dissimilarity between networks using subgraph counts, but it has also been defined for any type of network features that the user defines; for example eigen distributions. The variantes of Netdis are controlled by the input selected for the background expectations, whereas the variants of NetEmd are controlled directly by the user in the selection of the network features being compared (by default this pacakge uses subgraph counts).
+The `netdist` package currently considers to broad methodologies for network comparison, namely Netdis and NetEmd. Netdis considers multiple variants (via background expectations) to capture the dissimilarity between the local structure of networks exhibited by the occurrence of small subgraphs. NetEmd is also a method to capture the dissimilarity between networks using subgraph counts, but it has also been defined for any type of network features; for example eigen distributions. The variants of Netdis are controlled by the input selected for the background expectations, whereas the variants of NetEmd are controlled directly by the user in the selection of the network features being compared (by default this package uses subgraph counts).
 
 The following shows a quick introduction to the most simple functions of the package, and to some of the variants of Netdis and NetEmd.
 
@@ -31,10 +31,9 @@ library("igraph")
 
 ## Load graphs included in the netdist package
 ```{r, graphs,fig.align='center'}
-# Set source directory for Virus PPI graph edge files stored in the netdist package.
+# Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
-print(source_dir)
 
 # Load query graphs as igraph objects
 graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
@@ -81,7 +80,7 @@ and where $p_{t_i}(G)$ and $p_{t_i}(G')$ are the distributions of ${t_i}$ on $G$
 
 ## Comparing two graphs with NetEmd.
 ```{r, netemd,fig.align='center'}
-# Set source directory for Virus PPI graph edge files stored in the netdist package.
+# Set source directory for Virus protein-protein interaction network edge files stored in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
 # Load query graphs as igraph objects
@@ -93,7 +92,7 @@ graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
 graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
                              format = "ncol")
 
-#The one to one network comparison.
+# One to one NetEmd comparison.
 netemd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",max_graphlet_size=5)
 ```
 
@@ -149,28 +148,28 @@ $$Netdis(k)=netd_2^S(k)=\tfrac{1}{2}(1-netD_2^S(k)) \in [0,1].$$
 Small values of Netdis suggest higher `similarity' between the networks. By default Netdis uses subgraphs on $k=4$ nodes.
 
 
-## Using netdis with an gold standard graph as $E_w$.
-The use of gold standard graph as a substitute for $E_w$ can be used when such graph is known to be a good proxy for $E_w$, or alternatively a good reference point of comparison.
+## Using netdis with a gold-standard graph to obtain $E_w$.
+The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard (summarized in $E_w$).
 
 ```{r,netdisgoldstand,fig.align='center'}
-# Lattice graphs tto be used as reference point comparison.
-goldstd_1 <- igraph::graph.lattice(c(round(sqrt(igraph::vcount(graph_1))),round(sqrt(igraph::vcount(graph_1))))) 
-goldstd_2 <- igraph::graph.lattice(c(round(sqrt(igraph::vcount(graph_2))),round(sqrt(igraph::vcount(graph_2))))) 
+# Lattice graphs to be used as gold-standard as a reference point comparison
+goldstd_1 <- igraph::graph.lattice(c(8,8)) #Graph with 8^2 nodes
+goldstd_2 <- igraph::graph.lattice(c(44,44)) #Graph with 44^2 nodes
 
 plot(goldstd_1,vertex.size=0.8,vertex.label=NA)
 plot(goldstd_2,vertex.size=0.5,vertex.label=NA)
 
 
-# Netdis using the er_goldstd_1 graph as gold standard reference point
+# Netdis using the goldstd_1 graph as gold-standard reference point
 netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_1)
 
-# Netdis using the er_goldstd_2 graph as gold standard reference point
+# Netdis using the goldstd_2 graph as gold-standard reference point
 netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_2)
 ```
 
-## Netdis-GP: Using a Geometric Poisson approximation
+## Netdis-GP: Using a Geometric-Poisson approximation
 
-(Extracted from Ospina-Forero et al. (2018)): Instead of considering an approximation based on an observed gold-standard network whose selection may be difficult, $E_w$ is computed, independently for each graph, based on a geometric Poisson (GP) approximation for the distribution of the number of occurrences of subgraph $w$. It is assumes that $N_{w,i} \sim GP(\lambda^{\rho(i)}_k, \theta^{\rho(i)}_w)$, where $\lambda^{\rho(i)}_k$ is the Poisson parameter indexed by the size of subgraph $w$ and the density bin $\rho(i)$; and where $\theta^{\rho(i)}_w$ is the geometric parameter indexed by subgraph $w$ and density bin $\rho(i)$. $E_w(G, \rho(i))$ is taken as the mean of the GP approximation, i.e. $\lambda^{\rho(i)}_k/\theta^{\rho(i)}_w$.
+(Extracted from Ospina-Forero et al. (2018)): Instead of considering an approximation based on an observed gold-standard network whose selection may be difficult, $E_w$ is computed, independently for each graph, based on a Geometric-Poisson (GP) approximation for the distribution of the number of occurrences of subgraph $w$. It assumes that $N_{w,i} \sim GP(\lambda^{\rho(i)}_k, \theta^{\rho(i)}_w)$, where $\lambda^{\rho(i)}_k$ is the Poisson parameter indexed by the size of subgraph $w$ and the density bin $\rho(i)$; and where $\theta^{\rho(i)}_w$ is the geometric parameter indexed by subgraph $w$ and density bin $\rho(i)$. $E_w(G, \rho(i))$ is taken as the mean of the GP approximation, i.e. $\lambda^{\rho(i)}_k/\theta^{\rho(i)}_w$.
 
 As $\lambda^{\rho(i)}_k$ and $\theta^{\rho(i)}_w$ are not known, they are estimated as follows:
 Let $x_{w,d}^j$ be the number of subgraphs $w$ on the 2-step ego-network $j$ of density bin $d$, and let
@@ -184,15 +183,20 @@ where $q$ is the number of ego-networks in density bin $d$. Then,
 \]
 where $l$ is the number of connected subgraphs of size $k$, for example, $l=6$ for $k=4$. These estimators are based on the moment estimators of a GP random variable and the proposal made by (Picard et al.(2008)), where  the total count of each individual subgraph could be thought as the sum of the total subgraph counts over multiple ``clumps'' of edges that appear across the network.
 
+This variant focuses on detecting more general and global discrepancies between the ego-network structures.
+
 ```{r, netdisGP}
-#Netdis using the Geometric Poisson approximation for the background subgraph expectations.
+#Netdis using the Geometric-Poisson approximation as a way to obtain background expectations. 
 netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = NULL)
 ```
 
 
 ## Using Netdis with no expectation ($E_w=0$)
+Comparing the networks via their observed ego counts without centering them, (equivalent to using expectation equal to zero). This variant thus focuses on detecting small discrepancies between the networks.
+
+#' netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
 ```{r,netdiszero}
-#Netdis using no expecations (or equivalently, expectation equal to zero).
+#Netdis using no expectations (or equivalently, expectation equal to zero).
 netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
 
 ```
