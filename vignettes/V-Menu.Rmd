@@ -22,6 +22,8 @@ knitr::opts_chunk$set(
 This package contains multiple vignettes that illustrate the simple ways of employing the network comparison methods 'Netdis', 'NetEmd' and their variants (e.g. `Netdis Geometric-Poisson'), and also the large flexibility of these methodologies. The following is a list of the available vignettes:
 
 
-* [Default, simple and quick use usage 1](default_pairwise_usage.html):
+* [Default, simple and quick use usage 1: pairwise comparisons](default_pairwise_usage.html):
+* [Default, simple and quick use usage 2: precomputed properties](PreComputedProps.html):
+* [Default, simple and quick use usage 3: many to many comparions](ManyToMany.html):
 
 

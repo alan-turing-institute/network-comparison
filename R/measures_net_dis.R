@@ -85,7 +85,7 @@
 #'  netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_2)
 #'  
 #'  
-#'  #Imputing pre-calculated subgraph counts instead of subgraphs.
+#'  #Providing pre-calculated subgraph counts.
 #'  
 #'  props_1 <- count_graphlets_ego(graph = graph_1)
 #'  props_2 <- count_graphlets_ego(graph = graph_2)
@@ -530,7 +530,7 @@ netdis_many_to_many <- function(graphs = NULL,
     
     ## ------------------------------------------------------------------------
     # If no reference passed, calculate expected counts using query networks
-    # themselves.
+    # themselves. Geometric-Poisson GP SHOULD BE THE DEFALUT
   } else {
     centred_graphlet_counts <- purrr::map(
       graphlet_counts,
@@ -986,6 +986,10 @@ exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
   # variance in graphlet counts across ego networks in this density bin
   Vd_sq <- colSums(mean_sub_counts^2) / (nrow(mean_sub_counts) - 1)
   
+  # Dealing with zero variance HERE
+  ind_zerovar <- (Vd_sq < .00000001)
+  if(sum(ind_zerovar) > 0) Vd_sq[ind_zerovar] <- 0.1
+  
   # GP theta parameter for each graphlet id in this density bin
   theta_d <- 2 * means / (Vd_sq + means)
   
@@ -1004,8 +1008,15 @@ exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
       exp_counts_dk,
       lambda_dk / theta_d[graphlet_idx]
     )
+    
   }
   
+  #  Dealing with divisions by zero.
+  ind <- is.na(exp_counts_dk)
+  ind <- ind | is.infinite(exp_counts_dk)
+  if(sum(ind) > 0) exp_counts_dk[ind & ind_zerovar[-1]] <- 0
+  
+
   exp_counts_dk
 }
 

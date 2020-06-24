@@ -1,5 +1,5 @@
 ---
-title: "Default pairwise usage of the network comparison methods"
+title: "Default, simple and quick use usage 1: pairwise comparisons"
 date: "`10-06-2020`"
 author: "Luis Ospina-Forero"
 output: rmarkdown::html_vignette
@@ -7,7 +7,7 @@ vignette: >
   %\VignetteIndexEntry{default_pairwise_usage}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
----
+  ---
   
 ```{r, include = FALSE}
 knitr::opts_chunk$set(

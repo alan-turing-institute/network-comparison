@@ -1,0 +1,174 @@
+---
+title: "Default, simple and quick use usage 2: precomputed properties"
+author: "Luis Ospina-Forero"
+date: "23/06/2020"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{PreComputedProps}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+In many situations there may be a need to pursue the network comparisons from pre-computed counts. This decreases the computational time to obtain the results, particularly when the same networks are involved in multiple comparisons or when the same properties are used in other procedures. Also, performing the comparisons from pre-computed properties allows greater flexibility in the use of the network comparison methods and their variants.
+
+This Vignette follows similar examples as ["Default, simple and quick use usage 1: pairwise comparisons"](default_pairwise_usage.html) but shows the modifications required to obtain properties and to then use them in the network comparison methods.
+
+# Load required packages/libraries
+```{r, packages, message= FALSE}
+# Load packages/libraries
+library("netdist")
+library("igraph")
+```
+
+# Compare two networks via NetEmd.
+
+## Comparing two graphs with NetEmd via subgraph counts.
+```{r, netemd,fig.align='center'}
+# Create lattice networks
+gLat_1 <- graph.lattice(c(8,8)) 
+gLat_2 <- graph.lattice(c(44,44))  
+
+netemd_one_to_one(graph_1=gLat_1,graph_2=gLat_2,feature_type="orbit",max_graphlet_size=5)
+
+#Providing a matrix of network features
+counts_1= count_orbits_per_node(graph = gLat_1,max_graphlet_size = 5)
+counts_2= count_orbits_per_node(graph = gLat_2,max_graphlet_size = 5)
+
+netemd_one_to_one(dhists_1=counts_1, dhists_2=counts_2)
+
+#Providing the network features as lists of dhist objects
+dhists_1<- graph_features_to_histograms(counts_1)
+dhists_2<- graph_features_to_histograms(counts_2)
+
+netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2)
+```
+
+## Comparing two graphs with NetEmd via their Laplacian spectrum.
+```{r, netemdEigen,fig.align='center'}
+# Networks
+gLat_1 <- graph.lattice(c(8,8)) 
+gLat_2 <- graph.lattice(c(44,44))  
+
+#Laplacian
+Lapg_1 <- igraph::laplacian_matrix(graph = gLat_1,normalized = FALSE,sparse = FALSE)
+Lapg_2 <- igraph::laplacian_matrix(graph = gLat_2,normalized = FALSE,sparse = FALSE)
+
+#Normalized Laplacian
+NLapg_1 <- igraph::laplacian_matrix(graph = gLat_1,normalized = TRUE,sparse = FALSE)
+NLapg_2 <- igraph::laplacian_matrix(graph = gLat_2,normalized = TRUE,sparse = FALSE)
+
+# Providing a matrix of network features (e.g. Spectra). Spectra (This may take a couple of minutes).
+spec_1 <- cbind(L.Spectra= eigen(Lapg_1)$values, NL.Spectra= eigen(NLapg_1)$values) 
+spec_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values) 
+
+netemd_one_to_one(dhists_1 = spec_1,dhists_2 = spec_2, smoothing_window_width = 0)
+
+
+# Providing pre-computed dhist objects from network features
+dhists_1<- graph_features_to_histograms(spec_1)
+dhists_2<- graph_features_to_histograms(spec_2)
+
+netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2, smoothing_window_width = 0)
+```
+-------------------------
+
+# Compare two networks via Netdis and its variants.
+
+## Using netdis with a gold-standard graph to obtain $E_w$.
+The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard (summarized in $E_w$).
+
+```{r,netdisgoldstand,fig.align='center'}
+# Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
+source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+
+# Load query graphs as igraph objects
+graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),format = "ncol")
+graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),format = "ncol")
+
+# Lattice graphs to be used as gold-standard as a reference point comparison
+goldstd_1 <- igraph::graph.lattice(c(8,8)) #Graph with 8^2 nodes
+goldstd_2 <- igraph::graph.lattice(c(44,44)) #Graph with 44^2 nodes
+
+# Netdis using the goldstd_1 graph as gold-standard reference point
+netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_1)
+
+# Netdis using the goldstd_2 graph as gold-standard reference point
+netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_2)
+
+# Providing pre-calculated subgraph counts.
+props_1 <- count_graphlets_ego(graph = graph_1)
+props_2 <- count_graphlets_ego(graph = graph_2)
+props_goldstd_1 <- count_graphlets_ego(graph = goldstd_1)
+props_goldstd_2 <- count_graphlets_ego(graph = goldstd_2)
+
+ netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_1)
+ netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_2)
+```
+
+
+## Netdis-GP: Using a Geometric-Poisson approximation
+
+This variant focuses on detecting more general and global discrepancies between the ego-network structures.
+
+```{r, netdisGP}
+# Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
+source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+
+# Load query graphs as igraph objects
+graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),format = "ncol")
+graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),format = "ncol")
+
+# Netdis using the Geometric-Poisson approximation as a way to obtain background expectations. 
+netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = NULL)
+
+# Providing pre-calculated subgraph counts.
+props_1 <- count_graphlets_ego(graph = graph_1)
+props_2 <- count_graphlets_ego(graph = graph_2)
+
+netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_graph = NULL)
+```
+
+
+## Using Netdis with no expectation ($E_w=0$)
+Comparing the networks via their observed ego counts without centering them, (equivalent to using expectation equal to zero). This variant thus focuses on detecting small discrepancies between the networks.
+
+
+```{r,netdiszero}
+# Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
+source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+
+# Load query graphs as igraph objects
+graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),format = "ncol")
+graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),format = "ncol")
+
+#Netdis using no expectations (or equivalently, expectation equal to zero).
+netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
+
+# Providing pre-calculated subgraph counts.
+props_1 <- count_graphlets_ego(graph = graph_1)
+props_2 <- count_graphlets_ego(graph = graph_2)
+
+netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_graph = 0)  
+```
+
+-------------------------
+
+
+# Bibliography
+
+* W. Ali, T. Rito, G. Reinert, F. Sun, and C. M. Deane. Alignment-free protein interaction network comparison. Bioinformatics, 30:i430–i437, 2014.
+
+* L. Ospina-Forero, C. M. Deane, and G. Reinert. Assessment of model fit via network comparison methods based on subgraph counts. Journal of Complex Networks, page cny017, August 2018.
+
+* A. E. Wegner, L. Ospina-Forero, R. E. Gaunt, C. M. Deane, and G. Reinert. Identifying networks with common organizational principles. Journal of Complex networks, 2017.
+
+* F. Picard, J.-J. Daudin, M. Koskas, S. Schbath, and S. Robin. Assessing the exceptionality of network motifs. Journal of Computational Biology, 15(1):1–20, 2008.
