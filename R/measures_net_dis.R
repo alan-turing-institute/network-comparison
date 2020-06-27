@@ -118,10 +118,10 @@ netdis_one_to_one <- function(graph_1 = NULL,
   
   ## ------------------------------------------------------------------------
   # Check arguments
-  if (is.null(graph_1) & is.null(graphlet_counts_1)) {
+  if (is.null(graph_1) && is.null(graphlet_counts_1)) {
     stop("One of graph_1 and graphlet_counts_1 must be supplied.")
   }
-  if (is.null(graph_2) & is.null(graphlet_counts_2)) {
+  if (is.null(graph_2) && is.null(graphlet_counts_2)) {
     stop("One of graph_2 and graphlet_counts_2 must be supplied.")
   }
   ## ------------------------------------------------------------------------
@@ -158,7 +158,7 @@ netdis_one_to_one <- function(graph_1 = NULL,
   )
   
   if(!is.null(ref_graph)){
-    if (!is.numeric(ref_graph) & is.null(graphlet_counts_ref)) {
+    if (!is.numeric(ref_graph) && is.null(graphlet_counts_ref)) {
       graphlet_counts_ref <- count_graphlets_ego(
         ref_graph,
         max_graphlet_size = max_graphlet_size,
@@ -264,10 +264,10 @@ netdis_one_to_many <- function(graph_1 = NULL,
                                graphlet_counts_compare = NULL) {
   ## ------------------------------------------------------------------------
   # Check arguments
-  if (is.null(graph_1) & is.null(graphlet_counts_1)) {
+  if (is.null(graph_1) && is.null(graphlet_counts_1)) {
     stop("One of graph_1 and graphlet_counts_1 must be supplied.")
   }
-  if (is.null(graphs_compare) & is.null(graphlet_counts_compare)) {
+  if (is.null(graphs_compare) && is.null(graphlet_counts_compare)) {
     stop("One of graph_2 and graphlet_counts_2 must be supplied.")
   }
   
@@ -410,7 +410,7 @@ netdis_many_to_many <- function(graphs = NULL,
   
   ## ------------------------------------------------------------------------
   # Check arguments and set functions appropriately
-  if (is.null(graphs) & is.null(graphlet_counts)) {
+  if (is.null(graphs) && is.null(graphlet_counts)) {
     stop("One of graphs and graphlet_counts must be supplied.")
   }
   
@@ -425,7 +425,7 @@ netdis_many_to_many <- function(graphs = NULL,
     
   # If no ref_graph supplied, default to geometric poisson unless user-defined
   # functions have been provided.
-  if (is.null(ref_graph)) {
+  if (is.null(ref_graph) && is.null(graphlet_counts_ref)) {
     if (is.null(bin_counts_fn)) {
       bin_counts_fn <- density_binned_counts_gp
     }
