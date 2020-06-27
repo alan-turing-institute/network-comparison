@@ -40,24 +40,24 @@
 #' @param binning_fn Function used to bin ego network densities. Takes densities
 #' as its single argument, and returns a named list including keys \code{breaks}
 #' (list of bin edges) and \code{interval_indexes} (density bin index for each
-#' ego network). (Default: \code{binned_densities_adaptive} with
-#' \code{min_counts_per_interval = 5} and \code{num_intervals = 100}).
+#' ego network). If NULL uses \code{binned_densities_adaptive} with
+#' \code{min_counts_per_interval = 5} and \code{num_intervals = 100}
+#' (Default: NULL).
 #'
 #' @param bin_counts_fn Function used to calculate expected graphlet counts in
 #' each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-#' (bin indexes) and \code{max_graphlet_size} as arguments.
-#' (Default: \code{density_binned_counts} with \code{agg_fn = mean} and
-#' \code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
-#' approach used in the original netdis paper).
+#' (bin indexes) and \code{max_graphlet_size} as arguments. If NULL uses the
+#' approach from the original Netdis paper if \code{ref_graph} is not
+#' NULL, or geometric poisson if \code{ref_graph} is NULL (Default: NULL).
 #'
 #' @param exp_counts_fn Function used to map from binned reference counts to
 #' expected counts for each graphlet in each ego network of the query graphs.
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
 #' \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-#' (Default: \code{netdis_expected_counts} with
-#' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
-#' the original netdis paper).
-#'
+#' If NULL uses the approach from the original Netdis paper if \code{ref_graph}
+#' is not NULL, or geometric poisson if \code{ref_graph} is NULL
+#' (Default: NULL).
+#' 
 #' @return Netdis statistics between graph_1 and graph_2 for graphlet sizes
 #' up to and including max_graphlet_size.
 #'
@@ -109,20 +109,9 @@ netdis_one_to_one <- function(graph_1 = NULL,
                               neighbourhood_size = 2,
                               min_ego_nodes = 3,
                               min_ego_edges = 1,
-                              binning_fn = purrr::partial(
-                                binned_densities_adaptive,
-                                min_counts_per_interval = 5,
-                                num_intervals = 100
-                              ),
-                              bin_counts_fn = purrr::partial(
-                                density_binned_counts,
-                                agg_fn = mean,
-                                scale_fn = scale_graphlet_counts_ego
-                              ),
-                              exp_counts_fn = purrr::partial(
-                                netdis_expected_counts,
-                                scale_fn = count_graphlet_tuples
-                              ),
+                              binning_fn = NULL,
+                              bin_counts_fn = NULL,
+                              exp_counts_fn = NULL,
                               graphlet_counts_1 = NULL,
                               graphlet_counts_2 = NULL,
                               graphlet_counts_ref= NULL) {
@@ -203,9 +192,6 @@ netdis_one_to_one <- function(graph_1 = NULL,
 }
 
 
-
-
-
 #' Netdis comparisons between one graph and many other graphs.
 #'
 #' @param graph_1 Query graph - this graph will be compared with
@@ -235,23 +221,23 @@ netdis_one_to_one <- function(graph_1 = NULL,
 #' @param binning_fn Function used to bin ego network densities. Takes densities
 #' as its single argument, and returns a named list including keys \code{breaks}
 #' (list of bin edges) and \code{interval_indexes} (density bin index for each
-#' ego network). (Default: \code{binned_densities_adaptive} with
-#' \code{min_counts_per_interval = 5} and \code{num_intervals = 100}).
+#' ego network). If NULL uses \code{binned_densities_adaptive} with
+#' \code{min_counts_per_interval = 5} and \code{num_intervals = 100}
+#' (Default: NULL).
 #'
 #' @param bin_counts_fn Function used to calculate expected graphlet counts in
 #' each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-#' (bin indexes) and \code{max_graphlet_size} as arguments.
-#' (Default: \code{density_binned_counts} with \code{agg_fn = mean} and
-#' \code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
-#' approach used in the original netdis paper).
+#' (bin indexes) and \code{max_graphlet_size} as arguments. If NULL uses the
+#' approach from the original Netdis paper if \code{ref_graph} is not
+#' NULL, or geometric poisson if \code{ref_graph} is NULL (Default: NULL).
 #'
 #' @param exp_counts_fn Function used to map from binned reference counts to
 #' expected counts for each graphlet in each ego network of the query graphs.
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
 #' \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-#' (Default: \code{netdis_expected_counts} with
-#' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
-#' the original netdis paper).
+#' If NULL uses the approach from the original Netdis paper if \code{ref_graph}
+#' is not NULL, or geometric poisson if \code{ref_graph} is NULL
+#' (Default: NULL).
 #'
 #' @param graphlet_counts_1 Pre-generated graphlet counts for the first query
 #' graph. If the \code{graphlet_counts_1} argument is defined then
@@ -271,20 +257,9 @@ netdis_one_to_many <- function(graph_1 = NULL,
                                neighbourhood_size = 2,
                                min_ego_nodes = 3,
                                min_ego_edges = 1,
-                               binning_fn = purrr::partial(
-                                 binned_densities_adaptive,
-                                 min_counts_per_interval = 5,
-                                 num_intervals = 100
-                               ),
-                               bin_counts_fn = purrr::partial(
-                                 density_binned_counts,
-                                 agg_fn = mean,
-                                 scale_fn = scale_graphlet_counts_ego
-                               ),
-                               exp_counts_fn = purrr::partial(
-                                 netdis_expected_counts,
-                                 scale_fn = count_graphlet_tuples
-                               ),
+                               binning_fn = NULL,
+                               bin_counts_fn = NULL,
+                               exp_counts_fn = NULL,
                                graphlet_counts_1 = NULL,
                                graphlet_counts_compare = NULL) {
   ## ------------------------------------------------------------------------
@@ -398,23 +373,23 @@ netdis_one_to_many <- function(graph_1 = NULL,
 #' @param binning_fn Function used to bin ego network densities. Takes densities
 #' as its single argument, and returns a named list including keys \code{breaks}
 #' (list of bin edges) and \code{interval_indexes} (density bin index for each
-#' ego network). (Default: \code{binned_densities_adaptive} with
-#' \code{min_counts_per_interval = 5} and \code{num_intervals = 100}).
+#' ego network). If NULL uses \code{binned_densities_adaptive} with
+#' \code{min_counts_per_interval = 5} and \code{num_intervals = 100}
+#' (Default: NULL).
 #'
 #' @param bin_counts_fn Function used to calculate expected graphlet counts in
 #' each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-#' (bin indexes) and \code{max_graphlet_size} as arguments.
-#' (Default: \code{density_binned_counts} with \code{agg_fn = mean} and
-#' \code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
-#' approach used in the original netdis paper).
+#' (bin indexes) and \code{max_graphlet_size} as arguments. If NULL uses the
+#' approach from the original Netdis paper if \code{ref_graph} is not
+#' NULL, or geometric poisson if \code{ref_graph} is NULL (Default: NULL).
 #'
 #' @param exp_counts_fn Function used to map from binned reference counts to
 #' expected counts for each graphlet in each ego network of the query graphs.
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
 #' \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-#' (Default: \code{netdis_expected_counts} with
-#' \code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
-#' the original netdis paper).
+#' If NULL uses the approach from the original Netdis paper if \code{ref_graph}
+#' is not NULL, or geometric poisson if \code{ref_graph} is NULL
+#' (Default: NULL).
 #'
 #' @return Netdis statistics between query graphs for graphlet sizes
 #' up to and including max_graphlet_size.
@@ -427,27 +402,55 @@ netdis_many_to_many <- function(graphs = NULL,
                                 neighbourhood_size = 2,
                                 min_ego_nodes = 3,
                                 min_ego_edges = 1,
-                                binning_fn = purrr::partial(
-                                  binned_densities_adaptive,
-                                  min_counts_per_interval = 5,
-                                  num_intervals = 100
-                                ),
-                                bin_counts_fn = purrr::partial(
-                                  density_binned_counts,
-                                  agg_fn = mean,
-                                  scale_fn = scale_graphlet_counts_ego
-                                ),
-                                exp_counts_fn = purrr::partial(
-                                  netdis_expected_counts,
-                                  scale_fn = count_graphlet_tuples
-                                ),
+                                binning_fn = NULL,
+                                bin_counts_fn = NULL,
+                                exp_counts_fn = NULL,
                                 graphlet_counts = NULL,
                                 graphlet_counts_ref = NULL) {
   
   ## ------------------------------------------------------------------------
-  # Check arguments
+  # Check arguments and set functions appropriately
   if (is.null(graphs) & is.null(graphlet_counts)) {
     stop("One of graphs and graphlet_counts must be supplied.")
+  }
+  
+  # Set default binning_fn if none supplied
+  if (is.null(binning_fn)) {
+    binning_fn <- purrr::partial(
+      binned_densities_adaptive,
+      min_counts_per_interval = 5,
+      num_intervals = 100
+    )
+  }
+    
+  # If no ref_graph supplied, default to geometric poisson unless user-defined
+  # functions have been provided.
+  if (is.null(ref_graph)) {
+    if (is.null(bin_counts_fn)) {
+      bin_counts_fn <- density_binned_counts_gp
+    }
+    if (is.null(exp_counts_fn)) {
+      exp_counts_fn <- purrr::partial(
+        netdis_expected_counts,
+        scale_fn = NULL
+      )
+    }  
+  # If a ref_graph value supplied (including a constant), default to approach
+  # from original netdis paper, unless user-defined functions provided.
+  } else {
+    if (is.null(bin_counts_fn)) {
+      bin_counts_fn <- purrr::partial(
+        density_binned_counts,
+        agg_fn = mean,
+        scale_fn = scale_graphlet_counts_ego
+      )
+    }
+    if (is.null(exp_counts_fn)) {
+      exp_counts_fn <- purrr::partial(
+        netdis_expected_counts,
+        scale_fn = count_graphlet_tuples
+      )
+    }  
   }
   
   ## ------------------------------------------------------------------------
@@ -488,7 +491,7 @@ netdis_many_to_many <- function(graphs = NULL,
   } else if (!is.null(ref_graph) | !is.null(graphlet_counts_ref)) {
     
     # Generate ego networks and calculate graphlet counts
-    # But if some ref graphlet counts provided can skip this step
+    # But if graphlet_counts_ref provided can skip this step
     if (is.null(graphlet_counts_ref)) {
       graphlet_counts_ref <- count_graphlets_ego(
         ref_graph,

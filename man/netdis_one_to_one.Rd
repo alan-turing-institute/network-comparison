@@ -12,12 +12,9 @@ netdis_one_to_one(
   neighbourhood_size = 2,
   min_ego_nodes = 3,
   min_ego_edges = 1,
-  binning_fn = purrr::partial(binned_densities_adaptive, min_counts_per_interval = 5,
-    num_intervals = 100),
-  bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean, scale_fn =
-    scale_graphlet_counts_ego),
-  exp_counts_fn = purrr::partial(netdis_expected_counts, scale_fn =
-    count_graphlet_tuples),
+  binning_fn = NULL,
+  bin_counts_fn = NULL,
+  exp_counts_fn = NULL,
   graphlet_counts_1 = NULL,
   graphlet_counts_2 = NULL,
   graphlet_counts_ref = NULL
@@ -49,23 +46,23 @@ than min_ego_edges edges.}
 \item{binning_fn}{Function used to bin ego network densities. Takes densities
 as its single argument, and returns a named list including keys \code{breaks}
 (list of bin edges) and \code{interval_indexes} (density bin index for each
-ego network). (Default: \code{binned_densities_adaptive} with
-\code{min_counts_per_interval = 5} and \code{num_intervals = 100}).}
+ego network). If NULL uses \code{binned_densities_adaptive} with
+\code{min_counts_per_interval = 5} and \code{num_intervals = 100}
+(Default: NULL).}
 
 \item{bin_counts_fn}{Function used to calculate expected graphlet counts in
 each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-(bin indexes) and \code{max_graphlet_size} as arguments.
-(Default: \code{density_binned_counts} with \code{agg_fn = mean} and
-\code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
-approach used in the original netdis paper).}
+(bin indexes) and \code{max_graphlet_size} as arguments. If NULL uses the
+approach from the original Netdis paper if \code{ref_graph} is not
+NULL, or geometric poisson if \code{ref_graph} is NULL (Default: NULL).}
 
 \item{exp_counts_fn}{Function used to map from binned reference counts to
 expected counts for each graphlet in each ego network of the query graphs.
 Takes \code{ego_networks}, \code{density_bin_breaks},
 \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-(Default: \code{netdis_expected_counts} with
-\code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
-the original netdis paper).}
+If NULL uses the approach from the original Netdis paper if \code{ref_graph}
+is not NULL, or geometric poisson if \code{ref_graph} is NULL
+(Default: NULL).}
 
 \item{graphlet_counts_1}{Pre-generated graphlet counts for the first query
 graph. If the \code{graphlet_counts_1} argument is defined then
@@ -110,7 +107,7 @@ netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
  netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_2)
  
  
- #Imputing pre-calculated subgraph counts instead of subgraphs.
+ #Providing pre-calculated subgraph counts.
  
  props_1 <- count_graphlets_ego(graph = graph_1)
  props_2 <- count_graphlets_ego(graph = graph_2)
