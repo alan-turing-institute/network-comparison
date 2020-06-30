@@ -247,6 +247,10 @@ netdis_one_to_one <- function(graph_1 = NULL,
 #' for the remaining query graphs. If the \code{graphlet_counts_compare}
 #' argument is defined then \code{graphs_compare} will not be used.
 #'
+#' @param graphlet_counts_ref Pre-generated reference graphlet counts. If the
+#' \code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
+#' be used.
+#' 
 #' @return Netdis statistics between graph_1 and graph_2 for graphlet sizes
 #' up to and including max_graphlet_size
 #' @export
@@ -261,7 +265,8 @@ netdis_one_to_many <- function(graph_1 = NULL,
                                bin_counts_fn = NULL,
                                exp_counts_fn = NULL,
                                graphlet_counts_1 = NULL,
-                               graphlet_counts_compare = NULL) {
+                               graphlet_counts_compare = NULL,
+                               graphlet_counts_ref= NULL) {
   ## ------------------------------------------------------------------------
   # Check arguments
   if (is.null(graph_1) && is.null(graphlet_counts_1)) {
@@ -304,6 +309,20 @@ netdis_one_to_many <- function(graph_1 = NULL,
                             list(graph_1 = graphlet_counts_1),
                             after = 0
   )
+  
+  if(!is.null(ref_graph)){
+    if (!is.numeric(ref_graph) && is.null(graphlet_counts_ref)) {
+      graphlet_counts_ref <- count_graphlets_ego(
+        ref_graph,
+        max_graphlet_size = max_graphlet_size,
+        neighbourhood_size = neighbourhood_size,
+        min_ego_nodes = min_ego_nodes,
+        min_ego_edges = min_ego_edges,
+        return_ego_networks = FALSE
+      )
+      ref_graph <- NULL
+    }
+  }
   
   ## ------------------------------------------------------------------------
   # calculate netdis
@@ -488,7 +507,7 @@ netdis_many_to_many <- function(graphs = NULL,
     ## ------------------------------------------------------------------------
     # If there are no graphlet_counts_ref, and If a reference graph passed, use it to calculate expected counts for all
     # query graphs.
-  } else if (!is.null(ref_graph) | !is.null(graphlet_counts_ref)) {
+  } else if (!is.null(ref_graph) || !is.null(graphlet_counts_ref)) {
     
     # Generate ego networks and calculate graphlet counts
     # But if graphlet_counts_ref provided can skip this step
