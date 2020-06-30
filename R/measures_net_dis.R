@@ -337,7 +337,8 @@ netdis_one_to_many <- function(graph_1 = NULL,
     binning_fn = binning_fn,
     bin_counts_fn = bin_counts_fn,
     exp_counts_fn = exp_counts_fn,
-    graphlet_counts = graphlet_counts
+    graphlet_counts = graphlet_counts,
+    graphlet_counts_ref = graphlet_counts_ref
   )
   
   ## ------------------------------------------------------------------------

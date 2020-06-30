@@ -16,7 +16,8 @@ netdis_one_to_many(
   bin_counts_fn = NULL,
   exp_counts_fn = NULL,
   graphlet_counts_1 = NULL,
-  graphlet_counts_compare = NULL
+  graphlet_counts_compare = NULL,
+  graphlet_counts_ref = NULL
 )
 }
 \arguments{
@@ -72,6 +73,10 @@ graph. If the \code{graphlet_counts_1} argument is defined then
 \item{graphlet_counts_compare}{Named list of pre-generated graphlet counts
 for the remaining query graphs. If the \code{graphlet_counts_compare}
 argument is defined then \code{graphs_compare} will not be used.}
+
+\item{graphlet_counts_ref}{Pre-generated reference graphlet counts. If the
+\code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
+be used.}
 }
 \value{
 Netdis statistics between graph_1 and graph_2 for graphlet sizes
