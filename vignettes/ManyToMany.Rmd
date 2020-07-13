@@ -70,7 +70,7 @@ netemd_mat
 
 
 Illustration of the multiple NetEmd comparisons based on orbit counts.
-```{r,netemdorbitsPLOT,fig.align='center'}
+```{r,netemdorbitsPLOT,fig.align='center',fig.dim=c(8,8)}
 # Creating matrices to plot the Network comparison
 g_NETEMDcomp <- graph.edgelist(el = as.matrix(netemd_mat$comp_spec[,1:2]),directed = FALSE)
 edge_attr(graph = g_NETEMDcomp,name = "NetEmdOrbits") <- netemd_mat$netemds

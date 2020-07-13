@@ -45,7 +45,7 @@ graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
                              format = "ncol")
 
 # One to one NetEmd comparison.
-netemd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",max_graphlet_size=5)
+netemd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",smoothing_window_width = 1)#Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 
 ## ---- netemdEigen,fig.align='center'------------------------------------------
 #Laplacian
@@ -60,7 +60,7 @@ NLapg_2 <- igraph::laplacian_matrix(graph = graph_2,normalized = TRUE,sparse = F
 props_1 <- cbind(L.Spectra= eigen(Lapg_1)$values, NL.Spectra= eigen(NLapg_1)$values) 
 props_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values) 
 
-netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width = 0)
+netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width = 0)#Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 
 ## ----netdisgoldstand,fig.align='center'---------------------------------------
 # Lattice graphs to be used as gold-standard as a reference point comparison

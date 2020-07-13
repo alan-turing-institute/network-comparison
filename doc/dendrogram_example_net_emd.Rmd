@@ -62,7 +62,7 @@ plot(phangorn::upgma(as.dist(netemd_mat), method="average"), use.edge.length=FAL
      edge.width=cex*2, main=title, cex.lab=cex, cex.axis=cex, cex.main=cex, 
      cex.sub=cex, cex=cex)
 
-# The gdd_for_all_graphs and net_emds_for_all_graphs functions will run in 
+# The gdd_for_all_graphs and netemd_many_to_many functions will run in 
 # parallel using multiple threads where supported. The number of threads
 # used is determined by the global R option "mc.cores". You can inspect the 
 # current value of this using options("mc.cores") and set it with 

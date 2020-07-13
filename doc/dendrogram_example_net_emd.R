@@ -40,7 +40,7 @@ res <- netemd_many_to_many(dhists= virus_gdds, smoothing_window_width = 0)
 # normalised to unit variance
 
 # Convert to matrix for input to dendrogram method
-netemd_mat <- cross_comp_to_matrix(res$net_emds, res$comp_spec)
+netemd_mat <- cross_comp_to_matrix(res$netemds, res$comp_spec)
 netemd_mat
 
 ## -----------------------------------------------------------------------------
