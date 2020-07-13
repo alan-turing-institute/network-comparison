@@ -40,7 +40,7 @@ names(virus_gdds)
 # of unit width (smoothing_window_width = 1). Returns a named list containing:
 # (i) the NetEMDs and (ii) a table containing the graph names and indices 
 # within the input GDD list for each pair of graphs compared.
-res <- netemd_many_to_many(virus_gdds, smoothing_window_width = 0)
+res <- netemd_many_to_many(dhists= virus_gdds, smoothing_window_width = 0)
 
 # You can also specify method = "fixed_step" to use the much slower method of 
 # exhaustively evaluating the EMD at all offsets separated by a fixed step. 

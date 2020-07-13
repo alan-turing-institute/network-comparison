@@ -25,11 +25,6 @@
 #' which  results in no smoothing. Care should be taken to select a
 #' \code{smoothing_window_width} that is appropriate for the discrete domain
 #' (e.g.for the integer domain a width of 1 is the natural choice)
-#' @return NetEMD measure for the two sets of discrete histograms (or graphs). If
-#' (\code{return_details = FALSE}) then a list with the following named elements is returned
-#' \code{net_emd}: the NetEMD for the set of histogram pairs (or graphs), \code{min_emds}:
-#' the minimal EMD for each pair of histograms, \code{min_offsets}: the associated
-#' offsets giving the minimal EMD for each pair of histograms
 #' @param feature_type Type of graphlet-based feature to count: "graphlet"
 #' counts the number of graphlets each node participates in; "orbit" calculates
 #' the number of graphlet orbits each node participates in.
@@ -38,6 +33,11 @@
 #' counted. Possible values are 3,4, and 5 (default).
 #' @param ego_neighbourhood_size The number of steps from the source node to
 #' include nodes for each ego-network. NetEmd was proposed for individual nodes alone, hence the default value is 0.
+#' @return NetEMD measure for the two sets of discrete histograms (or graphs). If
+#' (\code{return_details = FALSE}) then a list with the following named elements is returned
+#' \code{net_emd}: the NetEMD for the set of histogram pairs (or graphs), \code{min_emds}:
+#' the minimal EMD for each pair of histograms, \code{min_offsets}: the associated
+#' offsets giving the minimal EMD for each pair of histograms
 #' @examples
 #'  require(igraph)
 #'  goldstd_1 <- graph.lattice(c(8,8)) 
@@ -177,8 +177,7 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
 #' matrices for each graph pair: \code{min_emds}: the minimal EMD for each GDD
 #' used to compute the NetEMD, \code{min_offsets}: the associated offsets giving
 #' the minimal EMD for each GDD
-#' @export 
-#' 
+#' @export
 netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smoothing_window_width = 0,
                                     return_details = FALSE, mc.cores = getOption("mc.cores", 2L),feature_type="orbit",max_graphlet_size = 5,ego_neighbourhood_size = 0) {
   if(max_graphlet_size > 4 & mc.cores > 1) print(paste("This function will compute orbits of graphlets up to size 5 using ", mc.cores," cores. Depending on the density and size of the graphs, this may lead to a large compsumption of RAM."))
@@ -202,8 +201,12 @@ netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smo
     which_imput_type <- "Graphs"
   }
   if (!is.null(dhists) ) {
-    if (all(( unlist(sapply(X = dhists, FUN = is.matrix)) ) )  ) { which_imput_type <- "dhist" }
-    if (all(( unlist(sapply(X = dhists, FUN = is.matrix)) ) )  ) { which_imput_type <- "Matrix" }
+    if (all(( unlist(sapply(X = dhists, FUN = is.matrix)) ) )  ) {which_imput_type <- "Matrix"} 
+    if (all(( unlist(sapply(X = dhists, FUN = 
+                            function(l){ all(( unlist(sapply(X = l, FUN = is_dhist)) ) ) }
+    )) ) )  ) {which_imput_type <- "dhist"} else {
+        warning("dhists does not conform to a Matrix or dhist class for all elmenents/netwroks in the list.")
+      }
   }
   ## ------------------------------------------------------------------------
   # Check arguments 2
@@ -249,7 +252,6 @@ netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smo
     ret <- list(netemds = net_emds, comp_spec = comp_spec)
   }
 }
-
 
 #' Internal function to compute the minimum Earth Mover's Distance between standarized and translated histograms
 #'
