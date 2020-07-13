@@ -21,6 +21,7 @@ Imports:
     lpSolve,
     plyr,
     dplyr,
+    pheatmap,
     Rcpp
 Suggests:
     testthat,
