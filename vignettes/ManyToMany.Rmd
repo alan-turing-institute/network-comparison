@@ -1,10 +1,10 @@
 ---
-title: 'Default, simple and quick use usage 3: many to many comparions'
+title: 'Default, simple and quick use usage 3: many to many comparisons'
 author: "Luis Ospina-Forero"
 date: "23/06/2020"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{PreComputedProps}
+  %\VignetteIndexEntry{ManyToManyComp}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

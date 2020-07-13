@@ -251,6 +251,7 @@ netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smo
     net_emds <- out
     ret <- list(netemds = net_emds, comp_spec = comp_spec)
   }
+  return(ret)
 }
 
 #' Internal function to compute the minimum Earth Mover's Distance between standarized and translated histograms

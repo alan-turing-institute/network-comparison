@@ -144,10 +144,10 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   offset_lists <- replicate(num_hists, offsets, simplify = FALSE)
 
   netemd_offset_self <- function(dhist, offsets, method) {
-    net_emds <- purrr::map_dbl(offsets, function(offset) {
+    netemds <- purrr::map_dbl(offsets, function(offset) {
       netemd_one_to_one(dhists_1 = dhist, dhists_2 = shift_dhist(dhist, offset), method = method)
     })
-    return(net_emds)
+    return(netemds)
   }
 
   expected <- 0
@@ -402,7 +402,7 @@ test_that("netemd_many_to_many works", {
   # individually and combine into expected output for code under test
   expected_netemd_fn <- function(gdds) {
     list(
-      net_emds = c(
+      netemds = c(
         netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 =  gdds$ECL), netemd_one_to_one(dhists_1 =gdds$EBV, dhists_2 = gdds$HSV),
         netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$KSHV), netemd_one_to_one(dhists_1 =gdds$EBV, dhists_2 = gdds$VZV),
         netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$HSV), netemd_one_to_one(dhists_1 =gdds$ECL, dhists_2 = gdds$KSHV),
