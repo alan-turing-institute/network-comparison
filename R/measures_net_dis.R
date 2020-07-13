@@ -490,7 +490,7 @@ netdis_many_to_many <- function(graphs = NULL,
   rm(graphs)
   
   ## ------------------------------------------------------------------------
-  # Centre counts
+  # Centred counts
   # If there are no graphlet_counts_ref, and a number has been passed as ref_graph, treat it as a constant expected
   # counts value (e.g. if ref_graph = 0 then no centring of counts).
   if (is.numeric(ref_graph) && length(ref_graph) == 1 && is.null(graphlet_counts_ref)) {

@@ -355,7 +355,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
 })
 
 context("Measures NetEMD: All graphs in directory")
-test_that("net_emds_for_all_graphs works", {
+test_that("netemd_many_to_many works", {
   # Set source directory and file properties for Virus PPI graph edge files
   source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
   edge_format <- "ncol"
@@ -415,7 +415,7 @@ test_that("net_emds_for_all_graphs works", {
 
   # Comparison function for clarity
   compare_fn <- function(gdds) {
-    expect_equal(net_emds_for_all_graphs(gdds), expected_netemd_fn(gdds))
+    expect_equal(netemd_many_to_many(dhists=gdds), expected_netemd_fn(gdds))
   }
 
   # Map over test parameters, comparing actual gdds to expected

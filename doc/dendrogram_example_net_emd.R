@@ -29,7 +29,7 @@ names(virus_gdds)
 # of unit width (smoothing_window_width = 1). Returns a named list containing:
 # (i) the NetEMDs and (ii) a table containing the graph names and indices 
 # within the input GDD list for each pair of graphs compared.
-res <- net_emds_for_all_graphs(virus_gdds, smoothing_window_width = 0)
+res <- netemd_many_to_many(dhists= virus_gdds, smoothing_window_width = 0)
 
 # You can also specify method = "fixed_step" to use the much slower method of 
 # exhaustively evaluating the EMD at all offsets separated by a fixed step. 
@@ -50,7 +50,7 @@ plot(phangorn::upgma(as.dist(netemd_mat), method="average"), use.edge.length=FAL
      edge.width=cex*2, main=title, cex.lab=cex, cex.axis=cex, cex.main=cex, 
      cex.sub=cex, cex=cex)
 
-# The gdd_for_all_graphs and net_emds_for_all_graphs functions will run in 
+# The gdd_for_all_graphs and netemd_many_to_many functions will run in 
 # parallel using multiple threads where supported. The number of threads
 # used is determined by the global R option "mc.cores". You can inspect the 
 # current value of this using options("mc.cores") and set it with 

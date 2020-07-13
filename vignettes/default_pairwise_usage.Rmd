@@ -7,7 +7,7 @@ vignette: >
   %\VignetteIndexEntry{default_pairwise_usage}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  ---
+---
   
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -59,7 +59,7 @@ plot(graph_2,vertex.size=0.5,vertex.label=NA)
 
 ## What is NetEmd?
 (Extracted from Wegner et al. (2017)):
-NetEmd is based on  the idea that the information encapsulated in the shape of the degree distribution and other network properties reflects the topological organization of the network. From an abstract point of view NetEmd views the shape of a distribution as a property that is invariant under linear deformations i.e$.$ translations and re-scalings of the axis.
+NetEmd is based on  the idea that the information encapsulated in the shape of the degree distribution and other network properties which reflect the topological organization of the network. From an abstract point of view, NetEmd views the shape of a distribution as a property that is invariant under linear deformations i.e$.$ translations and re-scalings of the axis.
 
 Based on these NetEmd uses the following measure between distributions $p$ and $q$ that are supported on $\mathbb{R}$ and have non-zero, finite variances:
 \begin{equation}\label{emdmet}
@@ -93,7 +93,7 @@ graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
                              format = "ncol")
 
 # One to one NetEmd comparison.
-netemd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",max_graphlet_size=5)
+netemd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",smoothing_window_width = 1)#Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 ```
 
 ## Comparing two graphs with NetEmd via their Laplacian spectrum.
@@ -110,14 +110,14 @@ NLapg_2 <- igraph::laplacian_matrix(graph = graph_2,normalized = TRUE,sparse = F
 props_1 <- cbind(L.Spectra= eigen(Lapg_1)$values, NL.Spectra= eigen(NLapg_1)$values) 
 props_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values) 
 
-netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width = 0)
+netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width = 0)#Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 ```
 -------------------------
 
 # Compare two networks via Netdis and its variants.
 
 ## What is Netdis?
-(Extracted from Ali et al. (2014)): Netdis counts small subgraphs  $w$ on $k$ nodes for all 2-step ego-networks, $k=3,4,5$. These counts are centred by subtracting the expected number of counts $E_w$. The centred counts between the networks are compared to form the Netdis statistic.
+(Extracted from Ali et al. (2014)): Netdis counts small subgraphs  $w$ on $k$ nodes for all 2-step ego-networks, $k=3,4,5$. These counts are centred by subtracting the expected number of counts $E_w$. These centred counts of each network are then compared thus leading to the Netdis statistic.
 
 Netdis is constructed as follows:
 

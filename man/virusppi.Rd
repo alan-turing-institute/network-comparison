@@ -5,9 +5,7 @@
 \name{virusppi}
 \alias{virusppi}
 \title{Protein-protein interaction (PPI) networks for 5 microorganisms}
-\format{
-A list of \code{igraph} objects.
-}
+\format{A list of \code{igraph} objects.}
 \source{
 \strong{PPI data (EBV, HSV-1, KSHV, VZV):} Fossum E, Friedel CC, Rajagopala SV, Titz B, Baiker A, Schmidt T, et al. (2009) Evolutionarily Conserved Herpesviral Protein Interaction Networks. PLoS Pathog 5(9): e1000570. \url{https://doi.org/10.1371/journal.ppat.1000570}. Data from Table S2 in the supporting information.
 

@@ -30,6 +30,6 @@ List of graphlet-based degree distributions, with each distribution
 represented as a \code{dhist} discrete histogram object.
 }
 \description{
-Generates graphlet-based degree distributions from \code{igraph} graph object
+Short-cut function to create graphlet-based degree distributions from \code{igraph} graph object
 using the ORCA fast graphlet orbit counting package.
 }

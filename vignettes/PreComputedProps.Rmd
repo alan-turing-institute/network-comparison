@@ -34,28 +34,28 @@ library("igraph")
 ## Comparing two graphs with NetEmd via subgraph counts.
 ```{r, netemd,fig.align='center'}
 # Create lattice networks
-gLat_1 <- graph.lattice(c(8,8)) 
+gLat_1 <- graph.lattice(c(20,20)) 
 gLat_2 <- graph.lattice(c(44,44))  
 
-netemd_one_to_one(graph_1=gLat_1,graph_2=gLat_2,feature_type="orbit",max_graphlet_size=5)
+netemd_one_to_one(graph_1=gLat_1,graph_2=gLat_2,feature_type="orbit",smoothing_window_width = 1)
 
 #Providing a matrix of network features
 counts_1= count_orbits_per_node(graph = gLat_1,max_graphlet_size = 5)
 counts_2= count_orbits_per_node(graph = gLat_2,max_graphlet_size = 5)
 
-netemd_one_to_one(dhists_1=counts_1, dhists_2=counts_2)
+netemd_one_to_one(dhists_1=counts_1, dhists_2=counts_2,smoothing_window_width = 1)
 
 #Providing the network features as lists of dhist objects
 dhists_1<- graph_features_to_histograms(counts_1)
 dhists_2<- graph_features_to_histograms(counts_2)
 
-netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2)
+netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2,smoothing_window_width = 1)
 ```
 
 ## Comparing two graphs with NetEmd via their Laplacian spectrum.
 ```{r, netemdEigen,fig.align='center'}
 # Networks
-gLat_1 <- graph.lattice(c(8,8)) 
+gLat_1 <- graph.lattice(c(20,20)) 
 gLat_2 <- graph.lattice(c(44,44))  
 
 #Laplacian
@@ -95,7 +95,7 @@ graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),format = "ncol")
 graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),format = "ncol")
 
 # Lattice graphs to be used as gold-standard as a reference point comparison
-goldstd_1 <- igraph::graph.lattice(c(8,8)) #Graph with 8^2 nodes
+goldstd_1 <- igraph::graph.lattice(c(20,20)) #Graph with 8^2 nodes
 goldstd_2 <- igraph::graph.lattice(c(44,44)) #Graph with 44^2 nodes
 
 # Netdis using the goldstd_1 graph as gold-standard reference point

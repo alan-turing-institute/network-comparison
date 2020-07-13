@@ -228,7 +228,7 @@ graph_features_to_histogramsSLOW <- function(features_matrix) {
 
 #' Graphlet-based degree distributions (GDDs)
 #'
-#' Generates graphlet-based degree distributions from \code{igraph} graph object
+#' Short-cut function to create graphlet-based degree distributions from \code{igraph} graph object
 #' using the ORCA fast graphlet orbit counting package.
 #' @param graph A connected, undirected, simple graph as an \code{igraph} object
 #' @param feature_type Type of graphlet-based feature to count: "graphlet"

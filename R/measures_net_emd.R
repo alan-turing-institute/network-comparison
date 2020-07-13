@@ -139,26 +139,10 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #' NetEMDs between all graph pairs using provided Graphlet-based Degree
 #' Distributions
-#' @param gdds List containing sets of Graphlet-based Degree Distributions for
-#' all graphs being compared
+#' @param graphs A list of network/graph objects from the \code{igraph} package. \code{graphs} can be set to \code{NULL} (default) if dhists is provided.
+#' @param dhists A list whose elements contain either: A  list of \code{dhist} discrete histogram objects for each graph, or a list  a matrix of network features (each column representing a feature). \code{dhists} can be set to \code{NULL} (default) if \code{graphs} is provided.
 #' @param method The method to use to find the minimum EMD across all potential
 #' offsets for each pair of histograms. Default is "optimise" to use
 #' R's built-in \code{stats::optimise} method to efficiently find the offset
@@ -175,6 +159,14 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
 #' (e.g.for the integer domain a width of 1 is the natural choice)
 #' @param  mc.cores Number of cores to use for parallel processing. Defaults to
 #' the \code{mc.cores} option set in the R environment.
+#' @param feature_type Type of graphlet-based feature to count: "graphlet"
+#' counts the number of graphlets each node participates in; "orbit" calculates
+#' the number of graphlet orbits each node participates in.
+#' @param max_graphlet_size Determines the maximum size of graphlets to count.
+#' Only graphlets containing up to \code{max_graphlet_size} nodes will be
+#' counted. Possible values are 3,4, and 5 (default).
+#' @param ego_neighbourhood_size The number of steps from the source node to
+#' include nodes for each ego-network. NetEmd was proposed for individual nodes alone, hence the default value is 0.
 #' @return NetEMD measures between all pairs of graphs for which GDDs
 #' were provided. Format of returned data depends on the \code{return_details}
 #' parameter. If set to FALSE, a list is returned with the following named
@@ -185,11 +177,12 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
 #' matrices for each graph pair: \code{min_emds}: the minimal EMD for each GDD
 #' used to compute the NetEMD, \code{min_offsets}: the associated offsets giving
 #' the minimal EMD for each GDD
-#' @export
-net_emds_for_all_graphs <- function(
-                                    gdds, method = "optimise", smoothing_window_width = 0,
-                                    return_details = FALSE, mc.cores = getOption("mc.cores", 2L)) {
-  comp_spec <- cross_comparison_spec(gdds)
+#' @export 
+#' 
+netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smoothing_window_width = 0,
+                                    return_details = FALSE, mc.cores = getOption("mc.cores", 2L),feature_type="orbit",max_graphlet_size = 5,ego_neighbourhood_size = 0) {
+  if(max_graphlet_size > 4 & mc.cores > 1) print(paste("This function will compute orbits of graphlets up to size 5 using ", mc.cores," cores. Depending on the density and size of the graphs, this may lead to a large compsumption of RAM."))
+  
   # NOTE: mcapply only works on unix-like systems with system level forking
   # capability. This means it will work on Linux and OSX, but not Windows.
   # For now, we just revert to single threaded operation on Windows
@@ -199,9 +192,45 @@ net_emds_for_all_graphs <- function(
     # forking
     mc.cores <- 1
   }
-  num_features <- length(gdds[[1]])
+  ## ------------------------------------------------------------------------
+  # Check arguments 1
+  which_imput_type <- NULL
+  if(!is.null(graphs) & is.null(dhists)){
+    if ( !all(( unlist(sapply(X = graphs, FUN = igraph::is.igraph)) ) )  ) {
+      stop("Graphs need to be igraph graph objects, or a list of dhists network features should be supplied.")
+    }
+    which_imput_type <- "Graphs"
+  }
+  if (!is.null(dhists) ) {
+    if (all(( unlist(sapply(X = dhists, FUN = is.matrix)) ) )  ) { which_imput_type <- "dhist" }
+    if (all(( unlist(sapply(X = dhists, FUN = is.matrix)) ) )  ) { which_imput_type <- "Matrix" }
+  }
+  ## ------------------------------------------------------------------------
+  # Check arguments 2
+  # If dhists is a list of matrices of network features then transform them to dhist objects.
+  if(which_imput_type == "Matrix"){
+    dhists <- sapply(X = dhists,FUN = graph_features_to_histograms, simplify = FALSE )
+  }
+  ## ------------------------------------------------------------------------
+  # Check arguments 3
+  #If input is graph then get graphlet counts
+  if(which_imput_type == "Graphs"){
+    dhists <- parallel::mcmapply(gdd, graphs,
+                       MoreArgs =
+                         list(
+                           feature_type = feature_type,
+                           max_graphlet_size = max_graphlet_size,
+                           ego_neighbourhood_size = ego_neighbourhood_size
+                         ),
+                       SIMPLIFY = FALSE, mc.cores = mc.cores
+    )
+  }
+  rm(graphs)
+  ## ------------------------------------------------------------------------
+  comp_spec <- cross_comparison_spec(dhists)
+  num_features <- length(dhists[[1]])
   out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {
-    netemd_one_to_one(dhists_1 =  gdds[[index_a]], dhists_2 =  gdds[[index_b]],
+    netemd_one_to_one(dhists_1 =  dhists[[index_a]], dhists_2 =  dhists[[index_b]],
       method = method, return_details = return_details,
       smoothing_window_width = smoothing_window_width
     )
@@ -214,10 +243,10 @@ net_emds_for_all_graphs <- function(
     colnames(min_offsets) <- purrr::simplify(purrr::map(1:num_features, ~ paste("MinOffsets_O", . - 1, sep = "")))
     min_offsets_std <- matrix(purrr::simplify(purrr::map(out, ~ .$min_offsets_std)), ncol = num_features, byrow = TRUE)
     colnames(min_offsets_std) <- purrr::simplify(purrr::map(1:num_features, ~ paste("MinOffsetsStd_O", . - 1, sep = "")))
-    ret <- list(net_emds = net_emds, comp_spec = comp_spec, min_emds = min_emds, min_offsets = min_offsets, min_offsets_std = min_offsets_std)
+    ret <- list(netemds = net_emds, comp_spec = comp_spec, min_emds = min_emds, min_offsets = min_offsets, min_offsets_std = min_offsets_std)
   } else {
     net_emds <- out
-    ret <- list(net_emds = net_emds, comp_spec = comp_spec)
+    ret <- list(netemds = net_emds, comp_spec = comp_spec)
   }
 }
 
