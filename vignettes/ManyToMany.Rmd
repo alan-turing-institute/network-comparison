@@ -85,7 +85,7 @@ pheatmap::pheatmap(mat = as.dist(mat),cluster_rows = TRUE,cluster_cols = TRUE,cl
 ```
 
 ## NetEmd using the Laplacian and Normalized Laplacian Spectrum.
-```{r, netemdspectrum,fig.align='center'}
+```{r, netemdspectrum}
 # NetEMD using the Laplacian and normalized Laplacian Spectrum.
 SPECT<-list()
 #this step may take several minutes.
@@ -102,7 +102,7 @@ netemd_mat
 
 
 Illustration of the multiple NetEmd comparisons based on the Laplacian and Normalized Laplacian spectra.
-```{r,netemdspectrumPLOT,fig.align='center'}
+```{r,netemdspectrumPLOT ,fig.align='center',fig.dim=c(8,8)}
 # Creating matrices to plot the Network comparison
 g_NETEMDcomp <- graph.edgelist(el = as.matrix(netemd_mat$comp_spec[,1:2]),directed = FALSE)
 edge_attr(graph = g_NETEMDcomp,name = "NetEmdOrbits") <- netemd_mat$netemds
@@ -129,7 +129,7 @@ The selection of a gold-standard graph as a substitute for a theoretical $E_w$ c
 # Netdis using reference or goldstandard networks.
 
 Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 nodes. Reference graphs given by start-like graphs are used as illustration of reference graphs. The plots of these networks illustrate clearly their structural differences.
-```{r,netdisgoldstandnetworks,fig.align='center'}
+```{r,netdisgoldstandnetworks ,fig.align='center'}
 # Create lattice, Ring and Tree like networks of sizes 20^2 and 40^2.
 # Create networks
 set.seed(3171)
@@ -149,7 +149,7 @@ plot(gst_1,vertex.size=0.8,vertex.label=NA)
 
 
 Obtain the comparison via Netdis using each of the reference graph networks.
-```{r,netdisgoldstand,fig.align='center'}
+```{r,netdisgoldstand ,fig.align='center'}
 # Netdis using the goldstd_1 graph as gold-standard reference point
 glist <- list(Lat_1=gLat_1, Lat_2=gLat_2, Ring_1=gRing_1, Ring_2=gRing_1, Tree_1=gTree_1, Tree_2=gTree_2)
 
@@ -162,7 +162,7 @@ netdis_mat_gst2
 ```
 
 
-```{r,netdisgoldstandPLOT,fig.align='center'}
+```{r,netdisgoldstandPLOT ,fig.align='center',fig.dim=c(8,8)}
 # Creating matrices to plot the Network comparison with Gold-Standard 1 
 g_NETDIScomp_1 <- graph.edgelist(el = as.matrix(netdis_mat_gst1$comp_spec[,1:2]),directed = FALSE)
 edge_attr(graph = g_NETDIScomp_1,name = "Netdis4") <- netdis_mat_gst1$netdis[2,]
@@ -199,7 +199,7 @@ netdis_mat <- netdis_many_to_many(graphs = glist, ref_graph = NULL)
 netdis_mat
 ```
 
-```{r,netdisGPPLOT,fig.align='center'}
+```{r,netdisGPPLOT ,fig.align='center',fig.dim=c(8,8)}
 # Creating matrices to plot the Network comparison with Gold-Standard 1 
 g_NETDIScomp_GP <- graph.edgelist(el = as.matrix(netdis_mat$comp_spec[,1:2]),directed = FALSE)
 edge_attr(graph = g_NETDIScomp_GP,name = "Netdis4") <- netdis_mat$netdis[2,]
@@ -224,7 +224,7 @@ netdis_mat <- netdis_many_to_many(graphs = glist, ref_graph = 0)
 netdis_mat
 ```
 
-```{r,netdiszeroPLOT,fig.align='center'}
+```{r,netdiszeroPLOT ,fig.align='center',fig.dim=c(8,8)}
 # Creating matrices to plot the Network comparison with Gold-Standard 1 
 g_NETDIScomp_zero <- graph.edgelist(el = as.matrix(netdis_mat$comp_spec[,1:2]),directed = FALSE)
 edge_attr(graph = g_NETDIScomp_zero,name = "Netdis4") <- netdis_mat$netdis[2,]
