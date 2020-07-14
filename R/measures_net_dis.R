@@ -175,10 +175,10 @@ netdis_one_to_one <- function(graph_1 = NULL,
   result <- netdis_many_to_many(
     graphs = NULL,
     ref_graph = ref_graph,
-    max_graphlet_size = 4,
-    neighbourhood_size = 2,
-    min_ego_nodes = 3,
-    min_ego_edges = 1,
+    max_graphlet_size = max_graphlet_size,
+    neighbourhood_size = neighbourhood_size,
+    min_ego_nodes = min_ego_nodes,
+    min_ego_edges = min_ego_edges,
     binning_fn = binning_fn,
     bin_counts_fn = bin_counts_fn,
     exp_counts_fn = exp_counts_fn,
@@ -434,6 +434,7 @@ netdis_many_to_many <- function(graphs = NULL,
     stop("One of graphs and graphlet_counts must be supplied.")
   }
   
+  
   # Set default binning_fn if none supplied
   if (is.null(binning_fn)) {
     binning_fn <- purrr::partial(
@@ -553,7 +554,7 @@ netdis_many_to_many <- function(graphs = NULL,
     
     ## ------------------------------------------------------------------------
     # If no reference passed, calculate expected counts using query networks
-    # themselves. Geometric-Poisson GP SHOULD BE THE DEFALUT
+    # themselves. Geometric-Poisson GP #This is the function that creates an error for a graph with three connected nodes.
   } else {
     centred_graphlet_counts <- purrr::map(
       graphlet_counts,
@@ -742,14 +743,14 @@ netdis_centred_graphlet_counts <- function(
     
     ## ------------------------------------------------------------------------
     # If NULL passed as ref bins and counts, calculate expected counts using
-    # query network itself.
+    # query network itself. This should be GP.
   } else if (is.null(ref_ego_density_bins) &&
              is.null(ref_binned_graphlet_counts)) {
     # Get ego-network densities
     densities <- ego_network_density(graphlet_counts)
     
     # bin ref ego-network densities
-    binned_densities <- binning_fn(densities)
+     binned_densities <- binning_fn(densities)
     
     # extract bin breaks and indexes from binning results
     ego_density_bin_breaks <- binned_densities$breaks
