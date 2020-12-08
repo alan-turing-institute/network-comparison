@@ -1,5 +1,5 @@
 ---
-title: "Default, simple and quick use usage 1: pairwise comparisons"
+title: "Simple and quick (default) usage 1: pairwise comparisons"
 date: "`10-06-2020`"
 author: "Luis Ospina-Forero"
 output: rmarkdown::html_vignette

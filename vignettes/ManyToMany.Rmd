@@ -1,5 +1,5 @@
 ---
-title: 'Default, simple and quick use usage 3: many to many comparisons'
+title: 'Simple and quick (default) usage 3: many to many comparisons'
 author: "Luis Ospina-Forero"
 date: "23/06/2020"
 output: rmarkdown::html_vignette
@@ -18,13 +18,13 @@ editor_options:
   )
 ```
   
-  # Introduction
+# Introduction
   
   In some situations there is a need to compare multiple graphs among each other. For such situations, the `netdist` package contains some initial shortcut functions that perform such calculation and may automatically (Unix) incorporate parallel processing.
   
-  This vignette does not show details about the Netdis and NetEmd network comparison methods or their variants, please check ["Default, simple and quick use usage 1: pairwise comparisons"](default_pairwise_usage.html) for these details. Instead, this vignette  shows the default usage of the shortcut functions for many-to-many comparisons.
+  This vignette does not show details about the Netdis and NetEmd network comparison methods or their variants, please check ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html) for these details. Instead, this vignette  shows the default usage of the shortcut functions for many-to-many comparisons.
   
-  Please note that for high performance computation, this shortcut functions may or may not be ideal, particualry in terms of RAM consumption.
+  Please note that for high performance computation, this shortcut functions may or may not be ideal, particularly in terms of RAM consumption.
   
 # Load required packages/libraries
 ```{r, packages, message= FALSE}
@@ -79,7 +79,7 @@ vnames <- rownames(mat)
 mat
 
 #Network comparisons heatmap with Gold-Standard 1 
-legend1 <- c(seq(min(mat),max(mat),length.out = 5))
+legend1 <- seq(min(mat),max(mat),length.out = 5)
 levels1 <- round(legend1,digits = 2); levels1[length(levels1)]="NetEmd"
 pheatmap::pheatmap(mat = as.dist(mat),cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D",angle_col=45,main = "NetEmd Orbit  Counts",labels_row = vnames,labels_col = vnames,display_numbers = TRUE,legend_breaks = legend1,legend_labels = levels1)
 ```
@@ -141,7 +141,7 @@ gTree_1 <- igraph::as.undirected( make_tree(n = 20^2,children = 3) )
 gTree_2 <- igraph::as.undirected( make_tree(n = 40^2,children = 3) )
 
 # Create a random graph to be used as a gold-standard
-gst_1 <- graph.star(20^2,)
+gst_1 <- graph.star(20^2)
 gst_2 <- graph.star(40^2)
 
 plot(gst_1,vertex.size=0.8,vertex.label=NA)

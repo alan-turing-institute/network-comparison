@@ -1,5 +1,5 @@
 ---
-title: "Default, simple and quick use usage 2: precomputed properties"
+title: "Simple and quick (default) usage 2: precomputed properties"
 author: "Luis Ospina-Forero"
 date: "23/06/2020"
 output: rmarkdown::html_vignette
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 In many situations there may be a need to pursue the network comparisons from pre-computed counts. This decreases the computational time to obtain the results, particularly when the same networks are involved in multiple comparisons or when the same properties are used in other procedures. Also, performing the comparisons from pre-computed properties allows greater flexibility in the use of the network comparison methods and their variants.
 
-This Vignette follows similar examples as ["Default, simple and quick use usage 1: pairwise comparisons"](default_pairwise_usage.html) but shows the modifications required to obtain properties and to then use them in the network comparison methods.
+This Vignette follows similar examples as ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html) but shows the modifications required to obtain properties and to then use them in the network comparison methods.
 
 # Load required packages/libraries
 ```{r, packages, message= FALSE}
