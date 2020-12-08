@@ -1,5 +1,5 @@
 ---
-title: "Netdis: step by step"
+title: "Netdis-GP: step by step"
 author: "Martin O'Reilly, Jack Roberts, Luis Ospina-Forero"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -20,14 +20,29 @@ chunk_output_type: console
 ```
 
 # Introduction
-This Vignette explains some inner calculations of Netdis, which the user doesn't need to go through, however we explain them here for the users that may want to use Netdis in a Modular fashion.
 
-For a simple Netdis function call see instead ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html).
+This Vignette explains some inner calculations of Netdis-GP, which the user does not need to go through, however we explain them here for the users that may want to use Netdis-GP in a Modular fashion. Netdis-GP is a version of Netdis that uses the Polya-Aeppli/Geometric-Poisson approximation for graphlet count expectations. 
+
+For a simple Netdis-GP function call see instead ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html).
 
 # What is Netdis?
 (Extracted from Ali et al. (2014)): Netdis counts small subgraphs  $w$ on $k$ nodes for all 2-step ego-networks, $k=3,4,5$. These counts are centred by subtracting the expected number of counts $E_w$. These centred counts of each network are then compared thus leading to the Netdis statistic.
 
-The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard (summarized in $E_w$).
+(Extracted from Ospina-Forero et al. (2018)): Instead of considering an approximation based on an observed gold-standard network whose selection may be difficult, $E_w$ is computed independently for each graph based on a Geometric-Poisson (GP) approximation for the distribution of the number of occurrences of subgraph $w$. It assumes that $N_{w,i} \sim GP(\lambda^{\rho(i)}_k, \theta^{\rho(i)}_w)$, where $\lambda^{\rho(i)}_k$ is the Poisson parameter indexed by the size of subgraph $w$ and the density bin $\rho(i)$; and where $\theta^{\rho(i)}_w$ is the geometric parameter indexed by subgraph $w$ and density bin $\rho(i)$. $E_w(G, \rho(i))$ is taken as the mean of the GP approximation, i.e. $\lambda^{\rho(i)}_k/\theta^{\rho(i)}_w$.
+
+As $\lambda^{\rho(i)}_k$ and $\theta^{\rho(i)}_w$ are not known, they are estimated as follows:
+Let $x_{w,d}^j$ be the number of subgraphs $w$ on the 2-step ego-network $j$ of density bin $d$, and let
+\[
+\bar{X}_{w,d}=\frac{1}{q} \sum_{j=1}^q x_{w,d}^j, \qquad V^2_{w,d}=\frac{1}{q-1} \sum_{j=1}^q (x_{w,d}^j - \bar{X}_{w,d})^2
+,
+\]
+where $q$ is the number of ego-networks in density bin $d$. Then,
+\[
+\hat{\lambda}^{d}_{k}= \frac{1}{l} \sum_{h \in A(k)} \frac{2 (\bar{X}_{h,d})^2}{V^2_{h,d}+\bar{X}_{h,d}} , \qquad \hat{\theta}^{d}_w= \frac{2\bar{X}_{w,d}}{V^2_{w,d}+\bar{X}_{w,d}},
+\]
+where $l$ is the number of connected subgraphs of size $k$, for example, $l=6$ for $k=4$. These estimators are based on the moment estimators of a GP random variable and the proposal made by (Picard et al.(2008)), where  the total count of each individual subgraph could be thought as the sum of the total subgraph counts over multiple ``clumps'' of edges that appear across the network.
+
+This variant focuses on detecting more general and global discrepancies between the ego-network structures.
 
 
 ## Netdis is constructed as follows:
@@ -57,6 +72,7 @@ M(k)  = \sum\limits_{w \in A(k)}
 The corresponding Netdis statistic is defined as
 $$Netdis(k)=netd_2^S(k)=\tfrac{1}{2}(1-netD_2^S(k)) \in [0,1].$$
 Small values of Netdis suggest higher `similarity' between the networks. By default Netdis uses subgraphs on $k=4$ nodes.
+
 
 
 # Load required libraries
@@ -118,7 +134,7 @@ head(ego_1,n=2)
 head(ego_2,n=2)
 ```
 
-## Count the number of nodes and the graphlets in ego networks
+## Count the number of nodes and the graphlets in the ego-networks of each graph ($N_w$)
 ```{r}
 # Count graphlets for ego networks in query and reference graphs
 graphlet_counts_1 <- ego_to_graphlet_counts(ego_networks = ego_1, max_graphlet_size = max_graphlet_size)
@@ -128,76 +144,54 @@ head(graphlet_counts_1)
 head(graphlet_counts_2)
 ```
 
-## Calculate expected graphlet counts in each bin.
 
-Variants of Netdis that the user can consider: 
-
-* Expectation via a gold-standard network (Original proposal).
-* Expectation via the Geometric Poisson / Polya-Aeppli approximation.
-* No expectation or Expectation zero.
-
-### Expectation via a gold-standard network
-For this case the user must provide the gold-standard network of their choosing. This network will be used as a comparison reference point by Netdis.
-
-```{r,fig.align='center'}
-# A gold-standard network
-gst_1 <- erdos.renyi.game(n = 30^2,p.or.m = graph.density(graph = gTree_2))
-plot(gst_1,vertex.size=0.8,vertex.label=NA)
-```
-
-### Obtain the gold-standard ego-network counts and their binning according to their edge-density ($N_w$ and $\rho(.)$).
+### Obtain binning for each ego-network according to the edge-density of the ego-networks of each individual graph ($\rho(.)$).
 ```{r}
-# Obtain graphlet counts and binning for gold-standard
-ego_gst_1 <- make_named_ego_graph(graph = gst_1, 
-                              order = neighbourhood_size, 
-                              min_ego_nodes = min_ego_nodes, 
-                              min_ego_edges = min_ego_edges)
-
-graphlet_counts_gst_1 <- ego_to_graphlet_counts(ego_networks = ego_gst_1,
-                                                max_graphlet_size = max_graphlet_size)
-
-head(graphlet_counts_gst_1)
-
-densities_gst_1<- ego_network_density(graphlet_counts = graphlet_counts_gst_1)
+# Get ego-network densities
+densities_1 <- ego_network_density(graphlet_counts = graphlet_counts_1)
+densities_2 <- ego_network_density(graphlet_counts = graphlet_counts_2)
 
 # Adaptively bin ego-network densities
-binned_densities_gst_1 <- binned_densities_adaptive(densities = densities_gst_1, 
+binned_densities_1 <- binned_densities_adaptive(densities = densities_1, 
                                                 min_counts_per_interval = min_bin_count, 
                                                 num_intervals = num_bins)
 
-str(binned_densities_gst_1)
+binned_densities_2 <- binned_densities_adaptive(densities = densities_2, 
+                                                min_counts_per_interval = min_bin_count, 
+                                                num_intervals = num_bins)
+
+str(binned_densities_1)
+str(binned_densities_2)
 ```
 
-### Obain the scaled mean counts for each density bin for the gold-standard network (canonical $E_w$)
+## Calculate expected graphlet counts in each density bin by a Geometric-Poisson approximation ($E_w$)
 ```{r}
-# Scale ego-network graphlet counts by dividing by total number of k-tuples in
-# ego-network (where k is graphlet size)
-scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(graphlet_counts = graphlet_counts_gst_1,
-                                                        max_graphlet_size =max_graphlet_size)
+binned_graphlet_counts_1 <- density_binned_counts_gp(graphlet_counts = graphlet_counts_1, 
+                                                     density_interval_indexes =  binned_densities_1$interval_indexes, 
+                                                     max_graphlet_size = max_graphlet_size)
 
-# Average ref graphlet counts across density bins
-ref_binned_graphlet_counts <- mean_density_binned_graphlet_counts(graphlet_counts = scaled_graphlet_counts_ref, density_interval_indexes = binned_densities_gst_1$interval_indexes)
-
-head(ref_binned_graphlet_counts)
+binned_graphlet_counts_2 <- density_binned_counts_gp(graphlet_counts = graphlet_counts_2, 
+                                                     density_interval_indexes =  binned_densities_2$interval_indexes, 
+                                                     max_graphlet_size = max_graphlet_size)
+binned_graphlet_counts_1
+binned_graphlet_counts_2
 ```
-
 
 ## Obtain the centred counts for each graphlet on the query graphs based on the GoldStandard counts ($N_w(G) - E_w(G)$).
-
 ```{r}
-# Scale the reference counts of the gold-standard network to the sizes of each of the query networks.
+# Calculate expected graphlet counts for each ego network
 exp_graphlet_counts_1 <- netdis_expected_counts(graphlet_counts = graphlet_counts_1,
-                                                density_breaks = binned_densities_gst_1$breaks, 
-                                                density_binned_reference_counts =  ref_binned_graphlet_counts, 
+                                                density_breaks = binned_densities_1$breaks, 
+                                                density_binned_reference_counts =  binned_graphlet_counts_1, 
                                                 max_graphlet_size = max_graphlet_size,
-                                                scale_fn=count_graphlet_tuples)
+                                                scale_fn=NULL)
 
 
 exp_graphlet_counts_2 <- netdis_expected_counts(graphlet_counts = graphlet_counts_2,
-                                                density_breaks = binned_densities_gst_1$breaks, 
-                                                density_binned_reference_counts =  ref_binned_graphlet_counts, 
+                                                density_breaks = binned_densities_2$breaks, 
+                                                density_binned_reference_counts =  binned_graphlet_counts_2, 
                                                 max_graphlet_size = max_graphlet_size,
-                                                scale_fn=count_graphlet_tuples)
+                                                scale_fn=NULL)
 
 # Centre graphlet counts by subtracting expected counts
 centred_graphlet_counts_1 <- netdis_subtract_exp_counts(graphlet_counts = graphlet_counts_1,
@@ -211,8 +205,6 @@ centred_graphlet_counts_2 <- netdis_subtract_exp_counts(graphlet_counts = graphl
 head(centred_graphlet_counts_1)
 head(centred_graphlet_counts_2)
 ```
-
-
 ## Sum centred graphlet counts across all ego networks ($S_w(G)$)
 ```{r}
 sum_graphlet_counts_1 <- colSums(centred_graphlet_counts_1)
@@ -222,7 +214,7 @@ sum_graphlet_counts_2 <- colSums(centred_graphlet_counts_2)
 sum_graphlet_counts_2
 ```
 
-## Calculate netdis statistics
+## Calculate Netdis-GP statistics
 ```{r}
 
 netdis_result <- netdis_uptok(centred_graphlet_count_vector_1 = sum_graphlet_counts_1,
@@ -231,6 +223,47 @@ netdis_result <- netdis_uptok(centred_graphlet_count_vector_1 = sum_graphlet_cou
 
 print(netdis_result)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
