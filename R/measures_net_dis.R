@@ -602,21 +602,21 @@ netdis_many_to_many <- function(graphs = NULL,
 #' Calculate Netdis statistic between two graphs from their Centred Graphlet
 #' Counts (generated using \code{netdis_centred_graphlet_counts}) for graphlets
 #' of size \code{graphlet_size}.
-#' @param centred_graphlet_counts1 Centred Graphlet Counts for graph 1
-#' @param centred_graphlet_counts2 Centred Graphlet Counts for graph 2
+#' @param centred_graphlet_count_vector_1 Centred Graphlet Counts vector for graph 1
+#' @param centred_graphlet_count_vector_2 Centred Graphlet Counts vector for graph 2
 #' @param graphlet_size The size of graphlets to use for the Netdis calculation
 #' (only counts for graphlets of the specified size will be used). The size of
 #' a graphlet is the number of nodes it contains.
 #' @return Netdis statistic calculated using centred counts for graphlets of
 #' the specified size
 #' @export
-netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2,
+netdis <- function(centred_graphlet_count_vector_1, centred_graphlet_count_vector_2,
                    graphlet_size) {
   # Select subset of centred counts corresponding to graphlets of the
   # specified size
   ids <- graphlet_ids_for_size(graphlet_size)
-  counts1 <- centred_graphlet_counts1[ids]
-  counts2 <- centred_graphlet_counts2[ids]
+  counts1 <- centred_graphlet_count_vector_1[ids]
+  counts2 <- centred_graphlet_count_vector_2[ids]
   
   # Calculate normalising constant
   norm_const <- sum(counts1^2 / sqrt(counts1^2 + counts2^2), na.rm = TRUE) *
@@ -634,15 +634,15 @@ netdis <- function(centred_graphlet_counts1, centred_graphlet_counts2,
 #' Calculate Netdis statistic between two graphs from their Centred Graphlet
 #' Counts (generated using \code{netdis_centred_graphlet_counts}) for all
 #' graphlet sizes up to \code{max_graphlet_size}.
-#' @param centred_graphlet_counts1 Centred Graphlet Counts for graph 1
-#' @param centred_graphlet_counts2 Centred Graphlet Counts for graph 2
+#' @param centred_graphlet_count_vector_1 Centred Graphlet Counts  vector for graph 1
+#' @param centred_graphlet_count_vector_2 Centred Graphlet Counts vector for graph 2
 #' @param max_graphlet_size max graphlet size to calculate Netdis for.
 #' The size of a graphlet is the number of nodes it contains. Netdis is
 #' calculated for all graphlets from size 3 to size max_graphlet_size.
 #' @return Netdis statistic calculated using centred counts for graphlets of
 #' the specified size
 #' @export
-netdis_uptok <- function(centred_graphlet_counts1, centred_graphlet_counts2,
+netdis_uptok <- function(centred_graphlet_count_vector_1, centred_graphlet_count_vector_2,
                          max_graphlet_size) {
   if ((max_graphlet_size > 5) | (max_graphlet_size < 3)) {
     stop("max_graphlet_size must be 3, 4 or 5.")
@@ -650,8 +650,8 @@ netdis_uptok <- function(centred_graphlet_counts1, centred_graphlet_counts2,
   
   netdis_statistics <- purrr::map(3:max_graphlet_size,
                                   netdis,
-                                  centred_graphlet_counts1 = centred_graphlet_counts1,
-                                  centred_graphlet_counts2 = centred_graphlet_counts2
+                                  centred_graphlet_count_vector_1 = centred_graphlet_count_vector_1,
+                                  centred_graphlet_count_vector_2 = centred_graphlet_count_vector_2
   )
   
   netdis_statistics <- simplify2array(netdis_statistics)
