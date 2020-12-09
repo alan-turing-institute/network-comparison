@@ -27,10 +27,10 @@ netdis_one_to_one(
 
 \item{ref_graph}{Controls how expected counts are calculated. Either:
 1) A numeric value - used as a constant expected counts value for all query
-graphs (DEFAULT: 0).
+graphs .
 2) A simplified \code{igraph} object - used as a reference graph from which
 expected counts are calculated for all query graphs.
-3) NULL - Expected counts will be calculated based on the properties of the
+3) NULL (Default) - Used for Netdis-GP, where the expected counts will be calculated based on the properties of the
 query graphs themselves.}
 
 \item{max_graphlet_size}{Generate graphlets up to this size.}
@@ -44,8 +44,7 @@ than min_ego_nodes nodes.}
 than min_ego_edges edges.}
 
 \item{binning_fn}{Function used to bin ego network densities. Takes densities
-as its single argument, and returns a named list including keys \code{breaks}
-(list of bin edges) and \code{interval_indexes} (density bin index for each
+as its single argument, and returns a named list including, the input \code{densities}, the resulting bin \code{breaks} (vector of density bin limits), and the vector \code{interval_indexes} which states to what bin each of the individual elements in \code{densities} belong to.
 ego network). If NULL uses \code{binned_densities_adaptive} with
 \code{min_counts_per_interval = 5} and \code{num_intervals = 100}
 (Default: NULL).}
