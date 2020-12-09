@@ -1,5 +1,5 @@
 ---
-title: "Simple and quick (default) usage 2: precomputed properties"
+title: "Simple and quick (default) usage 2: pre-computed properties"
 author: "Luis Ospina-Forero"
 date: "23/06/2020"
 output: rmarkdown::html_vignette

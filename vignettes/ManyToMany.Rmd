@@ -141,8 +141,8 @@ gTree_1 <- igraph::as.undirected( make_tree(n = 20^2,children = 3) )
 gTree_2 <- igraph::as.undirected( make_tree(n = 40^2,children = 3) )
 
 # Create a random graph to be used as a gold-standard
-gst_1 <- graph.star(20^2)
-gst_2 <- graph.star(40^2)
+gst_1 <- igraph::as.undirected( graph.star(20^2) )
+gst_2 <- igraph::as.undirected( graph.star(40^2) )
 
 plot(gst_1,vertex.size=0.8,vertex.label=NA)
 ```

@@ -1,0 +1,263 @@
+---
+title: "Netdis: customizations"
+author: "Jack Roberts, Luis Ospina-Forero"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Netdis: customizations}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+chunk_output_type: console
+---
+
+```{r, include = FALSE}
+  knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+  )
+```
+  
+# Introduction
+  
+  This Vignette explains some general parameter changes of Netdis. However, for a more in depth view of the inner steps of Netdis please check ["Netdis: step by step"](NetdisStepByStep.html) and ["Netdis-GP: step by step"](NetdisGPStepByStep.html).
+
+  Similarly, to see how to use pre-computed properties see ["Simple and quick (default) usage 2: pre-computed properties"](PreComputedProps.html)
+  
+
+# Load required packages/libraries
+```{r, packages, message= FALSE}
+  # Load packages/libraries
+library("netdist")
+library("igraph")
+library("pheatmap")
+```
+
+# Compare multiple networks via Netdis
+
+Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 nodes. Reference graphs given by start-like graphs are used as illustration of reference graphs. The plots of these networks illustrate clearly their structural differences.
+```{r,netdisgoldstandnetworks ,fig.align='center'}
+# Create lattice, Ring and Tree like networks of sizes 20^2 and 40^2.
+# Create networks
+set.seed(3171)
+gLat_1 <- graph.lattice(c(20,20)) 
+gLat_2 <- graph.lattice(c(40,40))  
+gRing_1 <- make_ring(20^2) 
+gRing_2 <- make_ring(40^2)
+gTree_1 <- igraph::as.undirected( make_tree(n = 20^2,children = 3) )
+gTree_2 <- igraph::as.undirected( make_tree(n = 40^2,children = 3) )
+
+glist <- list(Lat_1=gLat_1, Lat_2=gLat_2, Ring_1=gRing_1, Ring_2=gRing_1, Tree_1=gTree_1, Tree_2=gTree_2)
+
+# Create a random graph to be used as a gold-standard
+gst <- igraph::as.undirected(graph.star(30^2))
+```
+
+# Variants of Netdis: Changing the expectation
+
+## Using Netdis with a reference graph as a proxy for $E_w$.
+```{r,netdisgoldstand,fig.align='center',fig.dim=c(8,8)}
+netdis_mat_gst <- netdis_many_to_many(graphs = glist,
+                                      ref_graph = gst
+                                      )
+netdis.plot(netdislist = netdis_mat_gst,whatrow = 2, main = "Netdis with reference graph")
+```
+
+## Using Netdis with a constant valued expectation, $E_w=k$.
+
+```{r,netdisconstant,fig.align='center',fig.dim=c(8,8)}
+netdis_mat_zero <- netdis_many_to_many(graphs = glist,
+                                      ref_graph = 0
+                                      )
+netdis.plot(netdislist = netdis_mat_zero,whatrow = 2, main = "Netdis Ew=0")
+
+netdis_mat_5 <- netdis_many_to_many(graphs = glist,
+                                      ref_graph = 5
+                                      )
+netdis.plot(netdislist = netdis_mat_5,whatrow = 2, main = "Netdis Ew=5")
+```
+
+
+## Using Netdis-GP, Geometric-Poisson approximmation for $E_w$.
+
+```{r,fig.align='center',fig.dim=c(8,8)}
+netdisgp_mat <- netdis_many_to_many(graphs = glist,
+                                      ref_graph = NULL
+                                      )
+netdis.plot(netdisgp_mat, whatrow = 2, main = "Netdis-GP")
+```
+
+---------------------------
+
+# Customizing the ego-network binning function
+
+The ego-network binning function takes as argument a vector of the ego-network edge densities. The function should return a named list that includes: the input \code{densities}, the resulting bin \code{breaks} (vector of density bin limits), and the vector \code{interval_indexes} which states to what bin each of the individual elements in \code{densities} belongs to.
+```{r,fig.align='center',fig.dim=c(8,8)}
+#  Create an ego-network edge density binning function.
+mybinning <- function(densities) {
+  min_counts_per_interval <- 5
+  num_intervals <- 3
+  #
+  if( length(densities) < min_counts_per_interval) min_counts_per_interval <- length(densities)
+  breaks <- adaptive_breaks(densities,
+    min_count = min_counts_per_interval,
+    breaks = num_intervals
+  )
+  interval_indexes <- interval_index(densities,
+    breaks = breaks,
+    out_of_range_intervals = FALSE
+  )
+  list(
+    densities = densities,
+    interval_indexes = interval_indexes,
+    breaks = breaks
+  )
+}
+  
+# Let us see an example output of the binning function
+binning_example <- mybinning(runif(20))
+binning_example$breaks
+binning_example$interval_indexes
+binning_example$densities
+
+# Calculate Netdis
+netdisgp_mat_mybin <- netdis_many_to_many(graphs = glist,
+                                      ref_graph = NULL, 
+                                      binning_fn = mybinning
+                                      )
+
+netdis.plot(netdislist = netdisgp_mat_mybin,whatrow = 2, main = "Netdis with reference graph - mybinning")
+netdis.plot(netdislist = netdisgp_mat,whatrow = 2, main = "Netdis-GP")
+```
+
+
+Also note that whenever $E_w$ is taken as a constant value, then the binning will not have an effect on the  computation of Netdis. 
+
+
+```{r}
+# Calculate Netdis
+mybinning <- function(densities) {
+  min_counts_per_interval <- 5
+  num_intervals <- 3
+  #
+  if( length(densities) < min_counts_per_interval) min_counts_per_interval <- length(densities)
+  breaks <- adaptive_breaks(densities,
+    min_count = min_counts_per_interval,
+    breaks = num_intervals
+  )
+  interval_indexes <- interval_index(densities,
+    breaks = breaks,
+    out_of_range_intervals = FALSE
+  )
+  list(
+    densities = densities,
+    interval_indexes = interval_indexes,
+    breaks = breaks
+  )
+}
+
+netdis_constant_mat_mybin_3bins <- netdis_many_to_many(graphs = glist,
+                                      ref_graph = 5, 
+                                      binning_fn = mybinning
+                                      )
+
+mybinning <- function(densities) {
+  min_counts_per_interval <- 5
+  num_intervals <- 100
+  #
+  if( length(densities) < min_counts_per_interval) min_counts_per_interval <- length(densities)
+  breaks <- adaptive_breaks(densities,
+    min_count = min_counts_per_interval,
+    breaks = num_intervals
+  )
+  interval_indexes <- interval_index(densities,
+    breaks = breaks,
+    out_of_range_intervals = FALSE
+  )
+  list(
+    densities = densities,
+    interval_indexes = interval_indexes,
+    breaks = breaks
+  )
+}
+
+netdis_constant_mat_mybin_100bins <- netdis_many_to_many(graphs = glist,
+                                      ref_graph = 5, 
+                                      binning_fn = mybinning
+                                      )
+
+netdis_constant_mat_mybin_3bins$netdis  - netdis_constant_mat_mybin_100bins$netdis
+```
+
+
+---------------------------
+# Other simple customization of the Netdis computation
+
+Default values in the computation of Netdis.
+```{r}
+# Maximum graphlet size to calculate counts and netdis statistic for.
+max_graphlet_size <- 4
+
+# Ego network neighbourhood size
+neighbourhood_size <- 2
+
+# Minimum size of ego networks to consider
+min_ego_nodes <- 3
+min_ego_edges <- 1
+
+# Ego network density binning parameters
+min_bin_count <- 5
+num_bins <- 100
+```
+
+```{r,netdisgoldstand ,fig.align='center',fig.dim=c(8,8)}
+binning_fn <- purrr::partial(binned_densities_adaptive,
+                             min_counts_per_interval = min_bin_count,
+                             num_intervals = num_bins)
+
+netdisgp_mat <- netdis_many_to_many(graphs = glist,
+                                      ref_graph = NULL,
+                                      max_graphlet_size = max_graphlet_size,
+                                      neighbourhood_size = neighbourhood_size,
+                                      min_ego_nodes = min_ego_nodes,
+                                      min_ego_edges = min_ego_edges,
+                                      binning_fn = binning_fn
+                                    )
+
+netdis.plot(netdislist = netdisgp_mat,whatrow = 2, main = "Netdis-GP: Default parameters")
+
+# Changing the previous values:
+# (We only recommend chaning these default values for those user that have a clear understading of graph theory behind it)
+# Changing to 1 step Ego-networks (change with care).
+binning_fn <- purrr::partial(binned_densities_adaptive,
+                             min_counts_per_interval = 10,
+                             num_intervals = 20)
+netdisgp_mat_others <- netdis_many_to_many(graphs = glist,
+                                      ref_graph = NULL,
+                                      max_graphlet_size = 4,
+                                      neighbourhood_size = 3,
+                                      min_ego_nodes = 5,
+                                      min_ego_edges = 4,
+                                      binning_fn = binning_fn
+                                    )
+netdis.plot(netdislist = netdisgp_mat_others,whatrow = 2, main = "Netdis-GP: illustrative change of parameters")
+
+```
+
+
+
+-------------------------
+
+
+
+
+# Bibliography
+
+* W. Ali, T. Rito, G. Reinert, F. Sun, and C. M. Deane. Alignment-free protein interaction network comparison. Bioinformatics, 30:i430–i437, 2014.
+
+* L. Ospina-Forero, C. M. Deane, and G. Reinert. Assessment of model fit via network comparison methods based on subgraph counts. Journal of Complex Networks, page cny017, August 2018.
+
+* A. E. Wegner, L. Ospina-Forero, R. E. Gaunt, C. M. Deane, and G. Reinert. Identifying networks with common organizational principles. Journal of Complex networks, 2017.
+
+* F. Picard, J.-J. Daudin, M. Koskas, S. Schbath, and S. Robin. Assessing the exceptionality of network motifs. Journal of Computational Biology, 15(1):1–20, 2008.

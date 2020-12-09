@@ -28,7 +28,11 @@ This package contains multiple vignettes that illustrate the simple ways of empl
 
 * [Simple and quick (default) usage 3: many to many comparions](ManyToMany.html): User friendly options to retrieve all pairwise comparisons among a set of $n$ networks.
 
+* ["Netdis: step by step"](NetdisStepByStep.html): Shows a breakdown of the Netdis computation.
 
+* ["Netdis-GP: step by step"](NetdisGPStepByStep.html): Shows a breakdown of the Netdis-GP variant computation.
+
+* ["Netdis: customizations"](NewNetdisCustomisations.html): Shows general parameter changes of Netdis.
 
 -------------------------
 
