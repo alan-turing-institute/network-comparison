@@ -22,6 +22,8 @@ The `netdist` package currently considers to broad methodologies for network com
 
 The following shows a quick introduction to the most simple functions of the package, and to some of the variants of Netdis and NetEmd.
 
+For other vignettes in this package see the ["Menu"](V-Menu.html). 
+
 # Load required packages/libraries
 ```{r, packages, message= FALSE}
 # Load packages/libraries
@@ -30,30 +32,37 @@ library("igraph")
 ```
 
 ## Load graphs included in the netdist package
-```{r, graphs,fig.align='center'}
+The `netdist` package also includes examples of real a few real networks. These are protein interaction networks (PPI) of a few _Herpes_ virus and of the bacteria  _Escherichia Coli_ . In these networks, each node represents a protein and each link represents an interaction between proteins. See `help(virusppi)`.
+
+Although the `virusppi` list of PPI networks is loaded along with the `netdist` package, the following code shows how to read a network data from a file in disk:
+```{r, graphs,fig.align='center',fig.dim=c(6,6)}
 # Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
-
-# Load query graphs as igraph objects
-graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
+# Load query graphs as undirected igraph objects, with no loops, multiple edges or degree zero nodes.
+graph_1 <- read_simple_graph(file = file.path(source_dir, "EBV.txt"),
                              format = "ncol")
 
-graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
+graph_2 <- read_simple_graph(file = file.path(source_dir, "ECL.txt"),
                              format = "ncol")
 
 # Herpes virus EBV protein-protein interaction graph with 60 nodes and 208 edges.
 graph_1
+#Note this graph is the same as
+# virusppi$EBV
 
 # Herpes virus ECL protein-protein interaction graph with 1941 nodes and 3989 edges.
 graph_2
+#Note this graph is the same as
+# virusppi$ECL
 
 #A simple visualization of the graphs.
-plot(graph_1,vertex.size=0.5,vertex.label=NA)
-plot(graph_2,vertex.size=0.5,vertex.label=NA)
+plot(graph_1,vertex.size=4,vertex.label=NA)
+plot(graph_2,vertex.size=4,vertex.label=NA)
 ```
 
 
+The next two sections will provide a basic introduction and  usage of both NetEmd and Netdis.
 
 # Compare two networks via NetEmd.
 
@@ -110,6 +119,9 @@ NLapg_2 <- igraph::laplacian_matrix(graph = graph_2,normalized = TRUE,sparse = F
 props_1 <- cbind(L.Spectra= eigen(Lapg_1)$values, NL.Spectra= eigen(NLapg_1)$values) 
 props_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values) 
 
+head(props_1,n=3)
+head(props_2,n=3)
+
 netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width = 0)#Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 ```
 -------------------------
@@ -151,13 +163,13 @@ Small values of Netdis suggest higher `similarity' between the networks. By defa
 ## Using netdis with a gold-standard graph to obtain $E_w$.
 The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard (summarized in $E_w$).
 
-```{r,netdisgoldstand,fig.align='center'}
-# Lattice graphs to be used as gold-standard as a reference point comparison
+```{r,netdisgoldstand,fig.align='center',fig.dim=c(6,6)}
+# Lattice graphs to be used as a gold-standard reference point
 goldstd_1 <- igraph::graph.lattice(c(8,8)) #Graph with 8^2 nodes
 goldstd_2 <- igraph::graph.lattice(c(44,44)) #Graph with 44^2 nodes
 
-plot(goldstd_1,vertex.size=0.8,vertex.label=NA)
-plot(goldstd_2,vertex.size=0.5,vertex.label=NA)
+plot(goldstd_1,vertex.size=4,vertex.label=NA)
+plot(goldstd_2,vertex.size=4,vertex.label=NA)
 
 
 # Netdis using the goldstd_1 graph as gold-standard reference point
@@ -194,7 +206,6 @@ netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = NULL)
 ## Using Netdis with no expectation ($E_w=0$)
 Comparing the networks via their observed ego counts without centering them, (equivalent to using expectation equal to zero). This variant thus focuses on detecting small discrepancies between the networks.
 
-
 ```{r,netdiszero}
 #Netdis using no expectations (or equivalently, expectation equal to zero).
 netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
@@ -202,8 +213,6 @@ netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
 ```
 
 -------------------------
-
-
 
 
 

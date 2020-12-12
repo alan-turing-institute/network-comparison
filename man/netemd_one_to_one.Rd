@@ -18,15 +18,15 @@ netemd_one_to_one(
 )
 }
 \arguments{
-\item{graph_1}{A network/graph object from the \code{igraph} package. \code{graph_1} can be set to \code{NULL} (default) if dhists_1 is provided.}
+\item{graph_1}{A network/graph object from the \code{igraph} package. \code{graph_1} can be set to \code{NULL} (default) if \code{dhists_1} is provided.}
 
-\item{graph_2}{A network/graph object from the \code{igraph} package. \code{graph_2} can be set to \code{NULL} (default) if dhists_2 is provided.}
+\item{graph_2}{A network/graph object from the \code{igraph} package. \code{graph_2} can be set to \code{NULL} (default) if \code{dhists_2} is provided.}
 
-\item{dhists_1}{A \code{dhist} discrete histogram object, a list of such objects or a matrix of network features (each column representing a feature). \code{dhists_1} can be set to \code{NULL} (default) if \code{graph_1} is provided.}
+\item{dhists_1}{Either, a \code{dhist} discrete histogram object, or list of such objects, or a matrix of network features (each column representing a feature). \code{dhists_1} can be set to \code{NULL} (default) if \code{graph_1} is provided. A \code{dhist} object can be obtained from \code{graph_features_to_histograms}.}
 
-\item{dhists_2}{A \code{dhist} discrete histogram object, a list of such objects or a matrix of network features (each column representing a feature). \code{dhists_2} can be set to \code{NULL} (default) if \code{graph_1} is provided.}
+\item{dhists_2}{Same as \code{dhists_1}.}
 
-\item{method}{The method to use to find the minimum EMD across all potential
+\item{method}{The method to be used to find the minimum EMD across all potential
 offsets for each pair of histograms. Default is "optimise" to use
 R's built-in \code{stats::optimise} method to efficiently find the offset
 with the minimal EMD. However, this is not guaranteed to find the global
@@ -35,16 +35,16 @@ minimum if multiple local minima EMDs exist. You can alternatively specify the
 histograms at all offsets that are candidates for the minimal EMD at the cost of computational time.}
 
 \item{return_details}{Logical indicating whether to return the individual
-minimal EMDs and associated offsets for all pairs of histograms}
+minimal EMDs and associated offsets for all pairs of histograms.}
 
 \item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
 "smear" point masses across a finite width in the real domain. Default is 0,
 which  results in no smoothing. Care should be taken to select a
 \code{smoothing_window_width} that is appropriate for the discrete domain
-(e.g.for the integer domain a width of 1 is the natural choice)}
+(e.g.for the integer domain a width of 1 is the natural choice).}
 
 \item{feature_type}{Type of graphlet-based feature to count: "graphlet"
-counts the number of graphlets each node participates in; "orbit" calculates
+counts the number of graphlets each node participates in; "orbit" (default) calculates
 the number of graphlet orbits each node participates in.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
@@ -62,29 +62,46 @@ the minimal EMD for each pair of histograms, \code{min_offsets}: the associated
 offsets giving the minimal EMD for each pair of histograms
 }
 \description{
-Calculates the mean minimum Earth Mover's Distance (EMD) between 
-two sets of network features, after individually normalising the distribution
-of each feature so that they have unit mass and unit variance.
+Calculates the network Earth Mover's Distance (EMD) between 
+two sets of network features. This is done by individually normalising the distribution
+of each feature so that they have unit mass and unit variance. Then the minimun EMD between the same pair of features (one for each corresponding graph) is calculated by considering all possible translations of the feature distributions. Finally the average over all features is reported.
 This is calculated as follows:
-  1. Normalise each histogram to have unit mass and unit variance.
-  2. Find the minimum EMD between each pair of histograms.
-  3. Take the average minimum EMD across all histogram pairs.
+  1. Normalise each feature histogram to have unit mass and unit variance.
+  2. For each feature, find the minimum EMD between each pair of histograms considering all possible  histogram translations.
+  3. Take the average minimum EMD across all features.
 }
 \examples{
  require(igraph)
- goldstd_1 <- graph.lattice(c(8,8)) 
- goldstd_2 <- graph.lattice(c(44,44)) 
- netemd_one_to_one(graph_1=goldstd_1,graph_2=goldstd_2,feature_type="orbit",max_graphlet_size=5)
+ graph_1 <- graph.lattice(c(8,8)) 
+ graph_2 <- graph.lattice(c(44,44)) 
+ netemd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",max_graphlet_size=5)
  
  #Providing a matrix of network features
- props_a= count_orbits_per_node(graph = goldstd_1,max_graphlet_size = 5)
- props_b= count_orbits_per_node(graph = goldstd_2,max_graphlet_size = 5)
+ props_a= count_orbits_per_node(graph = graph_1,max_graphlet_size = 5)
+ props_b= count_orbits_per_node(graph = graph_2,max_graphlet_size = 5)
  
- netemd_one_to_one(dhists_1=props_a, dhists_2=props_b)
+ netemd_one_to_one(dhists_1=props_a, dhists_2=props_b,smoothing_window_width = 1)
  
  #Providing the network features as lists of dhist objects
  dhists_1<- graph_features_to_histograms(props_a)
  dhists_2<- graph_features_to_histograms(props_b)
  
  netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2)
+ 
+ 
+ # A variation of NetEmd: Using the Laplacian spectrum 
+ #Laplacian
+ Lapg_1 <- igraph::laplacian_matrix(graph = graph_1,normalized = FALSE,sparse = FALSE)
+ Lapg_2 <- igraph::laplacian_matrix(graph = graph_2,normalized = FALSE,sparse = FALSE)
+ 
+ #Normalized Laplacian
+ NLapg_1 <- igraph::laplacian_matrix(graph = graph_1,normalized = TRUE,sparse = FALSE)
+ NLapg_2 <- igraph::laplacian_matrix(graph = graph_2,normalized = TRUE,sparse = FALSE)
+ 
+ #Spectra (This may take a couple of minutes).
+ props_1 <- cbind(L.Spectra= eigen(Lapg_1)$values, NL.Spectra= eigen(NLapg_1)$values) 
+ props_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values) 
+ 
+ netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width = 0)#Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+ 
 }
