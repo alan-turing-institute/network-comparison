@@ -33,11 +33,11 @@ library("igraph")
 
 # Compare two networks via NetEmd.
 
-The following sections show how to extract the sugraph counts, or other relevant features prior to running NetEmd or Netdis. Then it shows how to call NetEmd or Netdis using the pre-computed features.
+The following sections show how to extract the subgraph counts, or other relevant features prior to running NetEmd or Netdis. Then it shows how to call NetEmd or Netdis using the pre-computed features.
 
 ## Comparing two graphs with NetEmd via subgraph counts.
 
-Although NetEmd and Netdis use subgraph counts, NetEmd takes counts directly from the observed graph, whereas Netdis takes counts from ego-networks of the observed graph. The following example shows how the counts are extracted for NetEMD via `count_orbits_per_node`. The user can call netemd by directly providing the matrix of counts, or by providing a processed version of these counts via `graph_features_to_histograms`.
+Although NetEmd and Netdis use subgraph counts, NetEmd takes counts directly from the observed graph, whereas Netdis takes counts from ego-networks of the observed graph. The following example shows how the counts are extracted for NetEmd via `count_orbits_per_node`. The user can call NetEmd by directly providing the matrix of counts, or by providing a processed version of these counts via `graph_features_to_histograms`.
 
 ```{r, netemd,fig.align='center'}
 # Create lattice networks
@@ -93,11 +93,11 @@ netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2, smoothing_window_width =
 Netdis uses counts from the resulting ego-networks of each of the nodes in a graph, but it also takes into account the mean or expectation of these ego-network counts ($E_w$). The following example shows how the user can compute and provide the properties required from each graph as well as any relevant property required to calculate $E_w$.
 
 
-## Using netdis with a gold-standard or reference graph to obtain $E_w$.
+## Using Netdis with a gold-standard or reference graph to obtain $E_w$.
 The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard graph and which is summarized in $E_w$.
 
 ```{r,netdisgoldstand,fig.align='center'}
-# Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
+# Set source directory for virus protein-protein interaction edge files stored in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
 # Load query graphs as igraph objects
@@ -149,7 +149,7 @@ netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_gra
 
 
 ## Using Netdis with no expectation ($E_w=0$)
-Comparing the networks via their observed ego counts without centering them, (equivalent to using expectation equal to zero). This variant thus focus on detecting small discrepancies between the networks.
+Comparing the networks via their observed ego counts without centring them, (equivalent to using expectation equal to zero). This variant thus focus on detecting small discrepancies between the networks.
 
 
 ```{r,netdiszero}
