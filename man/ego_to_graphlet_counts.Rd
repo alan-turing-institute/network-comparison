@@ -11,7 +11,7 @@ ego_to_graphlet_counts(ego_networks, max_graphlet_size = 4)
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes will be
-counted.}
+counted. Currently only size 4 and 5 are supported.}
 }
 \value{
 returns an RxC matrix

@@ -27,7 +27,7 @@
 #' \code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
 #' be used.
 #'
-#' @param max_graphlet_size Generate graphlets up to this size. 
+#' @param max_graphlet_size Generate graphlets up to this size. Currently only 4 and 5 are supported. 
 #'
 #' @param neighbourhood_size Ego network neighborhood size.
 #'
@@ -207,7 +207,7 @@ netdis_one_to_one <- function(graph_1 = NULL,
 #' 3) NULL - Expected counts will be calculated based on the properties of the
 #' query graphs themselves.
 #'
-#' @param max_graphlet_size Generate graphlets up to this size.
+#' @param max_graphlet_size Generate graphlets up to this size. Currently only 4 and 5 are supported. 
 #'
 #' @param neighbourhood_size Ego network neighbourhood size.
 #'
@@ -379,7 +379,7 @@ netdis_one_to_many <- function(graph_1 = NULL,
 #' Can be "many-to-many" (all pairwise combinations) or "one-to-many"
 #' (compare first graph in graphs to all other graphs.)
 #'
-#' @param max_graphlet_size Generate graphlets up to this size.
+#' @param max_graphlet_size Generate graphlets up to this size. Currently only 4 and 5 are supported. 
 #'
 #' @param neighbourhood_size Ego network neighbourhood size.
 #'
@@ -637,7 +637,7 @@ netdis <- function(centred_graphlet_count_vector_1, centred_graphlet_count_vecto
 #' @param centred_graphlet_count_vector_2 Centred Graphlet Counts vector for graph 2
 #' @param max_graphlet_size max graphlet size to calculate Netdis for.
 #' The size of a graphlet is the number of nodes it contains. Netdis is
-#' calculated for all graphlets from size 3 to size max_graphlet_size.
+#' calculated for all graphlets from size 3 to size max_graphlet_size. Currently only 4 and 5 are supported. 
 #' @return Netdis statistic calculated using centred counts for graphlets of
 #' the specified size
 #' @export
@@ -701,7 +701,7 @@ netdis_uptok <- function(centred_graphlet_count_vector_1, centred_graphlet_count
 #' Takes \code{ego_networks}, \code{density_bin_breaks},
 #' \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
 #'
-#' @param max_graphlet_size max graphlet size to calculate centred counts for.
+#' @param max_graphlet_size max graphlet size to calculate centred counts for. Currently only size 4 and 5 are supported.
 #'
 #' @return graphlet_counts minus exp_graphlet_counts for graphlets up to size
 #' max_graphlet_size.
@@ -800,7 +800,7 @@ netdis_centred_graphlet_counts <- function(
 #' nummber of ego networks (rows).
 #' @param exp_graphlet_counts Matrix of expected graphlet counts (columns) for a
 #' nummber of ego networks (rows).
-#' @param max_graphlet_size Do the subtraction for graphlets up to this size.
+#' @param max_graphlet_size Do the subtraction for graphlets up to this size. Currently only size 4 and 5 are supported.
 #' @export
 netdis_subtract_exp_counts <- function(
   graphlet_counts,
@@ -827,7 +827,7 @@ netdis_subtract_exp_counts <- function(
 #' @param density_binned_reference_counts Reference network graphlet counts for
 #' each density bin.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
-#' Only graphlets containing up to \code{max_graphlet_size} nodes are counted.
+#' Only graphlets containing up to \code{max_graphlet_size} nodes are counted. Currently only size 4 and 5 are supported.
 #' @param scale_fn Optional function to scale calculated expected counts, taking
 #' \code{graphlet_counts} and \code{max_graphlet_size} as arguments,
 #' and returning a scale factor that the looked up
@@ -863,7 +863,7 @@ netdis_expected_counts <- function(
 #'
 #' @param graphlet_counts Node and graphlet counts for an ego network.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
-#' Only graphlets containing up to \code{max_graphlet_size} nodes are counted.
+#' Only graphlets containing up to \code{max_graphlet_size} nodes are counted. Currently only size 4 and 5 are supported.
 #' @param density_breaks Density values defining bin edges.
 #' @param density_binned_reference_counts Reference network graphlet counts for
 #' each density bin.
@@ -992,7 +992,7 @@ density_binned_counts <- function(graphlet_counts,
 #' @param graphlet_counts Graphlet counts for a number of ego_networks.
 #' @param density_interval_indexes Density bin indexes for each ego network in
 #' \code{graphlet_counts}.
-#' @param max_graphlet_size Determines the maximum size of graphlets
+#' @param max_graphlet_size Determines the maximum size of graphlets. Currently only size 4 and 5 are supported.
 #' included in graphlet_counts.
 exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
                               density_interval_indexes,
@@ -1048,7 +1048,7 @@ exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
 #' @param graphlet_counts Graphlet counts for a number of ego_networks.
 #' @param density_interval_indexes Density bin index for
 #' each ego network.
-#' @param max_graphlet_size Determines the maximum size of graphlets
+#' @param max_graphlet_size Determines the maximum size of graphlets. Currently only size 4 and 5 are supported.
 #' included in graphlet_counts.
 #' @export
 density_binned_counts_gp <- function(graphlet_counts,
@@ -1110,7 +1110,7 @@ scale_graphlet_count <- function(graphlet_count, graphlet_tuples) {
 #' @param graphlet_counts Matrix of graphlet and node counts (columns) for a
 #' number of ego networks (rows).
 #' @param max_graphlet_size Determines the maximum size of graphlets included
-#' in the tuple counts.
+#' in the tuple counts. Currently only size 4 and 5 are supported.
 #' @export
 count_graphlet_tuples_ego <- function(graphlet_counts, max_graphlet_size) {
   graphlet_tuple_counts <-
@@ -1146,7 +1146,7 @@ ego_network_density <- function(graphlet_counts) {
 #'
 #' @param graphlet_counts Pre-calculated graphlet counts for each ego_network.
 #' @param max_graphlet_size Determines the maximum size of graphlets included
-#' in graphlet_counts.
+#' in graphlet_counts. Currently only size 4 and 5 are supported.
 #' @return scaled graphlet counts.
 #' @export
 scale_graphlet_counts_ego <- function(graphlet_counts,
@@ -1170,7 +1170,7 @@ scale_graphlet_counts_ego <- function(graphlet_counts,
 #'
 #' @param graph_graphlet_counts Node and graphlet counts for a single graph.
 #' @param max_graphlet_size Determines the maximum size of graphlets included
-#' in the tuple counts.
+#' in the tuple counts. Currently only size 4 and 5 are supported.
 #' @export
 count_graphlet_tuples <- function(graph_graphlet_counts, max_graphlet_size) {
   # extract node counts from graph_graphlet_counts

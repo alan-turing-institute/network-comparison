@@ -33,7 +33,7 @@ expected counts are calculated for all query graphs.
 3) NULL (Default) - Used for Netdis-GP, where the expected counts will be calculated based on the properties of the
 query graphs themselves.}
 
-\item{max_graphlet_size}{Generate graphlets up to this size.}
+\item{max_graphlet_size}{Generate graphlets up to this size. Currently only 4 and 5 are supported.}
 
 \item{neighbourhood_size}{Ego network neighborhood size.}
 

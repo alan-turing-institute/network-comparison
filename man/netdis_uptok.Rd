@@ -17,7 +17,7 @@ netdis_uptok(
 
 \item{max_graphlet_size}{max graphlet size to calculate Netdis for.
 The size of a graphlet is the number of nodes it contains. Netdis is
-calculated for all graphlets from size 3 to size max_graphlet_size.}
+calculated for all graphlets from size 3 to size max_graphlet_size. Currently only 4 and 5 are supported.}
 }
 \value{
 Netdis statistic calculated using centred counts for graphlets of

@@ -40,5 +40,5 @@ requested subset of the following simplifications in the following order:
   3. Removes multiple edges (i.e. ensuring only one edge exists for each
      pair of endpoints)
   4. Removes isolated vertices (i.e. vertices with no edges after the
-     previous alterations)
+     previous alterations).
 }

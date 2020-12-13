@@ -18,9 +18,11 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-In many situations there may be a need to pursue the network comparisons from pre-computed counts. This decreases the computational time to obtain the results, particularly when the same networks are involved in multiple comparisons or when the same properties are used in other procedures. Also, performing the comparisons from pre-computed properties allows greater flexibility in the use of the network comparison methods and their variants.
+In many situations there may be a need to pursue the network comparisons from pre-computed counts/features. Working from pre-computed features decreases the computational time to obtain result, particularly when the same networks are involved in multiple comparisons, or when the same properties are used in other procedures.
 
-This Vignette follows similar examples as ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html) but shows the modifications required to obtain properties and to then use them in the network comparison methods.
+This Vignette follows similar examples as ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html) but here, in contrast, the steps required to obtain counts/features and then use them in the network comparison methods are shown.
+
+For other vignettes in this package see the ["Menu"](V-Menu.html). 
 
 # Load required packages/libraries
 ```{r, packages, message= FALSE}
@@ -31,11 +33,16 @@ library("igraph")
 
 # Compare two networks via NetEmd.
 
+The following sections show how to extract the sugraph counts, or other relevant features prior to running NetEmd or Netdis. Then it shows how to call NetEmd or Netdis using the pre-computed features.
+
 ## Comparing two graphs with NetEmd via subgraph counts.
+
+Although NetEmd and Netdis use subgraph counts, NetEmd takes counts directly from the observed graph, whereas Netdis takes counts from ego-networks of the observed graph. The following example shows how the counts are extracted for NetEMD via `count_orbits_per_node`. The user can call netemd by directly providing the matrix of counts, or by providing a processed version of these counts via `graph_features_to_histograms`.
+
 ```{r, netemd,fig.align='center'}
 # Create lattice networks
-gLat_1 <- graph.lattice(c(20,20)) 
-gLat_2 <- graph.lattice(c(44,44))  
+gLat_1 <- igraph::graph.lattice(c(20,20)) 
+gLat_2 <- igraph::graph.lattice(c(44,44))  
 
 netemd_one_to_one(graph_1=gLat_1,graph_2=gLat_2,feature_type="orbit",smoothing_window_width = 1)
 
@@ -46,8 +53,8 @@ counts_2= count_orbits_per_node(graph = gLat_2,max_graphlet_size = 5)
 netemd_one_to_one(dhists_1=counts_1, dhists_2=counts_2,smoothing_window_width = 1)
 
 #Providing the network features as lists of dhist objects
-dhists_1<- graph_features_to_histograms(counts_1)
-dhists_2<- graph_features_to_histograms(counts_2)
+dhists_1<- graph_features_to_histograms(features_matrix = counts_1)
+dhists_2<- graph_features_to_histograms(features_matrix = counts_2)
 
 netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2,smoothing_window_width = 1)
 ```
@@ -83,8 +90,11 @@ netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2, smoothing_window_width =
 
 # Compare two networks via Netdis and its variants.
 
-## Using netdis with a gold-standard graph to obtain $E_w$.
-The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard (summarized in $E_w$).
+Netdis uses counts from the resulting ego-networks of each of the nodes in a graph, but it also takes into account the mean or expectation of these ego-network counts ($E_w$). The following example shows how the user can compute and provide the properties required from each graph as well as any relevant property required to calculate $E_w$.
+
+
+## Using netdis with a gold-standard or reference graph to obtain $E_w$.
+The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard graph and which is summarized in $E_w$.
 
 ```{r,netdisgoldstand,fig.align='center'}
 # Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
@@ -110,14 +120,14 @@ props_2 <- count_graphlets_ego(graph = graph_2)
 props_goldstd_1 <- count_graphlets_ego(graph = goldstd_1)
 props_goldstd_2 <- count_graphlets_ego(graph = goldstd_2)
 
- netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_1)
- netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_2)
+netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_1)
+netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_2)
 ```
 
 
 ## Netdis-GP: Using a Geometric-Poisson approximation
 
-This variant focuses on detecting more general and global discrepancies between the ego-network structures.
+This variant focuses on detecting more meso-level discrepancies between the ego-network structures.
 
 ```{r, netdisGP}
 # Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
@@ -139,7 +149,7 @@ netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_gra
 
 
 ## Using Netdis with no expectation ($E_w=0$)
-Comparing the networks via their observed ego counts without centering them, (equivalent to using expectation equal to zero). This variant thus focuses on detecting small discrepancies between the networks.
+Comparing the networks via their observed ego counts without centering them, (equivalent to using expectation equal to zero). This variant thus focus on detecting small discrepancies between the networks.
 
 
 ```{r,netdiszero}

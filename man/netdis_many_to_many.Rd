@@ -36,7 +36,7 @@ query graphs themselves.}
 Can be "many-to-many" (all pairwise combinations) or "one-to-many"
 (compare first graph in graphs to all other graphs.)}
 
-\item{max_graphlet_size}{Generate graphlets up to this size.}
+\item{max_graphlet_size}{Generate graphlets up to this size. Currently only 4 and 5 are supported.}
 
 \item{neighbourhood_size}{Ego network neighbourhood size.}
 

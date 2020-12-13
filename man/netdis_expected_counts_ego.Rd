@@ -17,7 +17,7 @@ netdis_expected_counts_ego(
 \item{graphlet_counts}{Node and graphlet counts for an ego network.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
-Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
+Only graphlets containing up to \code{max_graphlet_size} nodes are counted. Currently only size 4 and 5 are supported.}
 
 \item{density_breaks}{Density values defining bin edges.}
 

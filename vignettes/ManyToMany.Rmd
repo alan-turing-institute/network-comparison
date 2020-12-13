@@ -26,6 +26,8 @@ editor_options:
   
   Please note that for high performance computation, this shortcut functions may or may not be ideal, particularly in terms of RAM consumption.
   
+For other vignettes in this package see the ["Menu"](V-Menu.html). 
+
 # Load required packages/libraries
 ```{r, packages, message= FALSE}
   # Load packages/libraries

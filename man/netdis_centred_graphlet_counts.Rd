@@ -44,7 +44,7 @@ expected counts for each graphlet in each ego network of the query graphs.
 Takes \code{ego_networks}, \code{density_bin_breaks},
 \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.}
 
-\item{max_graphlet_size}{max graphlet size to calculate centred counts for.}
+\item{max_graphlet_size}{max graphlet size to calculate centred counts for. Currently only size 4 and 5 are supported.}
 }
 \value{
 graphlet_counts minus exp_graphlet_counts for graphlets up to size

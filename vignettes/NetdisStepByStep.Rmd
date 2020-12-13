@@ -24,6 +24,8 @@ This Vignette explains some inner calculations of Netdis, which the user doesn't
 
 For a simple Netdis function call see instead ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html).
 
+For other vignettes in this package see the ["Menu"](V-Menu.html). 
+
 # What is Netdis?
 (Extracted from Ali et al. (2014)): Netdis counts small subgraphs  $w$ on $k$ nodes for all 2-step ego-networks, $k=3,4,5$. These counts are centred by subtracting the expected number of counts $E_w$. These centred counts of each network are then compared thus leading to the Netdis statistic.
 

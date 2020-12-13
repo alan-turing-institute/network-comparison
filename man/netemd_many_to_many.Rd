@@ -20,7 +20,7 @@ netemd_many_to_many(
 \arguments{
 \item{graphs}{A list of network/graph objects from the \code{igraph} package. \code{graphs} can be set to \code{NULL} (default) if dhists is provided.}
 
-\item{dhists}{A list whose elements contain either: A  list of \code{dhist} discrete histogram objects for each graph, or a list  a matrix of network features (each column representing a feature). \code{dhists} can be set to \code{NULL} (default) if \code{graphs} is provided.}
+\item{dhists}{A list whose elements contain either: A  list of \code{dhist} discrete histogram objects for each graph, or a list  a matrix of network features (each column representing a feature). \code{dhists} can be set to \code{NULL} (default) if \code{graphs} is provided.  A \code{dhist} object can be obtained from \code{graph_features_to_histograms}.}
 
 \item{method}{The method to use to find the minimum EMD across all potential
 offsets for each pair of histograms. Default is "optimise" to use

@@ -25,6 +25,7 @@ chunk_output_type: console
 
   Similarly, to see how to use pre-computed properties see ["Simple and quick (default) usage 2: pre-computed properties"](PreComputedProps.html)
   
+  For other vignettes in this package see the ["Menu"](V-Menu.html). 
 
 # Load required packages/libraries
 ```{r, packages, message= FALSE}
@@ -261,3 +262,5 @@ netdis.plot(netdislist = netdisgp_mat_others,whatrow = 2, main = "Netdis-GP: ill
 * A. E. Wegner, L. Ospina-Forero, R. E. Gaunt, C. M. Deane, and G. Reinert. Identifying networks with common organizational principles. Journal of Complex networks, 2017.
 
 * F. Picard, J.-J. Daudin, M. Koskas, S. Schbath, and S. Robin. Assessing the exceptionality of network motifs. Journal of Computational Biology, 15(1):1–20, 2008.
+
+

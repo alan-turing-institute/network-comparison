@@ -22,7 +22,7 @@ nummber of ego networks (rows).}
 each density bin.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
-Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
+Only graphlets containing up to \code{max_graphlet_size} nodes are counted. Currently only size 4 and 5 are supported.}
 
 \item{scale_fn}{Optional function to scale calculated expected counts, taking
 \code{graphlet_counts} and \code{max_graphlet_size} as arguments,

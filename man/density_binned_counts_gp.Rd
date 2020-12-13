@@ -17,7 +17,7 @@ density_binned_counts_gp(
 \item{density_interval_indexes}{Density bin index for
 each ego network.}
 
-\item{max_graphlet_size}{Determines the maximum size of graphlets
+\item{max_graphlet_size}{Determines the maximum size of graphlets. Currently only size 4 and 5 are supported.
 included in graphlet_counts.}
 }
 \description{
