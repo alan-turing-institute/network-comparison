@@ -18,7 +18,7 @@ netemd_many_to_many(
 )
 }
 \arguments{
-\item{graphs}{A list of network/graph objects from the \code{igraph} package. \code{graphs} can be set to \code{NULL} (default) if dhists is provided.}
+\item{graphs}{A list of network/graph objects from the \code{igraph} package. \code{graphs} can be set to \code{NULL} (default) if \code{dhists} is provided.}
 
 \item{dhists}{A list whose elements contain either: A  list of \code{dhist} discrete histogram objects for each graph, or a list  a matrix of network features (each column representing a feature). \code{dhists} can be set to \code{NULL} (default) if \code{graphs} is provided.  A \code{dhist} object can be obtained from \code{graph_features_to_histograms}.}
 
@@ -34,7 +34,7 @@ histograms at all offsets that are candidates for the minimal EMD.}
 "smear" point masses across a finite width in the real domain. Default is 0,
 which  results in no smoothing. Care should be taken to select a
 \code{smoothing_window_width} that is appropriate for the discrete domain
-(e.g.for the integer domain a width of 1 is the natural choice)}
+(e.g.for the integer domain a width of 1 is the natural choice).}
 
 \item{return_details}{Logical indicating whether to return the individual
 minimal EMDs and associated offsets for all pairs of histograms}
@@ -43,22 +43,22 @@ minimal EMDs and associated offsets for all pairs of histograms}
 the \code{mc.cores} option set in the R environment.}
 
 \item{feature_type}{Type of graphlet-based feature to count: "graphlet"
-counts the number of graphlets each node participates in; "orbit" calculates
+counts the number of graphlets each node participates in; "orbit" (default) calculates
 the number of graphlet orbits each node participates in.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes will be
-counted. Possible values are 3,4, and 5 (default).}
+counted. Possible values are 4, and 5 (default).}
 
 \item{ego_neighbourhood_size}{The number of steps from the source node to
 include nodes for each ego-network. NetEmd was proposed for individual nodes alone, hence the default value is 0.}
 }
 \value{
-NetEMD measures between all pairs of graphs for which GDDs
+NetEMD measures between all pairs of graphs for which features
 were provided. Format of returned data depends on the \code{return_details}
 parameter. If set to FALSE, a list is returned with the following named
 elements:\code{net_emd}: a vector of NetEMDs for each pair of graphs,
-\code{comp_spec}: a comaprison specification table containing the graph names
+\code{comp_spec}: a comparison specification table containing the graph names
 and indices within the input GDD list for each pair of graphs compared.
 If \code{return_details} is set to FALSE, the list also contains the following
 matrices for each graph pair: \code{min_emds}: the minimal EMD for each GDD

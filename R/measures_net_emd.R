@@ -30,7 +30,7 @@
 #' the number of graphlet orbits each node participates in.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be
-#' counted. Possible values are 3,4, and 5 (default).
+#' counted. Possible values are 4, and 5 (default).
 #' @param ego_neighbourhood_size The number of steps from the source node to
 #' include nodes for each ego-network. NetEmd was proposed for individual nodes alone, hence the default value is 0.
 #' @return NetEMD measure for the two sets of discrete histograms (or graphs). If
@@ -158,7 +158,7 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
 
 #' NetEMDs between all graph pairs using provided Graphlet-based Degree
 #' Distributions
-#' @param graphs A list of network/graph objects from the \code{igraph} package. \code{graphs} can be set to \code{NULL} (default) if dhists is provided.
+#' @param graphs A list of network/graph objects from the \code{igraph} package. \code{graphs} can be set to \code{NULL} (default) if \code{dhists} is provided.
 #' @param dhists A list whose elements contain either: A  list of \code{dhist} discrete histogram objects for each graph, or a list  a matrix of network features (each column representing a feature). \code{dhists} can be set to \code{NULL} (default) if \code{graphs} is provided.  A \code{dhist} object can be obtained from \code{graph_features_to_histograms}.
 #' @param method The method to use to find the minimum EMD across all potential
 #' offsets for each pair of histograms. Default is "optimise" to use
@@ -173,22 +173,22 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
 #' "smear" point masses across a finite width in the real domain. Default is 0,
 #' which  results in no smoothing. Care should be taken to select a
 #' \code{smoothing_window_width} that is appropriate for the discrete domain
-#' (e.g.for the integer domain a width of 1 is the natural choice)
+#' (e.g.for the integer domain a width of 1 is the natural choice).
 #' @param  mc.cores Number of cores to use for parallel processing. Defaults to
 #' the \code{mc.cores} option set in the R environment.
 #' @param feature_type Type of graphlet-based feature to count: "graphlet"
-#' counts the number of graphlets each node participates in; "orbit" calculates
+#' counts the number of graphlets each node participates in; "orbit" (default) calculates
 #' the number of graphlet orbits each node participates in.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be
-#' counted. Possible values are 3,4, and 5 (default).
+#' counted. Possible values are 4, and 5 (default).
 #' @param ego_neighbourhood_size The number of steps from the source node to
 #' include nodes for each ego-network. NetEmd was proposed for individual nodes alone, hence the default value is 0.
-#' @return NetEMD measures between all pairs of graphs for which GDDs
+#' @return NetEMD measures between all pairs of graphs for which features
 #' were provided. Format of returned data depends on the \code{return_details}
 #' parameter. If set to FALSE, a list is returned with the following named
 #' elements:\code{net_emd}: a vector of NetEMDs for each pair of graphs,
-#' \code{comp_spec}: a comaprison specification table containing the graph names
+#' \code{comp_spec}: a comparison specification table containing the graph names
 #' and indices within the input GDD list for each pair of graphs compared.
 #' If \code{return_details} is set to FALSE, the list also contains the following
 #' matrices for each graph pair: \code{min_emds}: the minimal EMD for each GDD
@@ -219,7 +219,7 @@ netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smo
   }
   if (!is.null(dhists) ) {
     if (all(( unlist(sapply(X = dhists, FUN = is.matrix)) ) )  ) {which_imput_type <- "Matrix"} 
-    if (all(( unlist(sapply(X = dhists, FUN = 
+    if ( !is.null(which_imput_type) | all(( unlist(sapply(X = dhists, FUN = 
                             function(l){ all(( unlist(sapply(X = l, FUN = is_dhist)) ) ) }
     )) ) )  ) {which_imput_type <- "dhist"} else {
         warning("dhists does not conform to a Matrix or dhist class for all elmenents/netwroks in the list.")

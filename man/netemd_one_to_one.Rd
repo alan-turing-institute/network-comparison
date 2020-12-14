@@ -49,7 +49,7 @@ the number of graphlet orbits each node participates in.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes will be
-counted. Possible values are 3,4, and 5 (default).}
+counted. Possible values are 4, and 5 (default).}
 
 \item{ego_neighbourhood_size}{The number of steps from the source node to
 include nodes for each ego-network. NetEmd was proposed for individual nodes alone, hence the default value is 0.}

@@ -30,7 +30,7 @@ or a constant numeric value to subtract from all graphlet counts.}
 \item{binning_fn}{Function used to bin ego network densities. Only needed if
 \code{ref_ego_density_bins} and \code{ref_binned_graphlet_counts} are
 \code{NULL}. Takes densities as its single argument, and returns a named list
-including keys \code{breaks} (list of bin edges) and \code{interval_indexes}
+including keys \code{breaks} (vector of bin edges) and \code{interval_indexes}
 (density bin index for each ego network).}
 
 \item{bin_counts_fn}{Function used to calculate expected graphlet counts in

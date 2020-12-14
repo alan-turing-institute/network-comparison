@@ -37,7 +37,7 @@ The following sections show how to extract the subgraph counts, or other relevan
 
 ## Comparing two graphs with NetEmd via subgraph counts.
 
-Although NetEmd and Netdis use subgraph counts, NetEmd takes counts directly from the observed graph, whereas Netdis takes counts from ego-networks of the observed graph. The following example shows how the counts are extracted for NetEmd via `count_orbits_per_node`. The user can call NetEmd by directly providing the matrix of counts, or by providing a processed version of these counts via `graph_features_to_histograms`.
+NetEmd and Netdis use subgraph counts, however, NetEmd takes counts directly from the observed graph. Netdis takes counts from ego-networks of the observed graph. The following example shows how the counts are extracted for NetEmd via `count_orbits_per_node`. The user can call NetEmd by directly providing the matrix of counts, or by providing a processed version of these counts via `graph_features_to_histograms`.
 
 ```{r, netemd,fig.align='center'}
 # Create lattice networks
@@ -90,7 +90,7 @@ netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2, smoothing_window_width =
 
 # Compare two networks via Netdis and its variants.
 
-Netdis uses counts from the resulting ego-networks of each of the nodes in a graph, but it also takes into account the mean or expectation of these ego-network counts ($E_w$). The following example shows how the user can compute and provide the properties required from each graph as well as any relevant property required to calculate $E_w$.
+Netdis uses counts from the resulting ego-networks of each of the nodes in a graph, but it also takes into account the mean or expectation of these ego-network counts ($E_w$). The following example shows how the user can compute and provide the properties required from each graph as well as any relevant property required to calculate $E_w$. The main properties can be obtained by means of `count_graphlets_ego`.
 
 
 ## Using Netdis with a gold-standard or reference graph to obtain $E_w$.

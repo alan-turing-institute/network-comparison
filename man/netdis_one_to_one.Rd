@@ -31,17 +31,17 @@ graphs .
 2) A simplified \code{igraph} object - used as a reference graph from which
 expected counts are calculated for all query graphs.
 3) NULL (Default) - Used for Netdis-GP, where the expected counts will be calculated based on the properties of the
-query graphs themselves.}
+query graphs themselves. (Geometric-Poisson approximation).}
 
-\item{max_graphlet_size}{Generate graphlets up to this size. Currently only 4 and 5 are supported.}
+\item{max_graphlet_size}{Generate graphlets up to this size. Currently only 4 (default) and 5 are supported.}
 
-\item{neighbourhood_size}{Ego network neighborhood size.}
+\item{neighbourhood_size}{Ego network neighborhood size (default: 2).}
 
 \item{min_ego_nodes}{Filter ego networks which have fewer
-than min_ego_nodes nodes.}
+than min_ego_nodes nodes (default: 3).}
 
 \item{min_ego_edges}{Filter ego networks which have fewer
-than min_ego_edges edges.}
+than min_ego_edges edges (default: 1).}
 
 \item{binning_fn}{Function used to bin ego network densities. Takes edge \code{densities}
 as its single argument, and returns a named list including, the input \code{densities}, the resulting bin \code{breaks} (vector of density bin limits), and the vector \code{interval_indexes} which states to what bin each of the individual elements in \code{densities} belongs to.
@@ -58,21 +58,39 @@ values of \code{ref_graph} and \code{graphlet_counts_ref}.}
 \item{exp_counts_fn}{Function used to map from binned reference counts to
 expected counts for each graphlet in each ego network of the query graphs.
 Takes \code{ego_networks}, \code{density_bin_breaks},
-\code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.\
+\code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
 If \code{exp_counts_fn} is \code{NULL}, (default), it will apply
 either the approach from the original Netdis paper, or the respective Geometric-Poisson approximation; depending on the
 values of \code{ref_graph} and \code{graphlet_counts_ref}.}
 
 \item{graphlet_counts_1}{Pre-generated graphlet counts for the first query
-graph. If the \code{graphlet_counts_1} argument is defined then
+graph.  Matrix containing counts of each graphlet (columns) for
+each ego-network (rows) in the input graph. Columns are labelled with
+graphlet IDs and rows are labelled with the ID of the central node in each
+ego-network. As well as graphlet counts, each matrix  must contain an
+additional column labelled "N" including the node count for
+each ego network. (default: NULL).
+If the \code{graphlet_counts_1} argument is defined then
 \code{graph_1} will not be used. These counts can be obtained with \code{count_graphlets_ego}.}
 
 \item{graphlet_counts_2}{Pre-generated graphlet counts for the second query
-graph. If the \code{graphlet_counts_2} argument is defined then
+graph. Matrix containing counts of each graphlet (columns) for
+each ego-network (rows) in the input graph. Columns are labelled with
+graphlet IDs and rows are labelled with the ID of the central node in each
+ego-network. As well as graphlet counts, each matrix  must contain an
+additional column labelled "N" including the node count for
+each ego network. (default: NULL).
+If the \code{graphlet_counts_2} argument is defined then
 \code{graph_2} will not be used. These counts can be obtained with \code{count_graphlets_ego}.}
 
-\item{graphlet_counts_ref}{Pre-generated reference graphlet counts. If the
-\code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
+\item{graphlet_counts_ref}{Pre-generated reference graphlet counts.
+Matrix containing counts of each graphlet (columns) for
+each ego-network (rows) in the reference graph. Columns are labelled with
+graphlet IDs and rows are labelled with the ID of the central node in each
+ego-network. As well as graphlet counts, each matrix  must contain an
+additional column labelled "N" including the node count for
+each ego network. (default: NULL).
+If the \code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
 be used.}
 }
 \value{
