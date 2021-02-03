@@ -36,11 +36,11 @@ library("igraph")
 library("pheatmap")
 ```
 
-# Compare Multiple networks via NetEmd.
+# Compare Multiple networks via NetEmd
 
 (Extracted from Wegner et al. (2017)): NetEmd is based on  the idea that the information encapsulated in the shape of the degree distribution and other network properties which reflect the topological organization of the network. From an abstract point of view, NetEmd views the shape of a distribution as a property that is invariant under linear deformations i.e. translations and re-scalings of the axis.
 
-## Networks being compared.
+## Networks being compared
 
 Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 nodes. The plots of these networks illustrate clearly their structural differences.
 ```{r, netwokrs,fig.align='center',fig.dim=c(8,8)}
@@ -80,8 +80,8 @@ Illustration of the multiple NetEmd comparisons based on orbit counts.
 ```{r,netemdorbitsPLOT,fig.align='center',fig.dim=c(8,8)}
 netemd.plot(netemdlist=netemdlist,clustering_method="ward.D",main="NetEmd Orbits")
 
-###### The following code shows the inner working of netemd.plot ######
-# Creating matrices to plot the Network comparison
+###### The following code shows the inner working of function netdist::netemd.plot ######
+# Creating matrices to plot the Network comparisons
 g_NETEMDcomp <- igraph::graph.edgelist(el = as.matrix(netemdlist$comp_spec[,1:2]),directed = FALSE)
 igraph::edge_attr(graph = g_NETEMDcomp,name = "NetEmdOrbits") <- netemdlist$netemds
 mat <- get.adjacency(graph = g_NETEMDcomp,type = "both",attr = "NetEmdOrbits",names = TRUE,sparse = FALSE)
@@ -107,7 +107,7 @@ for(i in 1:length(glist)){
   SPECT[[ names(glist)[i] ]] <- cbind(L.Spectra= eigen(Lapg)$values, NL.Spectra= eigen(NLap)$values) 
 }
 
-netemdlist <- netemd_many_to_many(dhists = SPECT,smoothing_window_width = 0)#Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+netemdlist <- netemd_many_to_many(dhists = SPECT,smoothing_window_width = 0) #Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 
 netemdlist
 ```

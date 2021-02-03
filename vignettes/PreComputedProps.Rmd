@@ -1,6 +1,6 @@
 ---
 title: "Simple and quick (default) usage 2: pre-computed properties"
-author: "Luis Ospina-Forero"
+#author: "Luis Ospina-Forero"
 date: "23/06/2020"
 output: rmarkdown::html_vignette
 vignette: >
@@ -31,7 +31,7 @@ library("netdist")
 library("igraph")
 ```
 
-# Compare two networks via NetEmd.
+# Compare two networks via NetEmd
 
 The following sections show how to extract the subgraph counts, or other relevant features prior to running NetEmd or Netdis. Then it shows how to call NetEmd or Netdis using the pre-computed features.
 
@@ -59,7 +59,7 @@ dhists_2<- graph_features_to_histograms(features_matrix = counts_2)
 netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2,smoothing_window_width = 1)
 ```
 
-## Comparing two graphs with NetEmd via their Laplacian spectrum.
+## Comparing two graphs with NetEmd via their Laplacian spectrum
 ```{r, netemdEigen,fig.align='center'}
 # Networks
 gLat_1 <- graph.lattice(c(20,20)) 
@@ -88,12 +88,13 @@ netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2, smoothing_window_width =
 ```
 -------------------------
 
-# Compare two networks via Netdis and its variants.
+# Compare two networks via Netdis and its variants
 
 Netdis uses counts from the resulting ego-networks of each of the nodes in a graph, but it also takes into account the mean or expectation of these ego-network counts ($E_w$). The following example shows how the user can compute and provide the properties required from each graph as well as any relevant property required to calculate $E_w$. The main properties can be obtained by means of `count_graphlets_ego`.
 
 
-## Using Netdis with a gold-standard or reference graph to obtain $E_w$.
+## Using Netdis with a gold-standard or reference graph to obtain $E_w$
+
 The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard graph and which is summarized in $E_w$.
 
 ```{r,netdisgoldstand,fig.align='center'}
@@ -148,7 +149,7 @@ netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_gra
 ```
 
 
-## Using Netdis with no expectation ($E_w=0$)
+## Using Netdis with no background expectation ($E_w=0$)
 Comparing the networks via their observed ego counts without centring them, (equivalent to using expectation equal to zero). This variant thus focus on detecting small discrepancies between the networks.
 
 

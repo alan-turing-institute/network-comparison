@@ -1,6 +1,6 @@
 ---
 title: "Netdis: Protein interaction networks"
-author: "Martin O'Reilly, Luis Ospina-Forero"
+#author: "Martin O'Reilly, Luis Ospina-Forero"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -14,26 +14,25 @@ chunk_output_type: console
 
 # Protain interaction networks
 
-In this vignette we show a potential application of Netdis for real world data. In this case the comparison between the protein network structures could provide some insight into the phylogenetic tree of organisms as suggested in Ali et al. (2014).
-
-Here a proxy of the phylogenetic tree of 5 organisms, 4 _Herpes_ virus and  _Escherichia Coli_. The tree is approximated via a dedrogram built from all the pairwise protein network Netdis comparisons, as suggested in Ali et al. (2014). The correct tree is found using Netdis and graphlets of size 4.
+In this vignette we show a potential application of Netdis for real world data. In this case the comparison between the protein network structures could provide some insight into the phylogenetic tree of organisms as suggested in Ali et al. (2014). In this application we show a proxy of the phylogenetic tree of 5 organisms, 4 _Herpes_ virus and  _Escherichia Coli_. The tree is approximated via a dendrogram built from all the pairwise protein interaction network comparisons as suggested in Ali et al. (2014). The correct tree is found using Netdis and using graphlets of size 4 (taxonomy ground truth: NCBI taxonomy database. https://www.ncbi.nlm.nih.gov/taxonomy).
 
 For an introduction to Netdis and its variants see ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html). 
 
 For other vignettes in this package see the ["Menu"](V-Menu.html). 
 
-## Loading graphs
+# Loading protain interaction networks and an ER reference graph
+
 The package contains the protein interaction networks of a few _Herpes_ virus and of _Escherichia Coli_. These networks can be read by using `read_simple_graphs`, which reads graph data from all files in a directory that match a specific filename pattern in a format suitable for calculating graphlet-based features by using
 [ORCA package](https://CRAN.R-project.org/package=orca).
 
 We use `igraph::read_graph` to read graph data from files. See help for `igraph::read_graph` for a list of 
 supported values for the `format` parameter.
 
-```{r}
+```{r, message=FALSE}
 library("netdist")
 library("igraph")
 edge_format = "ncol"
-# Load reference graph (used for Netdis. Not required for NetEMD)
+# Load reference graph (used for Netdis. Not required for NetEmd
 ref_path = file.path(system.file(file.path("extdata", "random"), package = "netdist"),
                      "ER_1250_10_1")
 ref_graph <- read_simple_graph(ref_path, format = edge_format)
@@ -94,9 +93,8 @@ print(netdis4_mat)
 ```
 
 
-## Generate dendrograms
-```{r,fig.align='center',fig.dim=c(8,8)}
-graphdists <- as.dist(netdis4_mat)
+# Generate dendrograms
+```{r,fig.align='center',fig.dim=c(6,6)}
 par(mfrow = c(1, 2))
 cex <- 1
 
@@ -122,24 +120,38 @@ plot(phangorn::upgma(as.dist(netdis4_mat), method = "average"),
 ```
 
 
-```{r,fig.align='center',fig.dim=c(8,8)}
-cex <- 1.5
-col <- colorRampPalette(colors = c("blue","white"))(100)
-title <- paste("Netdis: graphlet size = ", 3, sep = "")
-heatmap(netdis3_mat, Rowv = NULL, Colv = NULL, col = col, main = title,
-        cexRow = cex, cexCol = cex, symm = TRUE)
+# Application using NetEmd
+```{r,fig.align='center',fig.dim=c(6,6)}
+netemdlist <- netemd_many_to_many(graphs = query_graphs,smoothing_window_width = 0,mc.cores = 1)
+netemd_mat <- cross_comp_to_matrix(measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec)
+
+netemdlist_smooth <- netemd_many_to_many(graphs = query_graphs,smoothing_window_width = 1,mc.cores = 1)
+netemd_mat_smooth <- cross_comp_to_matrix(measure = netemdlist_smooth$netemds, cross_comparison_spec = netemdlist_smooth$comp_spec)
+
+par(mfrow = c(1, 2))
+cex <- 1
+
+graphNetEMDdists_smooth <- as.dist(netemd_mat_smooth)
+plot(phangorn::upgma(as.dist(graphNetEMDdists_smooth), method = "average"),
+     use.edge.length = FALSE, 
+     edge.width = cex*2,
+     main = "NetEmd: with smoothing",
+     cex.lab = cex, cex.axis = cex,
+     cex.main = cex, cex.sub = cex,
+     cex = cex)
+
+
+graphNetEMDdists <- as.dist(netemd_mat)
+plot(phangorn::upgma(as.dist(graphNetEMDdists), method = "average"),
+     use.edge.length = FALSE, 
+     edge.width = cex*2,
+     main = "NetEmd: without smoothing",
+     cex.lab = cex, cex.axis = cex,
+     cex.main = cex, cex.sub = cex,
+     cex = cex)
+
 ```
-```{r,fig.align='center',fig.dim=c(8,8)}
-cex <- 1.5
-col <- colorRampPalette(colors = c("blue","white"))(100)
-title <- paste("Netdis: graphlet size = ", 4, sep = "")
-heatmap(netdis4_mat, Rowv = NULL, Colv = NULL, col = col, main = title,
-        cexRow = cex, cexCol = cex, symm = TRUE)
-```
-
-
--------------------------
-
+___
 
 # Bibliography
 

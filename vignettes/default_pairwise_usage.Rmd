@@ -1,7 +1,7 @@
 ---
 title: "Simple and quick (default) usage 1: pairwise comparisons"
 date: "`10-06-2020`"
-author: "Luis Ospina-Forero"
+#author: "Luis Ospina-Forero"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{default_pairwise_usage}
@@ -18,11 +18,12 @@ comment = "#>"
 
 # Introduction
 
-The `netdist` package currently considers to broad methodologies for network comparison, namely Netdis and NetEmd. Netdis considers multiple variants (via background expectations) to capture the dissimilarity between the local structure of networks exhibited by the occurrence of small subgraphs. NetEmd is also a method to capture the dissimilarity between networks using subgraph counts, but it has also been defined for any type of network features; for example eigen distributions. The variants of Netdis are controlled by the input selected for the background expectations, whereas the variants of NetEmd are controlled directly by the user in the selection of the network features being compared (by default this package uses subgraph counts).
+The `netdist` package currently considers two broad methodologies for network comparison, namely Netdis and NetEmd. Netdis considers multiple variants (via background expectations) to capture the dissimilarity between the local structure of networks exhibited by the occurrence of small subgraphs. NetEmd is also a method to capture the dissimilarity between networks using subgraph counts, but it has in addition been defined for any type of network features; for example eigen distributions. The variants of Netdis are controlled by the input selected for the background expectations, whereas the variants of NetEmd are controlled indirectly by the user by the selection of the network features being compared via NetEmd (by default this package uses subgraph counts as features).
 
-The following shows a quick introduction to the most simple functions of the package, and to some of the variants of Netdis and NetEmd.
+The following shows a quick introduction to the simplest functions of the package, and to some of the variants of Netdis and NetEmd.
 
-For other vignettes in this package see the ["Menu"](V-Menu.html). 
+For other vignettes in this package see the ["Menu"](V-Menu.html).
+
 
 # Load required packages/libraries
 ```{r, packages, message= FALSE}
@@ -32,7 +33,7 @@ library("igraph")
 ```
 
 ## Load graphs included in the netdist package
-The `netdist` package also includes examples of real a few real networks. These are protein interaction networks (PPI) of a few _Herpes_ virus and of the bacteria  _Escherichia Coli_ . In these networks, each node represents a protein and each link represents an interaction between proteins. See `help(virusppi)`.
+The `netdist` package also includes examples of a few real networks. These are protein interaction networks (PPI) of a few _Herpes_ virus and of the bacteria  _Escherichia Coli_ . In these networks, each node represents a protein and each link represents an interaction between proteins. See `help(virusppi)`.
 
 Although the `virusppi` list of PPI networks is loaded along with the `netdist` package, the following code shows how to read a network data from a file in disk:
 ```{r, graphs,fig.align='center',fig.dim=c(6,6)}
@@ -64,7 +65,7 @@ plot(graph_2,vertex.size=4,vertex.label=NA)
 
 The next two sections will provide a basic introduction and  usage of both NetEmd and Netdis.
 
-# Compare two networks via NetEmd.
+# Compare two networks via NetEmd
 
 ## What is NetEmd?
 (Extracted from Wegner et al. (2017)):
@@ -87,7 +88,7 @@ NetEmd_{t_i} (G,G')=EMD^*(p_{t_i}(G),p_{t_i}(G')),
 and where $p_{t_i}(G)$ and $p_{t_i}(G')$ are the distributions of ${t_i}$ on $G$ and $G'$ respectively. $NetEmd_{t_i}$ can be shown to be a pseudometric between graphs for any feature $t$, that is it is non-negative, symmetric and satisfies the triangle inequality.
 
 
-## Comparing two graphs with NetEmd.
+## Comparing two graphs with NetEmd
 ```{r, netemd,fig.align='center'}
 # Set source directory for Virus protein-protein interaction network edge files stored in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
@@ -105,7 +106,7 @@ graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
 netemd_one_to_one(graph_1=graph_1,graph_2=graph_2,feature_type="orbit",smoothing_window_width = 1)#Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 ```
 
-## Comparing two graphs with NetEmd via their Laplacian spectrum.
+## Comparing two graphs with NetEmd via their Laplacian spectrum
 ```{r, netemdEigen,fig.align='center'}
 #Laplacian
 Lapg_1 <- igraph::laplacian_matrix(graph = graph_1,normalized = FALSE,sparse = FALSE)
@@ -126,7 +127,7 @@ netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width =
 ```
 -------------------------
 
-# Compare two networks via Netdis and its variants.
+# Compare two networks via Netdis and its variants
 
 ## What is Netdis?
 (Extracted from Ali et al. (2014)): Netdis counts small subgraphs  $w$ on $k$ nodes for all 2-step ego-networks, $k=3,4,5$. These counts are centred by subtracting the expected number of counts $E_w$. These centred counts of each network are then compared thus leading to the Netdis statistic.
@@ -160,7 +161,8 @@ $$Netdis(k)=netd_2^S(k)=\tfrac{1}{2}(1-netD_2^S(k)) \in [0,1].$$
 Small values of Netdis suggest higher `similarity' between the networks. By default Netdis uses subgraphs on $k=4$ nodes.
 
 
-## Using netdis with a gold-standard graph to obtain $E_w$.
+## Using netdis with a gold-standard graph to obtain $E_w$
+
 The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard graph and which is summarized in $E_w$.
 
 ```{r,netdisgoldstand,fig.align='center',fig.dim=c(6,6)}
@@ -215,14 +217,12 @@ netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
 -------------------------
 
 
-
-
 # Bibliography
 
 * W. Ali, T. Rito, G. Reinert, F. Sun, and C. M. Deane. Alignment-free protein interaction network comparison. Bioinformatics, 30:i430–i437, 2014.
 
-* L. Ospina-Forero, C. M. Deane, and G. Reinert. Assessment of model fit via network comparison methods based on subgraph counts. Journal of Complex Networks, page cny017, August 2018.
-
 * A. E. Wegner, L. Ospina-Forero, R. E. Gaunt, C. M. Deane, and G. Reinert. Identifying networks with common organizational principles. Journal of Complex networks, 2017.
+
+* L. Ospina-Forero, C. M. Deane, and G. Reinert. Assessment of model fit via network comparison methods based on subgraph counts. Journal of Complex Networks, page cny017, August 2018.
 
 * F. Picard, J.-J. Daudin, M. Koskas, S. Schbath, and S. Robin. Assessing the exceptionality of network motifs. Journal of Computational Biology, 15(1):1–20, 2008.

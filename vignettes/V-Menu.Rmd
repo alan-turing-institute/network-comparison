@@ -1,7 +1,7 @@
 ---
 title: "Netdis Vignette's Menu"
 date: "`10-06-2020`"
-author: ""
+#author: "Luis Ospina-Forero"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{V-Menu}
@@ -20,19 +20,19 @@ knitr::opts_chunk$set(
 
 This package contains multiple vignettes that illustrate the simple ways of employing the network comparison methods 'Netdis', 'NetEmd' and their variants (e.g. `Netdis Geometric-Poisson'), and also the large flexibility of these methodologies. The following is a list of the available vignettes:
 
-* [Simple and quick (default) usage 1: pairwise comparisons](default_pairwise_usage.html): For comparisons between two networks.
+* [Simple and quick (default) usage 1: pairwise comparisons](default_pairwise_usage.html). For comparisons between two networks.
 
-* [Simple and quick (default) usage 2: precomputed properties](PreComputedProps.html): For comparisons that use pre-computed properties. This may be useful if a user specific property is to be used; but also when the user wants to save computation time in a setting of multiple comparisons against the same network.
+* [Simple and quick (default) usage 2: precomputed properties](PreComputedProps.html). For comparisons that use pre-computed properties. This may be useful if a user specific property is to be used; but also when the user wants to save computation time in a setting of multiple comparisons against the same network.
 
-* [Simple and quick (default) usage 3: many to many comparions](ManyToMany.html): User friendly options to retrieve all pairwise comparisons among a set of $n$ networks.
+* [Simple and quick (default) usage 3: many to many comparions](ManyToMany.html). User friendly options to retrieve all pairwise comparisons among a set of $n$ networks.
 
-* ["Netdis: step by step"](NetdisStepByStep.html): Shows a breakdown of the Netdis computation.
+* ["Netdis: step by step"](NetdisStepByStep.html). Shows a breakdown of the Netdis computation.
 
-* ["Netdis-GP: step by step"](NetdisGPStepByStep.html): Shows a breakdown of the Netdis-GP variant computation.
+* ["Netdis-GP: step by step"](NetdisGPStepByStep.html). Shows a breakdown of the Netdis-GP variant computation.
 
-* ["Netdis: customizations"](NewNetdisCustomisations.html): Shows general parameter changes of Netdis.
+* ["Netdis: customizations"](NewNetdisCustomisations.html). Shows general parameter changes of Netdis.
 
-* ["Netdis: Protein interaction networks"](dendrogram_example_net_dis.html): Shows a potential application of Netdis for real world protein interaction networks.
+* ["Netdis: Protein interaction networks"](dendrogram_example_net_dis.html). Shows a potential application of Netdis for real world protein interaction networks.
 
 -------------------------
 
@@ -43,8 +43,8 @@ This package contains multiple vignettes that illustrate the simple ways of empl
 
 * W. Ali, T. Rito, G. Reinert, F. Sun, and C. M. Deane. Alignment-free protein interaction network comparison. Bioinformatics, 30:i430–i437, 2014.
 
-* L. Ospina-Forero, C. M. Deane, and G. Reinert. Assessment of model fit via network comparison methods based on subgraph counts. Journal of Complex Networks, page cny017, August 2018.
-
 * A. E. Wegner, L. Ospina-Forero, R. E. Gaunt, C. M. Deane, and G. Reinert. Identifying networks with common organizational principles. Journal of Complex networks, 2017.
+
+* L. Ospina-Forero, C. M. Deane, and G. Reinert. Assessment of model fit via network comparison methods based on subgraph counts. Journal of Complex Networks, page cny017, August 2018.
 
 * F. Picard, J.-J. Daudin, M. Koskas, S. Schbath, and S. Robin. Assessing the exceptionality of network motifs. Journal of Computational Biology, 15(1):1–20, 2008.
