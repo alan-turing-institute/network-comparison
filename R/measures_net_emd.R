@@ -74,7 +74,7 @@
 #'  
 #' @export
 netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=NULL, method = "optimise",
-                               return_details = FALSE, smoothing_window_width = 0,feature_type="orbit",max_graphlet_size = 5,ego_neighbourhood_size = 0) {
+                              return_details = FALSE, smoothing_window_width = 0,feature_type="orbit",max_graphlet_size = 5,ego_neighbourhood_size = 0) {
   ## ------------------------------------------------------------------------
   # Check arguments 1
   if (!igraph::is.igraph(graph_1) & is.null(dhists_1)) {
@@ -98,10 +98,10 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
   if(igraph::is.igraph(graph_1)){
     if(!is.null(dhists_1)){warning("dhists_1 will be calculated from graph_1.")}
     dhists_1 <- gdd(graph = graph_1, feature_type = feature_type,
-            max_graphlet_size = max_graphlet_size,
-            ego_neighbourhood_size = ego_neighbourhood_size
-        )
-    }
+                    max_graphlet_size = max_graphlet_size,
+                    ego_neighbourhood_size = ego_neighbourhood_size
+    )
+  }
   if(igraph::is.igraph(graph_2)){
     if(!is.null(dhists_2)){warning("dhists_2 will be calculated from graph_2.")}
     dhists_2 <- gdd(graph = graph_2, feature_type = feature_type,
@@ -122,8 +122,8 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
   if (pair_of_dhist_lists) {
     details <- purrr::map2(dhists_1, dhists_2, function(dhist1, dhist2) {
       netemd_single_pair(dhist1, dhist2,
-                          method = method,
-                          smoothing_window_width = smoothing_window_width
+                         method = method,
+                         smoothing_window_width = smoothing_window_width
       )
     })
     # Collect the minimum EMDs and associated offsets for all histogram pairs
@@ -148,9 +148,9 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
     # Wrap each member of a single pair of histograms is a list and recursively
     # call this net_emd function. This ensures they are treated the same.
     return(netemd_one_to_one(dhists_1 = list(dhists_1), dhists_2 = list(dhists_2),
-                   method = method,
-                   return_details = return_details,
-                   smoothing_window_width = smoothing_window_width
+                             method = method,
+                             return_details = return_details,
+                             smoothing_window_width = smoothing_window_width
     ))
   }
 }
@@ -196,7 +196,7 @@ netemd_one_to_one <- function(graph_1=NULL,graph_2=NULL,dhists_1=NULL, dhists_2=
 #' the minimal EMD for each GDD
 #' @export
 netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smoothing_window_width = 0,
-                                    return_details = FALSE, mc.cores = getOption("mc.cores", 2L),feature_type="orbit",max_graphlet_size = 5,ego_neighbourhood_size = 0) {
+                               return_details = FALSE, mc.cores = getOption("mc.cores", 2L),feature_type="orbit",max_graphlet_size = 5,ego_neighbourhood_size = 0) {
   if(max_graphlet_size > 4 & mc.cores > 1) print(paste("This function will compute orbits of graphlets up to size 5 using ", mc.cores," cores. Depending on the density and size of the graphs, this may lead to a large compsumption of RAM."))
   
   # NOTE: mcapply only works on unix-like systems with system level forking
@@ -218,12 +218,17 @@ netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smo
     which_imput_type <- "Graphs"
   }
   if (!is.null(dhists) ) {
-    if (all(( unlist(sapply(X = dhists, FUN = is.matrix)) ) )  ) {which_imput_type <- "Matrix"} 
-    if ( !is.null(which_imput_type) | all(( unlist(sapply(X = dhists, FUN = 
-                            function(l){ all(( unlist(sapply(X = l, FUN = is_dhist)) ) ) }
-    )) ) )  ) {which_imput_type <- "dhist"} else {
-        warning("dhists does not conform to a Matrix or dhist class for all elmenents/netwroks in the list.")
-      }
+    if (all(( unlist(sapply(X = dhists, FUN = is.matrix)) ) )  ) {
+      which_imput_type <- "Matrix"
+    } 
+    if ( all(( unlist(sapply(X = dhists, FUN = 
+                             function(l){ all(( unlist(sapply(X = l, FUN = is_dhist)) ) ) }
+    )) ) )  ) {
+      which_imput_type <- "dhist"
+    }
+    if(is.null(which_imput_type)){
+      warning("dhists does not conform to a Matrix or dhist class for all elmenents/netwroks in the list.")
+    }
   }
   ## ------------------------------------------------------------------------
   # Check arguments 2
@@ -236,23 +241,29 @@ netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smo
   #If input is graph then get graphlet counts
   if(which_imput_type == "Graphs"){
     dhists <- parallel::mcmapply(gdd, graphs,
-                       MoreArgs =
-                         list(
-                           feature_type = feature_type,
-                           max_graphlet_size = max_graphlet_size,
-                           ego_neighbourhood_size = ego_neighbourhood_size
-                         ),
-                       SIMPLIFY = FALSE, mc.cores = mc.cores
+                                 MoreArgs =
+                                   list(
+                                     feature_type = feature_type,
+                                     max_graphlet_size = max_graphlet_size,
+                                     ego_neighbourhood_size = ego_neighbourhood_size
+                                   ),
+                                 SIMPLIFY = FALSE, mc.cores = mc.cores
     )
   }
   rm(graphs)
+  ## ------------------------------------------------------------------------
+  # Check arguments 4
+  #cross_comparison_spec was coded to require names!
+  if(is.null(names(dhists))){
+    names(dhists) <- paste("Net",1:length(dhists),sep = "")
+  }
   ## ------------------------------------------------------------------------
   comp_spec <- cross_comparison_spec(dhists)
   num_features <- length(dhists[[1]])
   out <- purrr::simplify(parallel::mcmapply(function(index_a, index_b) {
     netemd_one_to_one(dhists_1 =  dhists[[index_a]], dhists_2 =  dhists[[index_b]],
-      method = method, return_details = return_details,
-      smoothing_window_width = smoothing_window_width
+                      method = method, return_details = return_details,
+                      smoothing_window_width = smoothing_window_width
     )
   }, comp_spec$index_a, comp_spec$index_b, SIMPLIFY = FALSE, mc.cores = mc.cores))
   if (return_details) {
@@ -307,7 +318,7 @@ netemd_many_to_many<- function(graphs=NULL,dhists=NULL, method = "optimise", smo
 #'  netemd_single_pair(dhists_1[[1]],dhists_2[[1]],method = "optimise",smoothing_window_width = 0)
 #' @export
 netemd_single_pair <- function(dhist1, dhist2, method = "optimise",
-                                smoothing_window_width = 0) {
+                               smoothing_window_width = 0) {
   # Present dhists as smoothed or unsmoothed histograms depending on the value
   # of smoothing_window_width
   # NOTE: This MUST be done prior to any variance normalisation as the
@@ -324,14 +335,14 @@ netemd_single_pair <- function(dhist1, dhist2, method = "optimise",
     dhist1 <- as_smoothed_dhist(dhist1, smoothing_window_width)
     dhist2 <- as_smoothed_dhist(dhist2, smoothing_window_width)
   }
-
+  
   # Store means and variances to calculate offset later
   mean1 <- dhist_mean_location(dhist1)
   mean2 <- dhist_mean_location(dhist2)
-
+  
   var1 <- dhist_variance(dhist1)
   var2 <- dhist_variance(dhist2)
-
+  
   # Mean centre histograms. This helps with numerical stability as, after
   # variance normalisation, the differences between locations are often small.
   # We want to avoid calculating small differences between large numbers as
@@ -340,11 +351,11 @@ netemd_single_pair <- function(dhist1, dhist2, method = "optimise",
   # clustered around zero, rather than some potentially large mean location.
   dhist1 <- mean_centre_dhist(dhist1)
   dhist2 <- mean_centre_dhist(dhist2)
-
+  
   # Normalise histogram to unit mass and unit variance
   dhist1_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist1))
   dhist2_norm <- normalise_dhist_variance(normalise_dhist_mass(dhist2))
-
+  
   # Calculate minimal EMD
   result <- min_emd(dhist1_norm, dhist2_norm, method = method)
   # As we mean-centred the histograms prior to passing to min_emd(), the offset
