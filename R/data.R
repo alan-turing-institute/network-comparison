@@ -41,3 +41,19 @@
 #' @source \strong{Taxonomy ground truth:} NCBI taxonomy database. \url{https://www.ncbi.nlm.nih.gov/taxonomy}
 #' @encoding UTF-8
 "virusppi"
+
+
+
+
+
+#' World trade networks from 1962–2014
+#'
+#' The world trade data set consists of bilateral trade flows between countries for the years 1962–2014 [Feenstra et al., 2005, Division, 2015].
+#' 
+#'
+#' @format A list of \code{igraph} objects.
+#' @source \strong{World trade networks:} Feenstra RC,Lipsey RE, Deng H, Ma AC, and Mo H. (2005) World trade flows: 1962-2000. Technical report, National Bureau of Economic Research
+#' @encoding UTF-8
+"wtnets"
+
+
