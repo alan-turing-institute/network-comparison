@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 #  Introductory Vignettes
 
-This package contains multiple vignettes that illustrate the simple ways of employing the network comparison methods 'Netdis', 'NetEmd' and their variants (e.g. `Netdis Geometric-Poisson'), and also the large flexibility of these methodologies. The following is a list of the available vignettes:
+This package contains multiple vignettes that illustrate the simple ways of employing the network comparison methods 'Netdis', 'NetEmd' and their variants (e.g. `Netdis-GP'), and also the large flexibility of these methodologies. The following is a list of the available vignettes:
 
 * [Simple and quick (default) usage 1: pairwise comparisons](default_pairwise_usage.html). For comparisons between two networks.
 
@@ -26,13 +26,18 @@ This package contains multiple vignettes that illustrate the simple ways of empl
 
 * [Simple and quick (default) usage 3: many to many comparions](ManyToMany.html). User friendly options to retrieve all pairwise comparisons among a set of $n$ networks.
 
-* ["Netdis: step by step"](NetdisStepByStep.html). Shows a breakdown of the Netdis computation.
+* ["Netdis: Protein interaction networks"](dendrogram_example_net_dis.html). Shows a potential application of Netdis for real world protein interaction networks.
 
-* ["Netdis-GP: step by step"](NetdisGPStepByStep.html). Shows a breakdown of the Netdis-GP variant computation.
+* ["NetEmd: World trade networks"](NetEmdTimeOrdering.html). Shows a potential application of NetEmd using world trade networks.
+
+
+## Some more details of Netdis
 
 * ["Netdis: customizations"](NewNetdisCustomisations.html). Shows general parameter changes of Netdis.
 
-* ["Netdis: Protein interaction networks"](dendrogram_example_net_dis.html). Shows a potential application of Netdis for real world protein interaction networks.
+* ["Netdis: step by step"](NetdisStepByStep.html). Shows a breakdown of the Netdis computation.
+
+* ["Netdis-GP: step by step"](NetdisGPStepByStep.html). Shows a breakdown of the Netdis-GP variant computation.
 
 -------------------------
 
