@@ -1,0 +1,116 @@
+---
+title: 'NetEmd: World Trade'
+#author: "Luis Ospina-Forero"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{NetEmd: World Trade}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+chunk_output_type: console
+---
+
+# World trade networks
+
+The world trade data set consists of bilateral trade flows between countries for the years 1985–2014. The dataset is obtained from [Feenstra et al., 2005, Division, 2015] who provide a larger dataset that spams the years 1962–2014.
+
+For an introduction to NetEmd and its variants see ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html). 
+
+For many to many comparisons see [Simple and quick (default) usage 3: many to many comparions](ManyToMany.html)
+
+For other vignettes in this package see the ["Menu"](V-Menu.html). 
+
+
+# Loading world trade network data included in the package
+
+The package contains the world trade networks and pre-computed graphlet counts in ` worldtradesub`. This is a list of two lists. The first list is `worldtradesub$wtnets` which contains the networks and the second `worldtradesub$Counts` which contains  pre-computed counts for the aforementioned networks.
+
+```{r, message=FALSE}
+  library("netdist")
+  library("igraph")
+  data(worldtradesub)
+  wtnets<- worldtradesub$wtnets
+  summary(worldtradesub)
+  summary(wtnets)
+```
+
+These world trade networks are more dense than typically sparse social networks. For example the edge density for the network in 1985 is `r igraph::graph.density(worldtradesub$wtnets$wtn1985)`.
+```{r,fig.align='center',fig.dim=c(5,5)}
+  plot(wtnets$wtn1985,vertex.size=5,vertex.label.cex=0.4)
+```
+
+
+
+# Generate NetEmd measures between each pair of query graphs
+  
+In this example **NetEmd** will consider orbit counts of graphlets containing up to 5 nodes.  If NetEmd is to be called a single time, then the command `netemd_many_to_many(graphs = wtnets)` would suffice. The following code provides such an example: 
+```{r,cache=TRUE}
+  # As the trade networks are considerable dense, this example first considers a small number of networks. This example may take some minutes to run.
+  netemd_result <- netemd_many_to_many(graphs = wtnets[1:4],mc.cores = 1)
+
+  print(netemd_result)
+```
+However, if there are pre-computed counts or features NetEmd can be called via these features instead.
+
+# Pre-computing graphlet counts
+  
+This world trade dataset contains 30 relatively dense networks which will lead to a longer computation of graphlet counts. Thus, it is advisable to pre-compute counts in case there is a need to call NetEmd multiple times. For example, when adding a new network to the dataset.
+
+```{r}
+# This example may take more than a few minutes (17mins - 25mins) to run and it is not necessary to run it for the upcoming examples.
+if(FALSE){# It is not necessary to run, as these counts are already available in.
+    Counts <- list()
+    for(i in 1:length(wtnets)){
+      Counts[[ names(wtnets)[i] ]] <- count_orbits_per_node(graph = wtnets[[i]],max_graphlet_size = 5)
+    }
+}
+```
+  
+Now, with the pre-computed counts NetEmd can be calculated more rapidly as the computations of the counts are often the bottle neck in the computational time of NetEmd. NetEmd will be called `r length(wtnets) * (length(wtnets)/2 - 1) ` times in order to obtain all pairwise comparisons between the `r length(wtnets)` considered world trade networks:
+```{r}
+  # The pre-computed counts already in the package
+  Counts <- worldtradesub$Counts
+  
+  #Calling NetEmd 
+  netemd_result <- netemd_many_to_many(dhists = Counts ,mc.cores = 1)
+  
+  #Results
+  netemd_matrix <- cross_comp_to_matrix(measure = netemd_result$netemds, cross_comparison_spec = netemd_result$comp_spec)
+  
+  print(netemd_matrix[1:10,1:5])
+```
+  
+# Evidence of change in world trade
+
+Based on the comparison of the world trade networks across the year, we can identify periods of time where possible considerable changes in world trade have occurred. The following heat map clearly shows the existence of two potential
+ changes in the world trade system, and which correspond to 1995-1996 and 2010-2011.
+```{r,fig.align='center',fig.dim=c(8.5,8.5)}
+  netemd.plot(netemdlist=netemd_result,clustering_method="ward.D",main="NetEmd",docluster = FALSE)
+```
+
+The World Trade Organization (WTO) said the following about these years:
+
+* About 2011: "*World trade growth decelerated sharply in 2011 as the global economy struggled under the influence of natural disasters, financial uncertainty and civil conflict. A slowdown in trade had been expected after the strong rebound of 2010 but the earthquake in Japan and flooding in Thailand shook global supply chains, and fears of sovereign default in the euro area weighed heavily in the closing months of the year. The civil war in Libya also reduced oil supplies and contributed to sharply higher prices. All of these factors combined to produce below average growth in trade in 2011*" WTO report 2012, section "World trade in 2011" accessed on February 4th 2021 (https://www.wto.org/english/res_e/booksp_e/anrep_e/world_trade_report12_e.pdf) and (https://www.wto.org/english/res_e/publications_e/wtr12_e.htm)
+
+* About 1996: "*The WTO was created in January 1995, upon the completion of the Uruguay Round which established new rules for international trade in goods, services and intellectual property.*" WTO 1996 press releases (https://www.wto.org/english/news_e/pres96_e/anrep.htm).
+
+
+___
+
+# Bibliography
+
+* A. E. Wegner, L. Ospina-Forero, R. E. Gaunt, C. M. Deane, and G. Reinert. Identifying networks with common organizational principles. Journal of Complex networks, 2017.
+
+* R. C. Feenstra, R. E. Lipsey, H. Deng, A. C. Ma, and H. Mo. World trade flows: 1962-2000. Technical report, National Bureau of Economic Research, 2005. 
+
+* W. Ali, T. Rito, G. Reinert, F. Sun, and C. M. Deane. Alignment-free protein interaction network comparison. Bioinformatics, 30:i430–i437, 2014.
+
+* L. Ospina-Forero, C. M. Deane, and G. Reinert. Assessment of model fit via network comparison methods based on subgraph counts. Journal of Complex Networks, page cny017, August 2018.
+
+* F. Picard, J.-J. Daudin, M. Koskas, S. Schbath, and S. Robin. Assessing the exceptionality of network motifs. Journal of Computational Biology, 15(1):1–20, 2008.
+
+
+
+

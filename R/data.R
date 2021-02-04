@@ -46,14 +46,18 @@
 
 
 
-#' World trade networks from 1962–2014
+#' World trade networks from 1985–2014
 #'
-#' The world trade data set consists of bilateral trade flows between countries for the years 1962–2014 [Feenstra et al., 2005, Division, 2015].
+#' The world trade data set consists of bilateral trade flows between countries for the years 1985–2014 [Feenstra et al., 2005, Division, 2015]. This set is a subset of a dataset that spams the years 1962–2014.
 #' 
 #'
-#' @format A list of \code{igraph} objects.
+#' \itemize{
+#'  \item wtnets:  List of \code{igraph} objects providing the world trade networks from 1985–2014.
+#'  \item Counts:  Pre-computed graphlet counts for the networks in 'wtnets'.
+#'  }
+#'  
+#' @format A list of two elements. The first element, 'wtnets', is a list of \code{igraph} objects providing the world trade networks from 1985–2014. The second element, 'Counts', is a list of pre-computed graphlet counts for the aforementioned networks.
 #' @source \strong{World trade networks:} Feenstra RC,Lipsey RE, Deng H, Ma AC, and Mo H. (2005) World trade flows: 1962-2000. Technical report, National Bureau of Economic Research
 #' @encoding UTF-8
-"wtnets"
-
+"worldtradesub"
 
