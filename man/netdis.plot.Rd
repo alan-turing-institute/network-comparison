@@ -8,7 +8,8 @@ netdis.plot(
   netdislist,
   whatrow = c(1, 2)[2],
   clustering_method = "ward.D",
-  main = "Nedis"
+  main = "Nedis",
+  docluster = TRUE
 )
 }
 \arguments{
@@ -16,9 +17,11 @@ netdis.plot(
 
 \item{whatrow}{Selection of the row in \code{netdis_many_to_many$comp_spec} to be used for plotting.}
 
-\item{clustering_method}{Clustering method as allowed in the \code{pheatmap} function from the \code{pheatmap} package.}
+\item{clustering_method}{Clustering method as allowed in the \code{pheatmap} function from the \code{pheatmap} package. The dendrogram will appear if \code{docluster} is TRUE (default).}
 
 \item{main}{Title of the plot.}
+
+\item{docluster}{controls the order of the rows and columns. If TRUE (default) the rows and columns will be reordered to create the dendrogram. If FALSE, then only the heatmap is drawn.}
 }
 \value{
 Provides a heatmap and dendrogram for the network comparisons via \code{pheatmap}.

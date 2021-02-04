@@ -18,6 +18,8 @@ In this vignette we show a potential application of Netdis for real world data. 
 
 For an introduction to Netdis and its variants see ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html). 
 
+For many to many comparisons see [Simple and quick (default) usage 3: many to many comparions](ManyToMany.html)
+
 For other vignettes in this package see the ["Menu"](V-Menu.html). 
 
 # Loading protain interaction networks and an ER reference graph
@@ -119,9 +121,9 @@ plot(phangorn::upgma(as.dist(netdis4_mat), method = "average"),
      cex = cex)
 ```
 
-
+<!-- comment 
 # Application using NetEmd
-```{r,fig.align='center',fig.dim=c(6,6)}
+```{r,fig.align='center',fig.dim=c(6,6),eval=FALSE,include=FALSE}
 netemdlist <- netemd_many_to_many(graphs = query_graphs,smoothing_window_width = 0,mc.cores = 1)
 netemd_mat <- cross_comp_to_matrix(measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec)
 
@@ -151,6 +153,8 @@ plot(phangorn::upgma(as.dist(graphNetEMDdists), method = "average"),
      cex = cex)
 
 ```
+-->
+
 ___
 
 # Bibliography

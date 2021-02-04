@@ -80,11 +80,9 @@ Illustration of the multiple NetEmd comparisons based on orbit counts.
 ```{r,netemdorbitsPLOT,fig.align='center',fig.dim=c(8,8)}
 netemd.plot(netemdlist=netemdlist,clustering_method="ward.D",main="NetEmd Orbits")
 
-###### The following code shows the inner working of function netdist::netemd.plot ######
+###### The following code shows simmilar inner workings to the function netdist::netemd.plot ######
 # Creating matrices to plot the Network comparisons
-g_NETEMDcomp <- igraph::graph.edgelist(el = as.matrix(netemdlist$comp_spec[,1:2]),directed = FALSE)
-igraph::edge_attr(graph = g_NETEMDcomp,name = "NetEmdOrbits") <- netemdlist$netemds
-mat <- get.adjacency(graph = g_NETEMDcomp,type = "both",attr = "NetEmdOrbits",names = TRUE,sparse = FALSE)
+mat <- cross_comp_to_matrix(measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec)
 vnames <- rownames(mat)
 mat
 
