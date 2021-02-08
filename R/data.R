@@ -48,7 +48,7 @@
 
 #' World trade networks from 1985–2014
 #'
-#' The world trade data set consists of bilateral trade flows between countries for the years 1985–2014 [Feenstra et al., 2005, Division, 2015]. This set is a subset of a dataset that spams the years 1962–2014.
+#' The world trade data set consists of bilateral trade flows between countries for the years 1985–2014. This set is a subset of a dataset that spams the years 1962–2014 [Feenstra et al., 2005, Division, 2015].
 #' 
 #'
 #' \itemize{

@@ -18,7 +18,7 @@ comment = "#>"
 
 # Introduction
 
-The `netdist` package currently considers two broad methodologies for network comparison, namely Netdis and NetEmd. Netdis considers multiple variants (via background expectations) to capture the dissimilarity between the local structure of networks exhibited by the occurrence of small subgraphs. NetEmd is also a method to capture the dissimilarity between networks using subgraph counts, but it has in addition been defined for any type of network features; for example eigen distributions. The variants of Netdis are controlled by the input selected for the background expectations, whereas the variants of NetEmd are controlled indirectly by the user by the selection of the network features being compared via NetEmd (by default this package uses subgraph counts as features).
+The `netdist` package currently considers two broad methodologies for network comparison, namely Netdis and NetEmd. Netdis considers multiple variants (via background expectations) to capture the dissimilarity between the local structure of networks exhibited by the occurrence of small subgraphs on 3, 4 and 5 nodes. NetEmd is also a method to capture the dissimilarity between networks using subgraph counts, but it has in addition been defined for any type of network features; for example eigen distributions. The variants of Netdis are controlled by the input selected for the background expectations, whereas the variants of NetEmd are controlled indirectly by the user by the selection of the network features being compared via NetEmd (by default this package uses subgraph counts as features).
 
 The following shows a quick introduction to the simplest functions of the package, and to some of the variants of Netdis and NetEmd.
 
@@ -32,7 +32,7 @@ library("netdist")
 library("igraph")
 ```
 
-## Load graphs included in the netdist package
+## Load protetin interaction graphs included in the netdist package
 The `netdist` package also includes examples of a few real networks. These are protein interaction networks (PPI) of a few _Herpes_ virus and of the bacteria  _Escherichia Coli_ . In these networks, each node represents a protein and each link represents an interaction between proteins. See `help(virusppi)`.
 
 Although the `virusppi` list of PPI networks is loaded along with the `netdist` package, the following code shows how to read a network data from a file in disk:
@@ -62,6 +62,7 @@ plot(graph_1,vertex.size=4,vertex.label=NA)
 plot(graph_2,vertex.size=4,vertex.label=NA)
 ```
 
+Other networks loaded in this package are discussed in ["NetEmd: World trade networks"](NetEmdTimeOrdering.html). You can also see `?virusppi` and `?worldtradesub`.
 
 The next two sections will provide a basic introduction and  usage of both NetEmd and Netdis.
 
@@ -69,9 +70,9 @@ The next two sections will provide a basic introduction and  usage of both NetEm
 
 ## What is NetEmd?
 (Extracted from Wegner et al. (2017)):
-NetEmd is based on  the idea that the information encapsulated in the shape of the degree distribution and other network properties which reflect the topological organization of the network. From an abstract point of view, NetEmd views the shape of a distribution as a property that is invariant under linear deformations i.e$.$ translations and re-scalings of the axis.
+NetEmd is based on  the idea that the information encapsulated in the shape of the degree distribution and other network properties reflects the topological organization of the network. From an abstract point of view, NetEmd views the shape of a distribution as a property that is invariant under linear deformations i.e$.$ translations and re-scalings of the axis.
 
-Based on these NetEmd uses the following measure between distributions $p$ and $q$ that are supported on $\mathbb{R}$ and have non-zero, finite variances:
+Based on the previous ideas NetEmd uses the following measure between distributions $p$ and $q$ that are supported on $\mathbb{R}$ and have non-zero, finite variances:
 \begin{equation}\label{emdmet}
 EMD^*(p,q)=\mathrm{inf}_{c\in\mathbb{R}}\left( EMD\big(\tilde{p}(\cdot+c),\tilde{q}(\cdot)\big)\right),
 \end{equation}
@@ -116,14 +117,14 @@ Lapg_2 <- igraph::laplacian_matrix(graph = graph_2,normalized = FALSE,sparse = F
 NLapg_1 <- igraph::laplacian_matrix(graph = graph_1,normalized = TRUE,sparse = FALSE)
 NLapg_2 <- igraph::laplacian_matrix(graph = graph_2,normalized = TRUE,sparse = FALSE)
 
-#Spectra (This may take a couple of minutes).
+#Spectra (this may take a couple of minutes).
 props_1 <- cbind(L.Spectra= eigen(Lapg_1)$values, NL.Spectra= eigen(NLapg_1)$values) 
 props_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values) 
 
 head(props_1,n=3)
 head(props_2,n=3)
 
-netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width = 0)#Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width = 0)#If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 ```
 -------------------------
 
@@ -134,7 +135,7 @@ netemd_one_to_one(dhists_1 = props_1,dhists_2 = props_2,smoothing_window_width =
 
 Netdis is constructed as follows:
 
-Let $N_{w,i}(G)$ be the number of induced occurrences of small graphs $w$ in the 2-step ego network of vertex $i$. Now, bin all 2-step ego-networks of network $G$ according to their network density. Let $E_w(G,d)$ be the expected number of occurrences of $w$ in an ego-network whose density falls in density bin $d$. For a given network $G$ compute the centred subgraph counts as
+Let $N_{w,i}(G)$ be the number of induced occurrences of small graphs $w$ in the 2-step ego network of vertex $i$. Now, bin all 2-step ego-networks of network $G$ according to their network density. Let $E_w(G,\rho)$ be the expected number of occurrences of $w$ in an ego-network whose density falls in density bin $\rho$. For a given network $G$ compute the centred subgraph counts as
 \[
 S_w(G)=\sum\limits_{i }{\bigg (N_{w,i}(G)- E_w(G, \rho(i)) \bigg )},
 \] 
@@ -183,7 +184,7 @@ netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_2)
 
 ## Netdis-GP: Using a Geometric-Poisson approximation
 
-(Extracted from Ospina-Forero et al. (2018)): Instead of considering an approximation based on an observed gold-standard network whose selection may be difficult, $E_w$ is computed, independently for each graph, based on a Geometric-Poisson (GP) approximation for the distribution of the number of occurrences of subgraph $w$. It assumes that $N_{w,i} \sim GP(\lambda^{\rho(i)}_k, \theta^{\rho(i)}_w)$, where $\lambda^{\rho(i)}_k$ is the Poisson parameter indexed by the size of subgraph $w$ and the density bin $\rho(i)$; and where $\theta^{\rho(i)}_w$ is the geometric parameter indexed by subgraph $w$ and density bin $\rho(i)$. $E_w(G, \rho(i))$ is taken as the mean of the GP approximation, i.e. $\lambda^{\rho(i)}_k/\theta^{\rho(i)}_w$.
+(Extracted from Ospina-Forero et al. (2018)): Instead of considering an approximation based on an observed gold-standard network whose selection may be difficult, $E_w$ is computed independently for each graph, based on a Geometric-Poisson (GP) approximation of the distribution of the number of occurrences of subgraph $w$. It assumes that $N_{w,i} \sim GP(\lambda^{\rho(i)}_k, \theta^{\rho(i)}_w)$, where $\lambda^{\rho(i)}_k$ is the Poisson parameter indexed by the size of subgraph $w$ and the density bin $\rho(i)$; and where $\theta^{\rho(i)}_w$ is the geometric parameter indexed by subgraph $w$ and density bin $\rho(i)$. $E_w(G, \rho(i))$ is taken as the mean of the GP approximation, i.e. $\lambda^{\rho(i)}_k/\theta^{\rho(i)}_w$.
 
 As $\lambda^{\rho(i)}_k$ and $\theta^{\rho(i)}_w$ are not known, they are estimated as follows:
 Let $x_{w,d}^j$ be the number of subgraphs $w$ on the 2-step ego-network $j$ of density bin $d$, and let
