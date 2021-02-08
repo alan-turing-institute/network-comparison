@@ -90,7 +90,7 @@ NLapg_1 <- igraph::laplacian_matrix(graph = gLat_1,normalized = TRUE,sparse = FA
 NLapg_2 <- igraph::laplacian_matrix(graph = gLat_2,normalized = TRUE,sparse = FALSE)
 
 
-# Providing a matrix of network features (e.g. Spectra). Spectra (This may take a couple of minutes).
+# Providing a matrix of network features (e.g. Spectra). (This may take a couple of minutes).
 spec_1 <- cbind(L.Spectra= eigen(Lapg_1)$values, NL.Spectra= eigen(NLapg_1)$values) 
 spec_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values)
 
@@ -150,7 +150,7 @@ netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphle
 netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_2)
 ```
 
-Comparison to the result of Netdis without pre-compued counts.
+Comparison to the result of Netdis without pre-computed counts.
 ```{r}
 # Netdis using the goldstd_1 graph as gold-standard reference point
 netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_1)
