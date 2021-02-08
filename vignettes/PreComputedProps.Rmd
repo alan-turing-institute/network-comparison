@@ -18,9 +18,9 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-In many situations there may be a need to pursue the network comparisons from pre-computed counts/features. Working from pre-computed features decreases the computational time to obtain result, particularly when the same networks are involved in multiple comparisons, or when the same properties are used in other procedures.
+In many situations there may be a need to pursue the network comparisons from pre-computed counts/features. Working from pre-computed features decreases the computational time to obtain results, particularly when the same networks are involved in multiple comparisons, or when the same properties are used in other procedures. Similarly, advance users, could consider using other sets of pre-computed features, particularly for NetEmd.
 
-This Vignette follows similar examples as ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html) but here, in contrast, the steps required to obtain counts/features and then use them in the network comparison methods are shown.
+This vignette follows similar examples as ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html). However, this vignette shows the steps required to obtain counts/features and then how to use them in the network comparison methods.
 
 For other vignettes in this package see the ["Menu"](V-Menu.html). 
 
@@ -39,31 +39,47 @@ The following sections show how to extract the subgraph counts, or other relevan
 
 NetEmd and Netdis use subgraph counts, however, NetEmd takes counts directly from the observed graph. Netdis takes counts from ego-networks of the observed graph. The following example shows how the counts are extracted for NetEmd via `count_orbits_per_node`. The user can call NetEmd by directly providing the matrix of counts, or by providing a processed version of these counts via `graph_features_to_histograms`.
 
-```{r, netemd,fig.align='center'}
+```{r, netemd,fig.align='center',fig.dim=c(8,4)}
 # Create lattice networks
 gLat_1 <- igraph::graph.lattice(c(20,20)) 
 gLat_2 <- igraph::graph.lattice(c(44,44))  
 
-netemd_one_to_one(graph_1=gLat_1,graph_2=gLat_2,feature_type="orbit",smoothing_window_width = 1)
+par(mfrow=c(1,2))
+plot(gLat_1,vertex.size=4,vertex.label=NA)
+plot(gLat_2,vertex.size=4,vertex.label=NA)
+```
 
-#Providing a matrix of network features
+The simple computation of NetEmd without pre-computed features:
+```{r}
+netemd_one_to_one(graph_1=gLat_1,graph_2=gLat_2,feature_type="orbit",smoothing_window_width = 1)
+```
+
+
+### Providing a matrix of network features
+```{r}
 counts_1= count_orbits_per_node(graph = gLat_1,max_graphlet_size = 5)
 counts_2= count_orbits_per_node(graph = gLat_2,max_graphlet_size = 5)
+head(counts_1[,1:4])
 
 netemd_one_to_one(dhists_1=counts_1, dhists_2=counts_2,smoothing_window_width = 1)
+```
 
-#Providing the network features as lists of dhist objects
+### Providing the network features as lists of dhist objects
+```{r}
 dhists_1<- graph_features_to_histograms(features_matrix = counts_1)
 dhists_2<- graph_features_to_histograms(features_matrix = counts_2)
 
 netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2,smoothing_window_width = 1)
 ```
+___
 
 ## Comparing two graphs with NetEmd via their Laplacian spectrum
-```{r, netemdEigen,fig.align='center'}
+
+Computation of the Laplacian and Normalized Laplacian:
+```{r, netemdEigen}
 # Networks
 gLat_1 <- graph.lattice(c(20,20)) 
-gLat_2 <- graph.lattice(c(44,44))  
+gLat_2 <- graph.lattice(c(44,44))
 
 #Laplacian
 Lapg_1 <- igraph::laplacian_matrix(graph = gLat_1,normalized = FALSE,sparse = FALSE)
@@ -73,10 +89,16 @@ Lapg_2 <- igraph::laplacian_matrix(graph = gLat_2,normalized = FALSE,sparse = FA
 NLapg_1 <- igraph::laplacian_matrix(graph = gLat_1,normalized = TRUE,sparse = FALSE)
 NLapg_2 <- igraph::laplacian_matrix(graph = gLat_2,normalized = TRUE,sparse = FALSE)
 
+
 # Providing a matrix of network features (e.g. Spectra). Spectra (This may take a couple of minutes).
 spec_1 <- cbind(L.Spectra= eigen(Lapg_1)$values, NL.Spectra= eigen(NLapg_1)$values) 
-spec_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values) 
+spec_2 <- cbind(L.Spectra= eigen(Lapg_2)$values, NL.Spectra= eigen(NLapg_2)$values)
 
+head(spec_1)
+```
+
+Similarly to counts, all other features can be given as a matrix or as dhist objects:
+```{r}
 netemd_one_to_one(dhists_1 = spec_1,dhists_2 = spec_2, smoothing_window_width = 0)
 
 
@@ -97,38 +119,50 @@ Netdis uses counts from the resulting ego-networks of each of the nodes in a gra
 
 The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard graph and which is summarized in $E_w$.
 
-```{r,netdisgoldstand,fig.align='center'}
+```{r,netdisgoldstand}
 # Set source directory for virus protein-protein interaction edge files stored in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
 # Load query graphs as igraph objects
 graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),format = "ncol")
 graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),format = "ncol")
+```
 
+For illustration purposes consider the lattice networks as possible gold-standard networks:
+```{r,fig.align='center'}
 # Lattice graphs to be used as gold-standard as a reference point comparison
 goldstd_1 <- igraph::graph.lattice(c(20,20)) #Graph with 8^2 nodes
 goldstd_2 <- igraph::graph.lattice(c(44,44)) #Graph with 44^2 nodes
+```
 
-# Netdis using the goldstd_1 graph as gold-standard reference point
-netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_1)
-
-# Netdis using the goldstd_2 graph as gold-standard reference point
-netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_2)
-
+Now obtain the subgraph counts for all networks.
+```{r}
 # Providing pre-calculated subgraph counts.
 props_1 <- count_graphlets_ego(graph = graph_1)
 props_2 <- count_graphlets_ego(graph = graph_2)
 props_goldstd_1 <- count_graphlets_ego(graph = goldstd_1)
 props_goldstd_2 <- count_graphlets_ego(graph = goldstd_2)
+```
 
+Compute Netdis using the pre-computed counts and any of the example gold-standard networks.
+```{r}
 netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_1)
 netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_2)
+```
+
+Comparison to the result of Netdis without pre-compued counts.
+```{r}
+# Netdis using the goldstd_1 graph as gold-standard reference point
+netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_1)
+
+# Netdis using the goldstd_2 graph as gold-standard reference point
+netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_2)
 ```
 
 
 ## Netdis-GP: Using a Geometric-Poisson approximation
 
-This variant focuses on detecting more meso-level discrepancies between the ego-network structures.
+This Netdis variant focuses on detecting more meso-level discrepancies between the ego-network structures.
 
 ```{r, netdisGP}
 # Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
@@ -150,7 +184,7 @@ netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_gra
 
 
 ## Using Netdis with no background expectation ($E_w=0$)
-Comparing the networks via their observed ego counts without centring them, (equivalent to using expectation equal to zero). This variant thus focus on detecting small discrepancies between the networks.
+Comparing the networks via their observed ego counts without centring them, (equivalent to using expectation equal to zero). This variant focuses on detecting small discrepancies between the networks.
 
 
 ```{r,netdiszero}
