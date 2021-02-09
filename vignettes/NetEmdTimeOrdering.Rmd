@@ -1,5 +1,5 @@
 ---
-title: 'NetEmd: World Trade'
+title: 'NetEmd: World trade'
 #author: "Luis Ospina-Forero"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -25,7 +25,7 @@ For other vignettes in this package see the ["Menu"](V-Menu.html).
 
 # Loading world trade network data included in the package
 
-The package contains the world trade networks and pre-computed graphlet counts in ` worldtradesub`. This is a list of two lists. The first list is `worldtradesub$wtnets` which contains the networks and the second `worldtradesub$Counts` which contains  pre-computed counts for the aforementioned networks.
+The package contains the world trade networks and pre-computed subgraph/graphlet counts in ` worldtradesub`. This is a list of two lists. The first list is `worldtradesub$wtnets` which contains the networks and the second `worldtradesub$Counts` which contains  pre-computed counts for the aforementioned networks.
 
 ```{r, message=FALSE}
   library("netdist")
@@ -36,7 +36,7 @@ The package contains the world trade networks and pre-computed graphlet counts i
   summary(wtnets)
 ```
 
-These world trade networks are more dense than typically sparse social networks. For example the edge density for the network in 1985 is `r igraph::graph.density(worldtradesub$wtnets$wtn1985)`.
+These world trade networks are more dense than typically sparse social networks. For example the edge density for the network in 1985 is `r igraph::graph.density(worldtradesub$wtnets$wtn1985)`. Here is a plot of this network highlighting the relatively large number of edges:
 ```{r,fig.align='center',fig.dim=c(5,5)}
   plot(wtnets$wtn1985,vertex.size=5,vertex.label.cex=0.4)
 ```
@@ -45,8 +45,8 @@ These world trade networks are more dense than typically sparse social networks.
 
 # Generate NetEmd measures between each pair of query graphs
   
-In this example **NetEmd** will consider orbit counts of graphlets containing up to 5 nodes.  If NetEmd is to be called a single time, then the command `netemd_many_to_many(graphs = wtnets)` would suffice. The following code provides such an example: 
-```{r,cache=TRUE}
+In this example **NetEmd** will consider orbit counts of subgraphs containing up to 5 nodes.  If NetEmd is to be called a single time, then the command `netemd_many_to_many(graphs = wtnets)` would suffice. The following code provides such an example: 
+```{r}
   # As the trade networks are considerable dense, this example first considers a small number of networks. This example may take some minutes to run.
   netemd_result <- netemd_many_to_many(graphs = wtnets[1:4],mc.cores = 1)
 
@@ -54,9 +54,9 @@ In this example **NetEmd** will consider orbit counts of graphlets containing up
 ```
 However, if there are pre-computed counts or features NetEmd can be called via these features instead.
 
-# Pre-computing graphlet counts
+# Pre-computing subgraph counts
   
-This world trade dataset contains 30 relatively dense networks which will lead to a longer computation of graphlet counts. Thus, it is advisable to pre-compute counts in case there is a need to call NetEmd multiple times. For example, when adding a new network to the dataset.
+This world trade dataset contains 30 relatively dense networks which will lead to a longer computation of subgraph counts. Thus, it is advisable to pre-compute counts in case there is a need to call NetEmd multiple times. For example, when adding a new network to the dataset.
 
 ```{r}
 # This example may take more than a few minutes (17mins - 25mins) to run and it is not necessary to run it for the upcoming examples.
@@ -84,7 +84,7 @@ Now, with the pre-computed counts NetEmd can be calculated more rapidly as the c
   
 # Evidence of change in world trade
 
-Based on the comparison of the world trade networks across the year, we can identify periods of time where possible considerable changes in world trade have occurred. The following heat map clearly shows the existence of two potential
+Based on the comparison of the world trade networks across the years, we can identify periods of time where possible considerable changes in world trade have occurred. The following heat map clearly shows the existence of two potential
  changes in the world trade system, and which correspond to 1995-1996 and 2010-2011.
 ```{r,fig.align='center',fig.dim=c(8.5,8.5)}
   netemd.plot(netemdlist=netemd_result,clustering_method="ward.D",main="NetEmd",docluster = FALSE)
@@ -94,10 +94,10 @@ The World Trade Organization (WTO) said the following about these years:
 
 * About 2011: "*World trade growth decelerated sharply in 2011 as the global economy struggled under the influence of natural disasters, financial uncertainty and civil conflict. A slowdown in trade had been expected after the strong rebound of 2010 but the earthquake in Japan and flooding in Thailand shook global supply chains, and fears of sovereign default in the euro area weighed heavily in the closing months of the year. The civil war in Libya also reduced oil supplies and contributed to sharply higher prices. All of these factors combined to produce below average growth in trade in 2011*" WTO report 2012, section "World trade in 2011" accessed on February 4th 2021 (https://www.wto.org/english/res_e/booksp_e/anrep_e/world_trade_report12_e.pdf) and (https://www.wto.org/english/res_e/publications_e/wtr12_e.htm)
 
-* About 1996: "*The WTO was created in January 1995, upon the completion of the Uruguay Round which established new rules for international trade in goods, services and intellectual property.*" WTO 1996 press releases (https://www.wto.org/english/news_e/pres96_e/anrep.htm).
+* About 1995: "*The WTO was created in January 1995, upon the completion of the Uruguay Round which established new rules for international trade in goods, services and intellectual property.*" WTO 1996 press releases (https://www.wto.org/english/news_e/pres96_e/anrep.htm).
 
 
-___
+--------------------
 
 # Bibliography
 
