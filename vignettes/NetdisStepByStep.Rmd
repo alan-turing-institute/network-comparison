@@ -238,7 +238,7 @@ tail(centred_subgraph_counts_2)
 
 
 ## Sum centred subgraph counts across all ego-networks ($S_w(G)$)
-After the counts are centred, the total count is computed for each subgraph:
+After the counts are centred, the total count is computed for each subgraph in each query network:
 ```{r}
 sum_subgraph_counts_1 <- colSums(centred_subgraph_counts_1)
 sum_subgraph_counts_1
