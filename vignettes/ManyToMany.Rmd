@@ -88,7 +88,7 @@ netemd.plot(netemdlist=netemdlist,clustering_method="ward.D",main="NetEmd subgra
 
 ## NetEmd using the Laplacian and Normalized Laplacian Spectrum
 
-Pre-compute the Laplacian and and normalized Laplacian for each graph considered:
+Pre-compute the Laplacian and normalized Laplacian for each graph considered:
 ```{r, netemdspectrum}
 # NetEMD using the Laplacian and normalized Laplacian Spectrum.
 SPECT<-list()

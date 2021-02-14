@@ -91,7 +91,7 @@ plot(gTree_2,vertex.size=0.8,vertex.label=NA)
 
 ## Set Netdis parameters
 
-Netdis uses some mostly internal parameters that define the the size of the subgraphs/graphlets that are going to be used, as well as the length of the ego neighbourhood,  the minimum size considered for the resulting ego-networks, and finally some parameters that control an ego-network binning function. By default, Netdis considers the following setup:
+Netdis uses some mostly internal parameters that define the size of the subgraphs/graphlets that are going to be used, as well as the length of the ego neighbourhood,  the minimum size considered for the resulting ego-networks, and finally some parameters that control an ego-network binning function. By default, Netdis considers the following setup:
 
 ```{r}
 # Maximum subgraph size to calculate counts and netdis statistic for
@@ -189,7 +189,7 @@ binned_densities_gst_1 <- binned_densities_adaptive(densities = densities_gst_1,
 str(binned_densities_gst_1)
 ```
 
-### Obain the scaled mean counts for each density bin for the gold-standard network (called canonical $E_w$)
+### Obtain the scaled mean counts for each density bin for the gold-standard network (called canonical $E_w$)
 
 Finally, the average scaled subgraph counts are obtained for each subgraph in all density bins (`scaled_subgraph_counts_ref`).
 ```{r}
@@ -275,52 +275,6 @@ print(netdis_result)
 * A. E. Wegner, L. Ospina-Forero, R. E. Gaunt, C. M. Deane, and G. Reinert. Identifying networks with common organizational principles. Journal of Complex networks, 2017.
 
 * F. Picard, J.-J. Daudin, M. Koskas, S. Schbath, and S. Robin. Assessing the exceptionality of network motifs. Journal of Computational Biology, 15(1):1–20, 2008.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

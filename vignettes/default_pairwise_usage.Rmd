@@ -32,7 +32,7 @@ library("netdist")
 library("igraph")
 ```
 
-## Load protetin interaction graphs included in the netdist package
+## Load protein interaction graphs included in the netdist package
 The `netdist` package also includes examples of a few real networks. These are protein interaction networks (PPI) of a few _Herpes_ virus and of the bacteria  _Escherichia Coli_ . In these networks, each node represents a protein and each link represents an interaction between proteins. See `help(virusppi)`.
 
 Although the `virusppi` list of PPI networks is loaded along with the `netdist` package, the following code shows how to read a network data from a file in disk:
@@ -162,7 +162,7 @@ $$Netdis(k)=netd_2^S(k)=\tfrac{1}{2}(1-netD_2^S(k)) \in [0,1].$$
 Small values of Netdis suggest higher `similarity' between the networks. By default Netdis uses subgraphs on $k=4$ nodes.
 
 
-## Using netdis with a gold-standard graph to obtain $E_w$
+## Using Netdis with a gold-standard graph to obtain $E_w$
 
 The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard graph and which is summarized in $E_w$.
 
@@ -207,7 +207,7 @@ netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = NULL)
 
 
 ## Using Netdis with no expectation ($E_w=0$)
-Comparing the networks via their observed ego counts without centering them, (equivalent to using expectation equal to zero). This variant thus focus on detecting small discrepancies between the networks.
+Comparing the networks via their observed ego counts without centring them, (equivalent to using expectation equal to zero). This variant thus focus on detecting small discrepancies between the networks.
 
 ```{r,netdiszero}
 #Netdis using no expectations (or equivalently, expectation equal to zero).

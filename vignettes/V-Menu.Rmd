@@ -24,7 +24,7 @@ This package contains multiple vignettes that illustrate the simple ways of empl
 
 * [Simple and quick (default) usage 2: precomputed properties](PreComputedProps.html). For comparisons that use pre-computed properties. This may be useful if a user specific property is to be used; but also when the user wants to save computation time in a setting of multiple comparisons against the same network.
 
-* [Simple and quick (default) usage 3: many to many comparions](ManyToMany.html). User friendly options to retrieve all pairwise comparisons among a set of $n$ networks.
+* [Simple and quick (default) usage 3: many to many comparisons](ManyToMany.html). User friendly options to retrieve all pairwise comparisons among a set of $n$ networks.
 
 * ["Netdis: Protein interaction networks"](dendrogram_example_net_dis.html). Shows a potential application of Netdis for real world protein interaction networks.
 

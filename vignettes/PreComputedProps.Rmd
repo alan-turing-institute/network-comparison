@@ -112,7 +112,7 @@ netemd_one_to_one(dhists_1=dhists_1, dhists_2=dhists_2, smoothing_window_width =
 
 # Compare two networks via Netdis and its variants
 
-Netdis uses counts from the resulting ego-networks of each of the nodes in a graph, but it also takes into account the mean or expectation of these ego-network counts ($E_w$). The following example shows how the user can compute and provide the properties required from each graph as well as any relevant property required to calculate $E_w$. The main properties can be obtained by means of `count_graphlets_ego`.
+Netdis uses counts from the resulting ego-networks of each of the nodes in a graph, but it also considers the mean or expectation of these ego-network counts ($E_w$). The following example shows how the user can compute and provide the properties required from each graph as well as any relevant property required to calculate $E_w$. The main properties can be obtained by means of `count_graphlets_ego`.
 
 
 ## Using Netdis with a gold-standard or reference graph to obtain $E_w$

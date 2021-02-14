@@ -12,17 +12,17 @@ editor_options:
 chunk_output_type: console
 ---
 
-# Protain interaction networks
+# Protein interaction networks
 
 In this vignette we show a potential application of Netdis for real world data. In this case the comparison between the protein network structures could provide some insight into the phylogenetic tree of organisms as suggested in Ali et al. (2014). In this application we show a proxy of the phylogenetic tree of 5 organisms, 4 _Herpes_ virus and  _Escherichia Coli_. The tree is approximated via a dendrogram built from all the pairwise protein interaction network comparisons as suggested in Ali et al. (2014). The correct tree is found using Netdis and using subgraphs of size 4 (taxonomy ground truth: NCBI taxonomy database. https://www.ncbi.nlm.nih.gov/taxonomy).
 
 For an introduction to Netdis and its variants see ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html). 
 
-For many to many comparisons see [Simple and quick (default) usage 3: many to many comparions](ManyToMany.html)
+For many to many comparisons see [Simple and quick (default) usage 3: many to many comparisons](ManyToMany.html)
 
 For other vignettes in this package see the ["Menu"](V-Menu.html). 
 
-# Loading protain interaction networks and an ER reference graph
+# Loading protein interaction networks and an ER reference graph
 
 The package contains the protein interaction networks of a few _Herpes_ virus and of _Escherichia Coli_. These networks can be read by using `read_simple_graphs`, which reads graph data from all files in a directory that match a specific filename pattern in a format suitable for calculating subgraph-based features by using
 [ORCA package](https://CRAN.R-project.org/package=orca).
