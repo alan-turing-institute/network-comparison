@@ -5,20 +5,22 @@
 \name{worldtradesub}
 \alias{worldtradesub}
 \title{World trade networks from 1985–2014}
-\format{A list of two elements. The first element, 'wtnets', is a list of \code{igraph} objects providing the world trade networks from 1985–2014. The second element, 'Counts', is a list of pre-computed graphlet counts for the aforementioned networks.}
+\format{A list of two elements. The first element, 'wtnets', is a list of \code{igraph} objects providing a small sample of world trade networks from 2001–2014. The second element, 'Counts', is a list of pre-computed subgraph counts of world trade networks in the years 1985-2014.}
 \source{
-\strong{World trade networks:} Feenstra RC,Lipsey RE, Deng H, Ma AC, and Mo H. (2005) World trade flows: 1962-2000. Technical report, National Bureau of Economic Research
+\strong{World trade networks:}. United nations commodity trade statistics database (un comtrade). http://comtrade.un.org/, 2015.
+
+\strong{Subgraph Counts:} Feenstra RC,Lipsey RE, Deng H, Ma AC, and Mo H. (2005) World trade flows: 1962-2000. Technical report, National Bureau of Economic Research. (See also https://cid.econ.ucdavis.edu/wix.html).
 }
 \usage{
 worldtradesub
 }
 \description{
-The world trade data set consists of bilateral trade flows between countries for the years 1985–2014. This set is a subset of a dataset that spams the years 1962–2014 [Feenstra et al., 2005, Division, 2015].
+The world trade data set consists of an small sample of world trade networks for the years 2001-2014, and pre-computed subgraph counts of a larger set of world trade networks (1985–2014). The world trade networks are based on the data set from [Feenstra et al., 2005] for the years 1962- 2000 and on the United Nations division COMTRADE [Division, 2015] for the years 2001-2014.
 }
 \details{
 \itemize{
- \item wtnets:  List of \code{igraph} objects providing the world trade networks from 1985–2014.
- \item Counts:  Pre-computed graphlet counts for the networks in 'wtnets'.
+ \item wtnets:  List of \code{igraph} objects providing the world trade networks from 2001–2014.
+ \item Counts:  Pre-computed graphlet counts for the world trade networks in the years 1985-2014.
  }
 }
 \keyword{datasets}
