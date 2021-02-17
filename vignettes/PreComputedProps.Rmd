@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-In many situations there may be a need to pursue the network comparisons from pre-computed counts/features. Working from pre-computed features decreases the computational time to obtain results, particularly when the same networks are involved in multiple comparisons, or when the same properties are used in other procedures. Similarly, advance users, could consider using other sets of pre-computed features, particularly for NetEmd.
+In many situations there may be a need to pursue the network comparisons from pre-computed counts/features. Working from pre-computed features decreases the computational time to obtain results, particularly when the same networks are involved in multiple and subsequent comparisons, or when the same properties are used in other procedures. Similarly, advance users, could consider using other sets of pre-computed features, particularly for NetEmd.
 
 This vignette follows similar examples as ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html). However, this vignette shows the steps required to obtain counts/features and then how to use them in the network comparison methods.
 

@@ -36,7 +36,7 @@ library("igraph")
 library("pheatmap")
 ```
 
-# Compare Multiple networks via NetEmd
+# Compare multiple networks via NetEmd
 
 (Extracted from Wegner et al. (2017)): NetEmd is based on  the idea that the information encapsulated in the shape of the degree distribution and other network properties which reflect the topological organization of the network. From an abstract point of view, NetEmd views the shape of a distribution as a property that is invariant under linear deformations i.e. translations and re-scalings of the axis.
 

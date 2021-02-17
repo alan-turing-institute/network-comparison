@@ -14,7 +14,7 @@ chunk_output_type: console
 
 # World trade networks
  
-The world trade data set consists of a small sample of world trade networks for the years 2001-2014, and pre-computed subgraph counts of a larger set of world trade networks (1985–2014). The world trade networks are based on the data set from [Feenstra et al., 2005] for the years 1985-2000 and on the United Nations division COMTRADE [Division, 2015] for the years 2001-2014.
+The world trade data set consists of a small sample of world trade networks for the years 2001-2014, and pre-computed subgraph counts of a larger set of world trade networks (1985–2014). The world trade networks are based on the data set from [Feenstra et al., 2005] for the years 1985-2000 and on the United Nations division COMTRADE for the years 2001-2014.
 
 For an introduction to NetEmd and its variants see ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html). 
 
@@ -25,18 +25,18 @@ For other vignettes in this package see the ["Menu"](V-Menu.html).
 
 # Loading world trade network data included in the package
 
-The package contains the world trade networks and pre-computed subgraph/graphlet counts in ` worldtradesub`. This is a list of two lists. The first list is `worldtradesub$wtnets` which contains a small sample of the trade networks (2001-2014) and the second `worldtradesub$Counts` which contains pre-computed counts for a larger set of trade networks going from 1985 to 2014.
+The package contains the world trade networks and pre-computed subgraph/graphlet counts in the R data object ` worldtradesub`. This object contains a list of two lists. The first list is `worldtradesub$wtnets` which contains a small sample of the trade networks (2001-2014) and the second `worldtradesub$Counts` which contains pre-computed counts for a larger set of trade networks going from 1985 to 2014.
 
 ```{r, message=FALSE}
   library("netdist")
   library("igraph")
   data(worldtradesub)
-  wtnets<- worldtradesub$wtnets
   summary(worldtradesub)
+  wtnets<- worldtradesub$wtnets
   summary(wtnets)
 ```
 
-These world trade networks are denser than typically sparse social networks. For example the edge density for the network in 2001 is `r igraph::graph.density(worldtradesub$wtnets$wtn2001)`. Here is a plot of this network highlighting the relatively large number of edges:
+These world trade networks are denser than typically sparse social networks. For example, the edge density for the network in 2001 is `r igraph::graph.density(worldtradesub$wtnets$wtn2001)`. Here is a plot of this network highlighting the relatively large number of edges:
 ```{r,fig.align='center',fig.dim=c(5,5)}
   plot(wtnets$wtn2001,vertex.size=5,vertex.label.cex=0.4)
 ```
@@ -47,7 +47,8 @@ These world trade networks are denser than typically sparse social networks. For
   
 In this example **NetEmd** will consider orbit counts of subgraphs containing up to 5 nodes.  If NetEmd is to be called a single time, then the command `netemd_many_to_many(graphs = wtnets)` would suffice. The following code provides such an example: 
 ```{r}
-  # As the trade networks are considerable dense, this example first considers a small number of networks. This example may take some minutes to run.
+  # As the trade networks are considerable dense, this example first considers a small number of networks.
+  #This example may take some minutes to run.
   netemd_result <- netemd_many_to_many(graphs = wtnets[1:4],mc.cores = 1)
 
   print(netemd_result)
@@ -56,7 +57,7 @@ However, if there are pre-computed counts or features NetEmd can be called via t
 
 # Pre-computing subgraph counts
 
-World trade networks consist of relatively dense networks, thus leading to longer computational times of the subgraph counts. Hence, it is advisable to pre-compute counts in case there is a need to call NetEmd multiple times, particularly when, for example, adding a new network to the data set. The following illustrates the extraction of subgraph counts for the small network sample.
+World trade networks consist of relatively dense networks, thus leading to longer computational times for the calculation of the subgraph counts. Hence, it is advisable to pre-compute counts in case there is a need to call NetEmd multiple times. This may, for example, be the case when adding a new network to the data set. The following illustrates the extraction of subgraph counts for the small network sample.
 
 ```{r}
 # This example may take more than a few minutes to run  (approx. 20 mins) , and it is not necessary to run it for the upcoming examples as a larger set of counts has been already computed.
@@ -68,7 +69,7 @@ if(FALSE){# It is not necessary to run, as these counts are already available in
 }
 ```
   
-Now, with pre-computed counts NetEmd can be calculated more rapidly as the computations of the counts are often the bottle neck in the computational time of NetEmd. NetEmd will be called `r length(worldtradesub$Counts) * (length(worldtradesub$Counts)/2 - 1) ` times in order to obtain all pairwise comparisons between the trade networks from 1985 to 2014 (networks with pre-computed subgraph counts):
+Now, with pre-computed counts NetEmd can be calculated more rapidly as the computations of the counts are often the bottle neck in the computational time of NetEmd. NetEmd will be called `r length(worldtradesub$Counts) * (length(worldtradesub$Counts) - 1)/2 ` times in order to obtain all pairwise comparisons between the trade networks from 1985 to 2014 (networks with pre-computed subgraph counts):
 ```{r}
   # The pre-computed counts already in the package
   Counts <- worldtradesub$Counts
@@ -94,7 +95,7 @@ The World Trade Organization (WTO) said the following about these years:
 
 * About 2010-2011: "*World trade growth decelerated sharply in 2011 as the global economy struggled under the influence of natural disasters, financial uncertainty and civil conflict. A slowdown in trade had been expected after the strong rebound of 2010 but the earthquake in Japan and flooding in Thailand shook global supply chains, and fears of sovereign default in the euro area weighed heavily in the closing months of the year. The civil war in Libya also reduced oil supplies and contributed to sharply higher prices. All of these factors combined to produce below average growth in trade in 2011*" WTO report 2012, section "World trade in 2011" accessed on February 4th 2021 (https://www.wto.org/english/res_e/booksp_e/anrep_e/world_trade_report12_e.pdf) and (https://www.wto.org/english/res_e/publications_e/wtr12_e.htm)
 
-* About 1995-1996: "*The WTO was created in January 1995, upon the completion of the Uruguay Round which established new rules for international trade in goods, services and intellectual property.*" WTO 1996 press releases (https://www.wto.org/english/news_e/pres96_e/anrep.htm).
+* About 1995-1996: "*The WTO was created in January 1995, upon the completion of the Uruguay Round which established new rules for international trade in goods, services and intellectual property.*" WTO 1996 press releases accessed on February 4th 2021 (https://www.wto.org/english/news_e/pres96_e/anrep.htm).
 
 
 --------------------

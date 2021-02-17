@@ -24,7 +24,7 @@ For other vignettes in this package see the ["Menu"](V-Menu.html).
 
 # Loading protein interaction networks and an ER reference graph
 
-The package contains the protein interaction networks of a few _Herpes_ virus and of _Escherichia Coli_. These networks can be read by using `read_simple_graphs`, which reads graph data from all files in a directory that match a specific filename pattern in a format suitable for calculating subgraph-based features by using
+The package contains the protein interaction networks of a few _Herpes_ virus and of _Escherichia Coli_. These networks can be read by using `read_simple_graphs`, which reads graph data from all files in a directory that match a specific filename pattern in a format suitable for calculating subgraph-based features by using the
 [ORCA package](https://CRAN.R-project.org/package=orca).
 
 We use `igraph::read_graph` to read graph data from files. See help for `igraph::read_graph` for a list of 
@@ -96,6 +96,8 @@ print(netdis4_mat)
 
 
 # Generate dendrograms
+Dendrograms are created based on the network comparison values by joining networks with the ones with greater similarity. The specific details on how the links are made can be found in the help of `phangorn::upgma`.
+
 ```{r,fig.align='center',fig.dim=c(6,6)}
 par(mfrow = c(1, 2))
 cex <- 1

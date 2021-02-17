@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-#  Introductory Vignettes
+#  Introductory vignettes
 
 This package contains multiple vignettes that illustrate the simple ways of employing the network comparison methods 'Netdis', 'NetEmd' and their variants (e.g. `Netdis-GP'), and also the large flexibility of these methodologies. The following is a list of the available vignettes:
 

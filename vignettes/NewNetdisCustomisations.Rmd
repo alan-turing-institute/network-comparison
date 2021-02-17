@@ -20,7 +20,7 @@ chunk_output_type: console
   
 # Introduction
   
-This vignette explains variants of Netdis via global parameter changes of the Netdis call functions. For a more in-depth view of the inner steps of Netdis please check ["Netdis: step by step"](NetdisStepByStep.html) and ["Netdis-GP: step by step"](NetdisGPStepByStep.html).
+This vignette explains variants of Netdis via global parameter changes of the functions applying Netdis, for example `netemd_one_to_one` and `netdis_many_to_many`. For a more in-depth view of the inner steps of Netdis please check ["Netdis: step by step"](NetdisStepByStep.html) and ["Netdis-GP: step by step"](NetdisGPStepByStep.html).
 
 Similarly, to see how to use pre-computed properties see ["Simple and quick (default) usage 2: pre-computed properties"](PreComputedProps.html)
   
@@ -38,7 +38,7 @@ library("pheatmap")
 
 ## Networks being compared
 
-Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 nodes. Reference graphs given by start-like graphs are used as illustration of reference graphs. The plots of these networks illustrate clearly their structural differences.
+Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 nodes. A start-like graph is generated so they can be used as input for the reference graph in the option `ref_graph`.
 ```{r,netdisgoldstandnetworks ,fig.align='center'}
 # Create lattice, Ring and Tree like networks of sizes 20^2 and 40^2.
 # Create networks
@@ -53,7 +53,7 @@ gTree_2 <- igraph::as.undirected( make_tree(n = 40^2,children = 3) )
 glist <- list(Lat_1=gLat_1, Lat_2=gLat_2, Ring_1=gRing_1, Ring_2=gRing_1, Tree_1=gTree_1, Tree_2=gTree_2)
 
 # Create a random graph to be used as a gold-standard
-gst <- igraph::as.undirected(graph.star(30^2))
+gst <- igraph::as.undirected(graph.star(1000))
 ```
 
 # Variants of Netdis: Changing the expectation
@@ -69,7 +69,7 @@ netdis.plot(netdislist = netdis_mat_gst,whatrow = 2, main = "Netdis with referen
 
 ## Using Netdis with a constant valued expectation, $E_w=k$
 
-For this variant please set `ref_graph` to the desired constant $k$:
+For this variant please set `ref_graph` to the desired constant $k$. In this example we consider $k=0$ and $k=5$. Considering $k=0$ is equivalent to computing Netdis without background expectations:
 ```{r,netdisconstant,fig.align='center',fig.dim=c(7,7)}
 netdis_mat_zero <- netdis_many_to_many(graphs = glist,
                                       ref_graph = 0
@@ -84,7 +84,7 @@ netdis.plot(netdislist = netdis_mat_5,whatrow = 2, main = "Netdis Ew=5")
 
 
 ## Using Netdis-GP, Geometric-Poisson approximation for $E_w$
-In order to obtain the Netdis-GP variant set `ref_graph=NULL` (default):
+In order to obtain the Netdis-GP variant set `ref_graph=NULL` (default).
 ```{r,fig.align='center',fig.dim=c(7,7)}
 netdisgp_mat <- netdis_many_to_many(graphs = glist,
                                       ref_graph = NULL
@@ -96,7 +96,7 @@ netdis.plot(netdisgp_mat, whatrow = 2, main = "Netdis-GP")
 
 # Customizing the ego-network binning function
 
-The ego-network binning function takes as argument a vector of the ego-network edge densities. The function should return a named list that includes: the input `densities`, the resulting bin `breaks` (vector of density bin limits), and the vector `interval_indexes` which states to what bin each of the individual elements in `densities` belongs to. See for example:
+The ego-network binning function takes as argument a vector of the ego-network edge densities. The function should return a named list that includes: the input `densities`, the resulting bin `breaks` (vector of density bin limits), and the vector `interval_indexes`, which states to what bin each of the individual elements in `densities` belongs to. See for example:
 ```{r,fig.align='center',fig.dim=c(7,7)}
 #  Create an ego-network edge density binning function.
 mybinning <- function(densities) {
@@ -134,7 +134,7 @@ netdisgp_mat_mybin <- netdis_many_to_many(graphs = glist,
 netdis.plot(netdislist = netdisgp_mat_mybin,whatrow = 2, main = "Netdis-GP with mybinning")
 ```
 
-Also note that whenever $E_w$ is taken as a constant value, then the binning will not have an effect on the  computation of Netdis. 
+Note that whenever $E_w$ is taken as a constant value, then the binning will not have an effect on the  computation of Netdis. 
 
 ---------------------------
 
@@ -142,7 +142,7 @@ Also note that whenever $E_w$ is taken as a constant value, then the binning wil
 
 ## Changing default function parameter values in the computation of Netdis
 
-Change values with care as not all combinations may be possible. The following shows possible changes to the subgraph/graphlet size, the radius of the ego-networks considered, the minimum number of nodes and edges that are allowed in the ego-networks used in Netdis  and finally some parameters to modify the ego-network binning. The following are the default values:
+The following shows possible changes to the subgraph/graphlet size, the radius of the ego-networks considered, the minimum number of nodes and edges that are allowed in the ego-networks used in Netdis, and finally, some parameters to modify the ego-network binning. The following are the default values:
 ```{r}
 # Maximum graphlet size to calculate counts and netdis statistic for.
 max_graphlet_size <- 4
@@ -159,7 +159,8 @@ min_bin_count <- 5
 num_bins <- 100
 ```
 
-These values can be directly imputed into the shortcut Netdis function calls:
+These values can be directly imputed and changed into the shortcut Netdis function calls. However, not all combinations may be possible. The following shows the use of subgraphs up to size 4, with 3-step ego-networks and where only ego-networks with at least 5 nodes and 4 edges can be considered. Furthermore, the binning of the ego-networks will be sett to start with 20 bins and each bin will be required to have at least 20 elements.
+
 ```{r,fig.align='center',fig.dim=c(7,7)}
 # (We only recommend changing these default values for those users that have a clear understanding of graph theory behind it)
 #(change values with care as not all combinations may be possible).
@@ -180,7 +181,7 @@ netdisgp_mat_custom <- netdis_many_to_many(graphs = glist,
                                     )
 ```
 
-Here the default parameters are used, and a heatmap of the result of Netdis with default parameters and netdis with the previously modified parameters is given:
+Here the default parameters are used, and a heatmap of the result of Netdis with default parameters and Netdis with the previously modified parameters is given:
 ```{r ,fig.align='center',fig.dim=c(7,7)}
 #Default binning
 binning_fn <- purrr::partial(binned_densities_adaptive,

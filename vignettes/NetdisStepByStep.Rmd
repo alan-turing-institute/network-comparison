@@ -21,7 +21,7 @@ chunk_output_type: console
 
 # Introduction
 
-This vignette explains some inner calculations of Netdis, which the user does not need to go through, however we explain them here for those users that may want to use Netdis in a modular fashion.
+This vignette explains some inner calculations of Netdis which the user does not need to go through, however, we explain them here for those users that may want to use Netdis in a modular fashion.
 
 For a simple Netdis function call see instead ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html).
 
@@ -30,7 +30,7 @@ For other vignettes in this package see the ["Menu"](V-Menu.html).
 # What is Netdis?
 (Extracted from Ali et al. (2014)): Netdis counts small subgraphs  $w$ on $k$ nodes for all 2-step ego-networks, $k=3,4,5$. These counts are centred by subtracting the expected number of counts $E_w$. These centred counts of each network are then compared among one another thus leading to the Netdis statistic.
 
-The selection of a gold-standard graph as a substitute for $E_w$ could be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard (summarized in $E_w$).
+The selection of a gold-standard graph as a substitute for $E_w$ can be done when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard summarized in $E_w$.
 
 ## Netdis is defined as follows:
 
@@ -124,11 +124,11 @@ ego_2 <- make_named_ego_graph(gTree_2,
                               order = neighbourhood_size, 
                               min_ego_nodes = min_ego_nodes, 
                               min_ego_edges = min_ego_edges)
-head(ego_1,n=2)
-head(ego_2,n=2)
+tail(ego_1,n=2)
+tail(ego_2,n=2)
 ```
 
-## Count the number of nodes and the subgraphs  in ego-networks
+## Count the number of nodes and the subgraphs in ego-networks of query graphs ($N_w$)
 
 Once the ego-networks are extracted, the subgraph counts for all ego-network are obtained for each network being compared:
 ```{r}
@@ -136,8 +136,8 @@ Once the ego-networks are extracted, the subgraph counts for all ego-network are
 subgraph_counts_1 <- ego_to_graphlet_counts(ego_networks = ego_1, max_graphlet_size = max_subgraph_size)
 subgraph_counts_2 <- ego_to_graphlet_counts(ego_networks = ego_2, max_graphlet_size = max_subgraph_size)
 
-head(subgraph_counts_1)
-head(subgraph_counts_2)
+tail(subgraph_counts_1)
+tail(subgraph_counts_2)
 ```
 
 ## Calculate expected subgraph counts
@@ -148,7 +148,8 @@ In Netdis users can consider the following variants:
 * Expectation via the Geometric-Poisson / Polya-Aeppli approximation.
 * No expectation (equivalent to setting the expectation equal to zero).
 
-In this vignette the complete steps are given for "Expectation via a gold-standard network". The other two variations follow similar (simpler) steps, and are shown in other vignettes.
+In this vignette the complete steps are given for "Expectation via a gold-standard network". The step by step computation of Netdis-GP is in [Netdis-GP: step by step](NetdisGPStepByStep.html).
+
 
 
 ### Expectation via a gold-standard network
@@ -156,14 +157,14 @@ For this case the user must provide the gold-standard network of their choosing.
 
 The following considers a tree-like network with `r 30^2` nodes as the gold-standard.
 ```{r,fig.align='center',fig.dim=c(6,6)}
-# A gold-standard network
+# Network used as gold-standard
 gst_1 <- erdos.renyi.game(n = 30^2,p.or.m = graph.density(graph = gTree_2))
 plot(gst_1,vertex.size=0.8,vertex.label=NA)
 ```
 
-### Obtain the gold-standard ego-network counts and their binning according to their edge-density ($N_w$ and $\rho(.)$)
+### Obtain the gold-standard ego-network counts and their binning according to their edge-density ($\rho(.)$)
 
-To calculate the expected counts the ego-network, the counts of ego-networks of the gold-standard network need to be obtained first:
+To calculate the expected counts, $E_w$, the counts of the ego-networks of the gold-standard network need to be obtained first:
 ```{r}
 # Obtain subgraph counts and binning for gold-standard
 ego_gst_1 <- make_named_ego_graph(graph = gst_1, 
@@ -189,25 +190,29 @@ binned_densities_gst_1 <- binned_densities_adaptive(densities = densities_gst_1,
 str(binned_densities_gst_1)
 ```
 
-### Obtain the scaled mean counts for each density bin for the gold-standard network (called canonical $E_w$)
+### Obtain the scaled mean counts for each density bin for the gold-standard network (canonical $E_w$)
 
-Finally, the average scaled subgraph counts are obtained for each subgraph in all density bins (`scaled_subgraph_counts_ref`).
+$E_w$ is estimated based on the average subgraph counts of ego-networks per density bin for each given subgraph. However, as the query networks and the gold-standard may have different number of nodes, the counts of the gold-standard network are first scaled to a "standard" or "canonical" scale from which they can be scaled back towards networks of different sizes. The following code first shows the computation of the subgraph counts for the ego-networks in the gold-standard network with their corresponding scaling:
+
 ```{r}
 # Scale ego-network subgraph counts by dividing by the total number of k-tuples in the
 # ego-network (where k is the subgraph size)
 scaled_subgraph_counts_ref <- scale_graphlet_counts_ego(graphlet_counts = subgraph_counts_gst_1,
                                                         max_graphlet_size =max_subgraph_size)
+str(scaled_subgraph_counts_ref)
+```
 
+Finally, the standard or canonical $E_w$ can be obtained by taking the average per bin of the scaled subgraph counts: 
+```{r}
 # Average of the scaled reference subgraph counts in each density bin
 ref_binned_canonical_subgraph_counts <- mean_density_binned_graphlet_counts(graphlet_counts = scaled_subgraph_counts_ref, density_interval_indexes = binned_densities_gst_1$interval_indexes)
 
 ref_binned_canonical_subgraph_counts
 ```
 
-
 ## Obtain the centred counts for each subgraph on the query graphs based on the gold-standard counts ($N_w(G) - E_w(G)$)
 
-After obtaining the average scaled subgraph counts, the subgraph counts of the query networks can be centred:
+After obtaining the average scaled subgraph counts per density bin, the subgraph counts of the query networks can be centred:
 ```{r}
 # Scale the reference counts of the gold-standard network to the sizes of each of the query ego-networks.
 exp_subgraph_counts_1 <- netdis_expected_counts(graphlet_counts = subgraph_counts_1,

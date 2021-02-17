@@ -41,14 +41,14 @@ where $q$ is the number of ego-networks in density bin $d$. Then,
 \[
 \hat{\lambda}^{d}_{k}= \frac{1}{l} \sum_{h \in A(k)} \frac{2 (\bar{X}_{h,d})^2}{V^2_{h,d}+\bar{X}_{h,d}} , \qquad \hat{\theta}^{d}_w= \frac{2\bar{X}_{w,d}}{V^2_{w,d}+\bar{X}_{w,d}},
 \]
-where $l$ is the number of connected subgraphs of size $k$, for example, $l=6$ for $k=4$. These estimators are based on the moment estimators of a GP random variable and the proposal made by (Picard et al.(2008)), where  the total count of each individual subgraph could be thought as the sum of the total subgraph counts over multiple ``clumps'' of edges that appear across the network.
+where $l$ is the number of connected subgraphs of size $k$, for example, $l=6$ for $k=4$. These estimators are based on the moment estimators of a GP random variable and the proposal made by Picard et al.(2008), where  the total count of each individual subgraph could be thought as the sum of the total subgraph counts over multiple ``clumps'' of edges that appear across the network.
 
 This variant focuses on detecting more general and global discrepancies between the ego-network structures.
 
 
 ## Netdis and its variants are constructed as follows:
 
-Let $N_{w,i}(G)$ be the number of induced occurrences of small graphs $w$ in the 2-step ego network of vertex $i$. Now, bin all 2-step ego-networks of network $G$ according to their network density. Let $E_w(G,\rho)$ be the expected number of occurrences of $w$ in an ego-network whose density falls in density bin $\rho$. For a given network $G$ compute the centred subgraph counts as
+(Extracted from Ali et al. (2014)): Let $N_{w,i}(G)$ be the number of induced occurrences of small graphs $w$ in the 2-step ego network of vertex $i$. Now, bin all 2-step ego-networks of network $G$ according to their network density. Let $E_w(G,\rho)$ be the expected number of occurrences of $w$ in an ego-network whose density falls in density bin $\rho$. For a given network $G$ compute the centred subgraph counts as
 \[
 S_w(G)=\sum\limits_{i }{\bigg (N_{w,i}(G)- E_w(G, \rho(i)) \bigg )},
 \] 
@@ -185,7 +185,7 @@ binned_gp_subgraph_counts_1
 binned_gp_subgraph_counts_2
 ```
 
-## Obtain the centred counts for each subgraph on the query graphs based on the Gold-Standard counts ($N_w(G) - E_w(G)$)
+## Obtain the centred counts for each subgraph on the query graphs based on the Geometric-Poisson approximation  ($N_w(G) - E_w(G)$)
 With $E_w$ now obtained, Netdis-GP, can be compute as per its construction by first centring the observed counts:
 ```{r}
 # Calculate expected subgraph counts for each ego network
