@@ -22,11 +22,11 @@ Imports:
     plyr,
     dplyr,
     pheatmap,
-    Rcpp
+    Rcpp,
+    phangorn
 Suggests:
     testthat,
     knitr,
-    phangorn,
     rmarkdown,
     roxygen2
 RoxygenNote: 7.1.0
