@@ -1,2 +1,2 @@
 CXX_STD = CXX11
-PKG_CPPFLAGS += -fno-fast-math -msse2 -mfpmath=sse -mstackrealign
+PKG_CPPFLAGS += -fno-fast-math -msse2 -mstackrealign
