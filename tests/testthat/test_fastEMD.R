@@ -265,7 +265,7 @@ test_that("many element test Mixture ", {
                     top1 = max(x2[length(x2)],x1[length(x1)])+max(w1,w2)
                     bottom1 = min(x2[1],x1[1])
                     res2 <- 0 
-                    res2 <- res2 + integrate(f1,bottom1,top1,abs.tol=0.000000001,subdivisions = 100000000)[[1]]
+                    res2 <- res2 + integrate(f1,bottom1,top1,abs.tol=0.000000001)[[1]]
                     
                     res1 <- NetEmdSmoothV2(x1,v1,w1,x2,v2,w2)
                     #  if (abs(res1-res2)>0.001)
@@ -273,7 +273,7 @@ test_that("many element test Mixture ", {
                     #    browser()
                     #  }
                     # Swapped to percentage error
-                    expect_lt(abs(res1-res2),10**(-3))
+                    expect_lt(abs(res1-res2),10**(-6))
                     
                   }
                 }
