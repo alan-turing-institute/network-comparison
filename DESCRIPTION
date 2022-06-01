@@ -20,11 +20,11 @@ Imports:
     purrr,
     lpSolve,
     plyr,
-    dplyr,
     pheatmap,
     Rcpp,
-    phangorn
 Suggests:
+    dplyr,
+    phangorn,
     testthat,
     knitr,
     rmarkdown,

@@ -5,8 +5,8 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
-#  schedule:
-#    - cron: "6 6 * * 6"  # run at 6:06 every Saturday
+  schedule:
+    - cron: "5 5 5 * *"  # run at 05:05 on 5th day of each month
 
 name: Package checks and coverage
 
@@ -21,10 +21,10 @@ jobs:
       matrix:
         config:
           - {os: ubuntu-latest,   r: 'release'}
-          #- {os: ubuntu-latest,   r: 'oldrel'}
-          #- {os: ubuntu-latest,   r: 'devel'}
-          #- {os: macOS-latest,   r: 'release'}
-          #- {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,   r: 'oldrel'}
+          - {os: ubuntu-latest,   r: 'devel'}
+          - {os: macOS-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
