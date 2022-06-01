@@ -21,7 +21,8 @@ Imports:
     lpSolve,
     plyr,
     dplyr,
-    Rcpp
+    Rcpp,
+    phangorn
 Suggests:
     testthat,
     knitr,
