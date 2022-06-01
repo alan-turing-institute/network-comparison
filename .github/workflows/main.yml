@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [main, master]
 
-name: test-coverage
+name: Package checks and coverage
 
 jobs:
   R-CMD-check:
@@ -36,6 +36,10 @@ jobs:
         with:
           extra-packages: any::covr
           needs: coverage
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
 
       - name: Test coverage
         run: covr::codecov(quiet = FALSE)

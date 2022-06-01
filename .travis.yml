@@ -1,7 +1,6 @@
 language: r
 r:
-  - 4.1
-  - 4.2
+  - release
 cache: packages
 sudo: false
 warnings_are_errors: false
