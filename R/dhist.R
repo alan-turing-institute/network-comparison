@@ -119,8 +119,8 @@ is_dhist <- function(x, fast_check = TRUE) {
     return(has_class_attr)
   }
   # Otherwise check structure
-  has_locations <- purrr::contains(attr(x, "name"), "locations")
-  has_masses <- purrr::contains(attr(x, "name"), "masses")
+  has_locations <- purrr::has_element(attr(x, "name"), "locations")
+  has_masses <- purrr::has_element(attr(x, "name"), "masses")
   # Require list with correct class and presence of 1D numeric vector named
   # elements "locations" and "masses"
   return(has_class_attr
