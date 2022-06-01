@@ -1414,12 +1414,6 @@ test_that("netdis_one_to_one gives expected result when using geometric Poisson
   expected_netdis4 <- 0.1892716
 
   # check function to test
-  bin_counts_fn <- density_binned_counts_gp
-
-  exp_counts_fn <- purrr::partial(netdis_expected_counts,
-    scale_fn = NULL
-  )
-
   actual_netdis <- netdis_one_to_one(graph_1,
     graph_2,
     ref_graph = NULL,
@@ -1427,8 +1421,6 @@ test_that("netdis_one_to_one gives expected result when using geometric Poisson
     neighbourhood_size = neighbourhood_size,
     min_ego_nodes = min_ego_nodes,
     min_ego_edges = min_ego_edges,
-    bin_counts_fn = bin_counts_fn,
-    exp_counts_fn = exp_counts_fn
   )
 
   expect_equal(expected_netdis4, actual_netdis[["netdis4"]],

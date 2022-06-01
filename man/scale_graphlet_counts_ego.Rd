@@ -12,7 +12,7 @@ scale_graphlet_counts_ego(graphlet_counts, max_graphlet_size)
 \item{graphlet_counts}{Pre-calculated graphlet counts for each ego_network.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets included
-in graphlet_counts.}
+in graphlet_counts. Currently only size 4 and 5 are supported.}
 }
 \value{
 scaled graphlet counts.

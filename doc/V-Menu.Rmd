@@ -1,0 +1,29 @@
+---
+title: "Netdis Vignette's Menu"
+date: "`10-06-2020`"
+author: "Luis Ospina-Forero"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{V-Menu}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+#  Netdis introductory Vignettes
+
+This package contains multiple vignettes that illustrate the simple ways of employing the network comparison methods 'Netdis', 'NetEmd' and their variants (e.g. `Netdis Geometric-Poisson'), and also the large flexibility of these methodologies. The following is a list of the available vignettes:
+
+
+* [Default, simple and quick use usage 1: pairwise comparisons](default_pairwise_usage.html):
+* [Default, simple and quick use usage 2: precomputed properties](PreComputedProps.html):
+* [Default, simple and quick use usage 3: many to many comparions](ManyToMany.html):
+
+

@@ -4,8 +4,12 @@
 \alias{gdd}
 \title{Graphlet-based degree distributions (GDDs)}
 \usage{
-gdd(graph, feature_type = "orbit", max_graphlet_size = 4,
-  ego_neighbourhood_size = 0)
+gdd(
+  graph,
+  feature_type = "orbit",
+  max_graphlet_size = 4,
+  ego_neighbourhood_size = 0
+)
 }
 \arguments{
 \item{graph}{A connected, undirected, simple graph as an \code{igraph} object}
@@ -16,16 +20,16 @@ the number of graphlet orbits each node participates in.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes will be
-counted.}
+counted. Currently only size 4 and 5 are supported.}
 
-\item{ego_neighbourhood_size}{The number of steps from the source node to
-include nodes for each ego-network.}
+\item{ego_neighbourhood_size}{The number of steps from the source node used to select the
+neighboring nodes to be included in the source node ego-network.}
 }
 \value{
 List of graphlet-based degree distributions, with each distribution
 represented as a \code{dhist} discrete histogram object.
 }
 \description{
-Generates graphlet-based degree distributions from \code{igraph} graph object
+Short-cut function to create graphlet-based degree distributions from \code{igraph} graph object
 using the ORCA fast graphlet orbit counting package.
 }

@@ -11,7 +11,7 @@ count_graphlet_tuples_ego(graphlet_counts, max_graphlet_size)
 number of ego networks (rows).}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets included
-in the tuple counts.}
+in the tuple counts. Currently only size 4 and 5 are supported.}
 }
 \description{
 Run count_graphlet_tuples across pre-computed ego networks.

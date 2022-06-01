@@ -11,7 +11,7 @@ count_graphlets_per_node(graph, max_graphlet_size)
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes will be
-counted.}
+counted. Currently only size 4 and 5 are supported.}
 }
 \value{
 ORCA-format matrix containing counts of each graphlet (columns) at

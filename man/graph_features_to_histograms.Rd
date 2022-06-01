@@ -2,24 +2,20 @@
 % Please edit documentation in R/orca_interface.R
 \name{graph_features_to_histograms}
 \alias{graph_features_to_histograms}
-\title{Convert a matrix of node level features to a discrete histogram for
+\title{Convert a matrix of node level features to a "discrete histogram" for
 each feature.}
 \usage{
 graph_features_to_histograms(features_matrix)
 }
 \arguments{
-\item{features_matrix}{A number of nodes (rows) by number of features
-(columns) matrix, where the ij entry is the score of node i on feature j
-(e.g. for ORCA output this is counts of each graphlet or orbit at each
-graph vertex)}
+\item{features_matrix}{A matrix whose rows represent nodes and whose columns represent different node level features. This means that entry ij provides the value of feature j for node i.}
 }
 \value{
-Feature histograms: List of discrete histograms for each
+Feature histograms: List of "discrete histograms" for each
 feature
 }
 \description{
-Converts a matrix of node level features (e.g. for ORCA output this is counts
-of each graphlet or orbit at each graph vertex) to
-a set of discrete histograms (a histogram of counts for each distinct value
-across all graph vertices for each feature with no binning)
+Converts a matrix of node level features (e.g. for example counts
+of multiple graphlets or orbits at each node) to
+a set of histogram like objects (observed frequency distribution of each feature/column)
 }
