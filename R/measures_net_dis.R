@@ -380,7 +380,6 @@ netdis_one_to_many <- function(graph_1 = NULL,
 #' 3) NULL (default) - Expected counts will be calculated based on the properties of the
 #' query graphs themselves. (Geometric-Poisson approximation).
 #'
-#' 
 #' @param comparisons Which comparisons to perform between graphs.
 #' Can be "many-to-many" (all pairwise combinations) or "one-to-many"
 #' (compare first graph in graphs to all other graphs.)
@@ -394,18 +393,17 @@ netdis_one_to_many <- function(graph_1 = NULL,
 #'
 #' @param min_ego_edges Filter ego networks which have fewer
 #' than min_ego_edges edges (default 1).
-#'
-#'  @param binning_fn Function used to bin ego network densities. Takes edge \code{densities}
+#' 
+#' @param binning_fn Function used to bin ego network densities. Takes edge \code{densities}
 #' as its single argument, and returns a named list including, the input \code{densities}, the resulting bin \code{breaks} (vector of density bin limits), and the vector \code{interval_indexes} which states to what bin each of the individual elements in \code{densities} belongs to.
 #' ego network). If \code{NULL}, then the method \code{binned_densities_adaptive} with
-#' \code{min_counts_per_interval = 5} and \code{num_intervals = 100} is used
-#' (Default: NULL).
+#' \code{min_counts_per_interval = 5} and \code{num_intervals = 100} is used (default: NULL).
 #'
 #' @param bin_counts_fn Function used to calculate expected graphlet counts in
 #' each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
 #' (bin indexes) and \code{max_graphlet_size} as arguments. If \code{bin_counts_fn} is \code{NULL}, (default),
-#'  it will apply either the approach from the original Netdis paper, or the respective Geometric-Poisson
-#'   approximation; depending on the values of \code{ref_graph} and \code{graphlet_counts_ref}.
+#' it will apply either the approach from the original Netdis paper, or the respective Geometric-Poisson
+#' approximation; depending on the values of \code{ref_graph} and \code{graphlet_counts_ref}.
 #'
 #' @param exp_counts_fn Function used to map from binned reference counts to
 #' expected counts for each graphlet in each ego network of the query graphs.
@@ -414,7 +412,7 @@ netdis_one_to_many <- function(graph_1 = NULL,
 #' If \code{exp_counts_fn} is \code{NULL}, (default), it will apply
 #' either the approach from the original Netdis paper, or the respective Geometric-Poisson approximation; depending on the
 #' values of \code{ref_graph} and \code{graphlet_counts_ref}.
-#' 
+#'
 #' @param graphlet_counts Pre-generated graphlet counts (default: NULL). If the
 #' \code{graphlet_counts} argument is defined then \code{graphs} will not be
 #' used.
@@ -433,7 +431,7 @@ netdis_one_to_many <- function(graph_1 = NULL,
 #' each ego network. 
 #' If the \code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
 #' be used.
-
+#' 
 #' @return Netdis statistics between query graphs for graphlet sizes
 #' up to and including max_graphlet_size.
 #'

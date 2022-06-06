@@ -5,7 +5,9 @@
 \name{worldtradesub}
 \alias{worldtradesub}
 \title{World trade networks from 1985–2014}
-\format{A list of two elements. The first element, 'wtnets', is a list of \code{igraph} objects providing a small sample of world trade networks from 2001–2014. The second element, 'Counts', is a list of pre-computed subgraph counts of world trade networks in the years 1985-2014.}
+\format{
+A list of two elements. The first element, 'wtnets', is a list of \code{igraph} objects providing a small sample of world trade networks from 2001–2014. The second element, 'Counts', is a list of pre-computed subgraph counts of world trade networks in the years 1985-2014.
+}
 \source{
 \strong{World trade networks:}. United nations commodity trade statistics database (UN comtrade). http://comtrade.un.org/, 2015.
 

@@ -1,6 +1,6 @@
 Package: netdist
 Title: An implementation of the NetEMD alignment-free network distance measure
-Version: 0.4.9000
+Version: 0.4.9100
 Authors@R: person("Martin", "O'Reilly",email = "developer@mtspace.net", 
                   role = c("aut", "cre"))
 Description: An implementation of the NetEMD alignment-free network
@@ -20,15 +20,15 @@ Imports:
     purrr,
     lpSolve,
     plyr,
-    dplyr,
     pheatmap,
     Rcpp,
-    phangorn
 Suggests:
+    dplyr,
+    phangorn,
     testthat,
     knitr,
     rmarkdown,
     roxygen2
-RoxygenNote: 7.1.0
+RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 Encoding: UTF-8
