@@ -75,12 +75,12 @@ ego-network. As well as graphlet counts, each matrix  must contain an
 additional column labelled "N" including the node count for
 each ego network.}
 
-\item{graphlet_counts_ref}{Pre-generated reference graphlet counts (default: NULL). Matrix containing counts 
+\item{graphlet_counts_ref}{Pre-generated reference graphlet counts (default: NULL). Matrix containing counts
 of each graphlet (columns) for each ego-network (rows) in the input graph. Columns are labelled with
 graphlet IDs and rows are labelled with the ID of the central node in each
 ego-network. As well as graphlet counts, each matrix  must contain an
 additional column labelled "N" including the node count for
-each ego network. 
+each ego network.
 If the \code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
 be used.}
 }

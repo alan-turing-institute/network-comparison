@@ -43,13 +43,13 @@ This is calculated as follows:
   2. Find the minimum EMD between the histograms
 }
 \examples{
- require(igraph)
- goldstd_1 <- graph.lattice(c(8,8)) 
- goldstd_2 <- graph.lattice(c(44,44)) 
- props_1 <- count_orbits_per_node(graph = goldstd_1,max_graphlet_size = 5)
- props_2 <- count_orbits_per_node(graph = goldstd_2,max_graphlet_size = 5)
- dhists_1<- graph_features_to_histograms(props_1)
- dhists_2<- graph_features_to_histograms(props_2)
- # Obtain the minimum NetEMD_edges between the histograms 
- netemd_single_pair(dhists_1[[1]],dhists_2[[1]],method = "optimise",smoothing_window_width = 0)
+require(igraph)
+goldstd_1 <- graph.lattice(c(8, 8))
+goldstd_2 <- graph.lattice(c(44, 44))
+props_1 <- count_orbits_per_node(graph = goldstd_1, max_graphlet_size = 5)
+props_2 <- count_orbits_per_node(graph = goldstd_2, max_graphlet_size = 5)
+dhists_1 <- graph_features_to_histograms(props_1)
+dhists_2 <- graph_features_to_histograms(props_2)
+# Obtain the minimum NetEMD_edges between the histograms
+netemd_single_pair(dhists_1[[1]], dhists_2[[1]], method = "optimise", smoothing_window_width = 0)
 }
