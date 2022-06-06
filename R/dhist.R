@@ -9,23 +9,27 @@
 #' location
 #' @param smoothing_window_width If greater than 0, the discrete histogram will
 #' be treated as having the mass at each location "smoothed" uniformly across
-#' a bin centred on the location and having width = \code{smoothing_window_width}
-#' (default = \code{0} - no smoothing)
+#' a bin centred on the location and having
+#' width = \code{smoothing_window_width} (default = \code{0} - no smoothing)
 #' @param sorted Whether or not to return a discrete histogram with locations
 #' and masses sorted by ascending mass (default = \code{TRUE})
 #' @return A sparse discrete histogram. Format is a \code{dhist} object, which
 #' is a list of class \code{dhist} with the following named elements:
 #' \itemize{
 #'   \item \code{locations}: A 1D numeric vector of discrete locations
-#'   \item \code{masses}: A 1D numeric vector of the mass present at each location
+#'   \item \code{masses}: A 1D numeric vector of the mass present at each
+#'   location
 #' }
 #' Note that locations where no mass is present are not included in the returned
 #' \code{dhist} object. Mass in these discrete histograms is treated as being
-#' present precisely at the specified location. Discrete histograms should not be used
-#' for data where observations have been grouped into bins representing ranges
-#' of observation values.
+#' present precisely at the specified location. Discrete histograms should not
+#' be used for data where observations have been grouped into bins representing
+#' ranges of observation values.
 #' @export
-dhist <- function(locations, masses, smoothing_window_width = 0, sorted = TRUE) {
+dhist <- function(locations,
+                  masses,
+                  smoothing_window_width = 0,
+                  sorted = TRUE) {
   if (!is_numeric_vector_1d(locations)) {
     stop("Bin locations must be provided as a 1D numeric vector")
   }
@@ -76,9 +80,11 @@ update_dhist <-
 #' @param dhist A discrete histogram as a \code{dhist} object
 #' @param smoothing_window_width If greater than 0, the discrete histogram will
 #' be treated as having the mass at each location "smoothed" uniformly across
-#' a bin centred on the location and having width = \code{smoothing_window_width}
-#' @return A copy of a \code{dhist} object with its \code{smoothing_window_width}
-#' attribute set  to the value provided \code{smoothing_window_width} parameter.
+#' a bin centred on the location and having
+#' width = \code{smoothing_window_width}
+#' @return A copy of a \code{dhist} object with its
+#' \code{smoothing_window_width} attribute set to the value provided
+#' \code{smoothing_window_width} parameter.
 #' @export
 as_smoothed_dhist <- function(dhist, smoothing_window_width) {
   dhist <- update_dhist(dhist, smoothing_window_width = smoothing_window_width)
@@ -90,8 +96,8 @@ as_smoothed_dhist <- function(dhist, smoothing_window_width) {
 #' Returns an "unsmoothed" copy of a \code{dhist} object with its
 #' \code{smoothing_window_width} attribute set to 0.
 #' @param dhist A discrete histogram as a \code{dhist} object
-#' @return A copy of a \code{dhist} object with its \code{smoothing_window_width}
-#' attribute set to 0.
+#' @return A copy of a \code{dhist} object with its
+#' \code{smoothing_window_width} attribute set to 0.
 #' @export
 as_unsmoothed_dhist <- function(dhist) {
   dhist <- update_dhist(dhist, smoothing_window_width = 0)
@@ -101,8 +107,8 @@ as_unsmoothed_dhist <- function(dhist) {
 #' Check if an object is a \code{dhist} discrete histogram
 #'
 #' Checks if the input object is of class \code{dhist}. If \code{fast_check} is
-#' \code{TRUE} then the only check is whether the object has a class attribute of
-#' \code{dhist}. If \code{fast_check} is \code{FALSE} (default), then checks
+#' \code{TRUE} then the only check is whether the object has a class attribute
+#' of \code{dhist}. If \code{fast_check} is \code{FALSE} (default), then checks
 #' are also made to ensure that the object has the structure required of a
 #' \code{dhist} object.
 #' @param x An arbitrary object
@@ -111,8 +117,8 @@ as_unsmoothed_dhist <- function(dhist) {
 #' is set to \code{dhist} (default = \code{TRUE})
 #' @export
 is_dhist <- function(x, fast_check = TRUE) {
-  # Quick check that relies on user not to construct variables with "dhist" class
-  # that do not have the required elements
+  # Quick check that relies on user not to construct variables with "dhist"
+  # class that do not have the required elements
   has_class_attr <- (class(x) == "dhist")
   if (fast_check) {
     # Early return if fast check requested
@@ -133,13 +139,15 @@ is_dhist <- function(x, fast_check = TRUE) {
 
 #' Discrete histogram from observations (Pure R slow version)
 #'
-#' Generate a sparse discrete histogram from a set of discrete numeric observations
+#' Generate a sparse discrete histogram from a set of discrete numeric
+#' observations
 #' @param observations A vector of discrete numeric observations
 #' @return A sparse discrete histogram. Format is a \code{dhist} object, which
 #' is a list of class \code{dhist} with the following named elements:
 #' \itemize{
 #'   \item \code{locations}: A 1D numeric vector of discrete locations
-#'   \item \code{masses}: A 1D numeric vector of the mass present at each location
+#'   \item \code{masses}: A 1D numeric vector of the mass present at each
+#'   location
 #' }
 #' @export
 dhist_from_obs_slow <- function(observations) {
@@ -162,13 +170,15 @@ dhist_from_obs_slow <- function(observations) {
 
 #' Discrete histogram from observations
 #'
-#' Generate a sparse discrete histogram from a set of discrete numeric observations
+#' Generate a sparse discrete histogram from a set of discrete numeric
+#' observations
 #' @param observations A vector of discrete numeric observations
 #' @return A sparse discrete histogram. Format is a \code{dhist} object, which
 #' is a list of class \code{dhist} with the following named elements:
 #' \itemize{
 #'   \item \code{locations}: A 1D numeric vector of discrete locations
-#'   \item \code{masses}: A 1D numeric vector of the mass present at each location
+#'   \item \code{masses}: A 1D numeric vector of the mass present at each
+#'   location
 #' }
 #' @export
 dhist_from_obs <- function(observations) {
@@ -299,7 +309,8 @@ area_between_dhist_ecmfs <- function(dhist_ecmf1, dhist_ecmf2) {
     stop("ECMFs must have the same type")
   }
   ecmf_type <- ecmf_type1
-  # Determine all possible locations where either ECMF changes gradient ("knots")
+  # Determine all possible locations where either ECMF changes gradient
+  # ("knots")
   x1 <- ecmf_knots(dhist_ecmf1)
   x2 <- ecmf_knots(dhist_ecmf2)
   x <- sort(union(x1, x2))
@@ -413,7 +424,11 @@ area_between_offset_ecmfs <- function(ecmf1, ecmf2, offset) {
 #' increasing (default) or decreasing order of location
 #' @export
 sort_dhist <- function(dhist, decreasing = FALSE) {
-  sorted_indexes <- sort(dhist$locations, decreasing = decreasing, index.return = TRUE)$ix
+  sorted_indexes <- sort(
+    dhist$locations,
+    decreasing = decreasing,
+    index.return = TRUE
+  )$ix
   dhist$masses <- dhist$masses[sorted_indexes]
   dhist$locations <- dhist$locations[sorted_indexes]
   return(dhist)
@@ -463,12 +478,14 @@ dhist_variance <- function(dhist) {
     # For unsmoothed discrete histograms, the mass associated with each location
     # is located precisely at the lcoation. Therefore cariance (i.e. E[X^2])
     # is the mass-weighted sum of the mean-centred locations
-    variance <- sum(dhist$masses * (mean_centred_locations)^2) / sum(dhist$masses)
+    variance <- sum(dhist$masses * (mean_centred_locations)^2) /
+                sum(dhist$masses)
   } else {
-    # For smoothed histograms, the mass associated with each location is "smoothed"
-    # uniformly across a bin centred on the location with width = smoothing_window_width
-    # Variance (i.e. E[X^2]) is therefore the mass-weighted sum of the integrals
-    # of x^2 over the mean-centred bins at each location.
+    # For smoothed histograms, the mass associated with each location is
+    # "smoothed" uniformly across a bin centred on the location with
+    # width = smoothing_window_width Variance (i.e. E[X^2]) is therefore the
+    # mass-weighted sum of the integrals of x^2 over the mean-centred bins at
+    # each location.
     hw <- dhist$smoothing_window_width / 2
     bin_lowers <- mean_centred_locations - hw
     bin_uppers <- mean_centred_locations + hw
@@ -540,13 +557,17 @@ normalise_dhist_variance <- function(dhist) {
     std_dev <- dhist_std(dhist)
     centred_locations <- (dhist$locations - dhist_mean_location(dhist))
     normalised_centred_locations <- centred_locations / std_dev
-    normalised_locations <- normalised_centred_locations + dhist_mean_location(dhist)
+    normalised_locations <- normalised_centred_locations +
+                            dhist_mean_location(dhist)
     dhist <- update_dhist(dhist, locations = normalised_locations)
     # If smoothing_window_width not zero, then update it to reflect the variance
     # normalisation
     if (dhist$smoothing_window_width != 0) {
       normalised_smoothing_window_width <- dhist$smoothing_window_width / std_dev
-      dhist <- update_dhist(dhist, smoothing_window_width = normalised_smoothing_window_width)
+      dhist <- update_dhist(
+        dhist,
+        smoothing_window_width = normalised_smoothing_window_width
+      )
     }
   }
   return(dhist)
@@ -584,7 +605,8 @@ harmonise_dhist_locations <- function(dhist1, dhist2) {
 #'
 #' Check if a variable is a 1D numeric vector by checking that:
 #' \itemize{
-#'   \item \code{is_numeric(input)}: Input is vector, matrix, array or list of numbers
+#'   \item \code{is_numeric(input)}: Input is vector, matrix, array or list of
+#'   numbers
 #'   \item \code{is_null(dim(input))}: Input is not a matrix or array
 #' }
 #' @param input Arbitrary object
