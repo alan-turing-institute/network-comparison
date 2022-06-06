@@ -105,17 +105,17 @@
 #' # Set source directory for Virus PPI graph edge files stored in the
 #' # netdist package.
 #' source_dir <- system.file(
-#'     file.path("extdata", "VRPINS"),
-#'     package = "netdist"
+#'   file.path("extdata", "VRPINS"),
+#'   package = "netdist"
 #' )
 #' # Load query graphs as igraph objects
 #' graph_1 <- read_simple_graph(
-#'     file.path(source_dir, "EBV.txt"),
-#'     format = "ncol"
+#'   file.path(source_dir, "EBV.txt"),
+#'   format = "ncol"
 #' )
 #' graph_2 <- read_simple_graph(
-#'     file.path(source_dir, "ECL.txt"),
-#'     format = "ncol"
+#'   file.path(source_dir, "ECL.txt"),
+#'   format = "ncol"
 #' )
 #'
 #' # Netdis variant using the Geometric Poisson approximation to remove the
@@ -136,14 +136,14 @@
 #' goldstd_2 <- graph.lattice(c(44, 44)) # A reference net
 #'
 #' netdis_one_to_one(
-#'     graph_1 = graph_1,
-#'     graph_2 = graph_2,
-#'     ref_graph = goldstd_1
+#'   graph_1 = graph_1,
+#'   graph_2 = graph_2,
+#'   ref_graph = goldstd_1
 #' )
 #' netdis_one_to_one(
-#'     graph_1 = graph_1,
-#'     graph_2 = graph_2,
-#'     ref_graph = goldstd_2
+#'   graph_1 = graph_1,
+#'   graph_2 = graph_2,
+#'   ref_graph = goldstd_2
 #' )
 #'
 #'
@@ -156,28 +156,28 @@
 #'
 #' # Netdis Geometric-Poisson.
 #' netdis_one_to_one(
-#'     graphlet_counts_1 = props_1,
-#'     graphlet_counts_2 = props_2,
-#'     ref_graph = NULL
+#'   graphlet_counts_1 = props_1,
+#'   graphlet_counts_2 = props_2,
+#'   ref_graph = NULL
 #' )
 #'
 #' # Netdis Zero Expectation.
 #' netdis_one_to_one(
-#'     graphlet_counts_1 = props_1,
-#'     graphlet_counts_2 = props_2,
-#'     ref_graph = 0
+#'   graphlet_counts_1 = props_1,
+#'   graphlet_counts_2 = props_2,
+#'   ref_graph = 0
 #' )
 #'
 #' # Netdis using gold-standard network
 #' netdis_one_to_one(
-#'     graphlet_counts_1 = props_1,
-#'     graphlet_counts_2 = props_2,
-#'     graphlet_counts_ref = props_goldstd_1
+#'   graphlet_counts_1 = props_1,
+#'   graphlet_counts_2 = props_2,
+#'   graphlet_counts_ref = props_goldstd_1
 #' )
 #' netdis_one_to_one(
-#'     graphlet_counts_1 = props_1,
-#'     graphlet_counts_2 = props_2,
-#'     graphlet_counts_ref = props_goldstd_2
+#'   graphlet_counts_1 = props_1,
+#'   graphlet_counts_2 = props_2,
+#'   graphlet_counts_ref = props_goldstd_2
 #' )
 #' @export
 netdis_one_to_one <- function(graph_1 = NULL,
@@ -591,7 +591,9 @@ netdis_many_to_many <- function(graphs = NULL,
   # If there are no graphlet_counts_ref, and a number has been passed as
   # ref_graph, treat it as a constant expected counts value (e.g. if
   # ref_graph = 0 then no centring of counts).
-  if (is.numeric(ref_graph) && length(ref_graph) == 1 && is.null(graphlet_counts_ref)) {
+  if (is.numeric(ref_graph) &&
+    length(ref_graph) == 1 &&
+    is.null(graphlet_counts_ref)) {
     centred_graphlet_counts <- purrr::map(
       graphlet_counts,
       netdis_centred_graphlet_counts,

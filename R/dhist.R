@@ -479,7 +479,7 @@ dhist_variance <- function(dhist) {
     # is located precisely at the lcoation. Therefore cariance (i.e. E[X^2])
     # is the mass-weighted sum of the mean-centred locations
     variance <- sum(dhist$masses * (mean_centred_locations)^2) /
-                sum(dhist$masses)
+      sum(dhist$masses)
   } else {
     # For smoothed histograms, the mass associated with each location is
     # "smoothed" uniformly across a bin centred on the location with
@@ -558,7 +558,7 @@ normalise_dhist_variance <- function(dhist) {
     centred_locations <- (dhist$locations - dhist_mean_location(dhist))
     normalised_centred_locations <- centred_locations / std_dev
     normalised_locations <- normalised_centred_locations +
-                            dhist_mean_location(dhist)
+      dhist_mean_location(dhist)
     dhist <- update_dhist(dhist, locations = normalised_locations)
     # If smoothing_window_width not zero, then update it to reflect the variance
     # normalisation
