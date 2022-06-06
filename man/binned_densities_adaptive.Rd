@@ -4,8 +4,7 @@
 \alias{binned_densities_adaptive}
 \title{binned_densities_adaptive}
 \usage{
-binned_densities_adaptive(densities, min_counts_per_interval,
-  num_intervals)
+binned_densities_adaptive(densities, min_counts_per_interval, num_intervals)
 }
 \arguments{
 \item{densities}{Density values to use for binning.}

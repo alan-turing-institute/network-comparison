@@ -4,9 +4,14 @@
 \alias{read_simple_graph}
 \title{Read a graph from file, simplifying as requested}
 \usage{
-read_simple_graph(file, format, as_undirected = TRUE,
-  remove_loops = TRUE, remove_multiple = TRUE,
-  remove_isolates = TRUE)
+read_simple_graph(
+  file,
+  format,
+  as_undirected = TRUE,
+  remove_loops = TRUE,
+  remove_multiple = TRUE,
+  remove_isolates = TRUE
+)
 }
 \arguments{
 \item{file}{Path to file containing graph data}
@@ -35,5 +40,5 @@ requested subset of the following simplifications in the following order:
   3. Removes multiple edges (i.e. ensuring only one edge exists for each
      pair of endpoints)
   4. Removes isolated vertices (i.e. vertices with no edges after the
-     previous alterations)
+     previous alterations).
 }

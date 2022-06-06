@@ -21,13 +21,14 @@ Imports:
     lpSolve,
     plyr,
     dplyr,
-    Rcpp
+    pheatmap,
+    Rcpp,
+    phangorn
 Suggests:
     testthat,
     knitr,
-    phangorn,
     rmarkdown,
     roxygen2
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 Encoding: UTF-8

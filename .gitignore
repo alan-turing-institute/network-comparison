@@ -6,3 +6,6 @@
 *.so
 *.dll
 vignettes/.build.timestamp
+inst/doc
+doc
+Meta

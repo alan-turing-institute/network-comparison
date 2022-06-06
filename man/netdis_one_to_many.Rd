@@ -4,16 +4,21 @@
 \alias{netdis_one_to_many}
 \title{Netdis comparisons between one graph and many other graphs.}
 \usage{
-netdis_one_to_many(graph_1 = NULL, graphs_compare = NULL,
-  ref_graph = 0, max_graphlet_size = 4, neighbourhood_size = 2,
-  min_ego_nodes = 3, min_ego_edges = 1,
-  binning_fn = purrr::partial(binned_densities_adaptive,
-  min_counts_per_interval = 5, num_intervals = 100),
-  bin_counts_fn = purrr::partial(density_binned_counts, agg_fn = mean,
-  scale_fn = scale_graphlet_counts_ego),
-  exp_counts_fn = purrr::partial(netdis_expected_counts, scale_fn =
-  count_graphlet_tuples), graphlet_counts_1 = NULL,
-  graphlet_counts_compare = NULL)
+netdis_one_to_many(
+  graph_1 = NULL,
+  graphs_compare = NULL,
+  ref_graph = 0,
+  max_graphlet_size = 4,
+  neighbourhood_size = 2,
+  min_ego_nodes = 3,
+  min_ego_edges = 1,
+  binning_fn = NULL,
+  bin_counts_fn = NULL,
+  exp_counts_fn = NULL,
+  graphlet_counts_1 = NULL,
+  graphlet_counts_compare = NULL,
+  graphlet_counts_ref = NULL
+)
 }
 \arguments{
 \item{graph_1}{Query graph - this graph will be compared with
@@ -30,7 +35,7 @@ expected counts are calculated for all query graphs.
 3) NULL - Expected counts will be calculated based on the properties of the
 query graphs themselves.}
 
-\item{max_graphlet_size}{Generate graphlets up to this size.}
+\item{max_graphlet_size}{Generate graphlets up to this size. Currently only 4 and 5 are supported.}
 
 \item{neighbourhood_size}{Ego network neighbourhood size.}
 
@@ -40,26 +45,25 @@ than min_ego_nodes nodes.}
 \item{min_ego_edges}{Filter ego networks which have fewer
 than min_ego_edges edges.}
 
-\item{binning_fn}{Function used to bin ego network densities. Takes densities
-as its single argument, and returns a named list including keys \code{breaks}
-(list of bin edges) and \code{interval_indexes} (density bin index for each
-ego network). (Default: \code{binned_densities_adaptive} with
-\code{min_counts_per_interval = 5} and \code{num_intervals = 100}).}
+\item{binning_fn}{Function used to bin ego network densities. Takes edge \code{densities}
+as its single argument, and returns a named list including, the input \code{densities}, the resulting bin \code{breaks} (vector of density bin limits), and the vector \code{interval_indexes} which states to what bin each of the individual elements in \code{densities} belongs to.
+ego network). If \code{NULL}, then the method \code{binned_densities_adaptive} with
+\code{min_counts_per_interval = 5} and \code{num_intervals = 100} is used
+(Default: NULL).}
 
 \item{bin_counts_fn}{Function used to calculate expected graphlet counts in
 each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-(bin indexes) and \code{max_graphlet_size} as arguments.
-(Default: \code{density_binned_counts} with \code{agg_fn = mean} and
-\code{scale_fn = scale_graphlet_counts_ego}, which mirrors the
-approach used in the original netdis paper).}
+(bin indexes) and \code{max_graphlet_size} as arguments. If \code{bin_counts_fn} is \code{NULL}, (default),
+ it will apply either the approach from the original Netdis paper, or the respective Geometric-Poisson
+  approximation; depending on the values of \code{ref_graph} and \code{graphlet_counts_ref}.}
 
 \item{exp_counts_fn}{Function used to map from binned reference counts to
 expected counts for each graphlet in each ego network of the query graphs.
 Takes \code{ego_networks}, \code{density_bin_breaks},
 \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
-(Default: \code{netdis_expected_counts} with
-\code{scale_fn = count_graphlet_tuples}, which mirrors the approach used in
-the original netdis paper).}
+If \code{exp_counts_fn} is \code{NULL}, (default), it will apply
+either the approach from the original Netdis paper, or the respective Geometric-Poisson approximation; depending on the
+values of \code{ref_graph} and \code{graphlet_counts_ref}.}
 
 \item{graphlet_counts_1}{Pre-generated graphlet counts for the first query
 graph. If the \code{graphlet_counts_1} argument is defined then
@@ -68,6 +72,10 @@ graph. If the \code{graphlet_counts_1} argument is defined then
 \item{graphlet_counts_compare}{Named list of pre-generated graphlet counts
 for the remaining query graphs. If the \code{graphlet_counts_compare}
 argument is defined then \code{graphs_compare} will not be used.}
+
+\item{graphlet_counts_ref}{Pre-generated reference graphlet counts. If the
+\code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
+be used.}
 }
 \value{
 Netdis statistics between graph_1 and graph_2 for graphlet sizes

@@ -1,0 +1,227 @@
+---
+title: 'Simple and quick (default) usage 3: many to many comparisons'
+#author: "Luis Ospina-Forero"
+date: "23/06/2020"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ManyToManyComp}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+  
+```{r, include = FALSE}
+  knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+  )
+```
+  
+# Introduction
+  
+  In some situations there is a need to compare multiple graphs among each other. For such situations, the `netdist` package contains some initial shortcut functions that perform such calculation and may automatically (Unix) incorporate parallel processing.
+  
+  This vignette does not show details about the Netdis and NetEmd network comparison methods or their variants, please check ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html) for these details. Instead, this vignette  shows the default usage of the shortcut functions for many-to-many comparisons.
+  
+  Please note that for high performance computations these shortcut functions may not be ideal, particularly in terms of RAM consumption.
+  
+  For other vignettes in this package see the ["Menu"](V-Menu.html). 
+
+# Load required packages/libraries
+```{r, packages, message= FALSE}
+# Load packages/libraries
+library("netdist")
+library("igraph")
+library("pheatmap")
+```
+
+# Compare multiple networks via NetEmd
+
+(Extracted from Wegner et al. (2017)): NetEmd is based on  the idea that the information encapsulated in the shape of the degree distribution and other network properties which reflect the topological organization of the network. From an abstract point of view, NetEmd views the shape of a distribution as a property that is invariant under linear deformations i.e. translations and re-scalings of the axis.
+
+## Networks being compared
+
+Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 nodes. The plots of these networks illustrate clearly their structural differences.
+```{r, netwokrs,fig.align='center',fig.dim=c(8,4)}
+# Create networks
+set.seed(3171)
+gLat_1 <- igraph::graph.lattice(c(20,20)) 
+gLat_2 <- igraph::graph.lattice(c(40,40))  
+gRing_1 <- igraph::make_ring(20^2) 
+gRing_2 <- igraph::make_ring(40^2)
+gTree_1 <- igraph::as.undirected( make_tree(n = 20^2,children = 3) )
+gTree_2 <- igraph::as.undirected( make_tree(n = 40^2,children = 3) )
+
+par(mfrow=c(1,2))
+plot(gLat_1,vertex.size=0.8,vertex.label=NA)
+plot(gLat_2,vertex.size=0.8,vertex.label=NA)
+plot(gRing_1,vertex.size=0.8,vertex.label=NA)
+plot(gRing_2,vertex.size=0.8,vertex.label=NA)
+plot(gTree_1,vertex.size=0.8,vertex.label=NA)
+plot(gTree_2,vertex.size=0.8,vertex.label=NA)
+```
+
+## NetEmd using subgraph counts
+
+Subgraph count based NetEmd comparisons:
+```{r, netemdorbits,fig.align='center'}
+# NetEMD using subgraph counts.
+glist <- list(Lat_1=gLat_1, Lat_2=gLat_2, Ring_1=gRing_1, Ring_2=gRing_1, Tree_1=gTree_1, Tree_2=gTree_2)
+
+netemdlist <- netemd_many_to_many(graphs = glist,smoothing_window_width = 1,mc.cores = 1) #Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+
+netemdlist
+```
+
+To read the results in a matrix form:
+```{r,fig.align='center'}
+# Creating a comparison matrix:
+mat <- cross_comp_to_matrix(measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec)
+mat
+```
+
+Illustration of the multiple NetEmd comparisons based on subgraph counts.
+```{r,netemdorbitsPLOT,fig.align='center',fig.dim=c(8,8)}
+netemd.plot(netemdlist=netemdlist,clustering_method="ward.D",main="NetEmd subgraph counts")
+```
+
+## NetEmd using the Laplacian and Normalized Laplacian Spectrum
+
+Pre-compute the Laplacian and normalized Laplacian for each graph considered:
+```{r, netemdspectrum}
+# NetEMD using the Laplacian and normalized Laplacian Spectrum.
+SPECT<-list()
+
+#This step may take several minutes.
+for(i in 1:length(glist)){ 
+  Lapg <- igraph::laplacian_matrix(graph = glist[[i]],normalized = FALSE,sparse = FALSE)
+  NLap <- igraph::laplacian_matrix(graph = glist[[i]],normalized = TRUE,sparse = FALSE)
+  SPECT[[ names(glist)[i] ]] <- cbind(L.Spectra= eigen(Lapg)$values, NL.Spectra= eigen(NLap)$values) 
+}
+str(SPECT)
+```
+
+Compute NetEmd:
+```{r}
+netemdlist <- netemd_many_to_many(dhists = SPECT,smoothing_window_width = 0) #Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+
+netemdlist
+```
+
+
+### Illustration of the multiple NetEmd comparisons based on the Laplacian and Normalized Laplacian spectra
+```{r,netemdspectrumPLOT ,fig.align='center',fig.dim=c(8,8)}
+netemd.plot(netemdlist=netemdlist,clustering_method="ward.D",main="NetEmd Spectra")
+```
+
+
+-------------------------
+
+# Compare two networks via Netdis and its variants
+
+(Extracted from Ali et al. (2014)): Netdis counts small subgraphs  $w$ on $k$ nodes for all 2-step ego-networks, $k=3,4,5$. These counts are centred by subtracting the expected number of counts $E_w$. These centred counts of each network are then compared among one another thus leading to the Netdis statistic.
+
+
+## Using Netdis with a reference or gold-standard graph to obtain the expectations $E_w$
+
+The selection of a gold-standard graph as a substitute for a theoretical $E_w$ could be considered when such graph is known to be a good proxy for $E_w$, or alternatively as a good reference point for the comparison. This Netdis variant focuses on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard.
+
+
+### Netdis using reference or gold-standard networks
+
+Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 nodes. Reference graphs given by start-like graphs are used as illustration of reference graphs. The plots of these networks illustrate clearly their structural differences.
+
+```{r, netdisgoldstandnetworks,fig.align='center',fig.dim=c(8,4)}
+# Create networks
+set.seed(3171)
+gLat_1 <- igraph::graph.lattice(c(20,20)) 
+gLat_2 <- igraph::graph.lattice(c(40,40))  
+gRing_1 <- igraph::make_ring(20^2) 
+gRing_2 <- igraph::make_ring(40^2)
+gTree_1 <- igraph::as.undirected( make_tree(n = 20^2,children = 3) )
+gTree_2 <- igraph::as.undirected( make_tree(n = 40^2,children = 3) )
+
+# Create a random graph to be used as a gold-standard
+gst_1 <- igraph::as.undirected( graph.star(20^2) )
+gst_2 <- igraph::as.undirected( graph.star(40^2) )
+
+par(mfrow=c(1,2))
+plot(gst_1,vertex.size=0.8,vertex.label=NA)
+plot(gst_2,vertex.size=0.8,vertex.label=NA)
+```
+
+
+Obtain the comparison via Netdis using each of the reference graph networks.
+```{r,netdisgoldstand ,fig.align='center'}
+glist <- list(Lat_1=gLat_1, Lat_2=gLat_2, Ring_1=gRing_1, Ring_2=gRing_1, Tree_1=gTree_1, Tree_2=gTree_2)
+
+# Netdis using the goldstd_1 graph as gold-standard reference point
+netdis_mat_gst1 <- netdis_many_to_many(graphs = glist, ref_graph = gst_1)
+
+# Netdis using the goldstd_2 graph as gold-standard reference point
+netdis_mat_gst2 <- netdis_many_to_many(graphs = glist, ref_graph = gst_2)
+
+netdis_mat_gst1
+
+netdis_mat_gst2
+```
+
+To read the results in a matrix form:
+```{r,fig.align='center'}
+# Creating a comparison matrix:
+cross_comp_to_matrix(measure = netdis_mat_gst1$netdis, cross_comparison_spec = netdis_mat_gst1$comp_spec)
+
+cross_comp_to_matrix(measure = netdis_mat_gst2$netdis, cross_comparison_spec = netdis_mat_gst2$comp_spec)
+```
+
+Heatmap of the Netdis comparisons:
+```{r,netdisgoldstandPLOT ,fig.align='center',fig.dim=c(8,8)}
+#Network comparisons heatmap with Gold-Standard 1 
+netdis.plot(netdislist = netdis_mat_gst1, whatrow = 2,main = "Netdis GoldStd-1")
+
+#Network comparisons heatmap with Gold-Standard 2
+netdis.plot(netdislist = netdis_mat_gst2, whatrow = 2,main = "Netdis GoldStd-2")
+```
+
+
+### Netdis-GP: Using a Geometric-Poisson approximation
+
+This variant focuses on detecting more general and global discrepancies between the ego-network structures.
+
+```{r, netdisGP}
+# Netdis Geometric-Poisson comparisons
+netdis_mat <- netdis_many_to_many(graphs = glist, ref_graph = NULL)
+netdis_mat
+```
+
+```{r,netdisGPPLOT ,fig.align='center',fig.dim=c(8,8)}
+netdis.plot(netdislist = netdis_mat, whatrow = 2,main = "Netdis-GP")
+```
+
+### Using Netdis with no expectation ($E_w=0$)
+Comparing the networks via their observed ego-counts without centring them, (equivalent to using expectation equal to zero). This variant thus focuses on detecting small discrepancies between the networks.
+
+
+```{r, netdiszero}
+# Netdis with expectation zero
+netdis_mat <- netdis_many_to_many(graphs = glist, ref_graph = 0)
+netdis_mat
+```
+
+```{r,netdiszeroPLOT ,fig.align='center',fig.dim=c(8,8)}
+netdis.plot(netdislist = netdis_mat, whatrow = 2,main = "Netdis-zero")
+```
+
+-------------------------
+
+
+# Bibliography
+
+* W. Ali, T. Rito, G. Reinert, F. Sun, and C. M. Deane. Alignment-free protein interaction network comparison. Bioinformatics, 30:i430–i437, 2014.
+
+* L. Ospina-Forero, C. M. Deane, and G. Reinert. Assessment of model fit via network comparison methods based on subgraph counts. Journal of Complex Networks, page cny017, August 2018.
+
+* A. E. Wegner, L. Ospina-Forero, R. E. Gaunt, C. M. Deane, and G. Reinert. Identifying networks with common organizational principles. Journal of Complex networks, 2017.
+
+* F. Picard, J.-J. Daudin, M. Koskas, S. Schbath, and S. Robin. Assessing the exceptionality of network motifs. Journal of Computational Biology, 15(1):1–20, 2008.

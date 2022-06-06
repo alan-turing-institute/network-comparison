@@ -1,38 +1,41 @@
 ---
-title: "Dendrogram example for Netdis"
-author: "Martin O'Reilly"
+title: "Netdis: Protein interaction networks"
+#author: "Martin O'Reilly, Luis Ospina-Forero"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Dendrogram example for Netdis}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Netdis: Protein interaction networks}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+chunk_output_type: console
 ---
 
-## Virus PPI example for Netdis
+# Protein interaction networks
 
-### Load graphs
-Use `read_simple_graphs` to read graph data from all files in a directory that 
-match a specific filename pattern in a format suitable for calculating 
-graphlet-based feature counts using the 
+In this vignette we show a potential application of Netdis for real world data. In this case the comparison between the protein network structures could provide some insight into the phylogenetic tree of organisms as suggested in Ali et al. (2014). In this application we show a proxy of the phylogenetic tree of 5 organisms, 4 _Herpes_ virus and  _Escherichia Coli_. The tree is approximated via a dendrogram built from all the pairwise protein interaction network comparisons as suggested in Ali et al. (2014). The correct tree is found using Netdis and using subgraphs of size 4 (taxonomy ground truth: NCBI taxonomy database. https://www.ncbi.nlm.nih.gov/taxonomy).
+
+For an introduction to Netdis and its variants see ["Simple and quick (default) usage 1: pairwise comparisons"](default_pairwise_usage.html). 
+
+For many to many comparisons see [Simple and quick (default) usage 3: many to many comparisons](ManyToMany.html)
+
+For other vignettes in this package see the ["Menu"](V-Menu.html). 
+
+# Loading protein interaction networks and an ER reference graph
+
+The package contains the protein interaction networks of a few _Herpes_ virus and of _Escherichia Coli_. These networks can be read by using `read_simple_graphs`, which reads graph data from all files in a directory that match a specific filename pattern in a format suitable for calculating subgraph-based features by using the
 [ORCA package](https://CRAN.R-project.org/package=orca).
-We use `igraph::read_graph` to read graph data from files, so support
-all file formats it supports. See help for `igraph::read_graph` for a list of 
-supported values for the `format` parameter and the [igraph documentation](http://igraph.org/c/doc/igraph-Foreign.html#igraph_read_graph_edgelist)
-for descriptions of each of the supported file formats.
 
-The ORCA package we use to efficiently calculate graphlet and orbit counts 
-requires that graphs are _undirected_, _simple_ (i.e. have no self-loops or 
-multiple edges) and _connected_ (i.e. have no isolated vertices). Therefore, by
-default, graphs loaded by `read_simple_graphs` will be coerced to have the above
-properties. This can be avoided by setting the relevant `as_undirected`, 
-`remove_loops`, `remove_multiple` or `remove_isolates` parameters to `FALSE`.
-```{r}
+We use `igraph::read_graph` to read graph data from files. See help for `igraph::read_graph` for a list of 
+supported values for the `format` parameter.
+
+```{r, message=FALSE}
 library("netdist")
+library("igraph")
 edge_format = "ncol"
-# Load reference graph (used for Netdis. Not required for NetEMD)
-ref_path = file.path(system.file(file.path("extdata", "random"),
-                                 package = "netdist"),
+# Load reference graph (used for Netdis. Not required for NetEmd
+ref_path = file.path(system.file(file.path("extdata", "random"), package = "netdist"),
                      "ER_1250_10_1")
 ref_graph <- read_simple_graph(ref_path, format = edge_format)
 
@@ -49,47 +52,58 @@ query_graphs <- read_simple_graphs(source_dir,
 print(names(query_graphs))
 ```
 
-In this example we will use counts of graphlets containing up to 4 nodes and 
-consider ego-network neighbourhoods of size 2 (i.e. the immediate neighbours of 
+```{r,fig.align='center',fig.dim=c(5,5)}
+plot(query_graphs$EBV,vertex.label=NA,vertex.size=8)
+plot(query_graphs$`HSV-1`,vertex.label=NA,vertex.size=8)
+plot(query_graphs$KSHV,vertex.label=NA,vertex.size=8)
+plot(query_graphs$VZV,vertex.label=NA,vertex.size=8)
+plot(query_graphs$ECL,vertex.label=NA,vertex.size=4)
+```
+
+# Generate Netdis measures between each pair of query graphs
+
+In this example **Netdis** will use counts of subgraphs containing up to 4 nodes and 
+consider ego-networks (node ''neighbourhoods'') of size 2 (i.e. the immediate neighbours of 
 each node plus their immediate neighbours). 
 ```{r}
-# Set the maximum graphlet size to compute counts for
-max_graphlet_size <- 4
+# Set the maximum subgraph size to compute counts for
+max_subgraph_size <- 4
 neighbourhood_size <- 2
 ```
 
-## Generate NetDis measures between each pair of query graphs
+## Netdis using an ER reference graph
 ```{r}
-
-# Calculate netdis measure for graphlets up to size max_graphlet_size
-netdis_result <- netdis_many_to_many(query_graphs,
-                                     ref_graph,
-                                     max_graphlet_size = max_graphlet_size,
+# Calculate netdis measure for subgraphs up to size max_subgraph_size
+netdis_result <- netdis_many_to_many(graphs = query_graphs,
+                                     ref_graph = ref_graph,
+                                     max_graphlet_size = max_subgraph_size,
                                      neighbourhood_size = neighbourhood_size)
 
-# Netdis measure for graphlets of size 3
+# Netdis measure for subgraphs of size 3
 res3 <- netdis_result$netdis["netdis3", ]
-netdis3_mat <- cross_comp_to_matrix(res3, netdis_result$comp_spec)
+netdis3_mat <- cross_comp_to_matrix(measure = res3, cross_comparison_spec = netdis_result$comp_spec)
 
-print("Netdis: graphlet size = 3")
+print("Netdis: subgraph size = 3")
 print(netdis3_mat)
 
-# Netdis measure for graphlets of size 4
+# Netdis measure for subgraphs of size 4
 res4 <- netdis_result$netdis["netdis4", ]
 netdis4_mat <- cross_comp_to_matrix(res4, netdis_result$comp_spec)
 
-print("Netdis: graphlet size = 4")
+print("Netdis: subgraph size = 4")
 print(netdis4_mat)
 ```
 
-## Generate dendrograms
-```{r}
-graphdists <- as.dist(netdis4_mat)
+
+# Generate dendrograms
+Dendrograms are created based on the network comparison values by joining networks with the ones with greater similarity. The specific details on how the links are made can be found in the help of `phangorn::upgma`.
+
+```{r,fig.align='center',fig.dim=c(6,6)}
 par(mfrow = c(1, 2))
 cex <- 1
 
-# Dendrogram based on Netdis measure for graphlets of size 3
-title <- paste("Netdis: graphlet size = ", 3, sep = "")
+# Dendrogram based on Netdis measure for subgraphs of size 3
+title <- paste("Netdis: subgraph size = ", 3, sep = "")
 plot(phangorn::upgma(as.dist(netdis3_mat), method = "average"),
      use.edge.length = FALSE, 
      edge.width = cex*2,
@@ -98,8 +112,8 @@ plot(phangorn::upgma(as.dist(netdis3_mat), method = "average"),
      cex.main = cex, cex.sub = cex,
      cex = cex)
 
-# Dendrogram based on Netdis measure for graphlets of size 4
-title = paste("Netdis: graphlet size = ", 4, sep = "")
+# Dendrogram based on Netdis measure for subgraphs of size 4
+title = paste("Netdis: subgraph size = ", 4, sep = "")
 plot(phangorn::upgma(as.dist(netdis4_mat), method = "average"),
      use.edge.length = FALSE, 
      edge.width = cex*2,
@@ -108,17 +122,57 @@ plot(phangorn::upgma(as.dist(netdis4_mat), method = "average"),
      cex.main = cex, cex.sub = cex,
      cex = cex)
 ```
-```{r}
-cex <- 1.5
-col <- colorRampPalette(colors = c("blue","white"))(100)
-title <- paste("Netdis: graphlet size = ", 3, sep = "")
-heatmap(netdis3_mat, Rowv = NULL, Colv = NULL, col = col, main = title,
-        cexRow = cex, cexCol = cex, symm = TRUE)
+
+<!-- comment 
+# Application using NetEmd
+```{r,fig.align='center',fig.dim=c(6,6),eval=FALSE,include=FALSE}
+netemdlist <- netemd_many_to_many(graphs = query_graphs,smoothing_window_width = 0,mc.cores = 1)
+netemd_mat <- cross_comp_to_matrix(measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec)
+
+netemdlist_smooth <- netemd_many_to_many(graphs = query_graphs,smoothing_window_width = 1,mc.cores = 1)
+netemd_mat_smooth <- cross_comp_to_matrix(measure = netemdlist_smooth$netemds, cross_comparison_spec = netemdlist_smooth$comp_spec)
+
+par(mfrow = c(1, 2))
+cex <- 1
+
+graphNetEMDdists_smooth <- as.dist(netemd_mat_smooth)
+plot(phangorn::upgma(as.dist(graphNetEMDdists_smooth), method = "average"),
+     use.edge.length = FALSE, 
+     edge.width = cex*2,
+     main = "NetEmd: with smoothing",
+     cex.lab = cex, cex.axis = cex,
+     cex.main = cex, cex.sub = cex,
+     cex = cex)
+
+
+graphNetEMDdists <- as.dist(netemd_mat)
+plot(phangorn::upgma(as.dist(graphNetEMDdists), method = "average"),
+     use.edge.length = FALSE, 
+     edge.width = cex*2,
+     main = "NetEmd: without smoothing",
+     cex.lab = cex, cex.axis = cex,
+     cex.main = cex, cex.sub = cex,
+     cex = cex)
+
 ```
-```{r}
-cex <- 1.5
-col <- colorRampPalette(colors = c("blue","white"))(100)
-title <- paste("Netdis: graphlet size = ", 4, sep = "")
-heatmap(netdis4_mat, Rowv = NULL, Colv = NULL, col = col, main = title,
-        cexRow = cex, cexCol = cex, symm = TRUE)
-```
+-->
+
+--------------------
+
+
+# Bibliography
+
+* W. Ali, T. Rito, G. Reinert, F. Sun, and C. M. Deane. Alignment-free protein interaction network comparison. Bioinformatics, 30:i430–i437, 2014.
+
+* L. Ospina-Forero, C. M. Deane, and G. Reinert. Assessment of model fit via network comparison methods based on subgraph counts. Journal of Complex Networks, page cny017, August 2018.
+
+* A. E. Wegner, L. Ospina-Forero, R. E. Gaunt, C. M. Deane, and G. Reinert. Identifying networks with common organizational principles. Journal of Complex networks, 2017.
+
+* F. Picard, J.-J. Daudin, M. Koskas, S. Schbath, and S. Robin. Assessing the exceptionality of network motifs. Journal of Computational Biology, 15(1):1–20, 2008.
+
+
+
+
+
+
+

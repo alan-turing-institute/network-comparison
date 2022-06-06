@@ -4,9 +4,15 @@
 \alias{netdis_centred_graphlet_counts}
 \title{netdis_centred_graphlet_counts}
 \usage{
-netdis_centred_graphlet_counts(graphlet_counts, ref_ego_density_bins,
-  ref_binned_graphlet_counts, binning_fn, bin_counts_fn, exp_counts_fn,
-  max_graphlet_size)
+netdis_centred_graphlet_counts(
+  graphlet_counts,
+  ref_ego_density_bins,
+  ref_binned_graphlet_counts,
+  binning_fn,
+  bin_counts_fn,
+  exp_counts_fn,
+  max_graphlet_size
+)
 }
 \arguments{
 \item{graphlet_counts}{Ego network graphlet counts for a query graph}
@@ -21,10 +27,10 @@ labelled by graphlet ID and rows by density bin index), \code{NULL}, in
 which case density binned counts are generated using the query graph itself,
 or a constant numeric value to subtract from all graphlet counts.}
 
-\item{binning_fn}{Function used to bin ego network densities. Only needed if 
+\item{binning_fn}{Function used to bin ego network densities. Only needed if
 \code{ref_ego_density_bins} and \code{ref_binned_graphlet_counts} are
 \code{NULL}. Takes densities as its single argument, and returns a named list
-including keys \code{breaks} (list of bin edges) and \code{interval_indexes}
+including keys \code{breaks} (vector of bin edges) and \code{interval_indexes}
 (density bin index for each ego network).}
 
 \item{bin_counts_fn}{Function used to calculate expected graphlet counts in
@@ -38,7 +44,7 @@ expected counts for each graphlet in each ego network of the query graphs.
 Takes \code{ego_networks}, \code{density_bin_breaks},
 \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.}
 
-\item{max_graphlet_size}{max graphlet size to calculate centred counts for.}
+\item{max_graphlet_size}{max graphlet size to calculate centred counts for. Currently only size 4 and 5 are supported.}
 }
 \value{
 graphlet_counts minus exp_graphlet_counts for graphlets up to size

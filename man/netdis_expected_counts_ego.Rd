@@ -5,14 +5,19 @@
 \title{netdis_expected_counts_ego
 INTERNAL FUNCTION - Do not call directly}
 \usage{
-netdis_expected_counts_ego(graphlet_counts, max_graphlet_size,
-  density_breaks, density_binned_reference_counts, scale_fn = NULL)
+netdis_expected_counts_ego(
+  graphlet_counts,
+  max_graphlet_size,
+  density_breaks,
+  density_binned_reference_counts,
+  scale_fn = NULL
+)
 }
 \arguments{
 \item{graphlet_counts}{Node and graphlet counts for an ego network.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
-Only graphlets containing up to \code{max_graphlet_size} nodes are counted.}
+Only graphlets containing up to \code{max_graphlet_size} nodes are counted. Currently only size 4 and 5 are supported.}
 
 \item{density_breaks}{Density values defining bin edges.}
 
