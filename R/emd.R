@@ -80,8 +80,7 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     min_emd <- soln$objective
     min_offset <- soln$minimum
     return(list(min_emd = min_emd, min_offset = min_offset))
-  }
-  else {
+  } else {
     # Fall back on other version if either dhist is smoothed
     return(min_emd_optimise(dhist1, dhist2))
   }

@@ -22,8 +22,9 @@ expect_equal(self_net_emd(histogram, shift = 0, "optimise"), expected)
 expect_equal(self_net_emd(histogram, shift = 0, "exhaustive"), expected)
 
 expect_self_netemd_correct <- function(histogram, shift, method,
-                                        return_details = FALSE) {
-  self_net_emd <- netemd_one_to_one(dhists_1 = histogram, dhists_2 = shift_dhist(histogram, shift),
+                                       return_details = FALSE) {
+  self_net_emd <- netemd_one_to_one(
+    dhists_1 = histogram, dhists_2 = shift_dhist(histogram, shift),
     method = method, return_details = return_details
   )
   loc <- histogram$locations
@@ -199,8 +200,7 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
 
   expect_self_netemd_correct <-
     function(histogram, shift, method, return_details = FALSE) {
-      self_net_emd <- netemd_one_to_one(dhists_1 = histogram, dhists_2 = shift_dhist(histogram, shift),method = method, return_details = return_details
-      )
+      self_net_emd <- netemd_one_to_one(dhists_1 = histogram, dhists_2 = shift_dhist(histogram, shift), method = method, return_details = return_details)
       loc <- histogram$locations
       mass <- histogram$masses
       var <- sum(loc * loc * mass) / sum(mass) - (sum(loc * mass) / sum(mass))^2
@@ -292,7 +292,8 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
   # Map over virus PPI networks
   purrr::walk(virus_gdd, function(gdd) {
     purrr::walk(gdd, function(gdd_Ox) {
-      expect_equalish(netemd_one_to_one(dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
+      expect_equalish(netemd_one_to_one(
+        dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
         method = "optimise",
         smoothing_window_width = 0
       ), 0)
@@ -346,7 +347,8 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
   # Map over random graphs
   purrr::walk(random_gdd, function(gdd) {
     purrr::walk(gdd, function(gdd_Ox) {
-      expect_equalish(netemd_one_to_one(dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
+      expect_equalish(netemd_one_to_one(
+        dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
         method = "optimise",
         smoothing_window_width = 0
       ), 0)
@@ -403,11 +405,11 @@ test_that("netemd_many_to_many works", {
   expected_netemd_fn <- function(gdds) {
     list(
       netemds = c(
-        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 =  gdds$ECL), netemd_one_to_one(dhists_1 =gdds$EBV, dhists_2 = gdds$HSV),
-        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$KSHV), netemd_one_to_one(dhists_1 =gdds$EBV, dhists_2 = gdds$VZV),
-        netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$HSV), netemd_one_to_one(dhists_1 =gdds$ECL, dhists_2 = gdds$KSHV),
-        netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$VZV), netemd_one_to_one(dhists_1 =gdds$HSV, dhists_2 = gdds$KSHV),
-        netemd_one_to_one(dhists_1 = gdds$HSV, dhists_2 = gdds$VZV), netemd_one_to_one(dhists_1 =gdds$KSHV, dhists_2 = gdds$VZV)
+        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$ECL), netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$HSV),
+        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$KSHV), netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$VZV),
+        netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$HSV), netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$KSHV),
+        netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$VZV), netemd_one_to_one(dhists_1 = gdds$HSV, dhists_2 = gdds$KSHV),
+        netemd_one_to_one(dhists_1 = gdds$HSV, dhists_2 = gdds$VZV), netemd_one_to_one(dhists_1 = gdds$KSHV, dhists_2 = gdds$VZV)
       ),
       comp_spec = cross_comparison_spec(gdds)
     )
@@ -415,7 +417,7 @@ test_that("netemd_many_to_many works", {
 
   # Comparison function for clarity
   compare_fn <- function(gdds) {
-    expect_equal(netemd_many_to_many(dhists=gdds), expected_netemd_fn(gdds))
+    expect_equal(netemd_many_to_many(dhists = gdds), expected_netemd_fn(gdds))
   }
 
   # Map over test parameters, comparing actual gdds to expected

@@ -123,12 +123,12 @@ is_dhist <- function(x, fast_check = TRUE) {
   has_masses <- purrr::has_element(attr(x, "name"), "masses")
   # Require list with correct class and presence of 1D numeric vector named
   # elements "locations" and "masses"
-  return(has_class_attr
-  && purrr::is_list(x)
-  && has_locations
-  && has_masses
-  && is_numeric_vector_1d(x$locations)
-  && is_numeric_vector_1d(x$masses))
+  return(has_class_attr &&
+    purrr::is_list(x) &&
+    has_locations &&
+    has_masses &&
+    is_numeric_vector_1d(x$locations) &&
+    is_numeric_vector_1d(x$masses))
 }
 
 #' Discrete histogram from observations (Pure R slow version)

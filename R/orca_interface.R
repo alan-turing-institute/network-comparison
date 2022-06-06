@@ -67,10 +67,10 @@ indexed_edges_to_graph <- function(indexed_edges) {
 #' previous alterations have been made
 #' @return A named list of simplified igraph graph object, with the name of each
 #' graph set to the name of the file it was read from.
-#' @examples 
+#' @examples
 #' # Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
 #' source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
-#' print(source_dir) 
+#' print(source_dir)
 #' # Load query graphs as igraph objects
 #' graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"), format = "ncol")
 #' graph_1
@@ -256,8 +256,7 @@ gdd <- function(graph, feature_type = "orbit", max_graphlet_size = 4,
     out <- count_graphlets_per_node(graph,
       max_graphlet_size = max_graphlet_size
     )
-  }
-  else {
+  } else {
     stop("gdd: unrecognised feature_type")
   }
   graph_features_to_histograms(out)

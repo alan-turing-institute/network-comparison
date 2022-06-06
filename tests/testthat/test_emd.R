@@ -10,7 +10,7 @@ test_that("cost_matrix returns all zeros when all bin locations are identical", 
   expect_equal(cost_matrix(bin_centres1, bin_centres2), expected)
 })
 
-test_that("cost_matrix returns zeros along diagonal when both sets of bin 
+test_that("cost_matrix returns zeros along diagonal when both sets of bin
           locations are the same", {
   bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
   bin_centres2 <- bin_centres1
@@ -18,8 +18,8 @@ test_that("cost_matrix returns zeros along diagonal when both sets of bin
   expect_equal(diag(cost_matrix(bin_centres1, bin_centres2)), expected)
 })
 
-test_that("cost_matrix returns zeros along diagonal and taxicab distance from 
-          all zeros for all other elements when both sets of bin locations are  
+test_that("cost_matrix returns zeros along diagonal and taxicab distance from
+          all zeros for all other elements when both sets of bin locations are
           the same and are a sequence of consecutive integers", {
   bin_centres1 <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
   bin_centres2 <- bin_centres1
@@ -28,7 +28,7 @@ test_that("cost_matrix returns zeros along diagonal and taxicab distance from
   expect_equal(cost_matrix(bin_centres1, bin_centres2), expected)
 })
 
-test_that("cost_matrix is correct size when the two histograms are of different 
+test_that("cost_matrix is correct size when the two histograms are of different
           lengths", {
   bin_centres1 <- c(1, 2, 3, 4, 5, 6, 7)
   bin_centres2 <- c(8, 9, 10)
@@ -41,7 +41,7 @@ test_that("cost_matrix is correct size when the two histograms are of different
 
 context("EMD: EMD")
 # EMD: Property-based tests
-test_that("EMD methods return 0 when comparing a 1D feature distribution to 
+test_that("EMD methods return 0 when comparing a 1D feature distribution to
           itself", {
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- bin_masses1
@@ -59,7 +59,7 @@ test_that("EMD methods return 0 when comparing a 1D feature distribution to
   expect_equal(emd(histogram1, histogram2), expected)
 })
 
-test_that("EMD methods return numBins/2 when offsetting a symmetric discrete 
+test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
           triangle distribution by 1", {
   cost_fn <- function(triangle_width) {
     move_dist <- ceiling((triangle_width + 1) / 2)
@@ -191,7 +191,7 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
   expect_equal(emd(histogram1, histogram2), expected)
 })
 
-test_that("EMD methods return same result for densely and sparsely specified 
+test_that("EMD methods return same result for densely and sparsely specified
           bins", {
   sparse_bin_masses1 <- c(1, 1, 1, 1, 1, 1)
   sparse_bin_masses2 <- c(1, 1, 1, 1, 1, 1)
@@ -242,7 +242,7 @@ test_that("EMD methods return same result for densely and sparsely specified
   )
 })
 
-test_that("EMD methods return same result when order of densely specified bins 
+test_that("EMD methods return same result when order of densely specified bins
           is changed", {
   bin_masses1 <- c(1, 1, 1, 1, 0, 0, 0, 0, 0)
   bin_masses2 <- c(0, 0, 0, 0, 0, 1, 1, 1, 1)
@@ -284,7 +284,7 @@ test_that("EMD methods return same result when order of densely specified bins
   )
 })
 
-test_that("EMD methods return same result when order of sparsely specified bins 
+test_that("EMD methods return same result when order of sparsely specified bins
           is changed", {
   bin_masses1 <- c(1, 1, 1, 1, 1, 1)
   bin_masses2 <- c(1, 1, 1, 1, 1, 1)
@@ -392,7 +392,7 @@ test_that("min_emd_<method> methods correctly compare a non-offset 1D feature
   expect_equal(actual_optimise, expected)
 })
 
-test_that("min_emd_<method> methods correctly compare an offset 1D feature 
+test_that("min_emd_<method> methods correctly compare an offset 1D feature
           distribution to itself", {
   offset <- 10
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
