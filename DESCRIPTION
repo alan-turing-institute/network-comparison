@@ -29,6 +29,6 @@ Suggests:
     knitr,
     rmarkdown,
     roxygen2
-RoxygenNote: 7.1.0
+RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 Encoding: UTF-8

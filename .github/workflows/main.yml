@@ -46,7 +46,7 @@ jobs:
             any::covr
 
       - name: Check package
-        run: devtools::check()
+        run: devtools::document();devtools::check()
         shell: Rscript {0}
 
       - name: Test coverage
