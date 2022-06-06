@@ -6,7 +6,7 @@ Until this package hits release 1.0 anything can change with no notice.
 
 [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
 [![GitHub release](https://img.shields.io/github/release/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/releases/latest)
-[![Build](https://github.com/alan-turing-institute/network-comparison/actions/workflows/main.yml/badge.svg)](https://github.com/alan-turing-institute/network-comparison/actions/workflows/build.yml)
+[![Build](https://github.com/alan-turing-institute/network-comparison/actions/workflows/build.yml/badge.svg)](https://github.com/alan-turing-institute/network-comparison/actions/workflows/build.yml)
 
 [![Codecov](https://img.shields.io/codecov/c/github/alan-turing-institute/network-comparison/master.svg)](https://codecov.io/gh/alan-turing-institute/network-comparison?branch=master)
 [![license](https://img.shields.io/github/license/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/edit/master/LICENSE)
