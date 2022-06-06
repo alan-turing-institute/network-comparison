@@ -45,8 +45,22 @@ jobs:
             any::devtools
             any::covr
 
+      - name: Document
+        run: devtools::document()
+        shell: Rscript {0}
+
+      - name: Commit and push documentation changes
+        if: ${{ (matrix.config.os == 'ubuntu-latest') && (matrix.config.r == 'release') }}
+        run: |
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add man/\* NAMESPACE
+          git commit -m "Update documentation" || echo "No changes to commit"
+          git pull --ff-only
+          git push origin
+
       - name: Check package
-        run: devtools::document();devtools::check()
+        run: devtools::check()
         shell: Rscript {0}
 
       - name: Check coverage
