@@ -11,9 +11,11 @@ netdis(
 )
 }
 \arguments{
-\item{centred_graphlet_count_vector_1}{Centred Graphlet Counts vector for graph 1}
+\item{centred_graphlet_count_vector_1}{Centred Graphlet Counts vector for
+graph 1}
 
-\item{centred_graphlet_count_vector_2}{Centred Graphlet Counts vector for graph 2}
+\item{centred_graphlet_count_vector_2}{Centred Graphlet Counts vector for
+graph 2}
 
 \item{graphlet_size}{The size of graphlets to use for the Netdis calculation
 (only counts for graphlets of the specified size will be used). The size of

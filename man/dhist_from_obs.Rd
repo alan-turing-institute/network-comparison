@@ -14,9 +14,11 @@ A sparse discrete histogram. Format is a \code{dhist} object, which
 is a list of class \code{dhist} with the following named elements:
 \itemize{
   \item \code{locations}: A 1D numeric vector of discrete locations
-  \item \code{masses}: A 1D numeric vector of the mass present at each location
+  \item \code{masses}: A 1D numeric vector of the mass present at each
+  location
 }
 }
 \description{
-Generate a sparse discrete histogram from a set of discrete numeric observations
+Generate a sparse discrete histogram from a set of discrete numeric
+observations
 }

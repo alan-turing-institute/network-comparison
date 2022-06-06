@@ -15,8 +15,8 @@ location}
 
 \item{smoothing_window_width}{If greater than 0, the discrete histogram will
 be treated as having the mass at each location "smoothed" uniformly across
-a bin centred on the location and having width = \code{smoothing_window_width}
-(default = \code{0} - no smoothing)}
+a bin centred on the location and having
+width = \code{smoothing_window_width} (default = \code{0} - no smoothing)}
 
 \item{sorted}{Whether or not to return a discrete histogram with locations
 and masses sorted by ascending mass (default = \code{TRUE})}
@@ -26,13 +26,14 @@ A sparse discrete histogram. Format is a \code{dhist} object, which
 is a list of class \code{dhist} with the following named elements:
 \itemize{
   \item \code{locations}: A 1D numeric vector of discrete locations
-  \item \code{masses}: A 1D numeric vector of the mass present at each location
+  \item \code{masses}: A 1D numeric vector of the mass present at each
+  location
 }
 Note that locations where no mass is present are not included in the returned
 \code{dhist} object. Mass in these discrete histograms is treated as being
-present precisely at the specified location. Discrete histograms should not be used
-for data where observations have been grouped into bins representing ranges
-of observation values.
+present precisely at the specified location. Discrete histograms should not
+be used for data where observations have been grouped into bins representing
+ranges of observation values.
 }
 \description{
 Creates a discrete histogram object of class \code{dhist}, with bin
