@@ -1,7 +1,19 @@
-pandoc: '2.2'
-pkgdown: 1.4.1
+pandoc: 2.14.2
+pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
-  Quick_start_net_dis: Quick_start_net_dis.html
-  Quick_start_net_emd: Quick_start_net_emd.html
+  ManyToMany: ManyToMany.html
+  NetEmdTimeOrdering: NetEmdTimeOrdering.html
+  NetdisGPStepByStep: NetdisGPStepByStep.html
+  NetdisStepByStep: NetdisStepByStep.html
+  NewNetdisCustomisations: NewNetdisCustomisations.html
+  PreComputedProps: PreComputedProps.html
+  V-Menu: V-Menu.html
+  default_pairwise_usage: default_pairwise_usage.html
+  dendrogram_example_net_dis: dendrogram_example_net_dis.html
+  dendrogram_example_net_emd: dendrogram_example_net_emd.html
+  netdis_customisations: netdis_customisations.html
+  netdis_pairwise_comparisons: netdis_pairwise_comparisons.html
+  quickstart_netdis_2graphs: quickstart_netdis_2graphs.html
+last_built: 2022-06-06T19:57Z
 
