@@ -395,7 +395,7 @@ netdis_one_to_many <- function(graph_1 = NULL,
 #' @param min_ego_edges Filter ego networks which have fewer
 #' than min_ego_edges edges (default 1).
 #'
-#'  @param binning_fn Function used to bin ego network densities. Takes edge \code{densities}
+#' @param binning_fn Function used to bin ego network densities. Takes edge \code{densities}
 #' as its single argument, and returns a named list including, the input \code{densities}, the resulting bin \code{breaks} (vector of density bin limits), and the vector \code{interval_indexes} which states to what bin each of the individual elements in \code{densities} belongs to.
 #' ego network). If \code{NULL}, then the method \code{binned_densities_adaptive} with
 #' \code{min_counts_per_interval = 5} and \code{num_intervals = 100} is used
