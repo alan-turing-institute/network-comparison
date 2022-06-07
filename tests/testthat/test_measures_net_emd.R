@@ -302,7 +302,7 @@ context("Measures NetEMD: Virus PPI (EMD)")
 test_that("emd return 0 when comparing graphlet orbit degree distributions of
           virus PPI graphs to themselves", {
   # Load viurs PPI network data in ORCA-compatible edge list format
-  data_indexes <- seq_len(virusppi)
+  data_indexes <- 1:length(virusppi)
   data_names <- attr(virusppi, "name")
 
   # Calculate graphlet-based degree distributions up to graphlet order 4
@@ -320,7 +320,7 @@ context("Measures NetEMD: Virus PPI (NetEMD)")
 test_that("net_emd return 0 when comparing graphlet orbit degree distributions
           of virus PPI graphs to themselves", {
   # Load virus PPI network data in ORCA-compatible edge list format
-  data_indexes <- seq_len(virusppi)
+  data_indexes <- 1:length(virusppi)
   data_names <- attr(virusppi, "name")
 
   # Calculate graphlet-based degree distributions up to graphlet order 4
@@ -353,7 +353,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
     system.file(package = "netdist", "extdata", "random"),
     format = "ncol", pattern = "*"
   )
-  data_indexes <- seq_len(random_graphs)
+  data_indexes <- 1:length(random_graphs)
   data_names <- attr(random_graphs, "name")
 
   # Calculate graphlet-based degree distributions up to graphlet order 4
@@ -375,7 +375,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
     system.file(package = "netdist", "extdata", "random"),
     format = "ncol", pattern = "*"
   )
-  data_indexes <- seq_len(random_graphs)
+  data_indexes <- 1:length(random_graphs)
   data_names <- attr(random_graphs, "name")
 
   # Calculate graphlet-based degree distributions up to graphlet order 4

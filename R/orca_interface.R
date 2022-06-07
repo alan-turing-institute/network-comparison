@@ -690,7 +690,7 @@ cross_comparison_spec <- function(named_list, how = "many-to-many") {
       2:length(named_list)
     )
   } else {
-    indexes <- as.data.frame(t(utils::combn(seq_len(named_list), 2)))
+    indexes <- as.data.frame(t(utils::combn(1:length(named_list), 2)))
   }
 
   names <- as.data.frame(cbind(

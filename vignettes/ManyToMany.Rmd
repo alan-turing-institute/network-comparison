@@ -114,7 +114,7 @@ Pre-compute the Laplacian and normalized Laplacian for each graph considered:
 spect <- list()
 
 # This step may take several minutes.
-for (i in seq_len(glist)) {
+for (i in 1:length(glist)) {
   lapg <- igraph::laplacian_matrix(
     graph = glist[[i]], normalized = FALSE, sparse = FALSE
   )

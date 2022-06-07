@@ -65,7 +65,7 @@ World trade networks consist of relatively dense networks, thus leading to longe
 # counts has been already computed.
 if (FALSE) {
   counts <- list()
-  for (i in seq_len(wtnets)) {
+  for (i in 1:length(wtnets)) {
     counts[[names(wtnets)[i]]] <- count_orbits_per_node(
       graph = wtnets[[i]], max_graphlet_size = 5
     )

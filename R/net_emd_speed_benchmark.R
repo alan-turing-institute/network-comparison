@@ -13,7 +13,7 @@ netemd_speed_test <- function() {
   lab1 <- c()
   gdd_build_time <- c()
   netemd_time <- c()
-  for (i in seq_len(graphs))
+  for (i in 1:length(graphs))
   {
     for (j in 1:(i))
     {

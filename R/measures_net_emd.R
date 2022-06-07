@@ -367,7 +367,7 @@ netemd_many_to_many <- function(graphs = NULL,
   # Check arguments 4
   # cross_comparison_spec was coded to require names!
   if (is.null(names(dhists))) {
-    names(dhists) <- paste("Net", seq_len(dhists), sep = "")
+    names(dhists) <- paste("Net", 1:length(dhists), sep = "")
   }
   ## ------------------------------------------------------------------------
   comp_spec <- cross_comparison_spec(dhists)

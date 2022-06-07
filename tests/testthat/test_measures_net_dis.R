@@ -892,7 +892,7 @@ test_that(
 )
 
 context("Measures Netdis: Expected graphlet counts")
-test_that("netdis_exp_counts_ego works for graphlets up to 4 nodes", {
+test_that("netdis_expected_counts_ego works for graphlets up to 4 nodes", {
   # Helper function to generate graphs with known density and number of nodes
   rand_graph <- function(num_nodes, density) {
     max_edges <- choose(num_nodes, 2)
@@ -940,7 +940,7 @@ test_that("netdis_exp_counts_ego works for graphlets up to 4 nodes", {
   exp_exp_graphlet_counts <-
     purrr::map(density_indexes, exp_exp_graphlet_counts_fn)
   act_exp_graphlet_counts <-
-    purrr::map(graphlet_counts, netdis_exp_counts_ego,
+    purrr::map(graphlet_counts, netdis_expected_counts_ego,
       max_graphlet_size = max_graphlet_size,
       density_breaks = density_breaks,
       density_binned_ref_counts = scaled_reference_counts,
@@ -951,7 +951,7 @@ test_that("netdis_exp_counts_ego works for graphlets up to 4 nodes", {
   # NOTE: v2.0.0 of testthat library made a breaking change that means using
   # map, mapply etc can cause failures under certain conditions
   # See: https://github.com/r-lib/testthat/releases/tag/v2.0.0
-  for (i in seq_len(act_exp_graphlet_counts)) {
+  for (i in 1:length(act_exp_graphlet_counts)) {
     expect_equal(
       act_exp_graphlet_counts[i],
       exp_exp_graphlet_counts[i]
@@ -972,7 +972,7 @@ test_that("netdis_exp_counts_ego works for graphlets up to 4 nodes", {
       exp_exp_graphlet_counts_fn
     )
   act_exp_graphlet_counts <-
-    purrr::map(graphlet_counts, netdis_exp_counts_ego,
+    purrr::map(graphlet_counts, netdis_expected_counts_ego,
       max_graphlet_size = max_graphlet_size,
       density_breaks = density_breaks,
       density_binned_ref_counts = scaled_reference_counts,
@@ -982,7 +982,7 @@ test_that("netdis_exp_counts_ego works for graphlets up to 4 nodes", {
   # NOTE: v2.0.0 of testthat library made a breaking change that means using
   # map, mapply etc can cause failures under certain conditions
   # See: https://github.com/r-lib/testthat/releases/tag/v2.0.0
-  for (i in seq_len(act_exp_graphlet_counts)) {
+  for (i in 1:length(act_exp_graphlet_counts)) {
     expect_equal(
       act_exp_graphlet_counts[i],
       exp_exp_graphlet_counts[i]
@@ -990,7 +990,7 @@ test_that("netdis_exp_counts_ego works for graphlets up to 4 nodes", {
   }
 })
 
-test_that("netdis_exp_counts works for graphlets up to 4 nodes", {
+test_that("netdis_expected_counts works for graphlets up to 4 nodes", {
   # Helper function to generate graphs with known density and number of nodes
   # Set up a small sample network with at least one ego-network that contains
   # at least one of each graphlets
@@ -1099,7 +1099,7 @@ test_that("netdis_exp_counts works for graphlets up to 4 nodes", {
 
   # Calculate actual output of function under test
   act_exp_graphlet_counts_ego_o1 <-
-    netdis_exp_counts(
+    netdis_expected_counts(
       graphlet_counts_ego_o1,
       breaks,
       scaled_reference_counts,
@@ -1107,7 +1107,7 @@ test_that("netdis_exp_counts works for graphlets up to 4 nodes", {
       scale_fn = count_graphlet_tuples
     )
   act_exp_graphlet_counts_ego_o2 <-
-    netdis_exp_counts(
+    netdis_expected_counts(
       graphlet_counts_ego_o2,
       breaks,
       scaled_reference_counts,
@@ -1155,7 +1155,7 @@ test_that("netdis_exp_counts works for graphlets up to 4 nodes", {
 
   # Calculate actual output of function under test
   act_exp_graphlet_counts_ego_o1 <-
-    netdis_exp_counts(
+    netdis_expected_counts(
       graphlet_counts_ego_o1,
       breaks,
       scaled_reference_counts,
@@ -1163,7 +1163,7 @@ test_that("netdis_exp_counts works for graphlets up to 4 nodes", {
       scale_fn = NULL
     )
   act_exp_graphlet_counts_ego_o2 <-
-    netdis_exp_counts(
+    netdis_expected_counts(
       graphlet_counts_ego_o2,
       breaks,
       scaled_reference_counts,
