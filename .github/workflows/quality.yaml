@@ -28,7 +28,7 @@ jobs:
             any::styler
 
       - name: Styler
-        run: styler::style_pkg(dry='fail')
+        run: styler::style_pkg(filetype = c('R', 'Rprofile', 'Rmd'), dry='fail')
         shell: Rscript {0}
 
       - name: Lintr

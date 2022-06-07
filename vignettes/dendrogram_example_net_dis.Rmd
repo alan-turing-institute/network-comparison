@@ -33,31 +33,35 @@ supported values for the `format` parameter.
 ```{r, message=FALSE}
 library("netdist")
 library("igraph")
-edge_format = "ncol"
+edge_format <- "ncol"
 # Load reference graph (used for Netdis. Not required for NetEmd
-ref_path = file.path(system.file(file.path("extdata", "random"), package = "netdist"),
-                     "ER_1250_10_1")
+ref_path <- file.path(
+  system.file(file.path("extdata", "random"), package = "netdist"),
+  "ER_1250_10_1"
+)
 ref_graph <- read_simple_graph(ref_path, format = edge_format)
 
 # Set source directory and file properties for Virus PPI graph edge files
 source_dir <- system.file(file.path("extdata", "VRPINS"),
-                          package = "netdist")
+  package = "netdist"
+)
 edge_format <- "ncol"
 file_pattern <- "*"
 
 # Load all graphs in the source folder matching the filename pattern
 query_graphs <- read_simple_graphs(source_dir,
-                                   format = edge_format, 
-                                   pattern = file_pattern)
+  format = edge_format,
+  pattern = file_pattern
+)
 print(names(query_graphs))
 ```
 
 ```{r,fig.align='center',fig.dim=c(5,5)}
-plot(query_graphs$EBV,vertex.label=NA,vertex.size=8)
-plot(query_graphs$`HSV-1`,vertex.label=NA,vertex.size=8)
-plot(query_graphs$KSHV,vertex.label=NA,vertex.size=8)
-plot(query_graphs$VZV,vertex.label=NA,vertex.size=8)
-plot(query_graphs$ECL,vertex.label=NA,vertex.size=4)
+plot(query_graphs$EBV, vertex.label = NA, vertex.size = 8)
+plot(query_graphs$`HSV-1`, vertex.label = NA, vertex.size = 8)
+plot(query_graphs$KSHV, vertex.label = NA, vertex.size = 8)
+plot(query_graphs$VZV, vertex.label = NA, vertex.size = 8)
+plot(query_graphs$ECL, vertex.label = NA, vertex.size = 4)
 ```
 
 # Generate Netdis measures between each pair of query graphs
@@ -74,10 +78,12 @@ neighbourhood_size <- 2
 ## Netdis using an ER reference graph
 ```{r}
 # Calculate netdis measure for subgraphs up to size max_subgraph_size
-netdis_result <- netdis_many_to_many(graphs = query_graphs,
-                                     ref_graph = ref_graph,
-                                     max_graphlet_size = max_subgraph_size,
-                                     neighbourhood_size = neighbourhood_size)
+netdis_result <- netdis_many_to_many(
+  graphs = query_graphs,
+  ref_graph = ref_graph,
+  max_graphlet_size = max_subgraph_size,
+  neighbourhood_size = neighbourhood_size
+)
 
 # Netdis measure for subgraphs of size 3
 res3 <- netdis_result$netdis["netdis3", ]
@@ -105,31 +111,33 @@ cex <- 1
 # Dendrogram based on Netdis measure for subgraphs of size 3
 title <- paste("Netdis: subgraph size = ", 3, sep = "")
 plot(phangorn::upgma(as.dist(netdis3_mat), method = "average"),
-     use.edge.length = FALSE, 
-     edge.width = cex*2,
-     main = title,
-     cex.lab = cex, cex.axis = cex,
-     cex.main = cex, cex.sub = cex,
-     cex = cex)
+  use.edge.length = FALSE,
+  edge.width = cex * 2,
+  main = title,
+  cex.lab = cex, cex.axis = cex,
+  cex.main = cex, cex.sub = cex,
+  cex = cex
+)
 
 # Dendrogram based on Netdis measure for subgraphs of size 4
-title = paste("Netdis: subgraph size = ", 4, sep = "")
+title <- paste("Netdis: subgraph size = ", 4, sep = "")
 plot(phangorn::upgma(as.dist(netdis4_mat), method = "average"),
-     use.edge.length = FALSE, 
-     edge.width = cex*2,
-     main = title,
-     cex.lab = cex, cex.axis = cex,
-     cex.main = cex, cex.sub = cex,
-     cex = cex)
+  use.edge.length = FALSE,
+  edge.width = cex * 2,
+  main = title,
+  cex.lab = cex, cex.axis = cex,
+  cex.main = cex, cex.sub = cex,
+  cex = cex
+)
 ```
 
 <!-- comment 
 # Application using NetEmd
 ```{r,fig.align='center',fig.dim=c(6,6),eval=FALSE,include=FALSE}
-netemdlist <- netemd_many_to_many(graphs = query_graphs,smoothing_window_width = 0,mc.cores = 1)
+netemdlist <- netemd_many_to_many(graphs = query_graphs, smoothing_window_width = 0, mc.cores = 1)
 netemd_mat <- cross_comp_to_matrix(measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec)
 
-netemdlist_smooth <- netemd_many_to_many(graphs = query_graphs,smoothing_window_width = 1,mc.cores = 1)
+netemdlist_smooth <- netemd_many_to_many(graphs = query_graphs, smoothing_window_width = 1, mc.cores = 1)
 netemd_mat_smooth <- cross_comp_to_matrix(measure = netemdlist_smooth$netemds, cross_comparison_spec = netemdlist_smooth$comp_spec)
 
 par(mfrow = c(1, 2))
@@ -137,23 +145,24 @@ cex <- 1
 
 graphNetEMDdists_smooth <- as.dist(netemd_mat_smooth)
 plot(phangorn::upgma(as.dist(graphNetEMDdists_smooth), method = "average"),
-     use.edge.length = FALSE, 
-     edge.width = cex*2,
-     main = "NetEmd: with smoothing",
-     cex.lab = cex, cex.axis = cex,
-     cex.main = cex, cex.sub = cex,
-     cex = cex)
+  use.edge.length = FALSE,
+  edge.width = cex * 2,
+  main = "NetEmd: with smoothing",
+  cex.lab = cex, cex.axis = cex,
+  cex.main = cex, cex.sub = cex,
+  cex = cex
+)
 
 
 graphNetEMDdists <- as.dist(netemd_mat)
 plot(phangorn::upgma(as.dist(graphNetEMDdists), method = "average"),
-     use.edge.length = FALSE, 
-     edge.width = cex*2,
-     main = "NetEmd: without smoothing",
-     cex.lab = cex, cex.axis = cex,
-     cex.main = cex, cex.sub = cex,
-     cex = cex)
-
+  use.edge.length = FALSE,
+  edge.width = cex * 2,
+  main = "NetEmd: without smoothing",
+  cex.lab = cex, cex.axis = cex,
+  cex.main = cex, cex.sub = cex,
+  cex = cex
+)
 ```
 -->
 

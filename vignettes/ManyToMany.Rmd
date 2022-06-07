@@ -12,10 +12,10 @@ editor_options:
 ---
   
 ```{r, include = FALSE}
-  knitr::opts_chunk$set(
+knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
-  )
+)
 ```
   
 # Introduction
@@ -46,20 +46,20 @@ Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 
 ```{r, netwokrs,fig.align='center',fig.dim=c(8,4)}
 # Create networks
 set.seed(3171)
-gLat_1 <- igraph::graph.lattice(c(20,20)) 
-gLat_2 <- igraph::graph.lattice(c(40,40))  
-gRing_1 <- igraph::make_ring(20^2) 
+gLat_1 <- igraph::graph.lattice(c(20, 20))
+gLat_2 <- igraph::graph.lattice(c(40, 40))
+gRing_1 <- igraph::make_ring(20^2)
 gRing_2 <- igraph::make_ring(40^2)
-gTree_1 <- igraph::as.undirected( make_tree(n = 20^2,children = 3) )
-gTree_2 <- igraph::as.undirected( make_tree(n = 40^2,children = 3) )
+gTree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
+gTree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
 
-par(mfrow=c(1,2))
-plot(gLat_1,vertex.size=0.8,vertex.label=NA)
-plot(gLat_2,vertex.size=0.8,vertex.label=NA)
-plot(gRing_1,vertex.size=0.8,vertex.label=NA)
-plot(gRing_2,vertex.size=0.8,vertex.label=NA)
-plot(gTree_1,vertex.size=0.8,vertex.label=NA)
-plot(gTree_2,vertex.size=0.8,vertex.label=NA)
+par(mfrow = c(1, 2))
+plot(gLat_1, vertex.size = 0.8, vertex.label = NA)
+plot(gLat_2, vertex.size = 0.8, vertex.label = NA)
+plot(gRing_1, vertex.size = 0.8, vertex.label = NA)
+plot(gRing_2, vertex.size = 0.8, vertex.label = NA)
+plot(gTree_1, vertex.size = 0.8, vertex.label = NA)
+plot(gTree_2, vertex.size = 0.8, vertex.label = NA)
 ```
 
 ## NetEmd using subgraph counts
@@ -67,9 +67,9 @@ plot(gTree_2,vertex.size=0.8,vertex.label=NA)
 Subgraph count based NetEmd comparisons:
 ```{r, netemdorbits,fig.align='center'}
 # NetEMD using subgraph counts.
-glist <- list(Lat_1=gLat_1, Lat_2=gLat_2, Ring_1=gRing_1, Ring_2=gRing_1, Tree_1=gTree_1, Tree_2=gTree_2)
+glist <- list(Lat_1 = gLat_1, Lat_2 = gLat_2, Ring_1 = gRing_1, Ring_2 = gRing_1, Tree_1 = gTree_1, Tree_2 = gTree_2)
 
-netemdlist <- netemd_many_to_many(graphs = glist,smoothing_window_width = 1,mc.cores = 1) #Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+netemdlist <- netemd_many_to_many(graphs = glist, smoothing_window_width = 1, mc.cores = 1) # Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 
 netemdlist
 ```
@@ -83,7 +83,7 @@ mat
 
 Illustration of the multiple NetEmd comparisons based on subgraph counts.
 ```{r,netemdorbitsPLOT,fig.align='center',fig.dim=c(8,8)}
-netemd.plot(netemdlist=netemdlist,clustering_method="ward.D",main="NetEmd subgraph counts")
+netemd.plot(netemdlist = netemdlist, clustering_method = "ward.D", main = "NetEmd subgraph counts")
 ```
 
 ## NetEmd using the Laplacian and Normalized Laplacian Spectrum
@@ -91,20 +91,20 @@ netemd.plot(netemdlist=netemdlist,clustering_method="ward.D",main="NetEmd subgra
 Pre-compute the Laplacian and normalized Laplacian for each graph considered:
 ```{r, netemdspectrum}
 # NetEMD using the Laplacian and normalized Laplacian Spectrum.
-SPECT<-list()
+SPECT <- list()
 
-#This step may take several minutes.
-for(i in 1:length(glist)){ 
-  Lapg <- igraph::laplacian_matrix(graph = glist[[i]],normalized = FALSE,sparse = FALSE)
-  NLap <- igraph::laplacian_matrix(graph = glist[[i]],normalized = TRUE,sparse = FALSE)
-  SPECT[[ names(glist)[i] ]] <- cbind(L.Spectra= eigen(Lapg)$values, NL.Spectra= eigen(NLap)$values) 
+# This step may take several minutes.
+for (i in 1:length(glist)) {
+  Lapg <- igraph::laplacian_matrix(graph = glist[[i]], normalized = FALSE, sparse = FALSE)
+  NLap <- igraph::laplacian_matrix(graph = glist[[i]], normalized = TRUE, sparse = FALSE)
+  SPECT[[names(glist)[i]]] <- cbind(L.Spectra = eigen(Lapg)$values, NL.Spectra = eigen(NLap)$values)
 }
 str(SPECT)
 ```
 
 Compute NetEmd:
 ```{r}
-netemdlist <- netemd_many_to_many(dhists = SPECT,smoothing_window_width = 0) #Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+netemdlist <- netemd_many_to_many(dhists = SPECT, smoothing_window_width = 0) # Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
 
 netemdlist
 ```
@@ -112,7 +112,7 @@ netemdlist
 
 ### Illustration of the multiple NetEmd comparisons based on the Laplacian and Normalized Laplacian spectra
 ```{r,netemdspectrumPLOT ,fig.align='center',fig.dim=c(8,8)}
-netemd.plot(netemdlist=netemdlist,clustering_method="ward.D",main="NetEmd Spectra")
+netemd.plot(netemdlist = netemdlist, clustering_method = "ward.D", main = "NetEmd Spectra")
 ```
 
 
@@ -135,26 +135,26 @@ Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 
 ```{r, netdisgoldstandnetworks,fig.align='center',fig.dim=c(8,4)}
 # Create networks
 set.seed(3171)
-gLat_1 <- igraph::graph.lattice(c(20,20)) 
-gLat_2 <- igraph::graph.lattice(c(40,40))  
-gRing_1 <- igraph::make_ring(20^2) 
+gLat_1 <- igraph::graph.lattice(c(20, 20))
+gLat_2 <- igraph::graph.lattice(c(40, 40))
+gRing_1 <- igraph::make_ring(20^2)
 gRing_2 <- igraph::make_ring(40^2)
-gTree_1 <- igraph::as.undirected( make_tree(n = 20^2,children = 3) )
-gTree_2 <- igraph::as.undirected( make_tree(n = 40^2,children = 3) )
+gTree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
+gTree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
 
 # Create a random graph to be used as a gold-standard
-gst_1 <- igraph::as.undirected( graph.star(20^2) )
-gst_2 <- igraph::as.undirected( graph.star(40^2) )
+gst_1 <- igraph::as.undirected(graph.star(20^2))
+gst_2 <- igraph::as.undirected(graph.star(40^2))
 
-par(mfrow=c(1,2))
-plot(gst_1,vertex.size=0.8,vertex.label=NA)
-plot(gst_2,vertex.size=0.8,vertex.label=NA)
+par(mfrow = c(1, 2))
+plot(gst_1, vertex.size = 0.8, vertex.label = NA)
+plot(gst_2, vertex.size = 0.8, vertex.label = NA)
 ```
 
 
 Obtain the comparison via Netdis using each of the reference graph networks.
 ```{r,netdisgoldstand ,fig.align='center'}
-glist <- list(Lat_1=gLat_1, Lat_2=gLat_2, Ring_1=gRing_1, Ring_2=gRing_1, Tree_1=gTree_1, Tree_2=gTree_2)
+glist <- list(Lat_1 = gLat_1, Lat_2 = gLat_2, Ring_1 = gRing_1, Ring_2 = gRing_1, Tree_1 = gTree_1, Tree_2 = gTree_2)
 
 # Netdis using the goldstd_1 graph as gold-standard reference point
 netdis_mat_gst1 <- netdis_many_to_many(graphs = glist, ref_graph = gst_1)
@@ -177,11 +177,11 @@ cross_comp_to_matrix(measure = netdis_mat_gst2$netdis, cross_comparison_spec = n
 
 Heatmap of the Netdis comparisons:
 ```{r,netdisgoldstandPLOT ,fig.align='center',fig.dim=c(8,8)}
-#Network comparisons heatmap with Gold-Standard 1 
-netdis.plot(netdislist = netdis_mat_gst1, whatrow = 2,main = "Netdis GoldStd-1")
+# Network comparisons heatmap with Gold-Standard 1
+netdis.plot(netdislist = netdis_mat_gst1, whatrow = 2, main = "Netdis GoldStd-1")
 
-#Network comparisons heatmap with Gold-Standard 2
-netdis.plot(netdislist = netdis_mat_gst2, whatrow = 2,main = "Netdis GoldStd-2")
+# Network comparisons heatmap with Gold-Standard 2
+netdis.plot(netdislist = netdis_mat_gst2, whatrow = 2, main = "Netdis GoldStd-2")
 ```
 
 
@@ -196,7 +196,7 @@ netdis_mat
 ```
 
 ```{r,netdisGPPLOT ,fig.align='center',fig.dim=c(8,8)}
-netdis.plot(netdislist = netdis_mat, whatrow = 2,main = "Netdis-GP")
+netdis.plot(netdislist = netdis_mat, whatrow = 2, main = "Netdis-GP")
 ```
 
 ### Using Netdis with no expectation ($E_w=0$)
@@ -210,7 +210,7 @@ netdis_mat
 ```
 
 ```{r,netdiszeroPLOT ,fig.align='center',fig.dim=c(8,8)}
-netdis.plot(netdislist = netdis_mat, whatrow = 2,main = "Netdis-zero")
+netdis.plot(netdislist = netdis_mat, whatrow = 2, main = "Netdis-zero")
 ```
 
 -------------------------

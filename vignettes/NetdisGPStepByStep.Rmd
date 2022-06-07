@@ -13,10 +13,10 @@ chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
-  knitr::opts_chunk$set(
+knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
-  )
+)
 ```
 
 # Introduction
@@ -92,11 +92,11 @@ Generation of tree-like networks with 400 nodes and 1600 nodes.
 ```{r, netwokrs,fig.align='center',fig.dim=c(6,6)}
 # Create networks
 set.seed(34)
-gTree_1 <- igraph::as.undirected( make_tree(n = 20^2,children = 3) )
-gTree_2 <- igraph::as.undirected( make_tree(n = 40^2,children = 3) )
+gTree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
+gTree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
 
-plot(gTree_1,vertex.size=0.8,vertex.label=NA)
-plot(gTree_2,vertex.size=0.8,vertex.label=NA)
+plot(gTree_1, vertex.size = 0.8, vertex.label = NA)
+plot(gTree_2, vertex.size = 0.8, vertex.label = NA)
 ```
 
 
@@ -126,17 +126,19 @@ num_bins <- 100
 One of the first steps in Netdis is the extraction of all ego-networks in each of the query networks:
 ```{r}
 # Get ego-networks for query graphs
-ego_1 <- make_named_ego_graph(gTree_1, 
-                              order = neighbourhood_size, 
-                              min_ego_nodes = min_ego_nodes, 
-                              min_ego_edges = min_ego_edges)
+ego_1 <- make_named_ego_graph(gTree_1,
+  order = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges
+)
 
-ego_2 <- make_named_ego_graph(gTree_2, 
-                              order = neighbourhood_size, 
-                              min_ego_nodes = min_ego_nodes, 
-                              min_ego_edges = min_ego_edges)
-head(ego_1,n=2)
-head(ego_2,n=2)
+ego_2 <- make_named_ego_graph(gTree_2,
+  order = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges
+)
+head(ego_1, n = 2)
+head(ego_2, n = 2)
 ```
 
 ## Count the number of nodes and the subgraphs in the ego-networks of each graph ($N_w$)
@@ -159,13 +161,17 @@ densities_1 <- ego_network_density(graphlet_counts = subgraph_counts_1)
 densities_2 <- ego_network_density(graphlet_counts = subgraph_counts_2)
 
 # Adaptively bin ego-network densities
-binned_densities_1 <- binned_densities_adaptive(densities = densities_1, 
-                                                min_counts_per_interval = min_bin_count, 
-                                                num_intervals = num_bins)
+binned_densities_1 <- binned_densities_adaptive(
+  densities = densities_1,
+  min_counts_per_interval = min_bin_count,
+  num_intervals = num_bins
+)
 
-binned_densities_2 <- binned_densities_adaptive(densities = densities_2, 
-                                                min_counts_per_interval = min_bin_count, 
-                                                num_intervals = num_bins)
+binned_densities_2 <- binned_densities_adaptive(
+  densities = densities_2,
+  min_counts_per_interval = min_bin_count,
+  num_intervals = num_bins
+)
 
 str(binned_densities_1)
 str(binned_densities_2)
@@ -174,13 +180,17 @@ str(binned_densities_2)
 ## Calculate expected subgraph counts in each density bin by the Geometric-Poisson approximation ($E_w$)
 With the ego-network binning obtained, the Geometric-Poisson approximation of the expected subgraph counts, $E_w$, can be obtained for each subgraph $w$ and each density bin:
 ```{r}
-binned_gp_subgraph_counts_1 <- density_binned_counts_gp(graphlet_counts = subgraph_counts_1, 
-                                                     density_interval_indexes =  binned_densities_1$interval_indexes, 
-                                                     max_graphlet_size = max_subgraph_size)
+binned_gp_subgraph_counts_1 <- density_binned_counts_gp(
+  graphlet_counts = subgraph_counts_1,
+  density_interval_indexes = binned_densities_1$interval_indexes,
+  max_graphlet_size = max_subgraph_size
+)
 
-binned_gp_subgraph_counts_2 <- density_binned_counts_gp(graphlet_counts = subgraph_counts_2, 
-                                                     density_interval_indexes =  binned_densities_2$interval_indexes, 
-                                                     max_graphlet_size = max_subgraph_size)
+binned_gp_subgraph_counts_2 <- density_binned_counts_gp(
+  graphlet_counts = subgraph_counts_2,
+  density_interval_indexes = binned_densities_2$interval_indexes,
+  max_graphlet_size = max_subgraph_size
+)
 binned_gp_subgraph_counts_1
 binned_gp_subgraph_counts_2
 ```
@@ -189,27 +199,35 @@ binned_gp_subgraph_counts_2
 With $E_w$ now obtained, Netdis-GP, can be compute as per its construction by first centring the observed counts:
 ```{r}
 # Calculate expected subgraph counts for each ego network
-exp_gp_subgraph_counts_1 <- netdis_expected_counts(graphlet_counts = subgraph_counts_1,
-                                                density_breaks = binned_densities_1$breaks, 
-                                                density_binned_reference_counts =  binned_gp_subgraph_counts_1, 
-                                                max_graphlet_size = max_subgraph_size,
-                                                scale_fn=NULL)
+exp_gp_subgraph_counts_1 <- netdis_expected_counts(
+  graphlet_counts = subgraph_counts_1,
+  density_breaks = binned_densities_1$breaks,
+  density_binned_reference_counts = binned_gp_subgraph_counts_1,
+  max_graphlet_size = max_subgraph_size,
+  scale_fn = NULL
+)
 
 
-exp_gp_subgraph_counts_2 <- netdis_expected_counts(graphlet_counts = subgraph_counts_2,
-                                                density_breaks = binned_densities_2$breaks, 
-                                                density_binned_reference_counts =  binned_gp_subgraph_counts_2, 
-                                                max_graphlet_size = max_subgraph_size,
-                                                scale_fn=NULL)
+exp_gp_subgraph_counts_2 <- netdis_expected_counts(
+  graphlet_counts = subgraph_counts_2,
+  density_breaks = binned_densities_2$breaks,
+  density_binned_reference_counts = binned_gp_subgraph_counts_2,
+  max_graphlet_size = max_subgraph_size,
+  scale_fn = NULL
+)
 
 # Centre subgraph counts by subtracting expected counts
-centred_subgraph_counts_1 <- netdis_subtract_exp_counts(graphlet_counts = subgraph_counts_1,
-                                                        exp_graphlet_counts = exp_gp_subgraph_counts_1, 
-                                                        max_graphlet_size = max_subgraph_size)
+centred_subgraph_counts_1 <- netdis_subtract_exp_counts(
+  graphlet_counts = subgraph_counts_1,
+  exp_graphlet_counts = exp_gp_subgraph_counts_1,
+  max_graphlet_size = max_subgraph_size
+)
 
-centred_subgraph_counts_2 <- netdis_subtract_exp_counts(graphlet_counts = subgraph_counts_2,
-                                                        exp_graphlet_counts = exp_gp_subgraph_counts_2, 
-                                                        max_graphlet_size = max_subgraph_size)
+centred_subgraph_counts_2 <- netdis_subtract_exp_counts(
+  graphlet_counts = subgraph_counts_2,
+  exp_graphlet_counts = exp_gp_subgraph_counts_2,
+  max_graphlet_size = max_subgraph_size
+)
 
 head(centred_subgraph_counts_1)
 head(centred_subgraph_counts_2)
@@ -229,9 +247,11 @@ sum_subgraph_counts_2
 Finally, the total centred counts can be used to obtain the Netdis statistic:
 ```{r}
 
-netdis_result <- netdis_uptok(centred_graphlet_count_vector_1 = sum_subgraph_counts_1,
-                              centred_graphlet_count_vector_2 = sum_subgraph_counts_2, 
-                              max_graphlet_size =  max_subgraph_size)
+netdis_result <- netdis_uptok(
+  centred_graphlet_count_vector_1 = sum_subgraph_counts_1,
+  centred_graphlet_count_vector_2 = sum_subgraph_counts_2,
+  max_graphlet_size = max_subgraph_size
+)
 
 print(netdis_result)
 ```

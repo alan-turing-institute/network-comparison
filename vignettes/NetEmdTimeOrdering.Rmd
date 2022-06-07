@@ -28,17 +28,17 @@ For other vignettes in this package see the ["Menu"](V-Menu.html).
 The package contains the world trade networks and pre-computed subgraph/graphlet counts in the R data object ` worldtradesub`. This object contains a list of two lists. The first list is `worldtradesub$wtnets` which contains a small sample of the trade networks (2001-2014) and the second `worldtradesub$Counts` which contains pre-computed counts for a larger set of trade networks going from 1985 to 2014.
 
 ```{r, message=FALSE}
-  library("netdist")
-  library("igraph")
-  data(worldtradesub)
-  summary(worldtradesub)
-  wtnets<- worldtradesub$wtnets
-  summary(wtnets)
+library("netdist")
+library("igraph")
+data(worldtradesub)
+summary(worldtradesub)
+wtnets <- worldtradesub$wtnets
+summary(wtnets)
 ```
 
 These world trade networks are denser than typically sparse social networks. For example, the edge density for the network in 2001 is `r igraph::graph.density(worldtradesub$wtnets$wtn2001)`. Here is a plot of this network highlighting the relatively large number of edges:
 ```{r,fig.align='center',fig.dim=c(5,5)}
-  plot(wtnets$wtn2001,vertex.size=5,vertex.label.cex=0.4)
+plot(wtnets$wtn2001, vertex.size = 5, vertex.label.cex = 0.4)
 ```
 
 
@@ -47,11 +47,11 @@ These world trade networks are denser than typically sparse social networks. For
   
 In this example **NetEmd** will consider orbit counts of subgraphs containing up to 5 nodes.  If NetEmd is to be called a single time, then the command `netemd_many_to_many(graphs = wtnets)` would suffice. The following code provides such an example: 
 ```{r}
-  # As the trade networks are considerable dense, this example first considers a small number of networks.
-  #This example may take some minutes to run.
-  netemd_result <- netemd_many_to_many(graphs = wtnets[1:4],mc.cores = 1)
+# As the trade networks are considerable dense, this example first considers a small number of networks.
+# This example may take some minutes to run.
+netemd_result <- netemd_many_to_many(graphs = wtnets[1:4], mc.cores = 1)
 
-  print(netemd_result)
+print(netemd_result)
 ```
 However, if there are pre-computed counts or features NetEmd can be called via these features instead.
 
@@ -61,26 +61,26 @@ World trade networks consist of relatively dense networks, thus leading to longe
 
 ```{r}
 # This example may take more than a few minutes to run  (approx. 20 mins) , and it is not necessary to run it for the upcoming examples as a larger set of counts has been already computed.
-if(FALSE){# It is not necessary to run, as these counts are already available in.
-    Counts <- list()
-    for(i in 1:length(wtnets)){
-      Counts[[ names(wtnets)[i] ]] <- count_orbits_per_node(graph = wtnets[[i]],max_graphlet_size = 5)
-    }
+if (FALSE) { # It is not necessary to run, as these counts are already available in.
+  Counts <- list()
+  for (i in 1:length(wtnets)) {
+    Counts[[names(wtnets)[i]]] <- count_orbits_per_node(graph = wtnets[[i]], max_graphlet_size = 5)
+  }
 }
 ```
   
 Now, with pre-computed counts NetEmd can be calculated more rapidly as the computations of the counts are often the bottle neck in the computational time of NetEmd. NetEmd will be called `r length(worldtradesub$Counts) * (length(worldtradesub$Counts) - 1)/2 ` times in order to obtain all pairwise comparisons between the trade networks from 1985 to 2014 (networks with pre-computed subgraph counts):
 ```{r}
-  # The pre-computed counts already in the package
-  Counts <- worldtradesub$Counts
-  
-  #Calling NetEmd 
-  netemd_result <- netemd_many_to_many(dhists = Counts ,mc.cores = 1)
-  
-  #Results
-  netemd_matrix <- cross_comp_to_matrix(measure = netemd_result$netemds, cross_comparison_spec = netemd_result$comp_spec)
-  
-  print(netemd_matrix[1:10,1:5])
+# The pre-computed counts already in the package
+Counts <- worldtradesub$Counts
+
+# Calling NetEmd
+netemd_result <- netemd_many_to_many(dhists = Counts, mc.cores = 1)
+
+# Results
+netemd_matrix <- cross_comp_to_matrix(measure = netemd_result$netemds, cross_comparison_spec = netemd_result$comp_spec)
+
+print(netemd_matrix[1:10, 1:5])
 ```
   
 # Evidence of change in world trade
@@ -88,7 +88,7 @@ Now, with pre-computed counts NetEmd can be calculated more rapidly as the compu
 Based on the comparison of the world trade networks across the years, we can identify periods of time where possible considerable changes in world trade have occurred. The following heat map clearly shows the existence of two potential
  changes in the world trade system, and which correspond to 1995-1996 and 2010-2011.
 ```{r,fig.align='center',fig.dim=c(8.5,8.5)}
-  netemd.plot(netemdlist=netemd_result,clustering_method="ward.D",main="NetEmd",docluster = FALSE)
+netemd.plot(netemdlist = netemd_result, clustering_method = "ward.D", main = "NetEmd", docluster = FALSE)
 ```
 
 The World Trade Organization (WTO) said the following about these years:

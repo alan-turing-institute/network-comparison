@@ -29,10 +29,10 @@ min_ego_nodes <- 3
 min_ego_edges <- 1
 
 # Reference graph
-ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
-                        package = "netdist")
+ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"),
+  package = "netdist"
+)
 ref_graph <- read_simple_graph(ref_path, format = "ncol")
-
 ```
 
 ## Load query graphs
@@ -46,11 +46,12 @@ graphs <- read_simple_graphs(source_dir, format = "ncol", pattern = "*")
 
 # Calculate netdis statistics
 results <- netdis_many_to_many(graphs,
-                               ref_graph,
-                               max_graphlet_size = max_graphlet_size,
-                               neighbourhood_size = neighbourhood_size,
-                               min_ego_nodes = min_ego_nodes,
-                               min_ego_edges = min_ego_edges)
+  ref_graph,
+  max_graphlet_size = max_graphlet_size,
+  neighbourhood_size = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges
+)
 
 print(results$netdis)
 print(results$comp_spec)
@@ -60,23 +61,23 @@ print(results$comp_spec)
 ```{r}
 
 binning_fn <- purrr::partial(binned_densities_adaptive,
-                             min_counts_per_interval = 10,
-                             num_intervals = 50)
+  min_counts_per_interval = 10,
+  num_intervals = 50
+)
 
 
 # Calculate netdis statistics
 results <- netdis_many_to_many(graphs,
-                               ref_graph,
-                               max_graphlet_size = max_graphlet_size,
-                               neighbourhood_size = neighbourhood_size,
-                               min_ego_nodes = min_ego_nodes,
-                               min_ego_edges = min_ego_edges,
-                               binning_fn = binning_fn)
+  ref_graph,
+  max_graphlet_size = max_graphlet_size,
+  neighbourhood_size = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges,
+  binning_fn = binning_fn
+)
 
 print(results$netdis)
 print(results$comp_spec)
-
-
 ```
 
 ## With Modified Expected Counts: Geometric Poisson
@@ -84,17 +85,19 @@ print(results$comp_spec)
 bin_counts_fn <- density_binned_counts_gp
 
 exp_counts_fn <- purrr::partial(netdis_expected_counts,
-                                scale_fn = NULL)
+  scale_fn = NULL
+)
 
 # Calculate netdis statistics
 results <- netdis_many_to_many(graphs,
-                               ref_graph = NULL,
-                               max_graphlet_size = max_graphlet_size,
-                               neighbourhood_size = neighbourhood_size,
-                               min_ego_nodes = min_ego_nodes,
-                               min_ego_edges = min_ego_edges,
-                               bin_counts_fn = bin_counts_fn,
-                               exp_counts_fn = exp_counts_fn)
+  ref_graph = NULL,
+  max_graphlet_size = max_graphlet_size,
+  neighbourhood_size = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges,
+  bin_counts_fn = bin_counts_fn,
+  exp_counts_fn = exp_counts_fn
+)
 
 print(results$netdis)
 print(results$comp_spec)
@@ -108,14 +111,15 @@ exp_counts_fn <- netdis_expected_counts
 
 # Calculate netdis statistics
 results <- netdis_many_to_many(graphs,
-                               ref_graph = NULL,
-                               max_graphlet_size = max_graphlet_size,
-                               neighbourhood_size = neighbourhood_size,
-                               min_ego_nodes = min_ego_nodes,
-                               min_ego_edges = min_ego_edges,
-                               binning_fn = binning_fn,
-                               bin_counts_fn = bin_counts_fn,
-                               exp_counts_fn = exp_counts_fn)
+  ref_graph = NULL,
+  max_graphlet_size = max_graphlet_size,
+  neighbourhood_size = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges,
+  binning_fn = binning_fn,
+  bin_counts_fn = bin_counts_fn,
+  exp_counts_fn = exp_counts_fn
+)
 
 print(results$netdis)
 print(results$comp_spec)
