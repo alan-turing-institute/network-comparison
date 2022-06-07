@@ -10,7 +10,9 @@
 binned_densities_adaptive <- function(densities,
                                       min_counts_per_interval,
                                       num_intervals) {
-  if (length(densities) < min_counts_per_interval) min_counts_per_interval <- length(densities)
+  if (length(densities) < min_counts_per_interval) {
+    min_counts_per_interval <- length(densities)
+  }
   breaks <- adaptive_breaks(densities,
     min_count = min_counts_per_interval,
     breaks = num_intervals

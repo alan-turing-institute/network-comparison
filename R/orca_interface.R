@@ -68,11 +68,18 @@ indexed_edges_to_graph <- function(indexed_edges) {
 #' @return A named list of simplified igraph graph object, with the name of each
 #' graph set to the name of the file it was read from.
 #' @examples
-#' # Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
-#' source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+#' # Set source directory for Virus protein-protein interaction edge files
+#' # stored in the netdist package.
+#' source_dir <- system.file(
+#'   file.path("extdata", "VRPINS"),
+#'   package = "netdist"
+#' )
 #' print(source_dir)
 #' # Load query graphs as igraph objects
-#' graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"), format = "ncol")
+#' graph_1 <- read_simple_graph(
+#'   file.path(source_dir, "EBV.txt"),
+#'   format = "ncol"
+#' )
 #' graph_1
 #' @export
 read_simple_graphs <- function(source_dir,
@@ -208,10 +215,12 @@ simplify_graph <- function(graph, as_undirected = TRUE, remove_loops = TRUE,
 #'
 #' Converts a matrix of node level features (e.g. for example counts
 #' of multiple graphlets or orbits at each node) to
-#' a set of histogram like objects (observed frequency distribution of each feature/column)
-#' @param features_matrix A matrix whose rows represent nodes and whose columns represent different node level features. This means that entry ij provides the value of feature j for node i.
-#' @return Feature histograms: List of "discrete histograms" for each
-#' feature
+#' a set of histogram like objects (observed frequency distribution of each
+#' feature/column)
+#' @param features_matrix A matrix whose rows represent nodes and whose columns
+#' represent different node level features. This means that entry ij provides
+#' the value of feature j for node i.
+#' @return Feature histograms: List of "discrete histograms" for each feature
 #' @export
 graph_features_to_histograms <- function(features_matrix) {
   apply(features_matrix, 2, dhist_from_obs)
@@ -224,8 +233,9 @@ graph_features_to_histogramsSLOW <- function(features_matrix) {
 
 #' Graphlet-based degree distributions (GDDs)
 #'
-#' Short-cut function to create graphlet-based degree distributions from \code{igraph} graph object
-#' using the ORCA fast graphlet orbit counting package.
+#' Short-cut function to create graphlet-based degree distributions from
+#' \code{igraph} graph object using the ORCA fast graphlet orbit counting
+#' package.
 #' @param graph A connected, undirected, simple graph as an \code{igraph} object
 #' @param feature_type Type of graphlet-based feature to count: "graphlet"
 #' counts the number of graphlets each node participates in; "orbit" calculates
@@ -233,7 +243,8 @@ graph_features_to_histogramsSLOW <- function(features_matrix) {
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be
 #' counted. Currently only size 4 and 5 are supported.
-#' @param ego_neighbourhood_size The number of steps from the source node used to select the
+#' @param ego_neighbourhood_size The number of steps from the source node used
+#' to select the
 #' neighboring nodes to be included in the source node ego-network.
 #' @return List of graphlet-based degree distributions, with each distribution
 #' represented as a \code{dhist} discrete histogram object.
@@ -353,8 +364,9 @@ count_graphlets_for_graph <- function(graph, max_graphlet_size) {
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
 #' Only graphlets containing up to \code{max_graphlet_size} nodes will be
 #' counted. Currently only size 4 (default) and 5 are supported.
-#' @param neighbourhood_size The number of steps from the source node used to select the
-#' neighboring nodes to be included in the source node ego-network. (Default 2).
+#' @param neighbourhood_size The number of steps from the source node used to
+#' select the neighboring nodes to be included in the source node ego-network.
+#' (Default 2).
 #' @param min_ego_nodes Only ego networks with at least \code{min_ego_nodes}
 #' nodes are returned. (Default 3).
 #' @param min_ego_edges Only ego networks with at least \code{min_ego_edges}
@@ -517,7 +529,8 @@ orbit_to_graphlet_counts <- function(orbit_counts) {
 #' Graphlet key
 #'
 #' Metdata about graphlet groups.
-#' @param max_graphlet_size Maximum number of nodes graphlets can contain. Currently only size 2 to 5 are supported.
+#' @param max_graphlet_size Maximum number of nodes graphlets can contain.
+#' Currently only size 2 to 5 are supported.
 #' @return Metadata list with the following named fields:
 #' \itemize{
 #'   \item \code{max_nodes}: Maximum number of nodes graphlets can contain
@@ -553,7 +566,8 @@ graphlet_key <- function(max_graphlet_size) {
 #' Orbit key
 #'
 #' Metdata about orbit groups.
-#' @param max_graphlet_size Maximum number of nodes graphlets can contain. Currently only size 2 to 5 are supported.
+#' @param max_graphlet_size Maximum number of nodes graphlets can contain.
+#' Currently only size 2 to 5 are supported.
 #' @return Metadata list with the following named fields:
 #' \itemize{
 #'   \item \code{max_nodes}: Maximum number of nodes graphlets can contain
@@ -611,11 +625,11 @@ graphlet_ids_for_size <- function(graphlet_size) {
 #' @param feature_type Type of graphlet-based degree distributions. Can be
 #' \code{graphlet} to count graphlets or \code{orbit} to count orbits.
 #' @return A named list where each element contains a set of GDDs for a single
-#' @param max_graphlet_size Maximum size of graphlets to use when generating GDD.
-#'  Currently only size 4 and 5 are supported.
-#' @param ego_neighbourhood_size The number of steps from the source node used to select the
-#' neighboring nodes to be included in the source node ego-network. If set to 0, ego-networks will not be
-#' used.
+#' @param max_graphlet_size Maximum size of graphlets to use when generating
+#' GDD. Currently only size 4 and 5 are supported.
+#' @param ego_neighbourhood_size The number of steps from the source node used
+#' to select the neighboring nodes to be included in the source node
+#' ego-network. If set to 0, ego-networks will not be used.
 #' @param  mc.cores Number of cores to use for parallel processing. Defaults to
 #' the \code{mc.cores} option set in the R environment.
 #' @return A named list where each element contains a set of GDDs for a single

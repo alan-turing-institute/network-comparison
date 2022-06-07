@@ -1,14 +1,17 @@
 context("EMD: Cost matrix")
 # COST_MATRIX: Property-based tests
-test_that("cost_matrix returns all zeros when all bin locations are identical", {
-  bin_centres1 <- c(1, 1, 1, 1, 1, 1, 1)
-  bin_centres2 <- bin_centres1
-  expected <- matrix(0,
-    nrow = length(bin_centres1),
-    ncol = length(bin_centres2)
-  )
-  expect_equal(cost_matrix(bin_centres1, bin_centres2), expected)
-})
+test_that(
+  "cost_matrix returns all zeros when all bin locations are identical",
+  {
+    bin_centres1 <- c(1, 1, 1, 1, 1, 1, 1)
+    bin_centres2 <- bin_centres1
+    expected <- matrix(0,
+      nrow = length(bin_centres1),
+      ncol = length(bin_centres2)
+    )
+    expect_equal(cost_matrix(bin_centres1, bin_centres2), expected)
+  }
+)
 
 test_that("cost_matrix returns zeros along diagonal when both sets of bin
           locations are the same", {

@@ -4,10 +4,11 @@ netEMDSpeedTest <- function() {
   print(source_dir)
   edge_format <- "ncol"
   file_pattern <- ""
-  #    source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
-  #    edge_format = "ncol"
-  #    file_pattern = ".txt"
-  graphs <- read_simple_graphs(source_dir = source_dir, format = edge_format, pattern = file_pattern)
+  graphs <- read_simple_graphs(
+    source_dir = source_dir,
+    format = edge_format,
+    pattern = file_pattern
+  )
   n1 <- names(graphs)
   lab1 <- c()
   gddBuildTime <- c()
@@ -26,7 +27,10 @@ netEMDSpeedTest <- function() {
       netEMDStart <- Sys.time()
       net_emd(gdd1, gdd2)
       endTime <- Sys.time()
-      gddBuildTime <- append(gddBuildTime, as.double(netEMDStart - fulltimeStart))
+      gddBuildTime <- append(
+        gddBuildTime,
+        as.double(netEMDStart - fulltimeStart)
+      )
       netEMDtime <- append(netEMDtime, as.double(endTime - netEMDStart))
     }
   }
