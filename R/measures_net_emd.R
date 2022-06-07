@@ -284,7 +284,7 @@ netemd_many_to_many <- function(graphs = NULL,
                                 method = "optimise",
                                 smoothing_window_width = 0,
                                 return_details = FALSE,
-                                mc.cores = getOption("mc.cores", 2L),
+                                mc.cores = getOption("mc.cores", 2L), # nolint: object_name_linter.
                                 feature_type = "orbit",
                                 max_graphlet_size = 5,
                                 ego_neighbourhood_size = 0) {
@@ -304,7 +304,7 @@ netemd_many_to_many <- function(graphs = NULL,
   if (.Platform$OS.type != "unix") {
     # Force cores to 1 if system is not unix-like as it will not support
     # forking
-    mc.cores <- 1
+    mc.cores <- 1 # nolint: object_name_linter.
   }
   ## ------------------------------------------------------------------------
   # Check arguments 1

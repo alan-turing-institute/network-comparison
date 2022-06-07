@@ -1498,18 +1498,18 @@ test_that(
       min_ego_nodes = min_ego_nodes,
       min_ego_edges = min_ego_edges
     )
-    exp_counts_with_networks_order_1 <-
+    exp_counts_with_networks_order_1 <- # nolint: object_length_linter
       list(
         graphlet_counts = exp_counts_order_1,
         ego_networks = exp_ego_networks_order_1
       )
-    exp_counts_with_networks_order_2 <-
+    exp_counts_with_networks_order_2 <- # nolint: object_length_linter
       list(
         graphlet_counts = exp_counts_order_2,
         ego_networks = exp_ego_networks_order_2
       )
     # 2. Calculate actual
-    actual_counts_with_networks_order_1 <-
+    actual_counts_with_networks_order_1 <- # nolint: object_length_linter
       count_graphlets_ego(graph,
         max_graphlet_size = max_graphlet_size,
         neighbourhood_size = 1,
@@ -1517,7 +1517,7 @@ test_that(
         min_ego_edges = min_ego_edges,
         return_ego_networks = TRUE
       )
-    actual_counts_with_networks_order_2 <-
+    actual_counts_with_networks_order_2 <- # nolint: object_length_linter
       count_graphlets_ego(graph,
         max_graphlet_size = max_graphlet_size,
         neighbourhood_size = 2,

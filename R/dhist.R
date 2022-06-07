@@ -116,7 +116,7 @@ as_unsmoothed_dhist <- function(dhist) {
 #' superficial fast check limited to checking the object's class attribute
 #' is set to \code{dhist} (default = \code{TRUE})
 #' @export
-is_dhist <- function(x, fast_check = TRUE) {
+is_dhist <- function(x, fast_check = TRUE) { # nolint: cyclocomp_linter.
   # Quick check that relies on user not to construct variables with "dhist"
   # class that do not have the required elements
   has_class_attr <- (class(x) == "dhist")
@@ -386,7 +386,8 @@ segment_area_trapezium <- function(x_diff, y_diff_lower, y_diff_upper) {
   height_trapezium <- abs(x_diff)
   base_trapezium <- abs(y_diff_lower)
   top_trapezium <- abs(y_diff_upper)
-  segment_area <- 0.5 * height_trapezium * (base_trapezium + top_trapezium)
+
+  0.5 * height_trapezium * (base_trapezium + top_trapezium)
 }
 
 segment_area_bowtie <- function(x_diff, y_diff_lower, y_diff_upper) {

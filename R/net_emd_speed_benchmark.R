@@ -25,13 +25,13 @@ netemd_speed_test <- function() {
       gdd1 <- gdd(g1)
       gdd2 <- gdd(g2)
       netemd_start <- Sys.time()
-      net_emd(gdd1, gdd2)
+      netemd_single_pair(gdd1, gdd2)
       end_time <- Sys.time()
       gdd_build_time <- append(
         gdd_build_time,
         as.double(netemd_start - fulltime_start)
       )
-      net_emd_time <- append(netemd_time, as.double(end_time - netemd_start))
+      netemd_time <- append(netemd_time, as.double(end_time - netemd_start))
     }
   }
   list(gddBuildTime = gdd_build_time, netEMDtime = netemd_time)

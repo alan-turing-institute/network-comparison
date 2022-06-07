@@ -209,13 +209,3 @@ test_that("binned_densities_adaptive works", {
     expected_interval_indexes = expected_interval_indexes
   )
 })
-
-expected_binned_graphlet_counts <-
-  function(graphs, binning_fn, max_graphlet_size) {
-    binned_graphs <- binning_fn(graphs)
-    ref_counts <- purrr::map(
-      binned_graphs$graphs, count_graphlets_for_graph,
-      max_graphlet_size
-    )
-    ref_counts
-  }

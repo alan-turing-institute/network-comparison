@@ -419,7 +419,7 @@ test_that(
     mean_counts_bin3_o1 <- (exp_counts_o1[3, ] + exp_counts_o1[4, ] +
       exp_counts_o1[5, ] + exp_counts_o1[9, ] +
       exp_counts_o1[10, ]) / 5
-    exp_mean_density_binned_counts_o1 <- rbind(
+    exp_mean_density_binned_counts_o1 <- rbind( # nolint: object_length_linter.
       mean_counts_bin1_o1, mean_counts_bin2_o1, mean_counts_bin3_o1
     )
     rownames(exp_mean_density_binned_counts_o1) <- 1:3
@@ -432,17 +432,17 @@ test_that(
       exp_counts_o2[5, ]) / 2
     mean_counts_bin4_o2 <- (exp_counts_o2[8, ] +
       exp_counts_o2[9, ] + exp_counts_o2[10, ]) / 3
-    exp_mean_density_binned_counts_o2 <- rbind(
+    exp_mean_density_binned_counts_o2 <- rbind( # nolint: object_length_linter.
       mean_counts_bin1_o2, mean_counts_bin2_o2, mean_counts_bin3_o2,
       mean_counts_bin4_o2
     )
     rownames(exp_mean_density_binned_counts_o2) <- 1:4
 
     # Calculate actual output of function under test
-    act_mean_density_binned_counts_o1 <- mean_density_binned_graphlet_counts(
+    act_mean_density_binned_counts_o1 <- mean_density_binned_graphlet_counts( # nolint: object_length_linter.
       exp_counts_o1, exp_interval_indexes_o1
     )
-    act_mean_density_binned_counts_o2 <- mean_density_binned_graphlet_counts(
+    act_mean_density_binned_counts_o2 <- mean_density_binned_graphlet_counts( # nolint: object_length_linter.
       exp_counts_o2, exp_interval_indexes_o2
     )
 
@@ -696,7 +696,7 @@ test_that(
     mean_counts_bin3_o1 <- (exp_counts_o1[3, ] + exp_counts_o1[4, ] +
       exp_counts_o1[5, ] + exp_counts_o1[9, ] +
       exp_counts_o1[10, ]) / 5
-    exp_mean_density_binned_counts_o1 <- rbind(
+    exp_mean_density_binned_counts_o1 <- rbind( # nolint: object_length_linter.
       mean_counts_bin1_o1, mean_counts_bin2_o1, mean_counts_bin3_o1
     )
     rownames(exp_mean_density_binned_counts_o1) <- 1:3
@@ -709,7 +709,7 @@ test_that(
       exp_counts_o2[5, ]) / 2
     mean_counts_bin4_o2 <- (exp_counts_o2[8, ] + exp_counts_o2[9, ] +
       exp_counts_o2[10, ]) / 3
-    exp_mean_density_binned_counts_o2 <- rbind(
+    exp_mean_density_binned_counts_o2 <- rbind( # nolint: object_length_linter.
       mean_counts_bin1_o2, mean_counts_bin2_o2, mean_counts_bin3_o2,
       mean_counts_bin4_o2
     )
@@ -754,7 +754,7 @@ test_that(
       exp_counts_o1[10, ]
     ), 2, max)
 
-    exp_max_density_binned_counts_o1 <- rbind(
+    exp_max_density_binned_counts_o1 <- rbind( # nolint: object_length_linter.
       max_counts_bin1_o1, max_counts_bin2_o1, max_counts_bin3_o1
     )
     rownames(exp_max_density_binned_counts_o1) <- 1:3
@@ -774,7 +774,7 @@ test_that(
       exp_counts_o2[10, ]
     ), 2, max)
 
-    exp_max_density_binned_counts_o2 <- rbind(
+    exp_max_density_binned_counts_o2 <- rbind( # nolint: object_length_linter.
       max_counts_bin1_o2, max_counts_bin2_o2, max_counts_bin3_o2,
       max_counts_bin4_o2
     )
@@ -785,14 +785,14 @@ test_that(
     agg_fn <- max
     scale_fn <- NULL
 
-    act_max_density_binned_counts_o1 <- density_binned_counts(
+    act_max_density_binned_counts_o1 <- density_binned_counts( # nolint: object_length_linter.
       exp_counts_o1,
       exp_interval_indexes_o1,
       agg_fn = agg_fn,
       scale_fn = scale_fn
     )
 
-    act_max_density_binned_counts_o2 <- density_binned_counts(
+    act_max_density_binned_counts_o2 <- density_binned_counts( # nolint: object_length_linter.
       exp_counts_o2,
       exp_interval_indexes_o2,
       agg_fn = agg_fn,
@@ -836,7 +836,7 @@ test_that(
       exp_scaled_counts_o1[5, ] +
       exp_scaled_counts_o1[9, ] +
       exp_scaled_counts_o1[10, ]) / 5
-    exp_scaled_density_binned_counts_o1 <- rbind(
+    exp_scaled_density_binned_counts_o1 <- rbind( # nolint: object_length_linter.
       mean_scaled_counts_bin1_o1,
       mean_scaled_counts_bin2_o1,
       mean_scaled_counts_bin3_o1
@@ -853,7 +853,7 @@ test_that(
     mean_scaled_counts_bin4_o2 <- (exp_scaled_counts_o2[8, ] +
       exp_scaled_counts_o2[9, ] +
       exp_scaled_counts_o2[10, ]) / 3
-    exp_scaled_density_binned_counts_o2 <- rbind(
+    exp_scaled_density_binned_counts_o2 <- rbind( # nolint: object_length_linter.
       mean_scaled_counts_bin1_o2,
       mean_scaled_counts_bin2_o2,
       mean_scaled_counts_bin3_o2,
@@ -863,7 +863,7 @@ test_that(
 
     # Calculate scaled binned counts with density_binned_counts (function to
     # test)
-    act_scaled_density_binned_counts_o1 <- density_binned_counts(
+    act_scaled_density_binned_counts_o1 <- density_binned_counts( # nolint: object_length_linter.
       exp_counts_o1,
       exp_interval_indexes_o1,
       agg_fn = agg_fn,
@@ -871,7 +871,7 @@ test_that(
       max_graphlet_size = max_graphlet_size
     )
 
-    act_scaled_density_binned_counts_o2 <- density_binned_counts(
+    act_scaled_density_binned_counts_o2 <- density_binned_counts( # nolint: object_length_linter.
       exp_counts_o2,
       exp_interval_indexes_o2,
       agg_fn = agg_fn,
@@ -1595,9 +1595,4 @@ test_that("netdis_uptok errors for unsupported max_graphlet_size", {
 
   #  graphlet size less than 3
   expect_error(netdis_uptok(counts_1, counts_2, 2))
-})
-
-context("Netdis: works correctly when using a single density bin")
-test_that("netdis single density bin works correctly", {
-  # TODO
 })

@@ -35,7 +35,7 @@ expect_self_netemd_correct <- function(histogram, shift, method,
     net_emd = 0, min_emds = 0, min_offsets = shift,
     min_offsets_std = 0
   )
-  expect_equal(self_net_emd, expected)
+  expect_equal(self_net_emd, expected) # nolint: object_usage_linter.
 }
 
 locations <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
@@ -310,7 +310,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
 
   # Map over virus PPI networks
   purrr::walk(virus_gdd, function(gdd) {
-    purrr::walk(gdd, function(gdd_Ox) {
+    purrr::walk(gdd, function(gdd_Ox) { # nolint: object_length_linter
       expect_equal(emd(gdd_Ox, gdd_Ox), 0)
     })
   })
@@ -334,7 +334,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
 
   # Map over virus PPI networks
   purrr::walk(virus_gdd, function(gdd) {
-    purrr::walk(gdd, function(gdd_Ox) {
+    purrr::walk(gdd, function(gdd_Ox) { # nolint: object_length_linter
       expect_equalish(netemd_one_to_one(
         dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
         method = "optimise",
@@ -361,7 +361,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
 
   # Map over random graphs
   purrr::walk(random_gdd, function(gdd) {
-    purrr::walk(gdd, function(gdd_Ox) {
+    purrr::walk(gdd, function(gdd_Ox) { # nolint: object_length_linter
       expect_equal(emd(gdd_Ox, gdd_Ox), 0)
     })
   })
@@ -389,7 +389,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
 
   # Map over random graphs
   purrr::walk(random_gdd, function(gdd) {
-    purrr::walk(gdd, function(gdd_Ox) {
+    purrr::walk(gdd, function(gdd_Ox) { # nolint: object_length_linter
       expect_equalish(netemd_one_to_one(
         dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
         method = "optimise",

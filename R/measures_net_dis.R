@@ -511,7 +511,7 @@ netdis_one_to_many <- function(graph_1 = NULL,
 #' up to and including max_graphlet_size.
 #'
 #' @export
-netdis_many_to_many <- function(graphs = NULL,
+netdis_many_to_many <- function(graphs = NULL, # nolint: cyclocomp_linter.
                                 ref_graph = NULL,
                                 comparisons = "many-to-many",
                                 max_graphlet_size = 4,
@@ -1018,7 +1018,7 @@ netdis_expected_counts_ego <- function(graphlet_counts,
 #' (default \code{agg_fn = mean}).
 #'
 #' @export
-mean_density_binned_graphlet_counts <- function(graphlet_counts,
+mean_density_binned_graphlet_counts <- function(graphlet_counts, # nolint: object_length_linter.
                                                 density_interval_indexes,
                                                 agg_fn = mean) {
   # The ego network graphlet counts are an E x G matrix with rows (E)
@@ -1026,22 +1026,22 @@ mean_density_binned_graphlet_counts <- function(graphlet_counts,
   # to calculate the mean count for each graphlet / density bin combination,
   # so we will use tapply to average counts for each graphlet across density
   # bins, using apply to map this operation over graphlets
-  mean_density_binned_graphlet_counts <-
+  mean_density_binned_counts <-
     apply(graphlet_counts, MARGIN = 2, function(gc) {
       tapply(gc, INDEX = density_interval_indexes, FUN = agg_fn)
     })
 
   # if only 1 bin (i.e. no binning) will be left with a 1D list.
   # convert it into a 2D list.
-  if (is.null(dim(mean_density_binned_graphlet_counts))) {
-    dim(mean_density_binned_graphlet_counts) <-
-      c(1, length(mean_density_binned_graphlet_counts))
+  if (is.null(dim(mean_density_binned_counts))) {
+    dim(mean_density_binned_counts) <-
+      c(1, length(mean_density_binned_counts))
 
-    colnames(mean_density_binned_graphlet_counts) <-
+    colnames(mean_density_binned_counts) <-
       colnames(graphlet_counts)
   }
 
-  mean_density_binned_graphlet_counts
+  mean_density_binned_counts
 }
 
 #' For case where don't want to use binning, return a single bin which covers
@@ -1116,7 +1116,7 @@ exp_counts_bin_gp <- function(bin_idx, graphlet_counts,
   mean_sub_counts <- sweep(counts, 2, means)
 
   # variance in graphlet counts across ego networks in this density bin
-  Vd_sq <- colSums(mean_sub_counts^2) / (nrow(mean_sub_counts) - 1)
+  Vd_sq <- colSums(mean_sub_counts^2) / (nrow(mean_sub_counts) - 1) # nolint: object_name_linter.
 
   # Dealing with zero variance HERE
   ind_zerovar <- (Vd_sq < .00000001)
@@ -1282,7 +1282,7 @@ scale_graphlet_counts_ego <- function(graphlet_counts,
 #' @export
 count_graphlet_tuples <- function(graph_graphlet_counts, max_graphlet_size) {
   # extract node counts from graph_graphlet_counts
-  N <- graph_graphlet_counts["N"]
+  N <- graph_graphlet_counts["N"] # nolint: object_name_linter.
 
   graphlet_key <- graphlet_key(max_graphlet_size)
   graphlet_node_counts <- graphlet_key$node_count

@@ -226,11 +226,6 @@ graph_features_to_histograms <- function(features_matrix) {
   apply(features_matrix, 2, dhist_from_obs)
 }
 
-
-graph_features_to_histogramsSLOW <- function(features_matrix) {
-  apply(features_matrix, 2, dhist_from_obsSLOW)
-}
-
 #' Graphlet-based degree distributions (GDDs)
 #'
 #' Short-cut function to create graphlet-based degree distributions from
@@ -352,7 +347,7 @@ count_graphlets_for_graph <- function(graph, max_graphlet_size) {
   total_counts <- total_counts / nodes_per_graphlet
 
   # add overall graph node count to total_counts
-  N <- igraph::vcount(graph)
+  N <- igraph::vcount(graph) # nolint: object_name_linter.
   total_counts <- c(N = N, total_counts)
   total_counts
 }
@@ -642,7 +637,7 @@ gdd_for_all_graphs <- function(source_dir,
                                feature_type = "orbit",
                                max_graphlet_size = 4,
                                ego_neighbourhood_size = 0,
-                               mc.cores = getOption("mc.cores", 2L)) {
+                               mc.cores = getOption("mc.cores", 2L)) { # nolint: object_name_linter.
   # Create function to read graph from file and generate GDD
   graphs <- read_simple_graphs(
     source_dir = source_dir, format = format, pattern = pattern
@@ -655,7 +650,7 @@ gdd_for_all_graphs <- function(source_dir,
   if (.Platform$OS.type != "unix") {
     # Force cores to 1 if system is not unix-like as it will not support
     # forking
-    mc.cores <- 1
+    mc.cores <- 1 # nolint: object_name_linter.
   }
   parallel::mcmapply(gdd, graphs,
     MoreArgs =

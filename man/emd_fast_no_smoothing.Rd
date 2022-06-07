@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{emd_fast_no_smoothing}
 \alias{emd_fast_no_smoothing}
-\title{Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
+\title{Compute Earth Mover's Distance (EMD) between two Empirical Cumulative
 Density Functions (ECDFs)}
 \usage{
 emd_fast_no_smoothing(locations1, values1, locations2, values2)
@@ -17,6 +17,6 @@ emd_fast_no_smoothing(locations1, values1, locations2, values2)
 \item{values2}{Cumulative masses for ECDF 2}
 }
 \description{
-Compute Earth Mover's Distance (EMD) between two Empirical Cumulative 
+Compute Earth Mover's Distance (EMD) between two Empirical Cumulative
 Density Functions (ECDFs)
 }
