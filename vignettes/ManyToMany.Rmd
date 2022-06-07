@@ -67,9 +67,23 @@ plot(gTree_2, vertex.size = 0.8, vertex.label = NA)
 Subgraph count based NetEmd comparisons:
 ```{r, netemdorbits,fig.align='center'}
 # NetEMD using subgraph counts.
-glist <- list(Lat_1 = gLat_1, Lat_2 = gLat_2, Ring_1 = gRing_1, Ring_2 = gRing_1, Tree_1 = gTree_1, Tree_2 = gTree_2)
+glist <- list(
+  Lat_1 = gLat_1,
+  Lat_2 = gLat_2,
+  Ring_1 = gRing_1,
+  Ring_2 = gRing_1,
+  Tree_1 = gTree_1,
+  Tree_2 = gTree_2
+)
 
-netemdlist <- netemd_many_to_many(graphs = glist, smoothing_window_width = 1, mc.cores = 1) # Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+# Use of smoothing window 1 is given for discrete integer distributions. If the
+# network features are considered continuous variables smoothing_window_width
+# equal to zero is recommended.
+netemdlist <- netemd_many_to_many(
+  graphs = glist,
+  smoothing_window_width = 1,
+  mc.cores = 1
+)
 
 netemdlist
 ```
@@ -77,13 +91,19 @@ netemdlist
 To read the results in a matrix form:
 ```{r,fig.align='center'}
 # Creating a comparison matrix:
-mat <- cross_comp_to_matrix(measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec)
+mat <- cross_comp_to_matrix(
+  measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec
+)
 mat
 ```
 
 Illustration of the multiple NetEmd comparisons based on subgraph counts.
 ```{r,netemdorbitsPLOT,fig.align='center',fig.dim=c(8,8)}
-netemd.plot(netemdlist = netemdlist, clustering_method = "ward.D", main = "NetEmd subgraph counts")
+netemd.plot(
+  netemdlist = netemdlist,
+  clustering_method = "ward.D",
+  main = "NetEmd subgraph counts"
+)
 ```
 
 ## NetEmd using the Laplacian and Normalized Laplacian Spectrum
@@ -95,16 +115,25 @@ SPECT <- list()
 
 # This step may take several minutes.
 for (i in 1:length(glist)) {
-  Lapg <- igraph::laplacian_matrix(graph = glist[[i]], normalized = FALSE, sparse = FALSE)
-  NLap <- igraph::laplacian_matrix(graph = glist[[i]], normalized = TRUE, sparse = FALSE)
-  SPECT[[names(glist)[i]]] <- cbind(L.Spectra = eigen(Lapg)$values, NL.Spectra = eigen(NLap)$values)
+  Lapg <- igraph::laplacian_matrix(
+    graph = glist[[i]], normalized = FALSE, sparse = FALSE
+  )
+  NLap <- igraph::laplacian_matrix(
+    graph = glist[[i]], normalized = TRUE, sparse = FALSE
+  )
+  SPECT[[names(glist)[i]]] <- cbind(
+    L.Spectra = eigen(Lapg)$values, NL.Spectra = eigen(NLap)$values
+  )
 }
 str(SPECT)
 ```
 
 Compute NetEmd:
 ```{r}
-netemdlist <- netemd_many_to_many(dhists = SPECT, smoothing_window_width = 0) # Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+# Use of smoothing window 1 is given for discrete integer distributions. If the
+# network features are considered continuous variables smoothing
+# window_width equal to zero is recommended.
+netemdlist <- netemd_many_to_many(dhists = SPECT, smoothing_window_width = 0)
 
 netemdlist
 ```
@@ -112,7 +141,9 @@ netemdlist
 
 ### Illustration of the multiple NetEmd comparisons based on the Laplacian and Normalized Laplacian spectra
 ```{r,netemdspectrumPLOT ,fig.align='center',fig.dim=c(8,8)}
-netemd.plot(netemdlist = netemdlist, clustering_method = "ward.D", main = "NetEmd Spectra")
+netemd.plot(
+  netemdlist = netemdlist, clustering_method = "ward.D", main = "NetEmd Spectra"
+)
 ```
 
 
@@ -154,7 +185,14 @@ plot(gst_2, vertex.size = 0.8, vertex.label = NA)
 
 Obtain the comparison via Netdis using each of the reference graph networks.
 ```{r,netdisgoldstand ,fig.align='center'}
-glist <- list(Lat_1 = gLat_1, Lat_2 = gLat_2, Ring_1 = gRing_1, Ring_2 = gRing_1, Tree_1 = gTree_1, Tree_2 = gTree_2)
+glist <- list(
+  Lat_1 = gLat_1,
+  Lat_2 = gLat_2,
+  Ring_1 = gRing_1,
+  Ring_2 = gRing_1,
+  Tree_1 = gTree_1,
+  Tree_2 = gTree_2
+)
 
 # Netdis using the goldstd_1 graph as gold-standard reference point
 netdis_mat_gst1 <- netdis_many_to_many(graphs = glist, ref_graph = gst_1)
@@ -170,18 +208,28 @@ netdis_mat_gst2
 To read the results in a matrix form:
 ```{r,fig.align='center'}
 # Creating a comparison matrix:
-cross_comp_to_matrix(measure = netdis_mat_gst1$netdis, cross_comparison_spec = netdis_mat_gst1$comp_spec)
+cross_comp_to_matrix(
+  measure = netdis_mat_gst1$netdis,
+  cross_comparison_spec = netdis_mat_gst1$comp_spec
+)
 
-cross_comp_to_matrix(measure = netdis_mat_gst2$netdis, cross_comparison_spec = netdis_mat_gst2$comp_spec)
+cross_comp_to_matrix(
+  measure = netdis_mat_gst2$netdis,
+  cross_comparison_spec = netdis_mat_gst2$comp_spec
+)
 ```
 
 Heatmap of the Netdis comparisons:
 ```{r,netdisgoldstandPLOT ,fig.align='center',fig.dim=c(8,8)}
 # Network comparisons heatmap with Gold-Standard 1
-netdis.plot(netdislist = netdis_mat_gst1, whatrow = 2, main = "Netdis GoldStd-1")
+netdis.plot(
+  netdislist = netdis_mat_gst1, whatrow = 2, main = "Netdis GoldStd-1"
+)
 
 # Network comparisons heatmap with Gold-Standard 2
-netdis.plot(netdislist = netdis_mat_gst2, whatrow = 2, main = "Netdis GoldStd-2")
+netdis.plot(
+  netdislist = netdis_mat_gst2, whatrow = 2, main = "Netdis GoldStd-2"
+)
 ```
 
 

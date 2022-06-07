@@ -104,7 +104,8 @@ neighbourhood_size <- 2
 min_ego_nodes <- 3
 min_ego_edges <- 1
 
-# Ego-network density binning parameters. Here, the minimum number of ego-networks per bin and the starting number of bins
+# Ego-network density binning parameters. Here, the minimum number of
+# ego-networks per bin and the starting number of bins
 min_bin_count <- 5
 num_bins <- 100
 ```
@@ -135,8 +136,12 @@ tail(ego_2, n = 2)
 Once the ego-networks are extracted, the subgraph counts for all ego-network are obtained for each network being compared:
 ```{r}
 # Subgraphs counts for ego-networks in query graphs
-subgraph_counts_1 <- ego_to_graphlet_counts(ego_networks = ego_1, max_graphlet_size = max_subgraph_size)
-subgraph_counts_2 <- ego_to_graphlet_counts(ego_networks = ego_2, max_graphlet_size = max_subgraph_size)
+subgraph_counts_1 <- ego_to_graphlet_counts(
+  ego_networks = ego_1, max_graphlet_size = max_subgraph_size
+)
+subgraph_counts_2 <- ego_to_graphlet_counts(
+  ego_networks = ego_2, max_graphlet_size = max_subgraph_size
+)
 
 tail(subgraph_counts_1)
 tail(subgraph_counts_2)
@@ -203,8 +208,8 @@ str(binned_densities_gst_1)
 $E_w$ is estimated based on the average subgraph counts of ego-networks per density bin for each given subgraph. However, as the query networks and the gold-standard may have different number of nodes, the counts of the gold-standard network are first scaled to a "standard" or "canonical" scale from which they can be scaled back towards networks of different sizes. The following code first shows the computation of the subgraph counts for the ego-networks in the gold-standard network with their corresponding scaling:
 
 ```{r}
-# Scale ego-network subgraph counts by dividing by the total number of k-tuples in the
-# ego-network (where k is the subgraph size)
+# Scale ego-network subgraph counts by dividing by the total number of k-tuples
+# in the ego-network (where k is the subgraph size)
 scaled_subgraph_counts_ref <- scale_graphlet_counts_ego(
   graphlet_counts = subgraph_counts_gst_1,
   max_graphlet_size = max_subgraph_size
@@ -215,7 +220,10 @@ str(scaled_subgraph_counts_ref)
 Finally, the standard or canonical $E_w$ can be obtained by taking the average per bin of the scaled subgraph counts: 
 ```{r}
 # Average of the scaled reference subgraph counts in each density bin
-ref_binned_canonical_subgraph_counts <- mean_density_binned_graphlet_counts(graphlet_counts = scaled_subgraph_counts_ref, density_interval_indexes = binned_densities_gst_1$interval_indexes)
+ref_binned_canonical_subgraph_counts <- mean_density_binned_graphlet_counts(
+  graphlet_counts = scaled_subgraph_counts_ref,
+  density_interval_indexes = binned_densities_gst_1$interval_indexes
+)
 
 ref_binned_canonical_subgraph_counts
 ```
@@ -224,7 +232,8 @@ ref_binned_canonical_subgraph_counts
 
 After obtaining the average scaled subgraph counts per density bin, the subgraph counts of the query networks can be centred:
 ```{r}
-# Scale the reference counts of the gold-standard network to the sizes of each of the query ego-networks.
+# Scale the reference counts of the gold-standard network to the sizes of each
+# of the query ego-networks.
 exp_subgraph_counts_1 <- netdis_expected_counts(
   graphlet_counts = subgraph_counts_1,
   density_breaks = binned_densities_gst_1$breaks,

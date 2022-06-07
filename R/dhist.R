@@ -491,7 +491,8 @@ dhist_variance <- function(dhist) {
     bin_uppers <- mean_centred_locations + hw
     # See comment in issue #21 on Github repository for verification that E[X^2]
     # is calculated as below for a uniform bin
-    bin_x2_integrals <- (bin_lowers^2 + bin_uppers^2 + bin_lowers * bin_uppers) / 3
+    bin_x2_integrals <- (bin_lowers^2 + bin_uppers^2 +
+      bin_lowers * bin_uppers) / 3
     variance <- sum(dhist$masses * bin_x2_integrals) / sum(dhist$masses)
   }
   return(variance)
@@ -563,7 +564,8 @@ normalise_dhist_variance <- function(dhist) {
     # If smoothing_window_width not zero, then update it to reflect the variance
     # normalisation
     if (dhist$smoothing_window_width != 0) {
-      normalised_smoothing_window_width <- dhist$smoothing_window_width / std_dev
+      normalised_smoothing_window_width <-
+        dhist$smoothing_window_width / std_dev
       dhist <- update_dhist(
         dhist,
         smoothing_window_width = normalised_smoothing_window_width

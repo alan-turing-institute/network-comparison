@@ -37,10 +37,12 @@ The `netdist` package also includes examples of a few real networks. These are p
 
 Although the `virusppi` list of PPI networks is loaded along with the `netdist` package, the following code shows how to read a network data from a file in disk:
 ```{r, graphs,fig.align='center',fig.dim=c(6,6)}
-# Set source directory for Virus protein-protein interaction edge files stored in the netdist package.
+# Set source directory for Virus protein-protein interaction edge files stored
+# in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
-# Load query graphs as undirected igraph objects, with no loops, multiple edges or degree zero nodes.
+# Load query graphs as undirected igraph objects, with no loops, multiple edges
+# or degree zero nodes.
 graph_1 <- read_simple_graph(
   file = file.path(source_dir, "EBV.txt"),
   format = "ncol"
@@ -51,12 +53,14 @@ graph_2 <- read_simple_graph(
   format = "ncol"
 )
 
-# Herpes virus EBV protein-protein interaction graph with 60 nodes and 208 edges.
+# Herpes virus EBV protein-protein interaction graph with 60 nodes
+# and 208 edges.
 graph_1
 # Note this graph is the same as
 # virusppi$EBV
 
-# Herpes virus ECL protein-protein interaction graph with 1941 nodes and 3989 edges.
+# Herpes virus ECL protein-protein interaction graph with 1941 nodes
+# and 3989 edges.
 graph_2
 # Note this graph is the same as
 # virusppi$ECL
@@ -95,42 +99,69 @@ and where $p_{t_i}(G)$ and $p_{t_i}(G')$ are the distributions of ${t_i}$ on $G$
 
 ## Comparing two graphs with NetEmd
 ```{r, netemd,fig.align='center'}
-# Set source directory for Virus protein-protein interaction network edge files stored in the netdist package.
+# Set source directory for Virus protein-protein interaction network edge files
+# stored in the netdist package.
 source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
 # Load query graphs as igraph objects
-# Herpes virus EBV protein-protein interaction graph with 60 nodes and 208 edges.
+# Herpes virus EBV protein-protein interaction graph with 60 nodes
+# and 208 edges.
 graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
   format = "ncol"
 )
 
-# Herpes virus ECL protein-protein interaction graph with 1941 nodes and 3989 edges.
+# Herpes virus ECL protein-protein interaction graph with 1941 nodes
+# and 3989 edges.
 graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
   format = "ncol"
 )
 
 # One to one NetEmd comparison.
-netemd_one_to_one(graph_1 = graph_1, graph_2 = graph_2, feature_type = "orbit", smoothing_window_width = 1) # Use of smoothing window 1 is given for discrete integer distributions. If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+# Use of smoothing window 1 is given for discrete integer distributions. If the
+# network features are considered continuous variables smoothing_window_width
+# equal to zero is recommended.
+netemd_one_to_one(
+  graph_1 = graph_1,
+  graph_2 = graph_2,
+  feature_type = "orbit",
+  smoothing_window_width = 1
+)
 ```
 
 ## Comparing two graphs with NetEmd via their Laplacian spectrum
 ```{r, netemdEigen,fig.align='center'}
 # Laplacian
-Lapg_1 <- igraph::laplacian_matrix(graph = graph_1, normalized = FALSE, sparse = FALSE)
-Lapg_2 <- igraph::laplacian_matrix(graph = graph_2, normalized = FALSE, sparse = FALSE)
+Lapg_1 <- igraph::laplacian_matrix(
+  graph = graph_1, normalized = FALSE, sparse = FALSE
+)
+Lapg_2 <- igraph::laplacian_matrix(
+  graph = graph_2, normalized = FALSE, sparse = FALSE
+)
 
 # Normalized Laplacian
-NLapg_1 <- igraph::laplacian_matrix(graph = graph_1, normalized = TRUE, sparse = FALSE)
-NLapg_2 <- igraph::laplacian_matrix(graph = graph_2, normalized = TRUE, sparse = FALSE)
+NLapg_1 <- igraph::laplacian_matrix(
+  graph = graph_1, normalized = TRUE, sparse = FALSE
+)
+NLapg_2 <- igraph::laplacian_matrix(
+  graph = graph_2, normalized = TRUE, sparse = FALSE
+)
 
 # Spectra (this may take a couple of minutes).
-props_1 <- cbind(L.Spectra = eigen(Lapg_1)$values, NL.Spectra = eigen(NLapg_1)$values)
-props_2 <- cbind(L.Spectra = eigen(Lapg_2)$values, NL.Spectra = eigen(NLapg_2)$values)
+props_1 <- cbind(
+  L.Spectra = eigen(Lapg_1)$values, NL.Spectra = eigen(NLapg_1)$values
+)
+props_2 <- cbind(
+  L.Spectra = eigen(Lapg_2)$values, NL.Spectra = eigen(NLapg_2)$values
+)
 
 head(props_1, n = 3)
 head(props_2, n = 3)
 
-netemd_one_to_one(dhists_1 = props_1, dhists_2 = props_2, smoothing_window_width = 0) # If the network features are considered continuous variables smoothing_window_width equal to zero is recommended.
+# If the network features are considered continuous variables
+# smoothing_window_width equal to zero is recommended.
+netemd_one_to_one(
+  dhists_1 = props_1, dhists_2 = props_2, smoothing_window_width = 0
+)
 ```
 -------------------------
 
@@ -207,7 +238,8 @@ where $l$ is the number of connected subgraphs of size $k$, for example, $l=6$ f
 This variant focuses on detecting more meso-level discrepancies between the ego-network structures.
 
 ```{r, netdisGP}
-# Netdis using the Geometric-Poisson approximation as a way to obtain background expectations.
+# Netdis using the Geometric-Poisson approximation as a way to obtain background
+# expectations.
 netdis_one_to_one(graph_1 = graph_1, graph_2 = graph_2, ref_graph = NULL)
 ```
 

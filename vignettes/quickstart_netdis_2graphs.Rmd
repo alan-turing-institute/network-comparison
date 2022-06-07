@@ -67,8 +67,14 @@ ego_2 <- make_named_ego_graph(graph_2,
 ## Count graphlets in ego networks
 ```{r}
 # Count graphlets for ego networks in query and reference graphs
-graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
-graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
+graphlet_counts_1 <- ego_to_graphlet_counts(
+  ego_1,
+  max_graphlet_size = max_graphlet_size
+)
+graphlet_counts_2 <- ego_to_graphlet_counts(
+  ego_2,
+  max_graphlet_size = max_graphlet_size
+)
 ```
 
 ## Use a reference graph to calculate expected graphlet counts in ego network density bins
@@ -85,7 +91,10 @@ ego_ref <- make_named_ego_graph(ref_graph,
   min_ego_edges = min_ego_edges
 )
 
-graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_graphlet_size)
+graphlet_counts_ref <- ego_to_graphlet_counts(
+  ego_ref,
+  max_graphlet_size = max_graphlet_size
+)
 
 # Scale ego-network graphlet counts by dividing by total number of k-tuples in
 # ego-network (where k is graphlet size)

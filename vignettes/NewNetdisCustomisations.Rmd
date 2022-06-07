@@ -50,7 +50,14 @@ gRing_2 <- make_ring(40^2)
 gTree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
 gTree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
 
-glist <- list(Lat_1 = gLat_1, Lat_2 = gLat_2, Ring_1 = gRing_1, Ring_2 = gRing_1, Tree_1 = gTree_1, Tree_2 = gTree_2)
+glist <- list(
+  Lat_1 = gLat_1,
+  Lat_2 = gLat_2,
+  Ring_1 = gRing_1,
+  Ring_2 = gRing_1,
+  Tree_1 = gTree_1,
+  Tree_2 = gTree_2
+)
 
 # Create a random graph to be used as a gold-standard
 gst <- igraph::as.undirected(graph.star(1000))
@@ -65,7 +72,10 @@ netdis_mat_gst <- netdis_many_to_many(
   graphs = glist,
   ref_graph = gst
 )
-netdis.plot(netdislist = netdis_mat_gst, whatrow = 2, main = "Netdis with reference graph")
+netdis.plot(
+  netdislist = netdis_mat_gst, whatrow = 2,
+  main = "Netdis with reference graph"
+)
 ```
 
 ## Using Netdis with a constant valued expectation, $E_w=k$
@@ -107,7 +117,9 @@ mybinning <- function(densities) {
   min_counts_per_interval <- 5
   num_intervals <- 3
   #
-  if (length(densities) < min_counts_per_interval) min_counts_per_interval <- length(densities)
+  if (length(densities) < min_counts_per_interval) {
+    min_counts_per_interval <- length(densities)
+  }
   breaks <- adaptive_breaks(densities,
     min_count = min_counts_per_interval,
     breaks = num_intervals
@@ -136,7 +148,11 @@ netdisgp_mat_mybin <- netdis_many_to_many(
   binning_fn = mybinning
 )
 
-netdis.plot(netdislist = netdisgp_mat_mybin, whatrow = 2, main = "Netdis-GP with mybinning")
+netdis.plot(
+  netdislist = netdisgp_mat_mybin,
+  whatrow = 2,
+  main = "Netdis-GP with mybinning"
+)
 ```
 
 Note that whenever $E_w$ is taken as a constant value, then the binning will not have an effect on the  computation of Netdis. 
@@ -167,8 +183,9 @@ num_bins <- 100
 These values can be directly imputed and changed into the shortcut Netdis function calls. However, not all combinations may be possible. The following shows the use of subgraphs up to size 4, with 3-step ego-networks and where only ego-networks with at least 5 nodes and 4 edges can be considered. Furthermore, the binning of the ego-networks will be sett to start with 20 bins and each bin will be required to have at least 20 elements.
 
 ```{r,fig.align='center',fig.dim=c(7,7)}
-# (We only recommend changing these default values for those users that have a clear understanding of graph theory behind it)
-# (change values with care as not all combinations may be possible).
+# (We only recommend changing these default values for those users that have a
+# clear understanding of graph theory behind it. Change values with care as not
+# all combinations may be possible).
 
 # Defining a new binning function:
 binning_fn <- purrr::partial(binned_densities_adaptive,
@@ -205,8 +222,16 @@ netdisgp_mat <- netdis_many_to_many(
   min_ego_edges = min_ego_edges,
   binning_fn = binning_fn
 )
-netdis.plot(netdislist = netdisgp_mat, whatrow = 2, main = "Netdis-GP: Default parameter values")
-netdis.plot(netdislist = netdisgp_mat_custom, whatrow = 2, main = "Netdis-GP: illustrative parameter changes")
+netdis.plot(
+  netdislist = netdisgp_mat,
+  whatrow = 2,
+  main = "Netdis-GP: Default parameter values"
+)
+netdis.plot(
+  netdislist = netdisgp_mat_custom,
+  whatrow = 2,
+  main = "Netdis-GP: illustrative parameter changes"
+)
 ```
 
 

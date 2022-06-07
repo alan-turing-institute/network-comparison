@@ -87,7 +87,9 @@ netdis_result <- netdis_many_to_many(
 
 # Netdis measure for subgraphs of size 3
 res3 <- netdis_result$netdis["netdis3", ]
-netdis3_mat <- cross_comp_to_matrix(measure = res3, cross_comparison_spec = netdis_result$comp_spec)
+netdis3_mat <- cross_comp_to_matrix(
+  measure = res3, cross_comparison_spec = netdis_result$comp_spec
+)
 
 print("Netdis: subgraph size = 3")
 print(netdis3_mat)
@@ -134,11 +136,20 @@ plot(phangorn::upgma(as.dist(netdis4_mat), method = "average"),
 <!-- comment 
 # Application using NetEmd
 ```{r,fig.align='center',fig.dim=c(6,6),eval=FALSE,include=FALSE}
-netemdlist <- netemd_many_to_many(graphs = query_graphs, smoothing_window_width = 0, mc.cores = 1)
-netemd_mat <- cross_comp_to_matrix(measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec)
+netemdlist <- netemd_many_to_many(
+  graphs = query_graphs, smoothing_window_width = 0, mc.cores = 1
+)
+netemd_mat <- cross_comp_to_matrix(
+  measure = netemdlist$netemds, cross_comparison_spec = netemdlist$comp_spec
+)
 
-netemdlist_smooth <- netemd_many_to_many(graphs = query_graphs, smoothing_window_width = 1, mc.cores = 1)
-netemd_mat_smooth <- cross_comp_to_matrix(measure = netemdlist_smooth$netemds, cross_comparison_spec = netemdlist_smooth$comp_spec)
+netemdlist_smooth <- netemd_many_to_many(
+  graphs = query_graphs, smoothing_window_width = 1, mc.cores = 1
+)
+netemd_mat_smooth <- cross_comp_to_matrix(
+  measure = netemdlist_smooth$netemds,
+  cross_comparison_spec = netemdlist_smooth$comp_spec
+)
 
 par(mfrow = c(1, 2))
 cex <- 1
