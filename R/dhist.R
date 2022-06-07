@@ -399,23 +399,6 @@ segment_area_bowtie <- function(x_diff, y_diff_lower, y_diff_upper) {
     (abs(y_diff_lower) + abs(y_diff_upper))
 }
 
-#' Area between two offset Empirical Cumulative Mass Functions (ECMFs)
-#'
-#' @param ecmf1 An Empirical Cululative Mass Function (ECMF) object of class
-#' \code{dhist_ecmf}
-#' @param ecmf2 An Empirical Cululative Mass Function (ECMF) object of class
-#' \code{dhist_ecmf}
-#' @param offset An offset to add to all locations of the first ECMF. Postive
-#' offsets will shift the ECMF to the right and negative ones to the left.
-#' @return area The area between the two ECMFs, calculated as the integral of
-#' the absolute difference between the two ECMFs
-area_between_offset_ecmfs <- function(ecmf1, ecmf2, offset) {
-  # Construct ECMFs for each normalised histogram
-  ecmf1 <- dhist_ecmf(shift_dhist(dhist1_norm, offset))
-  ecmf2 <- dhist_ecmf(dhist2_norm)
-  area_between_dhist_ecmfs(ecmf1, ecmf2)
-}
-
 #' Sort discrete histogram
 #'
 #' Sort a discrete histogram so that locations are in increasing (default) or
