@@ -5,9 +5,15 @@
 \title{Load all graphs in a directory and calculates their Graphlet-based Degree
 Distributions (GDDs)}
 \usage{
-gdd_for_all_graphs(source_dir, format = "ncol", pattern = ".txt",
-  feature_type = "orbit", max_graphlet_size = 4,
-  ego_neighbourhood_size = 0, mc.cores = getOption("mc.cores", 2L))
+gdd_for_all_graphs(
+  source_dir,
+  format = "ncol",
+  pattern = ".txt",
+  feature_type = "orbit",
+  max_graphlet_size = 4,
+  ego_neighbourhood_size = 0,
+  mc.cores = getOption("mc.cores", 2L)
+)
 }
 \arguments{
 \item{source_dir}{Path to graph directory}
@@ -19,11 +25,12 @@ gdd_for_all_graphs(source_dir, format = "ncol", pattern = ".txt",
 \item{feature_type}{Type of graphlet-based degree distributions. Can be
 \code{graphlet} to count graphlets or \code{orbit} to count orbits.}
 
-\item{max_graphlet_size}{Maximum size of graphlets to use when generating GDD}
+\item{max_graphlet_size}{Maximum size of graphlets to use when generating GDD.
+Currently only size 4 and 5 are supported.}
 
-\item{ego_neighbourhood_size}{The number of steps from the source node to
-include nodes for each ego-network. If set to 0, ego-networks will not be
-used}
+\item{ego_neighbourhood_size}{The number of steps from the source node used to select the
+neighboring nodes to be included in the source node ego-network. If set to 0, ego-networks will not be
+used.}
 
 \item{mc.cores}{Number of cores to use for parallel processing. Defaults to
 the \code{mc.cores} option set in the R environment.}

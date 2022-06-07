@@ -1,0 +1,75 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: "5 5 5 * *"  # run at 05:05 on 5th day of each month
+
+name: Build
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest,   r: 'release'}
+          - {os: ubuntu-latest,   r: 'oldrel'}
+          - {os: ubuntu-latest,   r: 'devel'}
+          - {os: macOS-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      # on PR set branch to be able to push back, see https://github.com/actions/checkout/issues/124
+      - uses: actions/checkout@v2
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - uses: actions/checkout@v2
+        if: github.event_name != 'pull_request'
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-tinytex@v2
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::devtools
+            any::covr
+
+      - name: Document
+        run: devtools::document()
+        shell: Rscript {0}
+
+      - name: Commit and push documentation changes
+        if: ${{ (matrix.config.os == 'ubuntu-latest') && (matrix.config.r == 'release') }}
+        run: |
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add man/\* NAMESPACE
+          git commit -m "Update documentation" || echo "No changes to commit"
+          git pull --ff-only
+          git push origin
+
+      - name: Check package
+        run: devtools::check()
+        shell: Rscript {0}
+
+      - name: Check coverage
+        run: covr::codecov(quiet = FALSE)
+        shell: Rscript {0}

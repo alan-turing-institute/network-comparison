@@ -11,7 +11,7 @@ count_graphlet_tuples(graph_graphlet_counts, max_graphlet_size)
 \item{graph_graphlet_counts}{Node and graphlet counts for a single graph.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets included
-in the tuple counts.}
+in the tuple counts. Currently only size 4 and 5 are supported.}
 }
 \description{
 For each graphlet calculate the number of possible sets of k nodes in the

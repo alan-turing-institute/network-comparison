@@ -4,8 +4,13 @@
 \alias{density_binned_counts}
 \title{Used to calculate aggregated graphlet counts for each density bin.}
 \usage{
-density_binned_counts(graphlet_counts, density_interval_indexes,
-  agg_fn = mean, scale_fn = NULL, max_graphlet_size = NULL)
+density_binned_counts(
+  graphlet_counts,
+  density_interval_indexes,
+  agg_fn = mean,
+  scale_fn = NULL,
+  max_graphlet_size = NULL
+)
 }
 \arguments{
 \item{graphlet_counts}{Graphlet and node counts (columns) for a number of

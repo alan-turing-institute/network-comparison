@@ -4,8 +4,7 @@
 \alias{shift_to_next_alignment}
 \title{Minimum shift to next alignment of two location vectors}
 \usage{
-shift_to_next_alignment(x1, x2, distance_matrix_prev = NULL,
-  shift_prev = NULL)
+shift_to_next_alignment(x1, x2, distance_matrix_prev = NULL, shift_prev = NULL)
 }
 \arguments{
 \item{x1}{First location vector. This vector is being shifted rightwards}

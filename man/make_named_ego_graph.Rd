@@ -4,8 +4,7 @@
 \alias{make_named_ego_graph}
 \title{Get ego-networks for a graph as a named list}
 \usage{
-make_named_ego_graph(graph, order, min_ego_nodes = 3,
-  min_ego_edges = 1, ...)
+make_named_ego_graph(graph, order, min_ego_nodes = 3, min_ego_edges = 1, ...)
 }
 \arguments{
 \item{graph}{An \code{igraph} object}

@@ -4,8 +4,11 @@
 \alias{netdis_subtract_exp_counts}
 \title{netdis_subtract_exp_counts}
 \usage{
-netdis_subtract_exp_counts(graphlet_counts, exp_graphlet_counts,
-  max_graphlet_size)
+netdis_subtract_exp_counts(
+  graphlet_counts,
+  exp_graphlet_counts,
+  max_graphlet_size
+)
 }
 \arguments{
 \item{graphlet_counts}{Matrix of graphlet counts (columns) for a
@@ -14,7 +17,7 @@ nummber of ego networks (rows).}
 \item{exp_graphlet_counts}{Matrix of expected graphlet counts (columns) for a
 nummber of ego networks (rows).}
 
-\item{max_graphlet_size}{Do the subtraction for graphlets up to this size.}
+\item{max_graphlet_size}{Do the subtraction for graphlets up to this size. Currently only size 4 and 5 are supported.}
 }
 \description{
 Subtract expected graphlet counts from actual graphlet counts.
