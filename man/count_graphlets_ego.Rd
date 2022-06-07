@@ -20,8 +20,9 @@ count_graphlets_ego(
 Only graphlets containing up to \code{max_graphlet_size} nodes will be
 counted. Currently only size 4 (default) and 5 are supported.}
 
-\item{neighbourhood_size}{The number of steps from the source node used to select the
-neighboring nodes to be included in the source node ego-network. (Default 2).}
+\item{neighbourhood_size}{The number of steps from the source node used to
+select the neighboring nodes to be included in the source node ego-network.
+(Default 2).}
 
 \item{min_ego_nodes}{Only ego networks with at least \code{min_ego_nodes}
 nodes are returned. (Default 3).}

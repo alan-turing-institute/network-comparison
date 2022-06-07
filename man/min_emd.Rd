@@ -15,8 +15,8 @@ min_emd(dhist1, dhist2, method = "optimise")
 offsets for each pair of histograms. Default is "optimise" to use
 R's built-in \code{stats::optimise} method to efficiently find the offset
 with the minimal EMD. However, this is not guaranteed to find the global
-minimum if multiple local minima EMDs exist. You can alternatively specify the
-"exhaustive" method, which will exhaustively evaluate the EMD between the
+minimum if multiple local minima EMDs exist. You can alternatively specify
+the "exhaustive" method, which will exhaustively evaluate the EMD between the
 histograms at all offsets that are candidates for the minimal EMD.}
 }
 \value{

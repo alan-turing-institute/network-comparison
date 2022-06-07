@@ -2,7 +2,8 @@
 % Please edit documentation in R/measures_net_emd.R
 \name{netemd_single_pair}
 \alias{netemd_single_pair}
-\title{Internal function to compute the minimum Earth Mover's Distance between standarized and translated histograms}
+\title{Internal function to compute the minimum Earth Mover's Distance between
+standarized and translated histograms}
 \usage{
 netemd_single_pair(
   dhist1,
@@ -16,8 +17,8 @@ netemd_single_pair(
 offsets for each pair of histograms. Default is "optimise" to use
 R's built-in \code{stats::optimise} method to efficiently find the offset
 with the minimal EMD. However, this is not guaranteed to find the global
-minimum if multiple local minima EMDs exist. You can alternatively specify the
-"exhaustive" method, which will exhaustively evaluate the EMD between the
+minimum if multiple local minima EMDs exist. You can alternatively specify
+the "exhaustive" method, which will exhaustively evaluate the EMD between the
 histograms at all offsets that are candidates for the minimal EMD.}
 
 \item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
@@ -26,18 +27,23 @@ which  results in no smoothing. Care should be taken to select a
 \code{smoothing_window_width} that is appropriate for the discrete domain
 (e.g.for the integer domain a width of 1 is the natural choice)}
 
-\item{dhists_1}{A \code{dhist} discrete histogram object or a list of such objects}
+\item{dhists_1}{A \code{dhist} discrete histogram object or a list of such
+objects}
 
-\item{dhists_2}{A \code{dhist} discrete histogram object or a list of such objects}
+\item{dhists_2}{A \code{dhist} discrete histogram object or a list of such
+objects}
 }
 \value{
 A list with the following named elements
-\code{net_emd}: the NetEMD for the set of histogram pairs, \code{min_offsets}: the associated
-offsets giving the minimal EMD for each pair of histograms and \code{min_offset_std}: Offset used in the standardised histograms.
+\code{net_emd}: the NetEMD for the set of histogram pairs,
+\code{min_offsets}: the associated offsets giving the minimal EMD for each
+pair of histograms and \code{min_offset_std}: Offset used in the standardised
+histograms.
 }
 \description{
 Calculates the minimum Earth Mover's Distance (EMD) between two
-discrete histograms after normalising each histogram to unit mass and variance.
+discrete histograms after normalising each histogram to unit mass and
+variance.
 This is calculated as follows:
   1. Normalise each histogram to have unit mass and unit variance
   2. Find the minimum EMD between the histograms
@@ -51,5 +57,10 @@ props_2 <- count_orbits_per_node(graph = goldstd_2, max_graphlet_size = 5)
 dhists_1 <- graph_features_to_histograms(props_1)
 dhists_2 <- graph_features_to_histograms(props_2)
 # Obtain the minimum NetEMD_edges between the histograms
-netemd_single_pair(dhists_1[[1]], dhists_2[[1]], method = "optimise", smoothing_window_width = 0)
+netemd_single_pair(
+  dhists_1[[1]],
+  dhists_2[[1]],
+  method = "optimise",
+  smoothing_window_width = 0
+)
 }

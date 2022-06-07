@@ -22,7 +22,8 @@ the number of graphlet orbits each node participates in.}
 Only graphlets containing up to \code{max_graphlet_size} nodes will be
 counted. Currently only size 4 and 5 are supported.}
 
-\item{ego_neighbourhood_size}{The number of steps from the source node used to select the
+\item{ego_neighbourhood_size}{The number of steps from the source node used
+to select the
 neighboring nodes to be included in the source node ego-network.}
 }
 \value{
@@ -30,6 +31,7 @@ List of graphlet-based degree distributions, with each distribution
 represented as a \code{dhist} discrete histogram object.
 }
 \description{
-Short-cut function to create graphlet-based degree distributions from \code{igraph} graph object
-using the ORCA fast graphlet orbit counting package.
+Short-cut function to create graphlet-based degree distributions from
+\code{igraph} graph object using the ORCA fast graphlet orbit counting
+package.
 }
