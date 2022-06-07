@@ -7,7 +7,7 @@
 netdis_expected_counts(
   graphlet_counts,
   density_breaks,
-  density_binned_reference_counts,
+  density_binned_ref_counts,
   max_graphlet_size,
   scale_fn = NULL
 )
@@ -18,7 +18,7 @@ nummber of ego networks (rows).}
 
 \item{density_breaks}{Density values defining bin edges.}
 
-\item{density_binned_reference_counts}{Reference network graphlet counts for
+\item{density_binned_ref_counts}{Reference network graphlet counts for
 each density bin.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
@@ -28,7 +28,7 @@ Currently only size 4 and 5 are supported.}
 \item{scale_fn}{Optional function to scale calculated expected counts, taking
 \code{graphlet_counts} and \code{max_graphlet_size} as arguments,
 and returning a scale factor that the looked up
-\code{density_binned_reference_counts} values will be multiplied by.}
+\code{density_binned_ref_counts} values will be multiplied by.}
 }
 \description{
 Calculates expected graphlet counts for each ego network based on its density

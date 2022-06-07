@@ -367,7 +367,7 @@ netemd_many_to_many <- function(graphs = NULL,
   # Check arguments 4
   # cross_comparison_spec was coded to require names!
   if (is.null(names(dhists))) {
-    names(dhists) <- paste("Net", 1:length(dhists), sep = "")
+    names(dhists) <- paste("Net", seq_len(dhists), sep = "")
   }
   ## ------------------------------------------------------------------------
   comp_spec <- cross_comparison_spec(dhists)
@@ -492,9 +492,6 @@ netemd_single_pair <- function(dhist1, dhist2, method = "optimise",
   # Store means and variances to calculate offset later
   mean1 <- dhist_mean_location(dhist1)
   mean2 <- dhist_mean_location(dhist2)
-
-  var1 <- dhist_variance(dhist1)
-  var2 <- dhist_variance(dhist2)
 
   # Mean centre histograms. This helps with numerical stability as, after
   # variance normalisation, the differences between locations are often small.

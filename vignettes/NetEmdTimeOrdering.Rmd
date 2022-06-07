@@ -64,9 +64,9 @@ World trade networks consist of relatively dense networks, thus leading to longe
 # it is not necessary to run it for the upcoming examples as a larger set of
 # counts has been already computed.
 if (FALSE) {
-  Counts <- list()
-  for (i in 1:length(wtnets)) {
-    Counts[[names(wtnets)[i]]] <- count_orbits_per_node(
+  counts <- list()
+  for (i in seq_len(wtnets)) {
+    counts[[names(wtnets)[i]]] <- count_orbits_per_node(
       graph = wtnets[[i]], max_graphlet_size = 5
     )
   }
@@ -76,10 +76,10 @@ if (FALSE) {
 Now, with pre-computed counts NetEmd can be calculated more rapidly as the computations of the counts are often the bottle neck in the computational time of NetEmd. NetEmd will be called `r length(worldtradesub$Counts) * (length(worldtradesub$Counts) - 1)/2 ` times in order to obtain all pairwise comparisons between the trade networks from 1985 to 2014 (networks with pre-computed subgraph counts):
 ```{r}
 # The pre-computed counts already in the package
-Counts <- worldtradesub$Counts
+counts <- worldtradesub$Counts
 
 # Calling NetEmd
-netemd_result <- netemd_many_to_many(dhists = Counts, mc.cores = 1)
+netemd_result <- netemd_many_to_many(dhists = counts, mc.cores = 1)
 
 # Results
 netemd_matrix <- cross_comp_to_matrix(
@@ -95,7 +95,7 @@ print(netemd_matrix[1:10, 1:5])
 Based on the comparison of the world trade networks across the years, we can identify periods of time where possible considerable changes in world trade have occurred. The following heat map clearly shows the existence of two potential
  changes in the world trade system, and which correspond to 1995-1996 and 2010-2011.
 ```{r,fig.align='center',fig.dim=c(8.5,8.5)}
-netemd.plot(
+netemd_plot(
   netemdlist = netemd_result,
   clustering_method = "ward.D",
   main = "NetEmd",

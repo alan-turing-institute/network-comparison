@@ -4,17 +4,13 @@
 \alias{netdis}
 \title{Netdis - for one graphlet size}
 \usage{
-netdis(
-  centred_graphlet_count_vector_1,
-  centred_graphlet_count_vector_2,
-  graphlet_size
-)
+netdis(centred_graphlet_counts_1, centred_graphlet_counts_2, graphlet_size)
 }
 \arguments{
-\item{centred_graphlet_count_vector_1}{Centred Graphlet Counts vector for
+\item{centred_graphlet_counts_1}{Centred Graphlet Counts vector for
 graph 1}
 
-\item{centred_graphlet_count_vector_2}{Centred Graphlet Counts vector for
+\item{centred_graphlet_counts_2}{Centred Graphlet Counts vector for
 graph 2}
 
 \item{graphlet_size}{The size of graphlets to use for the Netdis calculation

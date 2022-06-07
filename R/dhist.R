@@ -564,11 +564,11 @@ normalise_dhist_variance <- function(dhist) {
     # If smoothing_window_width not zero, then update it to reflect the variance
     # normalisation
     if (dhist$smoothing_window_width != 0) {
-      normalised_smoothing_window_width <-
+      norm_smoothing_window_width <-
         dhist$smoothing_window_width / std_dev
       dhist <- update_dhist(
         dhist,
-        smoothing_window_width = normalised_smoothing_window_width
+        smoothing_window_width = norm_smoothing_window_width
       )
     }
   }

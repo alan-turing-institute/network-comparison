@@ -73,8 +73,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
   # Triangle(4, even), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 4, 3, 2, 1)
-  bin_centres1 <- 1:length(bin_masses1)
-  bin_centres2 <- 1:length(bin_masses2)
+  bin_centres1 <- seq_len(bin_masses1)
+  bin_centres2 <- seq_len(bin_masses2)
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   num_nonzero_bins <- sum(bin_masses1 > 0)
@@ -90,8 +90,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
   # Triangle(4, even), shifting by changing centres
   bin_masses1 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 1, 2, 3, 4, 4, 3, 2, 1, 0)
-  bin_centres1 <- 1:length(bin_masses1)
-  bin_centres2 <- 1:length(bin_masses2) + 1
+  bin_centres1 <- seq_len(bin_masses1)
+  bin_centres2 <- seq_len(bin_masses2) + 1
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   num_nonzero_bins <- sum(bin_masses1 > 0)
@@ -106,8 +106,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
   # Triangle(5, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 4, 3, 2, 1)
-  bin_centres1 <- 1:length(bin_masses1)
-  bin_centres2 <- 1:length(bin_masses2)
+  bin_centres1 <- seq_len(bin_masses1)
+  bin_centres2 <- seq_len(bin_masses2)
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
@@ -121,8 +121,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
   # Triangle(5, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
-  bin_centres1 <- 1:length(bin_masses1)
-  bin_centres2 <- 1:length(bin_masses2) + 1
+  bin_centres1 <- seq_len(bin_masses1)
+  bin_centres2 <- seq_len(bin_masses2) + 1
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
@@ -136,8 +136,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
   # Triangle(5, even), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1)
-  bin_centres1 <- 1:length(bin_masses1)
-  bin_centres2 <- 1:length(bin_masses2)
+  bin_centres1 <- seq_len(bin_masses1)
+  bin_centres2 <- seq_len(bin_masses2)
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
@@ -151,8 +151,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
   # Triangle(5, even), shifting by changing centres
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0)
-  bin_centres1 <- 1:length(bin_masses1)
-  bin_centres2 <- 1:length(bin_masses2) + 1
+  bin_centres1 <- seq_len(bin_masses1)
+  bin_centres2 <- seq_len(bin_masses2) + 1
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
@@ -166,8 +166,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
   # Triangle(6, odd), shifting by changing masses
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1)
-  bin_centres1 <- 1:length(bin_masses1)
-  bin_centres2 <- 1:length(bin_masses2)
+  bin_centres1 <- seq_len(bin_masses1)
+  bin_centres2 <- seq_len(bin_masses2)
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
@@ -181,8 +181,8 @@ test_that("EMD methods return numBins/2 when offsetting a symmetric discrete
   # Triangle(6, odd), shifting by changing centres
   bin_masses1 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
   bin_masses2 <- c(0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0)
-  bin_centres1 <- 1:length(bin_masses1)
-  bin_centres2 <- 1:length(bin_masses2) + 1
+  bin_centres1 <- seq_len(bin_masses1)
+  bin_centres2 <- seq_len(bin_masses2) + 1
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
   expected <- cost_fn(sum(bin_masses1 > 0))
@@ -249,13 +249,13 @@ test_that("EMD methods return same result when order of densely specified bins
           is changed", {
   bin_masses1 <- c(1, 1, 1, 1, 0, 0, 0, 0, 0)
   bin_masses2 <- c(0, 0, 0, 0, 0, 1, 1, 1, 1)
-  bin_centres1 <- 1:length(bin_masses1)
-  bin_centres2 <- 1:length(bin_masses2)
+  bin_centres1 <- seq_len(bin_masses1)
+  bin_centres2 <- seq_len(bin_masses2)
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
 
-  permuted_indexes1 <- sample(1:length(bin_masses1), replace = FALSE)
-  permuted_indexes2 <- sample(1:length(bin_masses2), replace = FALSE)
+  permuted_indexes1 <- sample(seq_len(bin_masses1), replace = FALSE)
+  permuted_indexes2 <- sample(seq_len(bin_masses2), replace = FALSE)
 
   permuted_bin_masses1 <- bin_masses1[permuted_indexes1]
   permuted_bin_centres1 <- bin_centres1[permuted_indexes1]
@@ -296,8 +296,8 @@ test_that("EMD methods return same result when order of sparsely specified bins
   histogram1 <- dhist(masses = bin_masses1, locations = bin_centres1)
   histogram2 <- dhist(masses = bin_masses2, locations = bin_centres2)
 
-  permuted_indexes1 <- sample(1:length(bin_masses1), replace = FALSE)
-  permuted_indexes2 <- sample(1:length(bin_masses2), replace = FALSE)
+  permuted_indexes1 <- sample(seq_len(bin_masses1), replace = FALSE)
+  permuted_indexes2 <- sample(seq_len(bin_masses2), replace = FALSE)
 
   permuted_bin_masses1 <- bin_masses1[permuted_indexes1]
   permuted_bin_centres1 <- bin_centres1[permuted_indexes1]

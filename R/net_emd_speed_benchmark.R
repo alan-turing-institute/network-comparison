@@ -1,4 +1,4 @@
-netEMDSpeedTest <- function() {
+netemd_speed_test <- function() {
   ## load the data
   source_dir <- system.file(file.path("extdata", "random"), package = "netdist")
   print(source_dir)
@@ -11,9 +11,9 @@ netEMDSpeedTest <- function() {
   )
   n1 <- names(graphs)
   lab1 <- c()
-  gddBuildTime <- c()
-  netEMDtime <- c()
-  for (i in 1:length(graphs))
+  gdd_build_time <- c()
+  netemd_time <- c()
+  for (i in seq_len(graphs))
   {
     for (j in 1:(i))
     {
@@ -21,18 +21,18 @@ netEMDSpeedTest <- function() {
       g2 <- graphs[[j]]
       lab1 <- append(lab1, paste(n1[i], n1[j], sep = ","))
       print(paste(n1[i], n1[j], sep = ","))
-      fulltimeStart <- Sys.time()
+      fulltime_start <- Sys.time()
       gdd1 <- gdd(g1)
       gdd2 <- gdd(g2)
-      netEMDStart <- Sys.time()
+      netemd_start <- Sys.time()
       net_emd(gdd1, gdd2)
-      endTime <- Sys.time()
-      gddBuildTime <- append(
-        gddBuildTime,
-        as.double(netEMDStart - fulltimeStart)
+      end_time <- Sys.time()
+      gdd_build_time <- append(
+        gdd_build_time,
+        as.double(netemd_start - fulltime_start)
       )
-      netEMDtime <- append(netEMDtime, as.double(endTime - netEMDStart))
+      net_emd_time <- append(netemd_time, as.double(end_time - netemd_start))
     }
   }
-  list(gddBuildTime = gddBuildTime, netEMDtime = netEMDtime)
+  list(gddBuildTime = gdd_build_time, netEMDtime = netemd_time)
 }

@@ -92,11 +92,11 @@ Generation of tree-like networks with 400 nodes and 1600 nodes.
 ```{r, netwokrs,fig.align='center',fig.dim=c(6,6)}
 # Create networks
 set.seed(34)
-gTree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
-gTree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
+gtree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
+gtree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
 
-plot(gTree_1, vertex.size = 0.8, vertex.label = NA)
-plot(gTree_2, vertex.size = 0.8, vertex.label = NA)
+plot(gtree_1, vertex.size = 0.8, vertex.label = NA)
+plot(gtree_2, vertex.size = 0.8, vertex.label = NA)
 ```
 
 
@@ -127,13 +127,13 @@ num_bins <- 100
 One of the first steps in Netdis is the extraction of all ego-networks in each of the query networks:
 ```{r}
 # Get ego-networks for query graphs
-ego_1 <- make_named_ego_graph(gTree_1,
+ego_1 <- make_named_ego_graph(gtree_1,
   order = neighbourhood_size,
   min_ego_nodes = min_ego_nodes,
   min_ego_edges = min_ego_edges
 )
 
-ego_2 <- make_named_ego_graph(gTree_2,
+ego_2 <- make_named_ego_graph(gtree_2,
   order = neighbourhood_size,
   min_ego_nodes = min_ego_nodes,
   min_ego_edges = min_ego_edges
@@ -207,7 +207,7 @@ With $E_w$ now obtained, Netdis-GP, can be compute as per its construction by fi
 exp_gp_subgraph_counts_1 <- netdis_expected_counts(
   graphlet_counts = subgraph_counts_1,
   density_breaks = binned_densities_1$breaks,
-  density_binned_reference_counts = binned_gp_subgraph_counts_1,
+  density_binned_ref_counts = binned_gp_subgraph_counts_1,
   max_graphlet_size = max_subgraph_size,
   scale_fn = NULL
 )
@@ -216,7 +216,7 @@ exp_gp_subgraph_counts_1 <- netdis_expected_counts(
 exp_gp_subgraph_counts_2 <- netdis_expected_counts(
   graphlet_counts = subgraph_counts_2,
   density_breaks = binned_densities_2$breaks,
-  density_binned_reference_counts = binned_gp_subgraph_counts_2,
+  density_binned_ref_counts = binned_gp_subgraph_counts_2,
   max_graphlet_size = max_subgraph_size,
   scale_fn = NULL
 )
@@ -253,8 +253,8 @@ Finally, the total centred counts can be used to obtain the Netdis statistic:
 ```{r}
 
 netdis_result <- netdis_uptok(
-  centred_graphlet_count_vector_1 = sum_subgraph_counts_1,
-  centred_graphlet_count_vector_2 = sum_subgraph_counts_2,
+  centred_graphlet_counts_1 = sum_subgraph_counts_1,
+  centred_graphlet_counts_2 = sum_subgraph_counts_2,
   max_graphlet_size = max_subgraph_size
 )
 

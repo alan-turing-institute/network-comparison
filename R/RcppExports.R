@@ -22,12 +22,6 @@ counts_from_observations <- function(features) {
 #'
 #' @export
 emd_fast_no_smoothing <- function(locations1, values1, locations2, values2) {
-    .Call(
-        `_netdist_emd_fast_no_smoothing`,
-        locations1,
-        values1,
-        locations2,
-        values2
-    )
+    .Call(`_netdist_emd_fast_no_smoothing`, locations1, values1, locations2, values2)
 }
 

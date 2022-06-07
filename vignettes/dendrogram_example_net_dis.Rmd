@@ -154,8 +154,8 @@ netemd_mat_smooth <- cross_comp_to_matrix(
 par(mfrow = c(1, 2))
 cex <- 1
 
-graphNetEMDdists_smooth <- as.dist(netemd_mat_smooth)
-plot(phangorn::upgma(as.dist(graphNetEMDdists_smooth), method = "average"),
+graph_netemd_dists_smooth <- as.dist(netemd_mat_smooth)
+plot(phangorn::upgma(as.dist(graph_netemd_dists_smooth), method = "average"),
   use.edge.length = FALSE,
   edge.width = cex * 2,
   main = "NetEmd: with smoothing",
@@ -165,8 +165,8 @@ plot(phangorn::upgma(as.dist(graphNetEMDdists_smooth), method = "average"),
 )
 
 
-graphNetEMDdists <- as.dist(netemd_mat)
-plot(phangorn::upgma(as.dist(graphNetEMDdists), method = "average"),
+graph_netemd_dists <- as.dist(netemd_mat)
+plot(phangorn::upgma(as.dist(graph_netemd_dists), method = "average"),
   use.edge.length = FALSE,
   edge.width = cex * 2,
   main = "NetEmd: without smoothing",

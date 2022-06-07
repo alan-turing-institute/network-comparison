@@ -5,16 +5,16 @@
 \title{Netdis - for all graphlet sizes up to max_graphlet_size}
 \usage{
 netdis_uptok(
-  centred_graphlet_count_vector_1,
-  centred_graphlet_count_vector_2,
+  centred_graphlet_counts_1,
+  centred_graphlet_counts_2,
   max_graphlet_size
 )
 }
 \arguments{
-\item{centred_graphlet_count_vector_1}{Centred Graphlet Counts  vector for
+\item{centred_graphlet_counts_1}{Centred Graphlet Counts  vector for
 graph 1}
 
-\item{centred_graphlet_count_vector_2}{Centred Graphlet Counts vector for
+\item{centred_graphlet_counts_2}{Centred Graphlet Counts vector for
 graph 2}
 
 \item{max_graphlet_size}{max graphlet size to calculate Netdis for.

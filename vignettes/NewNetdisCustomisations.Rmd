@@ -43,20 +43,20 @@ Generation of regular grid, ring and tree-like networks with 400 nodes and 1600 
 # Create lattice, Ring and Tree like networks of sizes 20^2 and 40^2.
 # Create networks
 set.seed(3171)
-gLat_1 <- graph.lattice(c(20, 20))
-gLat_2 <- graph.lattice(c(40, 40))
-gRing_1 <- make_ring(20^2)
-gRing_2 <- make_ring(40^2)
-gTree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
-gTree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
+glat_1 <- graph.lattice(c(20, 20))
+glat_2 <- graph.lattice(c(40, 40))
+gring_1 <- make_ring(20^2)
+gring_2 <- make_ring(40^2)
+gtree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
+gtree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
 
 glist <- list(
-  Lat_1 = gLat_1,
-  Lat_2 = gLat_2,
-  Ring_1 = gRing_1,
-  Ring_2 = gRing_1,
-  Tree_1 = gTree_1,
-  Tree_2 = gTree_2
+  Lat_1 = glat_1,
+  Lat_2 = glat_2,
+  Ring_1 = gring_1,
+  Ring_2 = gring_1,
+  Tree_1 = gtree_1,
+  Tree_2 = gtree_2
 )
 
 # Create a random graph to be used as a gold-standard
@@ -72,7 +72,7 @@ netdis_mat_gst <- netdis_many_to_many(
   graphs = glist,
   ref_graph = gst
 )
-netdis.plot(
+netdis_plot(
   netdislist = netdis_mat_gst, whatrow = 2,
   main = "Netdis with reference graph"
 )
@@ -86,13 +86,13 @@ netdis_mat_zero <- netdis_many_to_many(
   graphs = glist,
   ref_graph = 0
 )
-netdis.plot(netdislist = netdis_mat_zero, whatrow = 2, main = "Netdis Ew=0")
+netdis_plot(netdislist = netdis_mat_zero, whatrow = 2, main = "Netdis Ew=0")
 
 netdis_mat_5 <- netdis_many_to_many(
   graphs = glist,
   ref_graph = 5
 )
-netdis.plot(netdislist = netdis_mat_5, whatrow = 2, main = "Netdis Ew=5")
+netdis_plot(netdislist = netdis_mat_5, whatrow = 2, main = "Netdis Ew=5")
 ```
 
 
@@ -103,7 +103,7 @@ netdisgp_mat <- netdis_many_to_many(
   graphs = glist,
   ref_graph = NULL
 )
-netdis.plot(netdisgp_mat, whatrow = 2, main = "Netdis-GP")
+netdis_plot(netdisgp_mat, whatrow = 2, main = "Netdis-GP")
 ```
 
 ---------------------------
@@ -148,7 +148,7 @@ netdisgp_mat_mybin <- netdis_many_to_many(
   binning_fn = mybinning
 )
 
-netdis.plot(
+netdis_plot(
   netdislist = netdisgp_mat_mybin,
   whatrow = 2,
   main = "Netdis-GP with mybinning"
@@ -222,12 +222,12 @@ netdisgp_mat <- netdis_many_to_many(
   min_ego_edges = min_ego_edges,
   binning_fn = binning_fn
 )
-netdis.plot(
+netdis_plot(
   netdislist = netdisgp_mat,
   whatrow = 2,
   main = "Netdis-GP: Default parameter values"
 )
-netdis.plot(
+netdis_plot(
   netdislist = netdisgp_mat_custom,
   whatrow = 2,
   main = "Netdis-GP: illustrative parameter changes"

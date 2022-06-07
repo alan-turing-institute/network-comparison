@@ -126,19 +126,19 @@ test_that(
 context("ORCA interface: Graph cross comparison")
 test_that("cross_comparison_spec works for virus PPI data", {
   # Load viurs PPI network data in ORCA-compatible edge list format
-  expected_name_A <- c(
+  exp_name_a <- c(
     rep("EBV", 4), rep("ECL", 3), rep("HSV-1", 2),
     rep("KSHV", 1), rep("VZV", 0)
   )
-  expected_index_A <- c(rep(1, 4), rep(2, 3), rep(3, 2), rep(4, 1), rep(5, 0))
-  expected_name_B <- c(
+  exp_index_a <- c(rep(1, 4), rep(2, 3), rep(3, 2), rep(4, 1), rep(5, 0))
+  exp_name_b <- c(
     c("ECL", "HSV-1", "KSHV", "VZV"), c("HSV-1", "KSHV", "VZV"),
     c("KSHV", "VZV"), c("VZV")
   )
-  expected_index_B <- c(c(2, 3, 4, 5), c(3, 4, 5), c(4, 5), c(5))
+  exp_index_b <- c(c(2, 3, 4, 5), c(3, 4, 5), c(4, 5), c(5))
   expected <- as.data.frame(cbind(
-    expected_name_A, expected_name_B,
-    expected_index_A, expected_index_B
+    exp_name_a, exp_name_b,
+    exp_index_a, exp_index_b
   ))
   colnames(expected) <- c("name_a", "name_b", "index_a", "index_b")
 
@@ -177,31 +177,31 @@ test_that("Single and zero node graphs are gracefully handled", {
     "O62", "O63", "O64", "O65", "O66", "O67", "O68", "O69",
     "O70", "O71", "O72"
   ))
-  expected_zero_node_counts4 <- matrix(0, nrow = 0, ncol = length(names4))
-  colnames(expected_zero_node_counts4) <- names4
-  expected_zero_node_counts5 <- matrix(0, nrow = 0, ncol = length(names5))
-  colnames(expected_zero_node_counts5) <- names5
+  exp_zero_node_counts4 <- matrix(0, nrow = 0, ncol = length(names4))
+  colnames(exp_zero_node_counts4) <- names4
+  exp_zero_node_counts5 <- matrix(0, nrow = 0, ncol = length(names5))
+  colnames(exp_zero_node_counts5) <- names5
 
-  expected_single_node_counts4 <- matrix(0, nrow = 1, ncol = length(names4))
-  colnames(expected_single_node_counts4) <- names4
-  expected_single_node_counts5 <- matrix(0, nrow = 1, ncol = length(names5))
-  colnames(expected_single_node_counts5) <- names5
+  exp_single_node_counts4 <- matrix(0, nrow = 1, ncol = length(names4))
+  colnames(exp_single_node_counts4) <- names4
+  exp_single_node_counts5 <- matrix(0, nrow = 1, ncol = length(names5))
+  colnames(exp_single_node_counts5) <- names5
 
   expect_equal(
-    expected_zero_node_counts4,
+    exp_zero_node_counts4,
     count_orbits_per_node(zero_node_graph, max_graphlet_size = 4)
   )
   expect_equal(
-    expected_zero_node_counts5,
+    exp_zero_node_counts5,
     count_orbits_per_node(zero_node_graph, max_graphlet_size = 5)
   )
 
   expect_equal(
-    expected_single_node_counts4,
+    exp_single_node_counts4,
     count_orbits_per_node(single_node_graph, max_graphlet_size = 4)
   )
   expect_equal(
-    expected_single_node_counts5,
+    exp_single_node_counts5,
     count_orbits_per_node(single_node_graph, max_graphlet_size = 5)
   )
 })
@@ -1189,7 +1189,7 @@ test_that("orbit_to_graphlet_counts summation works", {
   g28_counts <- rowSums(orbit_counts_5[, g28_indexes, drop = FALSE])
   g29_counts <- rowSums(orbit_counts_5[, g29_indexes, drop = FALSE])
   # Define expected graphlet count matrix for graphlets up to 5 nodes
-  expected_graphlet_counts_5 <-
+  exp_graphlet_counts_5 <-
     cbind(
       g0_counts, g1_counts, g2_counts, g3_counts, g4_counts, g5_counts,
       g6_counts, g7_counts, g8_counts, g9_counts, g10_counts, g11_counts,
@@ -1198,7 +1198,7 @@ test_that("orbit_to_graphlet_counts summation works", {
       g22_counts, g23_counts, g24_counts, g25_counts, g26_counts,
       g27_counts, g28_counts, g29_counts
     )
-  colnames(expected_graphlet_counts_5) <-
+  colnames(exp_graphlet_counts_5) <-
     c(
       "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10",
       "G11", "G12", "G13", "G14", "G15", "G16", "G17", "G18", "G19",
@@ -1207,13 +1207,13 @@ test_that("orbit_to_graphlet_counts summation works", {
     )
   # Define epected graphlet count matrix for graphlets up to 4 nodes by
   # selecting a subset of the matrix for graphlets up to 5 nodes
-  expected_graphlet_counts_4 <- expected_graphlet_counts_5[, 1:9]
+  exp_graphlet_counts_4 <- exp_graphlet_counts_5[, 1:9]
   # Calculate actual graphlet counts from functions under test
   actual_graphlet_counts_4 <- orbit_to_graphlet_counts(orbit_counts_4)
   actual_graphlet_counts_5 <- orbit_to_graphlet_counts(orbit_counts_5)
   # Check expected and actual graphlet counts match
-  expect_equal(actual_graphlet_counts_4, expected_graphlet_counts_4)
-  expect_equal(actual_graphlet_counts_5, expected_graphlet_counts_5)
+  expect_equal(actual_graphlet_counts_4, exp_graphlet_counts_4)
+  expect_equal(actual_graphlet_counts_5, exp_graphlet_counts_5)
 })
 
 context("ORCA interface: Named ego networks")
@@ -1247,12 +1247,12 @@ test_that(
     # The expectation below is based on igraph::graph_from_edgelist adding nodes
     # in the order they appear in the edge list, and igraph::V returning them
     # in this same order
-    expected_node_names <- c(
+    exp_node_names <- c(
       "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"
     )
 
     # Expected edgelists for ego networks of order 1
-    expected_ego_elist_n1_o1 <- rbind(
+    exp_ego_elist_n1_o1 <- rbind(
       c("n1", "n2"),
       c("n1", "n4"),
       c("n1", "n6"),
@@ -1260,33 +1260,33 @@ test_that(
       c("n2", "n4"),
       c("n4", "n6")
     )
-    expected_ego_elist_n2_o1 <- rbind(
+    exp_ego_elist_n2_o1 <- rbind(
       c("n1", "n2"),
       c("n1", "n4"),
       c("n2", "n3"),
       c("n2", "n4"),
       c("n2", "n5")
     )
-    expected_ego_elist_n3_o1 <- rbind(
+    exp_ego_elist_n3_o1 <- rbind(
       c("n2", "n3")
     )
-    expected_ego_elist_n4_o1 <- rbind(
+    exp_ego_elist_n4_o1 <- rbind(
       c("n1", "n2"),
       c("n1", "n4"),
       c("n1", "n6"),
       c("n2", "n4"),
       c("n4", "n6")
     )
-    expected_ego_elist_n5_o1 <- rbind(
+    exp_ego_elist_n5_o1 <- rbind(
       c("n2", "n5")
     )
-    expected_ego_elist_n6_o1 <- rbind(
+    exp_ego_elist_n6_o1 <- rbind(
       c("n1", "n4"),
       c("n1", "n6"),
       c("n4", "n6"),
       c("n6", "n8")
     )
-    expected_ego_elist_n7_o1 <- rbind(
+    exp_ego_elist_n7_o1 <- rbind(
       c("n1", "n7"),
       c("n7", "n8"),
       c("n7", "n9"),
@@ -1295,7 +1295,7 @@ test_that(
       c("n8", "n10"),
       c("n9", "n10")
     )
-    expected_ego_elist_n8_o1 <- rbind(
+    exp_ego_elist_n8_o1 <- rbind(
       c("n6", "n8"),
       c("n7", "n8"),
       c("n7", "n9"),
@@ -1304,7 +1304,7 @@ test_that(
       c("n8", "n10"),
       c("n9", "n10")
     )
-    expected_ego_elist_n9_o1 <- rbind(
+    exp_ego_elist_n9_o1 <- rbind(
       c("n7", "n8"),
       c("n7", "n9"),
       c("n7", "n10"),
@@ -1312,7 +1312,7 @@ test_that(
       c("n8", "n10"),
       c("n9", "n10")
     )
-    expected_ego_elist_n10_o1 <- rbind(
+    exp_ego_elist_n10_o1 <- rbind(
       c("n7", "n8"),
       c("n7", "n9"),
       c("n7", "n10"),
@@ -1327,17 +1327,17 @@ test_that(
     min_ego_nodes <- 0
     min_ego_edges <- 0
 
-    expected_ego_elists_o1 <- list(
-      n1 = dplyr::arrange(data.frame(expected_ego_elist_n1_o1), X1, X2),
-      n2 = dplyr::arrange(data.frame(expected_ego_elist_n2_o1), X1, X2),
-      n3 = dplyr::arrange(data.frame(expected_ego_elist_n3_o1), X1, X2),
-      n4 = dplyr::arrange(data.frame(expected_ego_elist_n4_o1), X1, X2),
-      n5 = dplyr::arrange(data.frame(expected_ego_elist_n5_o1), X1, X2),
-      n6 = dplyr::arrange(data.frame(expected_ego_elist_n6_o1), X1, X2),
-      n7 = dplyr::arrange(data.frame(expected_ego_elist_n7_o1), X1, X2),
-      n8 = dplyr::arrange(data.frame(expected_ego_elist_n8_o1), X1, X2),
-      n9 = dplyr::arrange(data.frame(expected_ego_elist_n9_o1), X1, X2),
-      n10 = dplyr::arrange(data.frame(expected_ego_elist_n10_o1), X1, X2)
+    exp_ego_elists_o1 <- list(
+      n1 = dplyr::arrange(data.frame(exp_ego_elist_n1_o1), X1, X2),
+      n2 = dplyr::arrange(data.frame(exp_ego_elist_n2_o1), X1, X2),
+      n3 = dplyr::arrange(data.frame(exp_ego_elist_n3_o1), X1, X2),
+      n4 = dplyr::arrange(data.frame(exp_ego_elist_n4_o1), X1, X2),
+      n5 = dplyr::arrange(data.frame(exp_ego_elist_n5_o1), X1, X2),
+      n6 = dplyr::arrange(data.frame(exp_ego_elist_n6_o1), X1, X2),
+      n7 = dplyr::arrange(data.frame(exp_ego_elist_n7_o1), X1, X2),
+      n8 = dplyr::arrange(data.frame(exp_ego_elist_n8_o1), X1, X2),
+      n9 = dplyr::arrange(data.frame(exp_ego_elist_n9_o1), X1, X2),
+      n10 = dplyr::arrange(data.frame(exp_ego_elist_n10_o1), X1, X2)
     )
     # Generate actual ego-networks and convert to edge lists for comparison
     actual_ego_elists_o1 <-
@@ -1350,7 +1350,7 @@ test_that(
           dplyr::arrange(data.frame(igraph::as_edgelist(g)), X1, X2)
         }
       )
-    expect_equal(actual_ego_elists_o1, expected_ego_elists_o1)
+    expect_equal(actual_ego_elists_o1, exp_ego_elists_o1)
   }
 )
 
@@ -1383,12 +1383,12 @@ test_that("count_graphlets_for_graph works", {
   )
 
   # Manually verified graphlet counts
-  expected_counts <- c(10, 15, 18, 6, 21, 3, 1, 11, 1, 1)
-  names(expected_counts) <- graphlet_labels
+  exp_counts <- c(10, 15, 18, 6, 21, 3, 1, 11, 1, 1)
+  names(exp_counts) <- graphlet_labels
 
   # Test
   actual_counts <- count_graphlets_for_graph(graph, max_graphlet_size = 4)
-  expect_equal(expected_counts, actual_counts)
+  expect_equal(exp_counts, actual_counts)
 })
 
 context("ORCA interface: Ego-network graphlet counts")
@@ -1431,7 +1431,7 @@ test_that(
     k <- graphlet_key$node_count
     # Set manually verified counts
     # 1-step ego networks
-    expected_counts_order_1 <- rbind(
+    exp_counts_order_1 <- rbind(
       c(5, 6, 5, 2, 0, 1, 0, 2, 1, 0),
       c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
       c(2, 1, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -1443,10 +1443,10 @@ test_that(
       c(4, 6, 0, 4, 0, 0, 0, 0, 0, 1),
       c(4, 6, 0, 4, 0, 0, 0, 0, 0, 1)
     )
-    rownames(expected_counts_order_1) <- node_labels
-    colnames(expected_counts_order_1) <- graphlet_labels
+    rownames(exp_counts_order_1) <- node_labels
+    colnames(exp_counts_order_1) <- graphlet_labels
     # 2-step ego networks
-    expected_counts_order_2 <- rbind(
+    exp_counts_order_2 <- rbind(
       c(10, 15, 18, 6, 21, 3, 1, 11, 1, 1),
       c(7, 8, 10, 2, 6, 3, 0, 4, 1, 0),
       c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
@@ -1458,8 +1458,8 @@ test_that(
       c(6, 9, 8, 4, 4, 0, 1, 6, 0, 1),
       c(6, 9, 8, 4, 4, 0, 1, 6, 0, 1)
     )
-    rownames(expected_counts_order_2) <- node_labels
-    colnames(expected_counts_order_2) <- graphlet_labels
+    rownames(exp_counts_order_2) <- node_labels
+    colnames(exp_counts_order_2) <- graphlet_labels
 
     # Count graphlets in each ego network of the graph with only counts
     # requested
@@ -1483,30 +1483,30 @@ test_that(
 
     # Test that actual counts match expected with only counts requested
     # (default)
-    expect_equal(actual_counts_order_1, expected_counts_order_1)
-    expect_equal(actual_counts_order_2, expected_counts_order_2)
+    expect_equal(actual_counts_order_1, exp_counts_order_1)
+    expect_equal(actual_counts_order_2, exp_counts_order_2)
 
     # Test that actual and returned ego networks match expected
     # 1. Define expected
-    expected_ego_networks_order_1 <- make_named_ego_graph(graph,
+    exp_ego_networks_order_1 <- make_named_ego_graph(graph,
       order = 1,
       min_ego_nodes = min_ego_nodes,
       min_ego_edges = min_ego_edges
     )
-    expected_ego_networks_order_2 <- make_named_ego_graph(graph,
+    exp_ego_networks_order_2 <- make_named_ego_graph(graph,
       order = 2,
       min_ego_nodes = min_ego_nodes,
       min_ego_edges = min_ego_edges
     )
-    expected_counts_with_networks_order_1 <-
+    exp_counts_with_networks_order_1 <-
       list(
-        graphlet_counts = expected_counts_order_1,
-        ego_networks = expected_ego_networks_order_1
+        graphlet_counts = exp_counts_order_1,
+        ego_networks = exp_ego_networks_order_1
       )
-    expected_counts_with_networks_order_2 <-
+    exp_counts_with_networks_order_2 <-
       list(
-        graphlet_counts = expected_counts_order_2,
-        ego_networks = expected_ego_networks_order_2
+        graphlet_counts = exp_counts_order_2,
+        ego_networks = exp_ego_networks_order_2
       )
     # 2. Calculate actual
     actual_counts_with_networks_order_1 <-
@@ -1528,11 +1528,11 @@ test_that(
     # Test that actual counts match expected with ego-networks requested
     expect_equal(
       actual_counts_with_networks_order_1$graphlet_counts,
-      expected_counts_order_1
+      exp_counts_order_1
     )
     expect_equal(
       actual_counts_with_networks_order_2$graphlet_counts,
-      expected_counts_order_2
+      exp_counts_order_2
     )
 
     # 3. Compare
@@ -1541,14 +1541,14 @@ test_that(
     # with indexed edge lists to ensure we are checking full properties of
     # returned objects (i.e. named lists with matching elements).
     # 3a. Convert expected and actual ego networks from igraphs to indexed edges
-    expected_counts_with_networks_order_1$ego_networks <-
+    exp_counts_with_networks_order_1$ego_networks <-
       purrr::map(
-        expected_counts_with_networks_order_1$ego_networks,
+        exp_counts_with_networks_order_1$ego_networks,
         graph_to_indexed_edges
       )
-    expected_counts_with_networks_order_2$ego_networks <-
+    exp_counts_with_networks_order_2$ego_networks <-
       purrr::map(
-        expected_counts_with_networks_order_2$ego_networks,
+        exp_counts_with_networks_order_2$ego_networks,
         graph_to_indexed_edges
       )
     actual_counts_with_networks_order_1$ego_networks <-
@@ -1564,11 +1564,11 @@ test_that(
     # 3b. Do comparison
     expect_equal(
       actual_counts_with_networks_order_1,
-      expected_counts_with_networks_order_1
+      exp_counts_with_networks_order_1
     )
     expect_equal(
       actual_counts_with_networks_order_2,
-      expected_counts_with_networks_order_2
+      exp_counts_with_networks_order_2
     )
   }
 )
@@ -1613,7 +1613,7 @@ test_that(
     k <- graphlet_key$node_count
     # Set manually verified counts
     # 1-step ego networks
-    expected_counts_order_1 <- rbind(
+    exp_counts_order_1 <- rbind(
       c(5, 6, 5, 2, 0, 1, 0, 2, 1, 0),
       c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
       c(2, 1, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -1625,10 +1625,10 @@ test_that(
       c(4, 6, 0, 4, 0, 0, 0, 0, 0, 1),
       c(4, 6, 0, 4, 0, 0, 0, 0, 0, 1)
     )
-    rownames(expected_counts_order_1) <- node_labels
-    colnames(expected_counts_order_1) <- graphlet_labels
+    rownames(exp_counts_order_1) <- node_labels
+    colnames(exp_counts_order_1) <- graphlet_labels
     # 2-step ego networks
-    expected_counts_order_2 <- rbind(
+    exp_counts_order_2 <- rbind(
       c(10, 15, 18, 6, 21, 3, 1, 11, 1, 1),
       c(7, 8, 10, 2, 6, 3, 0, 4, 1, 0),
       c(5, 5, 5, 1, 0, 2, 0, 2, 0, 0),
@@ -1640,8 +1640,8 @@ test_that(
       c(6, 9, 8, 4, 4, 0, 1, 6, 0, 1),
       c(6, 9, 8, 4, 4, 0, 1, 6, 0, 1)
     )
-    rownames(expected_counts_order_2) <- node_labels
-    colnames(expected_counts_order_2) <- graphlet_labels
+    rownames(exp_counts_order_2) <- node_labels
+    colnames(exp_counts_order_2) <- graphlet_labels
 
     # Count graphlets in each ego network of the graph with only counts
     # requested
@@ -1672,7 +1672,7 @@ test_that(
       )
 
     # 3. Test that actual counts match expected
-    expect_equal(actual_counts_order_1, expected_counts_order_1)
-    expect_equal(actual_counts_order_2, expected_counts_order_2)
+    expect_equal(actual_counts_order_1, exp_counts_order_1)
+    expect_equal(actual_counts_order_2, exp_counts_order_2)
   }
 )

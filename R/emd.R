@@ -67,7 +67,6 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     val2 <- val2 / val2[length(val2)]
     loc1 <- dhist1$locations
     loc2 <- dhist2$locations
-    count <- 0
     emd_offset <- function(offset) {
       temp1 <- emd_fast_no_smoothing(loc1 + offset, val1, loc2, val2)
       temp1

@@ -41,19 +41,19 @@ NetEmd and Netdis use subgraph counts, however, NetEmd takes counts directly fro
 
 ```{r, netemd,fig.align='center',fig.dim=c(8,4)}
 # Create lattice networks
-gLat_1 <- igraph::graph.lattice(c(20, 20))
-gLat_2 <- igraph::graph.lattice(c(44, 44))
+glat_1 <- igraph::graph.lattice(c(20, 20))
+glat_2 <- igraph::graph.lattice(c(44, 44))
 
 par(mfrow = c(1, 2))
-plot(gLat_1, vertex.size = 4, vertex.label = NA)
-plot(gLat_2, vertex.size = 4, vertex.label = NA)
+plot(glat_1, vertex.size = 4, vertex.label = NA)
+plot(glat_2, vertex.size = 4, vertex.label = NA)
 ```
 
 The simple computation of NetEmd without pre-computed features:
 ```{r}
 netemd_one_to_one(
-  graph_1 = gLat_1,
-  graph_2 = gLat_2,
+  graph_1 = glat_1,
+  graph_2 = glat_2,
   feature_type = "orbit",
   smoothing_window_width = 1
 )
@@ -62,8 +62,8 @@ netemd_one_to_one(
 
 ### Providing a matrix of network features
 ```{r}
-counts_1 <- count_orbits_per_node(graph = gLat_1, max_graphlet_size = 5)
-counts_2 <- count_orbits_per_node(graph = gLat_2, max_graphlet_size = 5)
+counts_1 <- count_orbits_per_node(graph = glat_1, max_graphlet_size = 5)
+counts_2 <- count_orbits_per_node(graph = glat_2, max_graphlet_size = 5)
 head(counts_1[, 1:4])
 
 netemd_one_to_one(
@@ -87,33 +87,33 @@ ___
 Computation of the Laplacian and Normalized Laplacian:
 ```{r, netemdEigen}
 # Networks
-gLat_1 <- graph.lattice(c(20, 20))
-gLat_2 <- graph.lattice(c(44, 44))
+glat_1 <- graph.lattice(c(20, 20))
+glat_2 <- graph.lattice(c(44, 44))
 
 # Laplacian
-Lapg_1 <- igraph::laplacian_matrix(
-  graph = gLat_1, normalized = FALSE, sparse = FALSE
+lapg_1 <- igraph::laplacian_matrix(
+  graph = glat_1, normalized = FALSE, sparse = FALSE
 )
-Lapg_2 <- igraph::laplacian_matrix(
-  graph = gLat_2, normalized = FALSE, sparse = FALSE
+lapg_2 <- igraph::laplacian_matrix(
+  graph = glat_2, normalized = FALSE, sparse = FALSE
 )
 
 # Normalized Laplacian
-NLapg_1 <- igraph::laplacian_matrix(
-  graph = gLat_1, normalized = TRUE, sparse = FALSE
+nlapg_1 <- igraph::laplacian_matrix(
+  graph = glat_1, normalized = TRUE, sparse = FALSE
 )
-NLapg_2 <- igraph::laplacian_matrix(
-  graph = gLat_2, normalized = TRUE, sparse = FALSE
+nlapg_2 <- igraph::laplacian_matrix(
+  graph = glat_2, normalized = TRUE, sparse = FALSE
 )
 
 
 # Providing a matrix of network features (e.g. Spectra). (This may take a
 # couple of minutes).
 spec_1 <- cbind(
-  L.Spectra = eigen(Lapg_1)$values, NL.Spectra = eigen(NLapg_1)$values
+  L.Spectra = eigen(lapg_1)$values, NL.Spectra = eigen(nlapg_1)$values
 )
 spec_2 <- cbind(
-  L.Spectra = eigen(Lapg_2)$values, NL.Spectra = eigen(NLapg_2)$values
+  L.Spectra = eigen(lapg_2)$values, NL.Spectra = eigen(nlapg_2)$values
 )
 
 head(spec_1)

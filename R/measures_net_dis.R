@@ -702,9 +702,9 @@ netdis_many_to_many <- function(graphs = NULL,
 #' Calculate Netdis statistic between two graphs from their Centred Graphlet
 #' Counts (generated using \code{netdis_centred_graphlet_counts}) for graphlets
 #' of size \code{graphlet_size}.
-#' @param centred_graphlet_count_vector_1 Centred Graphlet Counts vector for
+#' @param centred_graphlet_counts_1 Centred Graphlet Counts vector for
 #' graph 1
-#' @param centred_graphlet_count_vector_2 Centred Graphlet Counts vector for
+#' @param centred_graphlet_counts_2 Centred Graphlet Counts vector for
 #' graph 2
 #' @param graphlet_size The size of graphlets to use for the Netdis calculation
 #' (only counts for graphlets of the specified size will be used). The size of
@@ -712,14 +712,14 @@ netdis_many_to_many <- function(graphs = NULL,
 #' @return Netdis statistic calculated using centred counts for graphlets of
 #' the specified size
 #' @export
-netdis <- function(centred_graphlet_count_vector_1,
-                   centred_graphlet_count_vector_2,
+netdis <- function(centred_graphlet_counts_1,
+                   centred_graphlet_counts_2,
                    graphlet_size) {
   # Select subset of centred counts corresponding to graphlets of the
   # specified size
   ids <- graphlet_ids_for_size(graphlet_size)
-  counts1 <- centred_graphlet_count_vector_1[ids]
-  counts2 <- centred_graphlet_count_vector_2[ids]
+  counts1 <- centred_graphlet_counts_1[ids]
+  counts2 <- centred_graphlet_counts_2[ids]
 
   # Calculate normalising constant
   norm_const <- sum(counts1^2 / sqrt(counts1^2 + counts2^2), na.rm = TRUE) *
@@ -737,9 +737,9 @@ netdis <- function(centred_graphlet_count_vector_1,
 #' Calculate Netdis statistic between two graphs from their Centred Graphlet
 #' Counts (generated using \code{netdis_centred_graphlet_counts}) for all
 #' graphlet sizes up to \code{max_graphlet_size}.
-#' @param centred_graphlet_count_vector_1 Centred Graphlet Counts  vector for
+#' @param centred_graphlet_counts_1 Centred Graphlet Counts  vector for
 #' graph 1
-#' @param centred_graphlet_count_vector_2 Centred Graphlet Counts vector for
+#' @param centred_graphlet_counts_2 Centred Graphlet Counts vector for
 #' graph 2
 #' @param max_graphlet_size max graphlet size to calculate Netdis for.
 #' The size of a graphlet is the number of nodes it contains. Netdis is
@@ -748,8 +748,8 @@ netdis <- function(centred_graphlet_count_vector_1,
 #' @return Netdis statistic calculated using centred counts for graphlets of
 #' the specified size
 #' @export
-netdis_uptok <- function(centred_graphlet_count_vector_1,
-                         centred_graphlet_count_vector_2,
+netdis_uptok <- function(centred_graphlet_counts_1,
+                         centred_graphlet_counts_2,
                          max_graphlet_size) {
   if ((max_graphlet_size > 5) | (max_graphlet_size < 3)) {
     stop("max_graphlet_size must be 3, 4 or 5.")
@@ -757,8 +757,8 @@ netdis_uptok <- function(centred_graphlet_count_vector_1,
 
   netdis_statistics <- purrr::map(3:max_graphlet_size,
     netdis,
-    centred_graphlet_count_vector_1 = centred_graphlet_count_vector_1,
-    centred_graphlet_count_vector_2 = centred_graphlet_count_vector_2
+    centred_graphlet_counts_1 = centred_graphlet_counts_1,
+    centred_graphlet_counts_2 = centred_graphlet_counts_2
   )
 
   netdis_statistics <- simplify2array(netdis_statistics)
@@ -932,7 +932,7 @@ netdis_subtract_exp_counts <- function(graphlet_counts,
 #' @param graphlet_counts Matrix of graphlet and node counts (columns) for a
 #' nummber of ego networks (rows).
 #' @param density_breaks Density values defining bin edges.
-#' @param density_binned_reference_counts Reference network graphlet counts for
+#' @param density_binned_ref_counts Reference network graphlet counts for
 #' each density bin.
 #' @param max_graphlet_size Determines the maximum size of graphlets to count.
 #' Only graphlets containing up to \code{max_graphlet_size} nodes are counted.
@@ -940,12 +940,12 @@ netdis_subtract_exp_counts <- function(graphlet_counts,
 #' @param scale_fn Optional function to scale calculated expected counts, taking
 #' \code{graphlet_counts} and \code{max_graphlet_size} as arguments,
 #' and returning a scale factor that the looked up
-#' \code{density_binned_reference_counts} values will be multiplied by.
+#' \code{density_binned_ref_counts} values will be multiplied by.
 #'
 #' @export
 netdis_expected_counts <- function(graphlet_counts,
                                    density_breaks,
-                                   density_binned_reference_counts,
+                                   density_binned_ref_counts,
                                    max_graphlet_size,
                                    scale_fn = NULL) {
 
@@ -956,7 +956,7 @@ netdis_expected_counts <- function(graphlet_counts,
     graphlet_counts, 1, netdis_expected_counts_ego,
     max_graphlet_size = max_graphlet_size,
     density_breaks = density_breaks,
-    density_binned_reference_counts = density_binned_reference_counts,
+    density_binned_ref_counts = density_binned_ref_counts,
     scale_fn = scale_fn
   ))
 
@@ -974,17 +974,17 @@ netdis_expected_counts <- function(graphlet_counts,
 #' Only graphlets containing up to \code{max_graphlet_size} nodes are counted.
 #' Currently only size 4 and 5 are supported.
 #' @param density_breaks Density values defining bin edges.
-#' @param density_binned_reference_counts Reference network graphlet counts for
+#' @param density_binned_ref_counts Reference network graphlet counts for
 #' each density bin.
 #' @param scale_fn Optional function to scale calculated expected counts, taking
 #' \code{graphlet_counts} and \code{max_graphlet_size} as arguments, and
 #' returning a scale factor that the looked up
-#' \code{density_binned_reference_counts} values will be multiplied by.
+#' \code{density_binned_ref_counts} values will be multiplied by.
 #'
 netdis_expected_counts_ego <- function(graphlet_counts,
                                        max_graphlet_size,
                                        density_breaks,
-                                       density_binned_reference_counts,
+                                       density_binned_ref_counts,
                                        scale_fn = NULL) {
 
   # Look up average scaled graphlet counts for graphs of similar density
@@ -993,7 +993,7 @@ netdis_expected_counts_ego <- function(graphlet_counts,
   matched_density_index <- interval_index(query_density, density_breaks)
 
   matched_reference_counts <-
-    density_binned_reference_counts[matched_density_index, ]
+    density_binned_ref_counts[matched_density_index, ]
 
   if (!is.null(scale_fn)) {
     # Scale reference counts e.g. by multiplying the

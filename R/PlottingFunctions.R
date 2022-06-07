@@ -23,7 +23,7 @@
 #' \code{pheatmap}.
 #' @export
 
-netdis.plot <- function(netdislist,
+netdis_plot <- function(netdislist,
                         whatrow = c(1, 2)[2],
                         clustering_method = "ward.D",
                         main = "Nedis",
@@ -79,7 +79,7 @@ netdis.plot <- function(netdislist,
 #' \code{pheatmap}.
 #' @export
 
-netemd.plot <- function(netemdlist,
+netemd_plot <- function(netemdlist,
                         clustering_method = "ward.D",
                         main = "NetEmd",
                         docluster = TRUE) {

@@ -80,11 +80,11 @@ Generation of tree-like networks with 400 nodes and 1600 nodes.
 ```{r, netwokrs,fig.align='center',fig.dim=c(6,6)}
 # Create networks
 set.seed(34)
-gTree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
-gTree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
+gtree_1 <- igraph::as.undirected(make_tree(n = 20^2, children = 3))
+gtree_2 <- igraph::as.undirected(make_tree(n = 40^2, children = 3))
 
-plot(gTree_1, vertex.size = 0.8, vertex.label = NA)
-plot(gTree_2, vertex.size = 0.8, vertex.label = NA)
+plot(gtree_1, vertex.size = 0.8, vertex.label = NA)
+plot(gtree_2, vertex.size = 0.8, vertex.label = NA)
 ```
 
 
@@ -116,13 +116,13 @@ num_bins <- 100
 One of the first steps in Netdis is the extraction of all ego-networks in each of the query networks:
 ```{r}
 # Get ego-networks for query graphs
-ego_1 <- make_named_ego_graph(gTree_1,
+ego_1 <- make_named_ego_graph(gtree_1,
   order = neighbourhood_size,
   min_ego_nodes = min_ego_nodes,
   min_ego_edges = min_ego_edges
 )
 
-ego_2 <- make_named_ego_graph(gTree_2,
+ego_2 <- make_named_ego_graph(gtree_2,
   order = neighbourhood_size,
   min_ego_nodes = min_ego_nodes,
   min_ego_edges = min_ego_edges
@@ -165,7 +165,7 @@ For this case the user must provide the gold-standard network of their choosing.
 The following considers a tree-like network with `r 30^2` nodes as the gold-standard.
 ```{r,fig.align='center',fig.dim=c(6,6)}
 # Network used as gold-standard
-gst_1 <- erdos.renyi.game(n = 30^2, p.or.m = graph.density(graph = gTree_2))
+gst_1 <- erdos.renyi.game(n = 30^2, p.or.m = graph.density(graph = gtree_2))
 plot(gst_1, vertex.size = 0.8, vertex.label = NA)
 ```
 
@@ -237,7 +237,7 @@ After obtaining the average scaled subgraph counts per density bin, the subgraph
 exp_subgraph_counts_1 <- netdis_expected_counts(
   graphlet_counts = subgraph_counts_1,
   density_breaks = binned_densities_gst_1$breaks,
-  density_binned_reference_counts = ref_binned_canonical_subgraph_counts,
+  density_binned_ref_counts = ref_binned_canonical_subgraph_counts,
   max_graphlet_size = max_subgraph_size,
   scale_fn = count_graphlet_tuples
 )
@@ -246,7 +246,7 @@ exp_subgraph_counts_1 <- netdis_expected_counts(
 exp_subgraph_counts_2 <- netdis_expected_counts(
   graphlet_counts = subgraph_counts_2,
   density_breaks = binned_densities_gst_1$breaks,
-  density_binned_reference_counts = ref_binned_canonical_subgraph_counts,
+  density_binned_ref_counts = ref_binned_canonical_subgraph_counts,
   max_graphlet_size = max_subgraph_size,
   scale_fn = count_graphlet_tuples
 )
@@ -284,8 +284,8 @@ Finally, the total centred counts can be used to obtain the Netdis statistic:
 ```{r}
 
 netdis_result <- netdis_uptok(
-  centred_graphlet_count_vector_1 = sum_subgraph_counts_1,
-  centred_graphlet_count_vector_2 = sum_subgraph_counts_2,
+  centred_graphlet_counts_1 = sum_subgraph_counts_1,
+  centred_graphlet_counts_2 = sum_subgraph_counts_2,
   max_graphlet_size = max_subgraph_size
 )
 

@@ -131,27 +131,27 @@ netemd_one_to_one(
 ## Comparing two graphs with NetEmd via their Laplacian spectrum
 ```{r, netemdEigen,fig.align='center'}
 # Laplacian
-Lapg_1 <- igraph::laplacian_matrix(
+lapg_1 <- igraph::laplacian_matrix(
   graph = graph_1, normalized = FALSE, sparse = FALSE
 )
-Lapg_2 <- igraph::laplacian_matrix(
+lapg_2 <- igraph::laplacian_matrix(
   graph = graph_2, normalized = FALSE, sparse = FALSE
 )
 
 # Normalized Laplacian
-NLapg_1 <- igraph::laplacian_matrix(
+nlapg_1 <- igraph::laplacian_matrix(
   graph = graph_1, normalized = TRUE, sparse = FALSE
 )
-NLapg_2 <- igraph::laplacian_matrix(
+nlapg_2 <- igraph::laplacian_matrix(
   graph = graph_2, normalized = TRUE, sparse = FALSE
 )
 
 # Spectra (this may take a couple of minutes).
 props_1 <- cbind(
-  L.Spectra = eigen(Lapg_1)$values, NL.Spectra = eigen(NLapg_1)$values
+  L.Spectra = eigen(lapg_1)$values, NL.Spectra = eigen(nlapg_1)$values
 )
 props_2 <- cbind(
-  L.Spectra = eigen(Lapg_2)$values, NL.Spectra = eigen(NLapg_2)$values
+  L.Spectra = eigen(lapg_2)$values, NL.Spectra = eigen(nlapg_2)$values
 )
 
 head(props_1, n = 3)

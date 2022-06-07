@@ -46,19 +46,19 @@ test_that(
       # the bug where we generated test locations with zero counts was so
       # annoying to identify that we're going with a belt and braces approach)
       non_zero_count_indexes <- counts != 0
-      expected_locations <- locations[non_zero_count_indexes]
-      expected_counts <- counts[non_zero_count_indexes]
+      exp_locations <- locations[non_zero_count_indexes]
+      exp_counts <- counts[non_zero_count_indexes]
       # dhist_from_obs will return results with bins ordered by ascending
       # location, so sort expected data to match
-      sorted_locations <- sort(expected_locations, index.return = TRUE)
+      sorted_locations <- sort(exp_locations, index.return = TRUE)
       sorted_location_indexes <- sorted_locations$ix
-      expected_locations <- expected_locations[sorted_location_indexes]
-      expected_counts <- expected_counts[sorted_location_indexes]
+      exp_locations <- exp_locations[sorted_location_indexes]
+      exp_counts <- exp_counts[sorted_location_indexes]
 
       # Check that histogram locations and counts match those used to generate
       # the observations
-      expect_true(all.equal(hist$locations, expected_locations))
-      expect_true(all.equal(hist$masses, expected_counts))
+      expect_true(all.equal(hist$locations, exp_locations))
+      expect_true(all.equal(hist$masses, exp_counts))
     }
 
     for (i in 1:num_tests) {
@@ -83,20 +83,20 @@ test_that(
     masses2 <- c(23, 24, 26, 22, 21, 25)
     actual2 <- dhist(locations = locations2, masses = masses2, sorted = FALSE)
 
-    expected_class <- "dhist"
-    expected_smoothing_window_width <- 0
+    exp_class <- "dhist"
+    exp_smoothing_window_width <- 0
 
     expected1 <- list(
       locations = locations1, masses = masses1,
-      smoothing_window_width = expected_smoothing_window_width
+      smoothing_window_width = exp_smoothing_window_width
     )
-    class(expected1) <- expected_class
+    class(expected1) <- exp_class
 
     expected2 <- list(
       locations = locations2, masses = masses2,
-      smoothing_window_width = expected_smoothing_window_width
+      smoothing_window_width = exp_smoothing_window_width
     )
-    class(expected2) <- expected_class
+    class(expected2) <- exp_class
 
     expect_equal(actual1, expected1)
     expect_equal(actual2, expected2)
@@ -116,22 +116,22 @@ test_that(
     masses2 <- c(23, 24, 26, 22, 21, 25)
     actual2 <- dhist(locations = locations2, masses = masses2, sorted = TRUE)
 
-    expected_class <- "dhist"
-    expected_smoothing_window_width <- 0
+    exp_class <- "dhist"
+    exp_smoothing_window_width <- 0
 
     expected1 <- list(
       locations = c(1, 7, 9, 21, 42, 101),
       masses = c(16, 15, 14, 13, 12, 11),
-      smoothing_window_width = expected_smoothing_window_width
+      smoothing_window_width = exp_smoothing_window_width
     )
-    class(expected1) <- expected_class
+    class(expected1) <- exp_class
 
     expected2 <- list(
       locations = c(-62, -58, 0, 3, 7, 16),
       masses = c(26, 25, 24, 23, 22, 21),
-      smoothing_window_width = expected_smoothing_window_width
+      smoothing_window_width = exp_smoothing_window_width
     )
-    class(expected2) <- expected_class
+    class(expected2) <- exp_class
 
     expect_equal(actual1, expected1)
     expect_equal(actual2, expected2)
@@ -151,22 +151,22 @@ test_that(
     masses2 <- c(23, 24, 26, 22, 21, 25)
     actual2 <- dhist(locations = locations2, masses = masses2)
 
-    expected_class <- "dhist"
-    expected_smoothing_window_width <- 0
+    exp_class <- "dhist"
+    exp_smoothing_window_width <- 0
 
     expected1 <- list(
       locations = c(1, 7, 9, 21, 42, 101),
       masses = c(16, 15, 14, 13, 12, 11),
-      smoothing_window_width = expected_smoothing_window_width
+      smoothing_window_width = exp_smoothing_window_width
     )
-    class(expected1) <- expected_class
+    class(expected1) <- exp_class
 
     expected2 <- list(
       locations = c(-62, -58, 0, 3, 7, 16),
       masses = c(26, 25, 24, 23, 22, 21),
-      smoothing_window_width = expected_smoothing_window_width
+      smoothing_window_width = exp_smoothing_window_width
     )
-    class(expected2) <- expected_class
+    class(expected2) <- exp_class
 
     expect_equal(actual1, expected1)
     expect_equal(actual2, expected2)
@@ -194,19 +194,19 @@ test_that(
       smoothing_window_width = smoothing_window_width, sorted = FALSE
     )
 
-    expected_class <- "dhist"
+    exp_class <- "dhist"
 
     expected1 <- list(
       locations = locations1, masses = masses1,
       smoothing_window_width = smoothing_window_width
     )
-    class(expected1) <- expected_class
+    class(expected1) <- exp_class
 
     expected2 <- list(
       locations = locations2, masses = masses2,
       smoothing_window_width = smoothing_window_width
     )
-    class(expected2) <- expected_class
+    class(expected2) <- exp_class
 
     expect_equal(actual1, expected1)
     expect_equal(actual2, expected2)
@@ -234,21 +234,21 @@ test_that(
       smoothing_window_width = smoothing_window_width, sorted = TRUE
     )
 
-    expected_class <- "dhist"
+    exp_class <- "dhist"
 
     expected1 <- list(
       locations = c(1, 7, 9, 21, 42, 101),
       masses = c(16, 15, 14, 13, 12, 11),
       smoothing_window_width = smoothing_window_width
     )
-    class(expected1) <- expected_class
+    class(expected1) <- exp_class
 
     expected2 <- list(
       locations = c(-62, -58, 0, 3, 7, 16),
       masses = c(26, 25, 24, 23, 22, 21),
       smoothing_window_width = smoothing_window_width
     )
-    class(expected2) <- expected_class
+    class(expected2) <- exp_class
 
     expect_equal(actual1, expected1)
     expect_equal(actual2, expected2)
@@ -276,21 +276,21 @@ test_that(
       smoothing_window_width = smoothing_window_width
     )
 
-    expected_class <- "dhist"
+    exp_class <- "dhist"
 
     expected1 <- list(
       locations = c(1, 7, 9, 21, 42, 101),
       masses = c(16, 15, 14, 13, 12, 11),
       smoothing_window_width = smoothing_window_width
     )
-    class(expected1) <- expected_class
+    class(expected1) <- exp_class
 
     expected2 <- list(
       locations = c(-62, -58, 0, 3, 7, 16),
       masses = c(26, 25, 24, 23, 22, 21),
       smoothing_window_width = smoothing_window_width
     )
-    class(expected2) <- expected_class
+    class(expected2) <- exp_class
 
     expect_equal(actual1, expected1)
     expect_equal(actual2, expected2)
@@ -301,20 +301,20 @@ test_that("as_smoothed_dhist sets smoothing_window_width correctly", {
   dhist_pre <- dhist(locations <- c(7, 42, 1, 21, 101, 9),
     masses = c(15, 12, 16, 13, 11, 14)
   )
-  expected_smoothing_window_width_pre <- 0
-  expected_smoothing_window_width_post <- 1
+  exp_smooth_window_width_pre <- 0
+  exp_smooth_window_width_post <- 1
 
   expect_equal(
     dhist_pre$smoothing_window_width,
-    expected_smoothing_window_width_pre
+    exp_smooth_window_width_pre
   )
   dhist_post <- as_smoothed_dhist(
     dhist_pre,
-    expected_smoothing_window_width_post
+    exp_smooth_window_width_post
   )
   expect_equal(
     dhist_post$smoothing_window_width,
-    expected_smoothing_window_width_post
+    exp_smooth_window_width_post
   )
 })
 
@@ -323,20 +323,20 @@ test_that("as_unsmoothed_dhist sets smoothing_window_width correctly", {
     masses = c(15, 12, 16, 13, 11, 14),
     smoothing_window_width <- 1
   )
-  expected_smoothing_window_width_pre <- 1
-  expected_smoothing_window_width_post <- 0
+  exp_smooth_window_width_pre <- 1
+  exp_smooth_window_width_post <- 0
 
   expect_equal(
     dhist_pre$smoothing_window_width,
-    expected_smoothing_window_width_pre
+    exp_smooth_window_width_pre
   )
   dhist_post <- as_smoothed_dhist(
     dhist_pre,
-    expected_smoothing_window_width_post
+    exp_smooth_window_width_post
   )
   expect_equal(
     dhist_post$smoothing_window_width,
-    expected_smoothing_window_width_post
+    exp_smooth_window_width_post
   )
 })
 
@@ -390,23 +390,23 @@ test_that(
     )
     # Be careful: ensure that no smoothing window width results in overlapping
     # bins
-    smoothing_window_width_A <- 1
-    smoothing_window_width_B <- 2
+    smoothing_window_width_a <- 1
+    smoothing_window_width_b <- 2
     dhist_unsmoothed <- as_unsmoothed_dhist(dhist)
-    dhist_smoothed_A <- as_smoothed_dhist(dhist, smoothing_window_width_A)
-    dhist_smoothed_B <- as_smoothed_dhist(dhist, smoothing_window_width_B)
+    dhist_smoothed_a <- as_smoothed_dhist(dhist, smoothing_window_width_a)
+    dhist_smoothed_b <- as_smoothed_dhist(dhist, smoothing_window_width_b)
 
     var_unsmoothed <- dhist_variance(dhist_unsmoothed)
-    var_smoothed_A <- dhist_variance(dhist_smoothed_A)
-    var_smoothed_B <- dhist_variance(dhist_smoothed_B)
+    var_smoothed_a <- dhist_variance(dhist_smoothed_a)
+    var_smoothed_b <- dhist_variance(dhist_smoothed_b)
 
-    expected_var_smoothed_A <- var_unsmoothed +
-      ((smoothing_window_width_A^2) / 12)
-    expected_var_smoothed_B <- var_unsmoothed +
-      ((smoothing_window_width_B^2) / 12)
+    exp_var_smoothed_a <- var_unsmoothed +
+      ((smoothing_window_width_a^2) / 12)
+    exp_var_smoothed_b <- var_unsmoothed +
+      ((smoothing_window_width_b^2) / 12)
 
-    expect_equal(var_smoothed_A, expected_var_smoothed_A)
-    expect_equal(var_smoothed_B, expected_var_smoothed_B)
+    expect_equal(var_smoothed_a, exp_var_smoothed_a)
+    expect_equal(var_smoothed_b, exp_var_smoothed_b)
   }
 )
 
@@ -462,10 +462,10 @@ test_that("normalise_dhist_mass output sums to 1", {
       smoothing_window_width = smoothing_window_width
     ))
   })
-  expected_total_mass <- 1
+  exp_total_mass <- 1
   # Check total masses match expectations
   purrr::map_dbl(normalised_dhists, function(dhist) {
-    expect_equal(sum(dhist$masses), expected_total_mass)
+    expect_equal(sum(dhist$masses), exp_total_mass)
   })
   # Check other histogram properties unchanged
   purrr::walk(normalised_dhists, function(dhist) {
@@ -513,7 +513,7 @@ test_that(
       smoothing_window_width = smoothing_window_width
     )
 
-    expected_post_norm_smoothing_windows <- purrr::map_dbl(
+    exp_post_norm_smooth_windows <- purrr::map_dbl(
       rand_dhists_smoothed,
       function(dhist) {
         smoothing_window_width / dhist_std(dhist)
@@ -529,13 +529,13 @@ test_that(
     actual_dhist_smoothed <- purrr::map(rand_dhists_smoothed, function(dhist) {
       normalise_dhist_variance(dhist)
     })
-    expected_variance <- 1
+    exp_variance <- 1
     # Check variance of normalised hostograms is as expected
     purrr::walk(actual_dhist_unsmoothed, function(dhist) {
-      expect_equal(dhist_variance(dhist), expected_variance)
+      expect_equal(dhist_variance(dhist), exp_variance)
     })
     purrr::walk(actual_dhist_smoothed, function(dhist) {
-      expect_equal(dhist_variance(dhist), expected_variance)
+      expect_equal(dhist_variance(dhist), exp_variance)
     })
     # Check smoothing window is as expected (0 for unsmoothe; smoothing_window
     # width/sigma for smoothed)
@@ -543,7 +543,7 @@ test_that(
       expect_equal(dhist$smoothing_window_width, 0)
     })
     purrr::walk2(
-      actual_dhist_smoothed, expected_post_norm_smoothing_windows,
+      actual_dhist_smoothed, exp_post_norm_smooth_windows,
       function(dhist, sww) {
         expect_equal(dhist$smoothing_window_width, sww)
       }
@@ -655,18 +655,18 @@ test_that(
 
     cum_masses1 <- cumsum(dhist1$masses)
     max_cum_mass <- cum_masses1[length(cum_masses1)]
-    expected_knots_ecds1 <- cum_masses1
-    expected_inter_knots_ecds1 <- head(
-      expected_knots_ecds1,
-      length(expected_knots_ecds1) - 1
+    exp_knots_ecds1 <- cum_masses1
+    exp_inter_knots_ecds1 <- head(
+      exp_knots_ecds1,
+      length(exp_knots_ecds1) - 1
     )
-    expected_extra_knots_ecds1 <- c(0, max_cum_mass)
-    expected_knots1 <- dhist1$locations
+    exp_extra_knots_ecds1 <- c(0, max_cum_mass)
+    exp_knots1 <- dhist1$locations
 
-    expect_equal(actual_knots1, expected_knots1)
-    expect_equal(actual_knots_ecds1, expected_knots_ecds1)
-    expect_equal(actual_inter_knots_ecds1, expected_inter_knots_ecds1)
-    expect_equal(actual_extra_knots_ecds1, expected_extra_knots_ecds1)
+    expect_equal(actual_knots1, exp_knots1)
+    expect_equal(actual_knots_ecds1, exp_knots_ecds1)
+    expect_equal(actual_inter_knots_ecds1, exp_inter_knots_ecds1)
+    expect_equal(actual_extra_knots_ecds1, exp_extra_knots_ecds1)
   }
 )
 
@@ -682,39 +682,39 @@ test_that(
     # half-integer grid
     # Smoothed and unsmoothed ECMF cumulative masses are on integer grid
     # Smoothed ECMF crossing points are on a quarter-integer grid
-    dhistA <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
-    dhistB <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
+    dhist_a <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
+    dhist_b <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
 
     # Set up smoothed and unsmoothed versions of histograms
     smoothing_window_width <- 1
-    dhistA_unsmoothed <- as_unsmoothed_dhist(dhistA)
-    dhistB_unsmoothed <- as_unsmoothed_dhist(dhistB)
-    dhistA_smoothed <- as_smoothed_dhist(dhistA, smoothing_window_width)
-    dhistB_smoothed <- as_smoothed_dhist(dhistB, smoothing_window_width)
+    dhist_a_unsmoothed <- as_unsmoothed_dhist(dhist_a)
+    dhist_b_unsmoothed <- as_unsmoothed_dhist(dhist_b)
+    dhist_a_smoothed <- as_smoothed_dhist(dhist_a, smoothing_window_width)
+    dhist_b_smoothed <- as_smoothed_dhist(dhist_b, smoothing_window_width)
 
     # Set expected area
-    expected_area_unsmoothed <- 4
-    expected_area_smoothed <- 3
+    exp_area_unsmoothed <- 4
+    exp_area_smoothed <- 3
 
     # Generate ecmfs
-    ecmfA_unsmoothed <- dhist_ecmf(dhistA_unsmoothed)
-    ecmfB_unsmoothed <- dhist_ecmf(dhistB_unsmoothed)
-    ecmfA_smoothed <- dhist_ecmf(dhistA_smoothed)
-    ecmfB_smoothed <- dhist_ecmf(dhistB_smoothed)
+    ecmf_a_unsmoothed <- dhist_ecmf(dhist_a_unsmoothed)
+    ecmf_b_unsmoothed <- dhist_ecmf(dhist_b_unsmoothed)
+    ecmf_a_smoothed <- dhist_ecmf(dhist_a_smoothed)
+    ecmf_b_smoothed <- dhist_ecmf(dhist_b_smoothed)
 
     # Calculate area between ECMFs
     actual_area_unsmoothed <- area_between_dhist_ecmfs(
-      ecmfA_unsmoothed,
-      ecmfB_unsmoothed
+      ecmf_a_unsmoothed,
+      ecmf_b_unsmoothed
     )
     actual_area_smoothed <- area_between_dhist_ecmfs(
-      ecmfA_smoothed,
-      ecmfB_smoothed
+      ecmf_a_smoothed,
+      ecmf_b_smoothed
     )
 
     # Compare caculated areas with expected areas
-    expect_equal(actual_area_unsmoothed, expected_area_unsmoothed)
-    expect_equal(actual_area_smoothed, expected_area_smoothed)
+    expect_equal(actual_area_unsmoothed, exp_area_unsmoothed)
+    expect_equal(actual_area_smoothed, exp_area_smoothed)
   }
 )
 
@@ -729,24 +729,24 @@ test_that(
     # Previous simple integer grid where both histograms have been separately
     # normalised to unit mass and variance. Has locations and masses at a range
     # of floating point locations. Has bowties, triangles and trapeziums.
-    dhistA <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
-    dhistB <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
+    dhist_a <- dhist(locations = c(1, 3, 4), masses = c(2, 1, 1))
+    dhist_b <- dhist(locations = c(0, 2, 4, 5), masses = c(0.5, 2, 0.5, 1))
 
-    dhistA <- normalise_dhist_mass(normalise_dhist_variance(dhistA))
-    dhistB <- normalise_dhist_mass(normalise_dhist_variance(dhistB))
+    dhist_a <- normalise_dhist_mass(normalise_dhist_variance(dhist_a))
+    dhist_b <- normalise_dhist_mass(normalise_dhist_variance(dhist_b))
 
     # Set up smoothed and unsmoothed versions of histograms
     smoothing_window_width <- 1
-    dhistA_unsmoothed <- as_unsmoothed_dhist(dhistA)
-    dhistB_unsmoothed <- as_unsmoothed_dhist(dhistB)
-    dhistA_smoothed <- as_smoothed_dhist(dhistA, smoothing_window_width)
-    dhistB_smoothed <- as_smoothed_dhist(dhistB, smoothing_window_width)
+    dhist_a_unsmoothed <- as_unsmoothed_dhist(dhist_a)
+    dhist_b_unsmoothed <- as_unsmoothed_dhist(dhist_b)
+    dhist_a_smoothed <- as_smoothed_dhist(dhist_a, smoothing_window_width)
+    dhist_b_smoothed <- as_smoothed_dhist(dhist_b, smoothing_window_width)
 
     # Generate ecmfs
-    ecmfA_unsmoothed <- dhist_ecmf(dhistA_unsmoothed)
-    ecmfB_unsmoothed <- dhist_ecmf(dhistB_unsmoothed)
-    ecmfA_smoothed <- dhist_ecmf(dhistA_smoothed)
-    ecmfB_smoothed <- dhist_ecmf(dhistB_smoothed)
+    ecmf_a_unsmoothed <- dhist_ecmf(dhist_a_unsmoothed)
+    ecmf_b_unsmoothed <- dhist_ecmf(dhist_b_unsmoothed)
+    ecmf_a_smoothed <- dhist_ecmf(dhist_a_smoothed)
+    ecmf_b_smoothed <- dhist_ecmf(dhist_b_smoothed)
 
     # Define some functions to make calculation of manually measured areas
     # easier
@@ -764,60 +764,66 @@ test_that(
     # Actual grid counts preserved in data to facilitate less tedious manual
     # checking if required
     # --- Unsmoothed ---
-    area_A_unsmoothed <- rectangle_area(width = 10 * 0.02, height = 12.5 * 0.01)
-    area_B_unsmoothed <- rectangle_area(width = 50.5 * 0.02, height = 37.5 * 0.01)
-    area_C_unsmoothed <- rectangle_area(width = 26 * 0.02, height = 12.5 * 0.01)
-    area_D_unsmoothed <- rectangle_area(width = 34.5 * 0.02, height = 12.5 * 0.01)
-    area_E_unsmoothed <- rectangle_area(width = 26.5 * 0.02, height = 25 * 0.01)
-    expected_area_unsmoothed <-
+    area_a_unsmoothed <- rectangle_area(width = 10 * 0.02, height = 12.5 * 0.01)
+    area_b_unsmoothed <- rectangle_area(
+      width = 50.5 * 0.02, height = 37.5 * 0.01
+    )
+    area_c_unsmoothed <- rectangle_area(
+      width = 26 * 0.02, height = 12.5 * 0.01
+    )
+    area_d_unsmoothed <- rectangle_area(
+      width = 34.5 * 0.02, height = 12.5 * 0.01
+    )
+    area_e_unsmoothed <- rectangle_area(width = 26.5 * 0.02, height = 25 * 0.01)
+    exp_area_unsmoothed <-
       sum(
-        area_A_unsmoothed, area_B_unsmoothed, area_C_unsmoothed,
-        area_D_unsmoothed, area_E_unsmoothed
+        area_a_unsmoothed, area_b_unsmoothed, area_c_unsmoothed,
+        area_d_unsmoothed, area_e_unsmoothed
       )
     # --- Smoothed ---
-    area_A_smoothed <- triangle_area(base = 2.75 * 0.01, height = 6.5 * 0.02)
-    area_B_smoothed <- triangle_area(base = 2.75 * 0.01, height = 3 * 0.02)
-    area_C_smoothed <- triangle_area(base = 18.5 * 0.01, height = 21 * 0.02)
-    area_D_smoothed <- trapezium_area(
+    area_a_smoothed <- triangle_area(base = 2.75 * 0.01, height = 6.5 * 0.02)
+    area_b_smoothed <- triangle_area(base = 2.75 * 0.01, height = 3 * 0.02)
+    area_c_smoothed <- triangle_area(base = 18.5 * 0.01, height = 21 * 0.02)
+    area_d_smoothed <- trapezium_area(
       side_a = 18.5 * 0.01,
       side_b = 37.5 * 0.01,
       height = 14.5 * 0.02
     )
-    area_E_smoothed <- trapezium_area(
+    area_e_smoothed <- trapezium_area(
       side_a = 37.5 * 0.01,
       side_b = 37.5 * 0.01,
       height = 16 * 0.02
     )
-    area_F_smoothed <- triangle_area(base = 37.5 * 0.01, height = 22.5 * 0.02)
-    area_G_smoothed <- triangle_area(base = 7.5 * 0.01, height = 8 * 0.02)
-    area_H_smoothed <- triangle_area(base = 7.5 * 0.01, height = 11 * 0.02)
-    area_I_smoothed <- triangle_area(base = 12.5 * 0.01, height = 19.5 * 0.02)
-    area_J_smoothed <- trapezium_area(
+    area_f_smoothed <- triangle_area(base = 37.5 * 0.01, height = 22.5 * 0.02)
+    area_g_smoothed <- triangle_area(base = 7.5 * 0.01, height = 8 * 0.02)
+    area_h_smoothed <- triangle_area(base = 7.5 * 0.01, height = 11 * 0.02)
+    area_i_smoothed <- triangle_area(base = 12.5 * 0.01, height = 19.5 * 0.02)
+    area_j_smoothed <- trapezium_area(
       side_a = 12.5 * 0.01,
       side_b = 20 * 0.01,
       height = 30.5 * 0.02
     )
-    area_K_smoothed <- trapezium_area(
+    area_k_smoothed <- trapezium_area(
       side_a = 20 * 0.01,
       side_b = 18 * 0.01,
       height = 8 * 0.02
     )
-    area_L_smoothed <- triangle_area(base = 18 * 0.01, height = 22 * 0.02)
-    expected_area_smoothed <-
+    area_l_smoothed <- triangle_area(base = 18 * 0.01, height = 22 * 0.02)
+    exp_area_smoothed <-
       sum(
-        area_A_smoothed, area_B_smoothed, area_C_smoothed, area_D_smoothed,
-        area_E_smoothed, area_F_smoothed, area_G_smoothed, area_H_smoothed,
-        area_I_smoothed, area_J_smoothed, area_K_smoothed, area_L_smoothed
+        area_a_smoothed, area_b_smoothed, area_c_smoothed, area_d_smoothed,
+        area_e_smoothed, area_f_smoothed, area_g_smoothed, area_h_smoothed,
+        area_i_smoothed, area_j_smoothed, area_k_smoothed, area_l_smoothed
       )
 
     # Calculate area between ECMFs
     actual_area_unsmoothed <- area_between_dhist_ecmfs(
-      ecmfA_unsmoothed,
-      ecmfB_unsmoothed
+      ecmf_a_unsmoothed,
+      ecmf_b_unsmoothed
     )
     actual_area_smoothed <- area_between_dhist_ecmfs(
-      ecmfA_smoothed,
-      ecmfB_smoothed
+      ecmf_a_smoothed,
+      ecmf_b_smoothed
     )
 
     # Compare caculated areas with expected areas
@@ -828,8 +834,8 @@ test_that(
 
     # Given manual measurement of areas between curves, consider area correct
     # if actual and expected areas are within 1% of each other
-    expect_equalish_manual(actual_area_unsmoothed, expected_area_unsmoothed, 0.01)
-    expect_equalish_manual(actual_area_smoothed, expected_area_smoothed, 0.01)
+    expect_equalish_manual(actual_area_unsmoothed, exp_area_unsmoothed, 0.01)
+    expect_equalish_manual(actual_area_smoothed, exp_area_smoothed, 0.01)
   }
 )
 
