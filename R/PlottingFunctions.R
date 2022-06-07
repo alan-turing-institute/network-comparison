@@ -37,7 +37,7 @@ netdis_plot <- function(netdislist,
   legend1 <- seq(min(adjmat), max(adjmat), length.out = 5)
   levels1 <- round(legend1, digits = 2)
   pheatmap::pheatmap(
-    mat = as.dist(adjmat),
+    mat = stats::as.dist(adjmat),
     cluster_rows = docluster,
     cluster_cols = docluster,
     clustering_method = clustering_method,
@@ -92,7 +92,7 @@ netemd_plot <- function(netemdlist,
   legend1 <- seq(min(adjmat), max(adjmat), length.out = 5)
   levels1 <- round(legend1, digits = 2)
   pheatmap::pheatmap(
-    mat = as.dist(adjmat),
+    mat = stats::as.dist(adjmat),
     cluster_rows = docluster,
     cluster_cols = docluster,
     clustering_method = clustering_method,
