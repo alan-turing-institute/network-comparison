@@ -306,8 +306,8 @@ test_that("Old failure case", {
   attr(d2,'class') <- "dhist"
   d2$locations <- c(0,1,2,3) 
   d2$masses <- c(8634,1242,114,10) 
-  sq1 <- net_emd_single_pair(d1,d2,method='optimise',smoothing_window_width = 1)
-  sq2 <- net_emd_single_pair(d1,d2,method='optimiseRonly',smoothing_window_width = 1)
+  sq1 <- netemd_single_pair(d1,d2,method='optimise',smoothing_window_width = 1)
+  sq2 <- netemd_single_pair(d1,d2,method='optimiseRonly',smoothing_window_width = 1)
   expect_lt(abs(sq1$min_emd-sq2$min_emd),10**(-4))
 })
 
