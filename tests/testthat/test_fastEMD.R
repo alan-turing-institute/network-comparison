@@ -83,6 +83,31 @@ getVal <- function(x1,v1,w1,x2,v2,w2)
   integrate(f1,mi123,ma123)
 }
 
+getRvalue <- function(x1,v1,w1,x2,v2,w2)
+{
+  v1s <- c(v1[1],diff(v1))
+  v2s <- c(v2[1],diff(v2))
+  d1 = dhist(x1+w1/2,v1s,smoothing_window_width=w1)  
+  d2 = dhist(x2+w2/2,v2s,smoothing_window_width=w2)
+  d1ec <- dhist_ecmf(d1)
+  d2ec <- dhist_ecmf(d2)
+  area_between_dhist_ecmfs(d1ec,d2ec)
+}
+ 
+
+compareRonlyVsOpt <- function(x1,v1,w1,x2,v2,w2)
+{
+  v1s <- c(v1[1],diff(v1))
+  v2s <- c(v2[1],diff(v2))
+  d1 = dhist(x1,v1s,smoothing_window_width=w1)  
+  d2 = dhist(x2,v2s,smoothing_window_width=w2)
+  res1 <- netdist::netemd_single_pair(d1,d2,method = "optimise")
+  res2 <- netdist::netemd_single_pair(d1,d2,method = "optimiseRonly")
+  expect_lt(abs(res1$min_emd-res2$min_emd),10**(-4))
+  c(res1$min_emd,res2$min_emd)
+}
+
+
 
 test_that("3 element test", {
   
@@ -264,16 +289,22 @@ test_that("many element test Mixture ", {
                     f1 <- makeFunction(x1,v1,w1,x2,v2,w2)
                     top1 = max(x2[length(x2)],x1[length(x1)])+max(w1,w2)
                     bottom1 = min(x2[1],x1[1])
+                    
+                    q1 = compareRonlyVsOpt(x1,v1,w1,x2,v2,w2)
+                    
                     res2 <- 0 
                     res2 <- res2 + integrate(f1,bottom1,top1,abs.tol=0.000000001,subdivisions = 100000000)[[1]]
                     
                     res1 <- NetEmdSmoothV2(x1,v1,w1,x2,v2,w2)
+                    
+                    res3 <- getRvalue(x1,v1,w1,x2,v2,w2)
+               #     print(c(q1,res1,res2,res3))
                     #  if (abs(res1-res2)>0.001)
                     #  {
                     #    browser()
                     #  }
                     # Swapped to percentage error
-                    expect_lt(abs(res1-res2),10**(-3))
+                    expect_lt(abs(res1-res3),10**(-3))
                     
                   }
                 }
@@ -339,3 +370,41 @@ test_that("Old Failure Case 2 reverse", {
   res2 <- NetEmdSmoothV2(x1,v1,w1,x2,v2,w2)
   expect_lt(abs(res2-res1),10**(-4))
 })
+
+
+test_that("equal distributions moving upwards",{ 
+  x2 = 1:10
+  v2 = 1:10 
+  w2 = 0.5
+  x1 = 1:10
+  v1 = c(1,2)
+  v1 = 1:10 
+  w1 = 0.5
+  for (i in 0:10)
+  {
+    res2 <- NetEmdSmoothV2(x1,v1+i,w1,x2,v2,w2)
+    res3 <- getRvalue(x1,v1+i,w1,x2,v2,w2)
+    print(c(i,res2,res3))
+    expect_lt(abs(res2-9.25*i),10**(-4))
+    expect_lt(abs(res2-res3),10**(-4))
+  }
+  }
+  )
+
+test_that("equal distributions moving upwards diff width",{ 
+  x2 = 1:10
+  v2 = 1:10 
+  w2 = 0.5
+  x1 = 1:10
+  v1 = c(1,2)
+  v1 = 1:10 
+  w1 = 0.25
+  for (i in 0:10)
+  {
+    res2 <- NetEmdSmoothV2(x1,v1+i,w1,x2,v2,w2)
+    res3 <- getRvalue(x1,v1+i,w1,x2,v2,w2)
+    print(c(i,res2,res3))
+    expect_lt(abs(res2-res3),10**(-4))
+  }
+  }
+  )
