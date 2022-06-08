@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <numeric>
 #include <math.h>
+#include "emd_fast_no_smoothing.h" // add_element_kahan()
 #include "fastSmoothV2.h"
 
 using namespace Rcpp;
@@ -142,6 +143,7 @@ double NetEmdSmoothV2(NumericVector loc1, NumericVector val1, double binWidth1,
   OverlappingSegments segs(loc1, loc2, binWidth1, binWidth2);
 
   double res = 0.0;
+  double compensation = 0.0;
 
   for (OverlappingSegments::iterator it = segs.begin(), endIt = segs.end();
        it != endIt; ++it)
@@ -184,9 +186,11 @@ double NetEmdSmoothV2(NumericVector loc1, NumericVector val1, double binWidth1,
     double curSeg2Val1 = (it->second > 0) ? val2[it->second - 1] : 0.0;
     double curSeg2Val2 = (it->second >= 0) ? val2[it->second] : 0.0;
 
-    res += get_double_segment_constrained(
+    double element = get_double_segment_constrained(
       curSeg1Loc1, curSeg1Loc2, curSeg1Loc3, curSeg1Val1, curSeg1Val2,
       curSeg2Loc1, curSeg2Loc2, curSeg2Loc3, curSeg2Val1, curSeg2Val2);
+
+    add_element_kahan(res, element, compensation);
   }
 
   return res;
