@@ -65,13 +65,13 @@ netemd_speed_test_smooth <- function() {
       gdd1 <- gdd(g1)
       gdd2 <- gdd(g2)
       netemd_start <- Sys.time()
-      netemd(gdd1, gdd2, smoothing_window_width = 1)
-      endTime <- Sys.time()
+      netemd_single_pair(gdd1, gdd2, smoothing_window_width = 1)
+      end_time <- Sys.time()
       gdd_build_time <- append(
         gdd_build_time,
         as.double(netemd_start - fulltime_start)
       )
-      netemd_time <- append(netemd_time, as.double(endTime - netemd_start))
+      netemd_time <- append(netemd_time, as.double(end_time - netemd_start))
     }
   }
   list(gdd_build_time = gdd_build_time, netemd_time = netemd_time)

@@ -74,7 +74,7 @@ get_val <- function(x1, v1, w1, x2, v2, w2) {
   integrate(f1, mi123, ma123)
 }
 
-get_R_value <- function(x1, v1, w1, x2, v2, w2) {
+get_r_value <- function(x1, v1, w1, x2, v2, w2) {
   v1s <- c(v1[1], diff(v1))
   v2s <- c(v2[1], diff(v2))
   d1 <- dhist(x1 + w1 / 2, v1s, smoothing_window_width = w1)
@@ -85,14 +85,14 @@ get_R_value <- function(x1, v1, w1, x2, v2, w2) {
 }
 
 
-compareRonlyVsOpt <- function(x1, v1, w1, x2, v2, w2) {
+compar_r_only_vs_opt <- function(x1, v1, w1, x2, v2, w2) {
   v1s <- c(v1[1], diff(v1))
   v2s <- c(v2[1], diff(v2))
   d1 <- dhist(x1, v1s, smoothing_window_width = w1)
   d2 <- dhist(x2, v2s, smoothing_window_width = w2)
   res1 <- netdist::netemd_single_pair(d1, d2, method = "optimise")
   res2 <- netdist::netemd_single_pair(d1, d2, method = "optimiseRonly")
-  expect_lt(abs(res1$min_emd - res2$min_emd), 10**(-4))
+  testthat::expect_lt(abs(res1$min_emd - res2$min_emd), 10**(-4))
   c(res1$min_emd, res2$min_emd)
 }
 
@@ -287,7 +287,7 @@ test_that("many element test Mixture ", {
           top1 <- max(x2[length(x2)], x1[length(x1)]) + max(w1, w2)
           bottom1 <- min(x2[1], x1[1])
 
-          q1 <- compareRonlyVsOpt(x1, v1, w1, x2, v2, w2)
+          q1 <- compar_r_only_vs_opt(x1, v1, w1, x2, v2, w2)
 
           res2 <- 0
           res2 <- res2 + integrate(
@@ -296,7 +296,7 @@ test_that("many element test Mixture ", {
 
           res1 <- netemd_smooth(x1, v1, w1, x2, v2, w2)
 
-          res3 <- get_R_value(x1, v1, w1, x2, v2, w2)
+          res3 <- get_r_value(x1, v1, w1, x2, v2, w2)
           # Swapped to percentage error
           expect_lt(abs(res1 - res3), 10**(-3))
         }
@@ -385,7 +385,7 @@ test_that("equal distributions moving upwards", {
   for (i in 0:10)
   {
     res2 <- netemd_smooth(x1, v1 + i, w1, x2, v2, w2)
-    res3 <- get_R_value(x1, v1 + i, w1, x2, v2, w2)
+    res3 <- get_r_value(x1, v1 + i, w1, x2, v2, w2)
     print(c(i, res2, res3))
     expect_lt(abs(res2 - 9.25 * i), 10**(-4))
     expect_lt(abs(res2 - res3), 10**(-4))
@@ -403,7 +403,7 @@ test_that("equal distributions moving upwards diff width", {
   for (i in 0:10)
   {
     res2 <- netemd_smooth(x1, v1 + i, w1, x2, v2, w2)
-    res3 <- get_R_value(x1, v1 + i, w1, x2, v2, w2)
+    res3 <- get_r_value(x1, v1 + i, w1, x2, v2, w2)
     print(c(i, res2, res3))
     expect_lt(abs(res2 - res3), 10**(-4))
   }
