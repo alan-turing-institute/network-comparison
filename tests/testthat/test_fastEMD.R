@@ -109,7 +109,8 @@ test_that("3 element test", {
       v2 <- c(0.25, 0.70, 1.00)
       f1 <- make_function(x1, v1, w1, x2, v2, w2)
       res2 <- integrate(
-        f1, 0, max(x2[3], x1[3]) + max(w1, w2), abs.tol = 0.000000001
+        f1, 0, max(x2[3], x1[3]) + max(w1, w2),
+        abs.tol = 0.000000001
       )[[1]]
 
       res1 <- netemd_smooth(x1, v1, w1, x2, v2, w2)
@@ -128,7 +129,8 @@ test_that("2 element test w1=0.1, w2=0.2", {
   v2 <- c(0.5, 1.00)
   f1 <- make_function(x1, v1, w1, x2, v2, w2)
   res2 <- integrate(
-    f1, 0, max(x2[2], x1[2]) + max(w1, w2), abs.tol = 0.000000001
+    f1, 0, max(x2[2], x1[2]) + max(w1, w2),
+    abs.tol = 0.000000001
   )[[1]]
   res1 <- netemd_smooth(x1, v1, w1, x2, v2, w2)
 
@@ -182,7 +184,8 @@ test_that("3 element test Mixture", {
       v2 <- c(0.25, 0.70, 1.00)
       f1 <- make_function(x1, v1, w1, x2, v2, w2)
       res2 <- integrate(
-        f1, 0, max(x2[3], x1[3]) + max(w1, w2), abs.tol = 0.000000001
+        f1, 0, max(x2[3], x1[3]) + max(w1, w2),
+        abs.tol = 0.000000001
       )[[1]]
 
       res1 <- netemd_smooth(x1, v1, w1, x2, v2, w2)
@@ -205,7 +208,8 @@ test_that("3 element test Mixture MidPoint", {
       v2 <- c(0.1, v2_2, 1.00)
       f1 <- make_function(x1, v1, w1, x2, v2, w2)
       res2 <- integrate(
-        f1, 0, max(x2[3], x1[3]) + max(w1, w2), abs.tol = 0.000000001
+        f1, 0, max(x2[3], x1[3]) + max(w1, w2),
+        abs.tol = 0.000000001
       )[[1]]
 
       res1 <- netemd_smooth(x1, v1, w1, x2, v2, w2)
@@ -229,7 +233,8 @@ test_that("3 element test Mixture StartPoint", {
       v2 <- c(v2_1, 0.5, 1.00)
       f1 <- make_function(x1, v1, w1, x2, v2, w2)
       res2 <- integrate(
-        f1, 0, max(x2[3], x1[3]) + max(w1, w2), abs.tol = 0.000000001
+        f1, 0, max(x2[3], x1[3]) + max(w1, w2),
+        abs.tol = 0.000000001
       )[[1]]
 
       res1 <- netemd_smooth(x1, v1, w1, x2, v2, w2)
@@ -253,7 +258,8 @@ test_that("3 element test Mixture StartLoc", {
       v2 <- c(0.3, 0.5, 1.00)
       f1 <- make_function(x1, v1, w1, x2, v2, w2)
       res2 <- integrate(
-        f1, 0, max(x2[3], x1[3]) + max(w1, w2), abs.tol = 0.000000001
+        f1, 0, max(x2[3], x1[3]) + max(w1, w2),
+        abs.tol = 0.000000001
       )[[1]]
 
       res1 <- netemd_smooth(x1, v1, w1, x2, v2, w2)
@@ -291,7 +297,8 @@ test_that("many element test Mixture ", {
 
           res2 <- 0
           res2 <- res2 + integrate(
-            f1, bottom1, top1, abs.tol = 0.000000001, subdivisions = 100000000
+            f1, bottom1, top1,
+            abs.tol = 0.000000001, subdivisions = 100000000
           )[[1]]
 
           res1 <- netemd_smooth(x1, v1, w1, x2, v2, w2)
@@ -315,7 +322,8 @@ test_that("3 element test w1=0.1, w2=0.2", {
   v2 <- c(0.25, 0.70, 1.00)
   f1 <- make_function(x1, v1, w1, x2, v2, w2)
   res2 <- integrate(
-    f1, 0, max(x2[3], x1[3]) + max(w1, w2), abs.tol = 0.0000000001
+    f1, 0, max(x2[3], x1[3]) + max(w1, w2),
+    abs.tol = 0.0000000001
   )[[1]]
   res1 <- netemd_smooth(x1, v1, w1, x2, v2, w2)
 
@@ -332,10 +340,12 @@ test_that("Old failure case", {
   d2$locations <- c(0, 1, 2, 3)
   d2$masses <- c(8634, 1242, 114, 10)
   sq1 <- netemd_single_pair(
-    d1, d2, method = "optimise", smoothing_window_width = 1
+    d1, d2,
+    method = "optimise", smoothing_window_width = 1
   )
   sq2 <- netemd_single_pair(
-    d1, d2, method = "optimiseRonly", smoothing_window_width = 1
+    d1, d2,
+    method = "optimiseRonly", smoothing_window_width = 1
   )
   expect_lt(abs(sq1$min_emd - sq2$min_emd), 10**(-4))
 })

@@ -80,8 +80,7 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     min_emd <- soln$objective
     min_offset <- soln$minimum
     return(list(min_emd = min_emd, min_offset = min_offset))
-  } else
-  {
+  } else {
     val1 <- cumsum(dhist1$masses)
     val2 <- cumsum(dhist2$masses)
     val1 <- val1 / val1[length(val1)]
