@@ -1,5 +1,6 @@
 # Network Comparison
-An R package implementing the Netdis and NetEMD alignment-free network comparison measures.
+An R package implementing the Netdis and NetEMD alignment-free network comparison measures.   
+
 
 ### :warning: BETA: Package under construction (pre-release) :warning:
 Until this package hits release 1.0 anything can change with no notice.
@@ -8,6 +9,7 @@ Until this package hits release 1.0 anything can change with no notice.
 [![GitHub release](https://img.shields.io/github/release/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/releases/latest)
 [![Build](https://github.com/alan-turing-institute/network-comparison/actions/workflows/build.yml/badge.svg)](https://github.com/alan-turing-institute/network-comparison/actions/workflows/build.yml)
 
+[![Quality checks](https://github.com/alan-turing-institute/network-comparison/actions/workflows/quality.yaml/badge.svg)](https://github.com/alan-turing-institute/network-comparison/actions/workflows/quality.yaml)
 [![Codecov](https://img.shields.io/codecov/c/github/alan-turing-institute/network-comparison/master.svg)](https://codecov.io/gh/alan-turing-institute/network-comparison?branch=master)
 [![license](https://img.shields.io/github/license/alan-turing-institute/network-comparison.svg)](https://github.com/alan-turing-institute/network-comparison/edit/master/LICENSE)
 [![Github All Releases](https://img.shields.io/github/downloads/alan-turing-institute/network-comparison/total.svg)](https://github.com/alan-turing-institute/network-comparison/releases/latest)
@@ -55,7 +57,7 @@ using `browseVignettes(package = "netdist")`.
 
 You can list the functions available in the package with `library(help = "netdist")`
 and get more detailed help on individual functions using `?function_name` (e.g.
-`?net_emd`). In RStudio, typing `?netdist::` should also provide a drop down list
+`?netemd`). In RStudio, typing `?netdist::` should also provide a drop down list
 of functions you can select to load the more detailed help.
 
 ## References

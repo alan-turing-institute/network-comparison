@@ -9,11 +9,19 @@
 A list of \code{igraph} objects.
 }
 \source{
-\strong{PPI data (EBV, HSV-1, KSHV, VZV):} Fossum E, Friedel CC, Rajagopala SV, Titz B, Baiker A, Schmidt T, et al. (2009) Evolutionarily Conserved Herpesviral Protein Interaction Networks. PLoS Pathog 5(9): e1000570. \url{https://doi.org/10.1371/journal.ppat.1000570}. Data from Table S2 in the supporting information.
+\strong{PPI data (EBV, HSV-1, KSHV, VZV):} Fossum E, Friedel CC,
+Rajagopala SV, Titz B, Baiker A, Schmidt T, et al. (2009) Evolutionarily
+Conserved Herpesviral Protein Interaction Networks. PLoS Pathog 5(9):
+e1000570. \url{https://doi.org/10.1371/journal.ppat.1000570}. Data from Table
+S2 in the supporting information.
 
-\strong{PPI data (ECL):} Peregrín-Alvarez JM, Xiong X, Su C, Parkinson J (2009) The Modular Organization of Protein Interactions in Escherichia coli. PLoS Comput Biol 5(10): e1000523. \url{https://doi.org/10.1371/journal.pcbi.1000523}
+\strong{PPI data (ECL):} Peregrín-Alvarez JM, Xiong X, Su C,
+Parkinson J (2009) The Modular Organization of Protein Interactions in
+Escherichia coli. PLoS Comput Biol 5(10): e1000523.
+\url{https://doi.org/10.1371/journal.pcbi.1000523}
 
-\strong{Taxonomy ground truth:} NCBI taxonomy database. \url{https://www.ncbi.nlm.nih.gov/taxonomy}
+\strong{Taxonomy ground truth:} NCBI taxonomy database.
+\url{https://www.ncbi.nlm.nih.gov/taxonomy}
 }
 \usage{
 virusppi

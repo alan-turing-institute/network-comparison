@@ -25,8 +25,8 @@ to calculate the EMD at all offsets where any knots from the two ECMFs align
 to ensure that the offset with the global minimum EMD is found.
 
 This is because of the piece-wise linear nature of the two ECMFs. Between any
-two offsets where knots from the two ECMFs align, EMD will be either constant,
-or uniformly increasing or decreasing. Therefore, there the EMD between two
-sets of aligned knots cannot be smaller than the EMD at one or other of the
-bounding offsets.
+two offsets where knots from the two ECMFs align, EMD will be either
+constant, or uniformly increasing or decreasing. Therefore, there the EMD
+between two sets of aligned knots cannot be smaller than the EMD at one or
+other of the bounding offsets.
 }

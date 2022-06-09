@@ -15,7 +15,8 @@ TRUE if input is a 1D numeric vector. FALSE otherwise.
 \description{
 Check if a variable is a 1D numeric vector by checking that:
 \itemize{
-  \item \code{is_numeric(input)}: Input is vector, matrix, array or list of numbers
+  \item \code{is_numeric(input)}: Input is vector, matrix, array or list of
+  numbers
   \item \code{is_null(dim(input))}: Input is not a matrix or array
 }
 }

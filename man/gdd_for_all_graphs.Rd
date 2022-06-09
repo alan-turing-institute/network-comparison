@@ -25,12 +25,12 @@ gdd_for_all_graphs(
 \item{feature_type}{Type of graphlet-based degree distributions. Can be
 \code{graphlet} to count graphlets or \code{orbit} to count orbits.}
 
-\item{max_graphlet_size}{Maximum size of graphlets to use when generating GDD.
-Currently only size 4 and 5 are supported.}
+\item{max_graphlet_size}{Maximum size of graphlets to use when generating
+GDD. Currently only size 4 and 5 are supported.}
 
-\item{ego_neighbourhood_size}{The number of steps from the source node used to select the
-neighboring nodes to be included in the source node ego-network. If set to 0, ego-networks will not be
-used.}
+\item{ego_neighbourhood_size}{The number of steps from the source node used
+to select the neighboring nodes to be included in the source node
+ego-network. If set to 0, ego-networks will not be used.}
 
 \item{mc.cores}{Number of cores to use for parallel processing. Defaults to
 the \code{mc.cores} option set in the R environment.}

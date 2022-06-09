@@ -23,11 +23,12 @@ source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
 
 # Load query graphs
 graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),
-                             format = "ncol")
+  format = "ncol"
+)
 
 graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),
-                             format = "ncol")
-
+  format = "ncol"
+)
 ```
 
 ## Set Netdis parameters
@@ -50,86 +51,108 @@ num_bins <- 100
 ## Generate ego networks
 ```{r}
 # Get ego networks for query graphs and reference graph
-ego_1 <- make_named_ego_graph(graph_1, 
-                              order = neighbourhood_size, 
-                              min_ego_nodes = min_ego_nodes, 
-                              min_ego_edges = min_ego_edges)
+ego_1 <- make_named_ego_graph(graph_1,
+  order = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges
+)
 
-ego_2 <- make_named_ego_graph(graph_2, 
-                              order = neighbourhood_size, 
-                              min_ego_nodes = min_ego_nodes, 
-                              min_ego_edges = min_ego_edges)
+ego_2 <- make_named_ego_graph(graph_2,
+  order = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges
+)
 ```
 
 ## Count graphlets in ego networks
 ```{r}
 # Count graphlets for ego networks in query and reference graphs
-graphlet_counts_1 <- ego_to_graphlet_counts(ego_1, max_graphlet_size = max_graphlet_size)
-graphlet_counts_2 <- ego_to_graphlet_counts(ego_2, max_graphlet_size = max_graphlet_size)
+graphlet_counts_1 <- ego_to_graphlet_counts(
+  ego_1,
+  max_graphlet_size = max_graphlet_size
+)
+graphlet_counts_2 <- ego_to_graphlet_counts(
+  ego_2,
+  max_graphlet_size = max_graphlet_size
+)
 ```
 
 ## Use a reference graph to calculate expected graphlet counts in ego network density bins
 ```{r}
 # Load reference graph
-ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"), 
-                        package = "netdist")
+ref_path <- system.file(file.path("extdata", "random", "ER_1250_10_1"),
+  package = "netdist"
+)
 ref_graph <- read_simple_graph(ref_path, format = "ncol")
 
-ego_ref <- make_named_ego_graph(ref_graph, 
-                                order = neighbourhood_size, 
-                                min_ego_nodes = min_ego_nodes, 
-                                min_ego_edges = min_ego_edges)
+ego_ref <- make_named_ego_graph(ref_graph,
+  order = neighbourhood_size,
+  min_ego_nodes = min_ego_nodes,
+  min_ego_edges = min_ego_edges
+)
 
-graphlet_counts_ref <- ego_to_graphlet_counts(ego_ref, max_graphlet_size = max_graphlet_size)
+graphlet_counts_ref <- ego_to_graphlet_counts(
+  ego_ref,
+  max_graphlet_size = max_graphlet_size
+)
 
 # Scale ego-network graphlet counts by dividing by total number of k-tuples in
 # ego-network (where k is graphlet size)
-scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(graphlet_counts_ref, 
-                                                        max_graphlet_size)
+scaled_graphlet_counts_ref <- scale_graphlet_counts_ego(
+  graphlet_counts_ref,
+  max_graphlet_size
+)
 
 
 # Get ego-network densities
 densities_ref <- ego_network_density(graphlet_counts_ref)
 
 # Adaptively bin ref ego-network densities
-binned_densities <- binned_densities_adaptive(densities_ref, 
-                                              min_counts_per_interval = min_bin_count, 
-                                              num_intervals = num_bins)
+binned_densities <- binned_densities_adaptive(densities_ref,
+  min_counts_per_interval = min_bin_count,
+  num_intervals = num_bins
+)
 
 ref_ego_density_bins <- binned_densities$breaks
 
 # Average ref graphlet counts across density bins
 ref_binned_graphlet_counts <- mean_density_binned_graphlet_counts(
-                                  scaled_graphlet_counts_ref, 
-                                  binned_densities$interval_indexes)
-  
+  scaled_graphlet_counts_ref,
+  binned_densities$interval_indexes
+)
 ```
 
 
 ## Centre graphlet counts of query graphs based on statistics of reference graph
 ```{r}
 # Calculate expected graphlet counts (using ref graph ego network density bins)
-exp_graphlet_counts_1 <- netdis_expected_counts(graphlet_counts_1, 
-                                                                 ref_ego_density_bins, 
-                                                                 ref_binned_graphlet_counts,
-                                                                 max_graphlet_size,
-                                                                 scale_fn=count_graphlet_tuples)
+exp_graphlet_counts_1 <- netdis_expected_counts(graphlet_counts_1,
+  ref_ego_density_bins,
+  ref_binned_graphlet_counts,
+  max_graphlet_size,
+  scale_fn = count_graphlet_tuples
+)
 
 
-exp_graphlet_counts_2 <- netdis_expected_counts(graphlet_counts_2, 
-                                                                 ref_ego_density_bins, 
-                                                                 ref_binned_graphlet_counts,
-                                                                 max_graphlet_size,
-                                                                 scale_fn=count_graphlet_tuples)
+exp_graphlet_counts_2 <- netdis_expected_counts(graphlet_counts_2,
+  ref_ego_density_bins,
+  ref_binned_graphlet_counts,
+  max_graphlet_size,
+  scale_fn = count_graphlet_tuples
+)
 
 # Centre graphlet counts by subtracting expected counts
-centred_graphlet_counts_1 <- netdis_subtract_exp_counts(graphlet_counts_1,
-                                                        exp_graphlet_counts_1,
-                                                        max_graphlet_size)
+centred_graphlet_counts_1 <- netdis_subtract_exp_counts(
+  graphlet_counts_1,
+  exp_graphlet_counts_1,
+  max_graphlet_size
+)
 
-centred_graphlet_counts_2 <- netdis_subtract_exp_counts(graphlet_counts_2,
-                                                        exp_graphlet_counts_2,
-                                                        max_graphlet_size)
+centred_graphlet_counts_2 <- netdis_subtract_exp_counts(
+  graphlet_counts_2,
+  exp_graphlet_counts_2,
+  max_graphlet_size
+)
 ```
 
 ## Sum centred graphlet counts across all ego networks
@@ -142,9 +165,11 @@ sum_graphlet_counts_2 <- colSums(centred_graphlet_counts_2)
 ## Calculate netdis statistics
 ```{r}
 
-netdis_result <- netdis_uptok(sum_graphlet_counts_1, 
-                              sum_graphlet_counts_2, 
-                              max_graphlet_size)
+netdis_result <- netdis_uptok(
+  sum_graphlet_counts_1,
+  sum_graphlet_counts_2,
+  max_graphlet_size
+)
 
 print(netdis_result)
 ```

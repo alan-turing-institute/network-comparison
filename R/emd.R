@@ -9,8 +9,8 @@
 #' offsets for each pair of histograms. Default is "optimise" to use
 #' R's built-in \code{stats::optimise} method to efficiently find the offset
 #' with the minimal EMD. However, this is not guaranteed to find the global
-#' minimum if multiple local minima EMDs exist. You can alternatively specify the
-#' "exhaustive" method, which will exhaustively evaluate the EMD between the
+#' minimum if multiple local minima EMDs exist. You can alternatively specify
+#' the "exhaustive" method, which will exhaustively evaluate the EMD between the
 #' histograms at all offsets that are candidates for the minimal EMD.
 #' @return Earth Mover's Distance between the two discrete histograms
 #' @export
@@ -43,7 +43,8 @@ min_emd <- function(dhist1, dhist2, method = "optimise") {
 #' @export
 min_emd_optimise_fast <- function(dhist1, dhist2) {
   # Can we run the C++ fast implementation (only works with no smoothing)?
-  if ((dhist1$smoothing_window_width == 0) && (dhist2$smoothing_window_width == 0)) {
+  if ((dhist1$smoothing_window_width == 0) &&
+    (dhist2$smoothing_window_width == 0)) {
     # Determine minimum and maximum offset of range in which histograms overlap
     # (based on sliding histogram 1)
     min_offset <- min(dhist2$locations) - max(dhist1$locations)
@@ -66,7 +67,6 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     val2 <- val2 / val2[length(val2)]
     loc1 <- dhist1$locations
     loc2 <- dhist2$locations
-    count <- 0
     emd_offset <- function(offset) {
       temp1 <- emd_fast_no_smoothing(loc1 + offset, val1, loc2, val2)
       temp1
@@ -80,10 +80,54 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     min_emd <- soln$objective
     min_offset <- soln$minimum
     return(list(min_emd = min_emd, min_offset = min_offset))
-  }
-  else {
-    # Fall back on other version if either dhist is smoothed
-    return(min_emd_optimise(dhist1, dhist2))
+  } else {
+    val1 <- cumsum(dhist1$masses)
+    val2 <- cumsum(dhist2$masses)
+    val1 <- val1 / val1[length(val1)]
+    val2 <- val2 / val2[length(val2)]
+    loc1 <- dhist1$locations
+    loc2 <- dhist2$locations
+    bin_width_1 <- dhist1$smoothing_window_width
+    bin_width_2 <- dhist2$smoothing_window_width
+    # Offset the histograms to make the alignments work
+    loc1_mod <- loc1 - bin_width_1 / 2
+    loc2_mod <- loc2 - bin_width_2 / 2
+    # Determine minimum and maximum offset of range in which histograms overlap
+    # (based on sliding histogram 1)
+    min_offset <- min(loc2_mod) - max(loc1_mod) - max(bin_width_1, bin_width_2)
+    max_offset <- max(loc2_mod) - min(loc1_mod) + max(bin_width_1, bin_width_2)
+    # Set lower and upper range for optimise algorithm to be somewhat wider than
+    # range defined by the minimum and maximum offset. This guards against a
+    # couple of issues that arise if the optimise range is exactly min_offset
+    # to max_offset
+    # 1) If lower and upper are equal, the optimise method will throw and error
+    # 2) It seems that optimise is not guaranteed to explore its lower and upper
+    #    bounds, even in the case where one of them is the offset with minimum
+    #    EMD
+    buffer <- 0.1
+    min_offset <- min_offset - buffer
+    max_offset <- max_offset + buffer
+    # Define a single parameter function to minimise emd as a function of offset
+    emd_offset <- function(offset) {
+      temp1 <- netemd_smooth(
+        loc1_mod + offset,
+        val1,
+        bin_width_1,
+        loc2_mod,
+        val2,
+        bin_width_2
+      )
+      temp1
+    }
+    # Get solution from optimiser
+    soln <- stats::optimise(emd_offset,
+      lower = min_offset, upper = max_offset,
+      tol = .Machine$double.eps * 1000
+    )
+    # Return mnimum EMD and associated offset
+    min_emd <- soln$objective
+    min_offset <- soln$minimum
+    return(list(min_emd = min_emd, min_offset = min_offset))
   }
 }
 
@@ -148,10 +192,10 @@ min_emd_optimise <- function(dhist1, dhist2) {
 #' to ensure that the offset with the global minimum EMD is found.
 #'
 #' This is because of the piece-wise linear nature of the two ECMFs. Between any
-#' two offsets where knots from the two ECMFs align, EMD will be either constant,
-#' or uniformly increasing or decreasing. Therefore, there the EMD between two
-#' sets of aligned knots cannot be smaller than the EMD at one or other of the
-#' bounding offsets.
+#' two offsets where knots from the two ECMFs align, EMD will be either
+#' constant, or uniformly increasing or decreasing. Therefore, there the EMD
+#' between two sets of aligned knots cannot be smaller than the EMD at one or
+#' other of the bounding offsets.
 #' @param dhist1 A \code{dhist} discrete histogram object
 #' @param dhist2 A \code{dhist} discrete histogram object
 #' @return Earth Mover's Distance between the two discrete histograms
@@ -241,15 +285,16 @@ emd <- function(dhist1, dhist2) {
 #' Distance between the two histograms by summing the absolute difference
 #' between the two cumulative histograms.
 #' @references
-#' Calculation of the Wasserstein Distance Between Probability Distributions on the Line
-#' S. S. Vallender, Theory of Probability & Its Applications 1974 18:4, 784-786
-#' \url{http://dx.doi.org/10.1137/1118101}
+#' Calculation of the Wasserstein Distance Between Probability Distributions on
+#' the Line S. S. Vallender, Theory of Probability & Its Applications 1974 18:4,
+#' 784-786 \url{http://dx.doi.org/10.1137/1118101}
 #' @param dhist1 A discrete histogram as a \code{dhist} object
 #' @param dhist2 A discrete histogram as a \code{dhist} object
 #' @return Earth Mover's Distance between the two input histograms
 #' @export
 emd_cs <- function(dhist1, dhist2) {
-  # Generate Empirical Cumulative Mass Functions (ECMFs) for each discrete histogram
+  # Generate Empirical Cumulative Mass Functions (ECMFs) for each discrete
+  # histogram
   ecmf1 <- dhist_ecmf(dhist1)
   ecmf2 <- dhist_ecmf(dhist2)
   # Calculate the area between the two ECMFs
@@ -279,10 +324,16 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   # the bin_mass and bin_centre vectors for each histogram must have the same
   # length.
   if (length(bin_centres1) != num_bins1) {
-    stop("Number of bin masses and bin centres provided for histogram 1 must be equal")
+    stop(
+      "Number of bin masses and bin centres provided for histogram 1 must ",
+      "be equal"
+    )
   }
   if (length(bin_centres2) != num_bins2) {
-    stop("Number of bin masses and bin centres provided for histogram 2 must be equal")
+    stop(
+      "Number of bin masses and bin centres provided for histogram 2 must ",
+      "be equal"
+    )
   }
 
   # Generate cost matrix
@@ -291,10 +342,16 @@ emd_lp <- function(bin_masses1, bin_masses2, bin_centres1, bin_centres2) {
   # Linear Programming solver requires all bin masses and transportation costs
   # to be integers to generate correct answer
   if (!isTRUE(all.equal(bin_masses1, floor(bin_masses1)))) {
-    stop("All bin masses for histogram 1 must be integers for accurate Linear Programming solution")
+    stop(
+      "All bin masses for histogram 1 must be integers for accurate Linear ",
+      "Programming solution"
+    )
   }
   if (!isTRUE(all.equal(bin_masses2, floor(bin_masses2)))) {
-    stop("All bin masses for histogram 2 must be integers for accurate Linear Programming solution")
+    stop(
+      "All bin masses for histogram 2 must be integers for accurate ",
+      "Linear Programming solution"
+    )
   }
   if (!isTRUE(all.equal(cost_mat, floor(cost_mat)))) {
     stop("All costs must be integers for accurate Linear Programming solution")
@@ -320,8 +377,18 @@ cost_matrix <- function(bin_centres1, bin_centres2) {
   # Calculate distances between all bins in network 1 and all bins in network 2
   num_bins1 <- length(bin_centres1)
   num_bins2 <- length(bin_centres2)
-  loc_mat1 <- matrix(bin_centres1, nrow = num_bins1, ncol = num_bins2, byrow = FALSE)
-  loc_mat2 <- matrix(bin_centres2, nrow = num_bins1, ncol = num_bins2, byrow = TRUE)
+  loc_mat1 <- matrix(
+    bin_centres1,
+    nrow = num_bins1,
+    ncol = num_bins2,
+    byrow = FALSE
+  )
+  loc_mat2 <- matrix(
+    bin_centres2,
+    nrow = num_bins1,
+    ncol = num_bins2,
+    byrow = TRUE
+  )
   cost_mat <- abs(loc_mat1 - loc_mat2)
   return(cost_mat)
 }

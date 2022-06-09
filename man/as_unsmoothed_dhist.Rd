@@ -10,8 +10,8 @@ as_unsmoothed_dhist(dhist)
 \item{dhist}{A discrete histogram as a \code{dhist} object}
 }
 \value{
-A copy of a \code{dhist} object with its \code{smoothing_window_width}
-attribute set to 0.
+A copy of a \code{dhist} object with its
+\code{smoothing_window_width} attribute set to 0.
 }
 \description{
 Returns an "unsmoothed" copy of a \code{dhist} object with its

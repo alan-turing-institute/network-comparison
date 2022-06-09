@@ -1,6 +1,10 @@
 
-self_net_emd <- function(histogram, shift, method) {
-  netemd_one_to_one(dhists_1 = histogram, dhists_2 = shift_dhist(histogram, shift), method = method)
+self_netemd <- function(histogram, shift, method) {
+  netemd_one_to_one(
+    dhists_1 = histogram,
+    dhists_2 = shift_dhist(histogram, shift),
+    method = method
+  )
 }
 expected <- 0
 
@@ -8,32 +12,30 @@ locations <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
 masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
 histogram <- dhist(locations = locations, masses = masses)
 
-expect_equal(self_net_emd(histogram, shift = 1, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 1, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.5, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.5, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.1, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.1, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.05, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.05, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.01, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.01, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 1, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 1, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0.5, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0.5, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0.1, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0.1, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0.05, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0.05, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0.01, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0.01, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0, "exhaustive"), expected)
 
 expect_self_netemd_correct <- function(histogram, shift, method,
-                                        return_details = FALSE) {
-  self_net_emd <- netemd_one_to_one(dhists_1 = histogram, dhists_2 = shift_dhist(histogram, shift),
+                                       return_details = FALSE) {
+  self_netemd <- netemd_one_to_one(
+    dhists_1 = histogram, dhists_2 = shift_dhist(histogram, shift),
     method = method, return_details = return_details
   )
-  loc <- histogram$locations
-  mass <- histogram$masses
-  var <- sum(loc * loc * mass) / sum(mass) - (sum(loc * mass) / sum(mass))^2
   expected <- list(
-    net_emd = 0, min_emds = 0, min_offsets = shift,
+    netemd = 0, min_emds = 0, min_offsets = shift,
     min_offsets_std = 0
   )
-  expect_equal(self_net_emd, expected)
+  expect_equal(self_netemd, expected) # nolint: object_usage_linter.
 }
 
 locations <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
@@ -88,40 +90,48 @@ expect_self_netemd_correct(histogram,
   return_details = TRUE
 )
 
-test_that("net_emd returns 0 when comparing any normal histogram against itself (no offset)", {
-  num_hists <- 5
-  num_bins <- 101
+test_that(
+  paste(
+    "netemd returns 0 when comparing any normal histogram against itself",
+    "(no offset)"
+  ),
+  {
+    num_hists <- 5
+    num_bins <- 101
 
-  mus <- runif(num_hists, -10, 10)
-  sigmas <- runif(num_hists, 0, 10)
+    mus <- runif(num_hists, -10, 10)
+    sigmas <- runif(num_hists, 0, 10)
 
-  rand_locations <- function(mu, sigma) {
-    return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))
+    rand_locations <- function(mu, sigma) {
+      return(seq(mu - 5 * sigma, mu + 5 * sigma, length.out = num_bins))
+    }
+
+    rand_dhists <- purrr::map2(mus, sigmas, function(mu, sigma) {
+      locations <- rand_locations(mu, sigma)
+      masses <- dnorm(locations, mean = mu, sd = sigma)
+      return(dhist(masses = masses, locations = locations))
+    })
+
+    expected <- 0
+    actuals_opt <- purrr::map(rand_dhists, function(dhist) {
+      netemd_one_to_one(dhists_1 = dhist, dhists_2 = dhist, method = "optimise")
+    })
+    purrr::walk(actuals_opt, function(actual) {
+      expect_equal(actual, expected)
+    })
+
+    actuals_exhaustive_default <- purrr::map(rand_dhists, function(dhist) {
+      netemd_one_to_one(
+        dhists_1 = dhist, dhists_2 = dhist, method = "exhaustive"
+      )
+    })
+    purrr::walk(actuals_exhaustive_default, function(actual) {
+      expect_equal(actual, expected)
+    })
   }
+)
 
-  rand_dhists <- purrr::map2(mus, sigmas, function(mu, sigma) {
-    locations <- rand_locations(mu, sigma)
-    masses <- dnorm(locations, mean = mu, sd = sigma)
-    return(dhist(masses = masses, locations = locations))
-  })
-
-  expected <- 0
-  actuals_opt <- purrr::map(rand_dhists, function(dhist) {
-    netemd_one_to_one(dhists_1 = dhist, dhists_2 = dhist, method = "optimise")
-  })
-  purrr::walk(actuals_opt, function(actual) {
-    expect_equal(actual, expected)
-  })
-
-  actuals_exhaustive_default <- purrr::map(rand_dhists, function(dhist) {
-    netemd_one_to_one(dhists_1 = dhist, dhists_2 = dhist, method = "exhaustive")
-  })
-  purrr::walk(actuals_exhaustive_default, function(actual) {
-    expect_equal(actual, expected)
-  })
-})
-
-test_that("net_emd returns 0 when comparing any normal histogram randomly offset
+test_that("netemd returns 0 when comparing any normal histogram randomly offset
           against itself", {
   num_hists <- 2
   num_bins <- 101
@@ -145,7 +155,11 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
 
   netemd_offset_self <- function(dhist, offsets, method) {
     netemds <- purrr::map_dbl(offsets, function(offset) {
-      netemd_one_to_one(dhists_1 = dhist, dhists_2 = shift_dhist(dhist, offset), method = method)
+      netemd_one_to_one(
+        dhists_1 = dhist,
+        dhists_2 = shift_dhist(dhist, offset),
+        method = method
+      )
     })
     return(netemds)
   }
@@ -175,7 +189,7 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   })
 })
 
-test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
+test_that("netemd returns min_emd = 0 and min_offset = 0 when comparing any
           normal histogram randomly offset against itself", {
   num_hists <- 2
   num_bins <- 101
@@ -199,16 +213,20 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
 
   expect_self_netemd_correct <-
     function(histogram, shift, method, return_details = FALSE) {
-      self_net_emd <- netemd_one_to_one(dhists_1 = histogram, dhists_2 = shift_dhist(histogram, shift),method = method, return_details = return_details
+      self_netemd <- netemd_one_to_one(
+        dhists_1 = histogram,
+        dhists_2 = shift_dhist(histogram, shift),
+        method = method,
+        return_details = return_details
       )
       loc <- histogram$locations
       mass <- histogram$masses
       var <- sum(loc * loc * mass) / sum(mass) - (sum(loc * mass) / sum(mass))^2
       expected <- list(
-        net_emd = 0, min_emds = 0, min_offsets = shift,
+        netemd = 0, min_emds = 0, min_offsets = shift,
         min_offsets_std = 0
       )
-      expect_equal(self_net_emd, expected)
+      expect_equal(self_netemd, expected)
     }
 
   purrr::walk2(rand_dhists, offset_lists, function(dhist, offsets) {
@@ -228,34 +246,59 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
   })
 })
 
-test_that("net_emd returns analytically derived non-zero solutions for distributions
-          where the analytical solution is known", {
-  # Helper functions to create dhists for a given value of "p"
-  two_bin_dhist <- function(p) {
-    dhist(locations = c(0, 1), masses = c(p, 1 - p))
-  }
-  three_bin_dhist <- function(p) {
-    dhist(locations = c(-1, 0, 1), masses = c(0.5 * p * (1 - p), 1 - (p * (1 - p)), 0.5 * p * (1 - p)))
-  }
+test_that(
+  paste(
+    "netemd returns analytically derived non-zero solutions for",
+    "distributions where the analytical solution is known"
+  ),
+  {
+    # Helper functions to create dhists for a given value of "p"
+    two_bin_dhist <- function(p) {
+      dhist(locations = c(0, 1), masses = c(p, 1 - p))
+    }
+    three_bin_dhist <- function(p) {
+      dhist(
+        locations = c(-1, 0, 1),
+        masses = c(0.5 * p * (1 - p), 1 - (p * (1 - p)), 0.5 * p * (1 - p))
+      )
+    }
 
-  # Helper function to test actual vs expected
-  test_pair <- function(p, expected) {
-    dhistA <- two_bin_dhist(p)
-    dhistB <- three_bin_dhist(p)
-    expect_equal(netemd_one_to_one(dhists_1 = dhistA, dhists_2 = dhistB, method = "exhaustive"), expected, tolerance = 1e-12)
-    # Even setting the stats::optimise method tolerance to machine double precision, the
-    # optimised NetEMD is ~1e-09, so set a slightly looser tolerance here
-    expect_equal(netemd_one_to_one(dhists_1 = dhistA, dhists_2 = dhistB, method = "optimise"), expected, tolerance = 1e-08)
-  }
+    # Helper function to test actual vs expected
+    test_pair <- function(p, expected) {
+      dhist_a <- two_bin_dhist(p)
+      dhist_b <- three_bin_dhist(p)
+      expect_equal(
+        netemd_one_to_one(
+          dhists_1 = dhist_a,
+          dhists_2 = dhist_b,
+          method = "exhaustive"
+        ),
+        expected,
+        tolerance = 1e-12
+      )
+      # Even setting the stats::optimise method tolerance to machine double
+      # precision, the optimised NetEMD is ~1e-09, so set a slightly looser
+      # tolerance here
+      expect_equal(
+        netemd_one_to_one(
+          dhists_1 = dhist_a,
+          dhists_2 = dhist_b,
+          method = "optimise"
+        ),
+        expected,
+        tolerance = 1e-08
+      )
+    }
 
-  # Test for p values with analytically calculated NetEMD
-  test_pair(1 / 2, 1)
-  test_pair(1 / 3, 1 / sqrt(2))
-  test_pair(1 / 5, 1 / 2)
-})
+    # Test for p values with analytically calculated NetEMD
+    test_pair(1 / 2, 1)
+    test_pair(1 / 3, 1 / sqrt(2))
+    test_pair(1 / 5, 1 / 2)
+  }
+)
 
 context("Measures NetEMD: Virus PPI (EMD)")
-# EMD and NET_EMD: Virus PPI datasets
+# EMD and netemd: Virus PPI datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of
           virus PPI graphs to themselves", {
   # Load viurs PPI network data in ORCA-compatible edge list format
@@ -267,14 +310,14 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
 
   # Map over virus PPI networks
   purrr::walk(virus_gdd, function(gdd) {
-    purrr::walk(gdd, function(gdd_Ox) {
+    purrr::walk(gdd, function(gdd_Ox) { # nolint: object_length_linter
       expect_equal(emd(gdd_Ox, gdd_Ox), 0)
     })
   })
 })
 
 context("Measures NetEMD: Virus PPI (NetEMD)")
-test_that("net_emd return 0 when comparing graphlet orbit degree distributions
+test_that("netemd return 0 when comparing graphlet orbit degree distributions
           of virus PPI graphs to themselves", {
   # Load virus PPI network data in ORCA-compatible edge list format
   data_indexes <- 1:length(virusppi)
@@ -291,8 +334,9 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
 
   # Map over virus PPI networks
   purrr::walk(virus_gdd, function(gdd) {
-    purrr::walk(gdd, function(gdd_Ox) {
-      expect_equalish(netemd_one_to_one(dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
+    purrr::walk(gdd, function(gdd_Ox) { # nolint: object_length_linter
+      expect_equalish(netemd_one_to_one(
+        dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
         method = "optimise",
         smoothing_window_width = 0
       ), 0)
@@ -301,7 +345,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
 })
 
 context("Measures NetEMD: Random graphs (EMD)")
-# EMD and NET_EMD: Random graph datasets
+# EMD and netemd: Random graph datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of
           random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
@@ -317,14 +361,14 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
 
   # Map over random graphs
   purrr::walk(random_gdd, function(gdd) {
-    purrr::walk(gdd, function(gdd_Ox) {
+    purrr::walk(gdd, function(gdd_Ox) { # nolint: object_length_linter
       expect_equal(emd(gdd_Ox, gdd_Ox), 0)
     })
   })
 })
 
 context("Measures NetEMD: Random graphs (NetEMD)")
-test_that("net_emd return 0 when comparing graphlet orbit degree distributions
+test_that("netemd return 0 when comparing graphlet orbit degree distributions
           of random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
   random_graphs <- read_simple_graphs(
@@ -345,8 +389,9 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
 
   # Map over random graphs
   purrr::walk(random_gdd, function(gdd) {
-    purrr::walk(gdd, function(gdd_Ox) {
-      expect_equalish(netemd_one_to_one(dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
+    purrr::walk(gdd, function(gdd_Ox) { # nolint: object_length_linter
+      expect_equalish(netemd_one_to_one(
+        dhists_1 = gdd_Ox, dhists_2 = gdd_Ox,
         method = "optimise",
         smoothing_window_width = 0
       ), 0)
@@ -403,11 +448,16 @@ test_that("netemd_many_to_many works", {
   expected_netemd_fn <- function(gdds) {
     list(
       netemds = c(
-        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 =  gdds$ECL), netemd_one_to_one(dhists_1 =gdds$EBV, dhists_2 = gdds$HSV),
-        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$KSHV), netemd_one_to_one(dhists_1 =gdds$EBV, dhists_2 = gdds$VZV),
-        netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$HSV), netemd_one_to_one(dhists_1 =gdds$ECL, dhists_2 = gdds$KSHV),
-        netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$VZV), netemd_one_to_one(dhists_1 =gdds$HSV, dhists_2 = gdds$KSHV),
-        netemd_one_to_one(dhists_1 = gdds$HSV, dhists_2 = gdds$VZV), netemd_one_to_one(dhists_1 =gdds$KSHV, dhists_2 = gdds$VZV)
+        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$ECL),
+        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$HSV),
+        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$KSHV),
+        netemd_one_to_one(dhists_1 = gdds$EBV, dhists_2 = gdds$VZV),
+        netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$HSV),
+        netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$KSHV),
+        netemd_one_to_one(dhists_1 = gdds$ECL, dhists_2 = gdds$VZV),
+        netemd_one_to_one(dhists_1 = gdds$HSV, dhists_2 = gdds$KSHV),
+        netemd_one_to_one(dhists_1 = gdds$HSV, dhists_2 = gdds$VZV),
+        netemd_one_to_one(dhists_1 = gdds$KSHV, dhists_2 = gdds$VZV)
       ),
       comp_spec = cross_comparison_spec(gdds)
     )
@@ -415,7 +465,7 @@ test_that("netemd_many_to_many works", {
 
   # Comparison function for clarity
   compare_fn <- function(gdds) {
-    expect_equal(netemd_many_to_many(dhists=gdds), expected_netemd_fn(gdds))
+    expect_equal(netemd_many_to_many(dhists = gdds), expected_netemd_fn(gdds))
   }
 
   # Map over test parameters, comparing actual gdds to expected
