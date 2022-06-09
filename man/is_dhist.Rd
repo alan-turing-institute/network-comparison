@@ -15,8 +15,8 @@ is set to \code{dhist} (default = \code{TRUE})}
 }
 \description{
 Checks if the input object is of class \code{dhist}. If \code{fast_check} is
-\code{TRUE} then the only check is whether the object has a class attribute of
-\code{dhist}. If \code{fast_check} is \code{FALSE} (default), then checks
+\code{TRUE} then the only check is whether the object has a class attribute
+of \code{dhist}. If \code{fast_check} is \code{FALSE} (default), then checks
 are also made to ensure that the object has the structure required of a
 \code{dhist} object.
 }

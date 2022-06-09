@@ -18,16 +18,22 @@ netemd_many_to_many(
 )
 }
 \arguments{
-\item{graphs}{A list of network/graph objects from the \code{igraph} package. \code{graphs} can be set to \code{NULL} (default) if \code{dhists} is provided.}
+\item{graphs}{A list of network/graph objects from the \code{igraph} package.
+\code{graphs} can be set to \code{NULL} (default) if \code{dhists} is
+provided.}
 
-\item{dhists}{A list whose elements contain either: A  list of \code{dhist} discrete histogram objects for each graph, or a list  a matrix of network features (each column representing a feature). \code{dhists} can be set to \code{NULL} (default) if \code{graphs} is provided.  A \code{dhist} object can be obtained from \code{graph_features_to_histograms}.}
+\item{dhists}{A list whose elements contain either: A  list of \code{dhist}
+discrete histogram objects for each graph, or a list  a matrix of network
+features (each column representing a feature). \code{dhists} can be set to
+\code{NULL} (default) if \code{graphs} is provided.  A \code{dhist} object
+can be obtained from \code{graph_features_to_histograms}.}
 
 \item{method}{The method to use to find the minimum EMD across all potential
 offsets for each pair of histograms. Default is "optimise" to use
 R's built-in \code{stats::optimise} method to efficiently find the offset
 with the minimal EMD. However, this is not guaranteed to find the global
-minimum if multiple local minima EMDs exist. You can alternatively specify the
-"exhaustive" method, which will exhaustively evaluate the EMD between the
+minimum if multiple local minima EMDs exist. You can alternatively specify
+the "exhaustive" method, which will exhaustively evaluate the EMD between the
 histograms at all offsets that are candidates for the minimal EMD.}
 
 \item{smoothing_window_width}{Width of "top-hat" smoothing window to apply to
@@ -43,15 +49,16 @@ minimal EMDs and associated offsets for all pairs of histograms}
 the \code{mc.cores} option set in the R environment.}
 
 \item{feature_type}{Type of graphlet-based feature to count: "graphlet"
-counts the number of graphlets each node participates in; "orbit" (default) calculates
-the number of graphlet orbits each node participates in.}
+counts the number of graphlets each node participates in; "orbit" (default)
+calculates the number of graphlet orbits each node participates in.}
 
 \item{max_graphlet_size}{Determines the maximum size of graphlets to count.
 Only graphlets containing up to \code{max_graphlet_size} nodes will be
 counted. Possible values are 4, and 5 (default).}
 
 \item{ego_neighbourhood_size}{The number of steps from the source node to
-include nodes for each ego-network. NetEmd was proposed for individual nodes alone, hence the default value is 0.}
+include nodes for each ego-network. NetEmd was proposed for individual nodes
+alone, hence the default value is 0.}
 }
 \value{
 NetEMD measures between all pairs of graphs for which features
@@ -60,10 +67,10 @@ parameter. If set to FALSE, a list is returned with the following named
 elements:\code{net_emd}: a vector of NetEMDs for each pair of graphs,
 \code{comp_spec}: a comparison specification table containing the graph names
 and indices within the input GDD list for each pair of graphs compared.
-If \code{return_details} is set to FALSE, the list also contains the following
-matrices for each graph pair: \code{min_emds}: the minimal EMD for each GDD
-used to compute the NetEMD, \code{min_offsets}: the associated offsets giving
-the minimal EMD for each GDD
+If \code{return_details} is set to FALSE, the list also contains the
+following matrices for each graph pair: \code{min_emds}: the minimal EMD for
+each GDD used to compute the NetEMD, \code{min_offsets}: the associated
+offsets giving the minimal EMD for each GDD
 }
 \description{
 NetEMDs between all graph pairs using provided Graphlet-based Degree

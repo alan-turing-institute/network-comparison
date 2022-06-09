@@ -7,7 +7,8 @@
 graphlet_key(max_graphlet_size)
 }
 \arguments{
-\item{max_graphlet_size}{Maximum number of nodes graphlets can contain. Currently only size 2 to 5 are supported.}
+\item{max_graphlet_size}{Maximum number of nodes graphlets can contain.
+Currently only size 2 to 5 are supported.}
 }
 \value{
 Metadata list with the following named fields:

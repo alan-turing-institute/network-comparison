@@ -5,3 +5,6 @@
 ^appveyor\.yml$
 ^doc$
 ^Meta$
+^\.github$
+^\.lintr
+^docs$

@@ -21,19 +21,29 @@ netdis_one_to_one(
 )
 }
 \arguments{
-\item{graph_1}{A simple graph object from the \code{igraph} package. \code{graph_1} can be set to \code{NULL} (default) if \code{graphlet_counts_1} is provided. If both \code{graph_1} and \code{graphlet_counts_1} are not \code{NULL}, then only \code{graphlet_counts_1} will be considered.}
+\item{graph_1}{A simple graph object from the \code{igraph} package.
+\code{graph_1} can be set to \code{NULL} (default) if
+\code{graphlet_counts_1} is provided. If both \code{graph_1} and
+\code{graphlet_counts_1} are not \code{NULL}, then only
+\code{graphlet_counts_1} will be considered.}
 
-\item{graph_2}{A simple graph object from the \code{igraph} package. \code{graph_2} can be set to \code{NULL} (default) if \code{graphlet_counts_2} is provided. If both \code{graph_2} and \code{graphlet_counts_2} are not \code{NULL}, then only \code{graphlet_counts_2} will be considered.}
+\item{graph_2}{A simple graph object from the \code{igraph} package.
+\code{graph_2} can be set to \code{NULL} (default) if
+\code{graphlet_counts_2} is provided. If both \code{graph_2} and
+\code{graphlet_counts_2} are not \code{NULL}, then only
+\code{graphlet_counts_2} will be considered.}
 
 \item{ref_graph}{Controls how expected counts are calculated. Either:
 1) A numeric value - used as a constant expected counts value for all query
 graphs .
 2) A simplified \code{igraph} object - used as a reference graph from which
 expected counts are calculated for all query graphs.
-3) NULL (Default) - Used for Netdis-GP, where the expected counts will be calculated based on the properties of the
-query graphs themselves. (Geometric-Poisson approximation).}
+3) NULL (Default) - Used for Netdis-GP, where the expected counts will be
+calculated based on the properties of the query graphs themselves
+(Geometric-Poisson approximation).}
 
-\item{max_graphlet_size}{Generate graphlets up to this size. Currently only 4 (default) and 5 are supported.}
+\item{max_graphlet_size}{Generate graphlets up to this size. Currently only
+4 (default) and 5 are supported.}
 
 \item{neighbourhood_size}{Ego network neighborhood size (default: 2).}
 
@@ -43,25 +53,31 @@ than min_ego_nodes nodes (default: 3).}
 \item{min_ego_edges}{Filter ego networks which have fewer
 than min_ego_edges edges (default: 1).}
 
-\item{binning_fn}{Function used to bin ego network densities. Takes edge \code{densities}
-as its single argument, and returns a named list including, the input \code{densities}, the resulting bin \code{breaks} (vector of density bin limits), and the vector \code{interval_indexes} which states to what bin each of the individual elements in \code{densities} belongs to.
-ego network). If \code{NULL}, then the method \code{binned_densities_adaptive} with
-\code{min_counts_per_interval = 5} and \code{num_intervals = 100} is used
-(Default: NULL).}
+\item{binning_fn}{Function used to bin ego network densities. Takes edge
+\code{densities} as its single argument, and returns a named list including,
+the input \code{densities}, the resulting bin \code{breaks} (vector of
+density bin limits), and the vector \code{interval_indexes} which states to
+what bin each of the individual elements in \code{densities} belongs to.
+ego network). If \code{NULL}, then the method
+\code{binned_densities_adaptive} with \code{min_counts_per_interval = 5}
+and \code{num_intervals = 100} is used (Default: NULL).}
 
 \item{bin_counts_fn}{Function used to calculate expected graphlet counts in
 each density bin. Takes \code{graphlet_counts}, \code{interval_indexes}
-(bin indexes) and \code{max_graphlet_size} as arguments. If \code{bin_counts_fn} is \code{NULL}, (default), it will apply
-either the approach from the original Netdis paper, or the respective Geometric-Poisson approximation; depending on the
-values of \code{ref_graph} and \code{graphlet_counts_ref}.}
+(bin indexes) and \code{max_graphlet_size} as arguments. If
+\code{bin_counts_fn} is \code{NULL}, (default), it will apply either the
+approach from the original Netdis paper, or the respective Geometric-Poisson
+approximation; depending on the values of \code{ref_graph} and
+\code{graphlet_counts_ref}.}
 
 \item{exp_counts_fn}{Function used to map from binned reference counts to
 expected counts for each graphlet in each ego network of the query graphs.
 Takes \code{ego_networks}, \code{density_bin_breaks},
 \code{binned_graphlet_counts}, and \code{max_graphlet_size} as arguments.
 If \code{exp_counts_fn} is \code{NULL}, (default), it will apply
-either the approach from the original Netdis paper, or the respective Geometric-Poisson approximation; depending on the
-values of \code{ref_graph} and \code{graphlet_counts_ref}.}
+either the approach from the original Netdis paper, or the respective
+Geometric-Poisson approximation; depending on the values of \code{ref_graph}
+and \code{graphlet_counts_ref}.}
 
 \item{graphlet_counts_1}{Pre-generated graphlet counts for the first query
 graph.  Matrix containing counts of each graphlet (columns) for
@@ -69,9 +85,9 @@ each ego-network (rows) in the input graph. Columns are labelled with
 graphlet IDs and rows are labelled with the ID of the central node in each
 ego-network. As well as graphlet counts, each matrix  must contain an
 additional column labelled "N" including the node count for
-each ego network. (default: NULL).
-If the \code{graphlet_counts_1} argument is defined then
-\code{graph_1} will not be used. These counts can be obtained with \code{count_graphlets_ego}.}
+each ego network. If the \code{graphlet_counts_1} argument is defined then
+\code{graph_1} will not be used. These counts can be obtained with
+\code{count_graphlets_ego}. (default: NULL).}
 
 \item{graphlet_counts_2}{Pre-generated graphlet counts for the second query
 graph. Matrix containing counts of each graphlet (columns) for
@@ -81,7 +97,8 @@ ego-network. As well as graphlet counts, each matrix  must contain an
 additional column labelled "N" including the node count for
 each ego network. (default: NULL).
 If the \code{graphlet_counts_2} argument is defined then
-\code{graph_2} will not be used. These counts can be obtained with \code{count_graphlets_ego}.}
+\code{graph_2} will not be used. These counts can be obtained with
+\code{count_graphlets_ego}.}
 
 \item{graphlet_counts_ref}{Pre-generated reference graphlet counts.
 Matrix containing counts of each graphlet (columns) for
@@ -89,55 +106,98 @@ each ego-network (rows) in the reference graph. Columns are labelled with
 graphlet IDs and rows are labelled with the ID of the central node in each
 ego-network. As well as graphlet counts, each matrix  must contain an
 additional column labelled "N" including the node count for
-each ego network. (default: NULL).
-If the \code{graphlet_counts_ref} argument is defined then \code{ref_graph} will not
-be used.}
+each ego network. If the \code{graphlet_counts_ref} argument is defined then
+\code{ref_graph} will not be used. (default: NULL).}
 }
 \value{
 Netdis statistics between graph_1 and graph_2 for graphlet sizes
 up to and including max_graphlet_size.
 }
 \description{
-Calculates the different variants of the network dissimilarity statistic Netdis between two graphs. The variants currently supported are Netdis using a gold-standard network, Netdis using no expecations (\code{ref_graph = 0}), and Netdis using a Geometric Poisson  approximation for the expectation (\code{ref_graph = NULL}).
+Calculates the different variants of the network dissimilarity statistic
+Netdis between two graphs. The variants currently supported are Netdis using
+a gold-standard network, Netdis using no expecations (\code{ref_graph = 0}),
+and Netdis using a Geometric Poisson  approximation for the expectation
+(\code{ref_graph = NULL}).
 }
 \examples{
 require(netdist)
 require(igraph)
-#Set source directory for Virus PPI graph edge files stored in the netdist package.
-source_dir <- system.file(file.path("extdata", "VRPINS"), package = "netdist")
+# Set source directory for Virus PPI graph edge files stored in the
+# netdist package.
+source_dir <- system.file(
+  file.path("extdata", "VRPINS"),
+  package = "netdist"
+)
 # Load query graphs as igraph objects
-graph_1 <- read_simple_graph(file.path(source_dir, "EBV.txt"),format = "ncol")
-graph_2 <- read_simple_graph(file.path(source_dir, "ECL.txt"),format = "ncol")
+graph_1 <- read_simple_graph(
+  file.path(source_dir, "EBV.txt"),
+  format = "ncol"
+)
+graph_2 <- read_simple_graph(
+  file.path(source_dir, "ECL.txt"),
+  format = "ncol"
+)
 
-#Netdis variant using the Geometric Poisson approximation to remove the background expectation of each network.
-netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = NULL) #This option will focus on detecting more general and global discrepancies between the ego-network structures.
+# Netdis variant using the Geometric Poisson approximation to remove the
+# background expectation of each network. This option will focus on detecting
+# more general and global discrepancies between the ego-network structures.
+netdis_one_to_one(graph_1 = graph_1, graph_2 = graph_2, ref_graph = NULL)
 
-#Comparing the networks via their observed ego counts without centering them (equivalent to using expectation equal to zero). This option, will focus on detecting small discrepancies.
-netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = 0)
+# Comparing the networks via their observed ego counts without centering them
+# (equivalent to using expectation equal to zero). This option, will focus on
+# detecting small discrepancies.
+netdis_one_to_one(graph_1 = graph_1, graph_2 = graph_2, ref_graph = 0)
 
-# Example of the use of netdis with a reference graph.This option will focus on detecting discrepancies between the networks relative to the ego-network structure of the reference network / gold-standard.
-# Two lattice networks of different sizes are used for this example. 
- goldstd_1 <- graph.lattice(c(8,8)) #A reference net
- goldstd_2 <- graph.lattice(c(44,44)) #A reference net
- 
- netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_1)
- netdis_one_to_one(graph_1= graph_1, graph_2= graph_2,  ref_graph = goldstd_2)
- 
- 
- #Providing pre-calculated subgraph counts.
- 
- props_1 <- count_graphlets_ego(graph = graph_1)
- props_2 <- count_graphlets_ego(graph = graph_2)
- props_goldstd_1 <- count_graphlets_ego(graph = goldstd_1)
- props_goldstd_2 <- count_graphlets_ego(graph = goldstd_2)
- 
-#Netdis Geometric-Poisson.
-netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_graph = NULL)
+# Example of the use of netdis with a reference graph.This option will focus
+# on detecting discrepancies between the networks relative to the ego-network
+# structure of the reference network / gold-standard.
+# Two lattice networks of different sizes are used for this example.
+goldstd_1 <- graph.lattice(c(8, 8)) # A reference net
+goldstd_2 <- graph.lattice(c(44, 44)) # A reference net
 
-#Netdis Zero Expectation.
-netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, ref_graph = 0)
+netdis_one_to_one(
+  graph_1 = graph_1,
+  graph_2 = graph_2,
+  ref_graph = goldstd_1
+)
+netdis_one_to_one(
+  graph_1 = graph_1,
+  graph_2 = graph_2,
+  ref_graph = goldstd_2
+)
 
-#Netdis using gold-standard network
-netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_1)
-netdis_one_to_one(graphlet_counts_1= props_1,graphlet_counts_2= props_2, graphlet_counts_ref = props_goldstd_2)
+
+# Providing pre-calculated subgraph counts.
+
+props_1 <- count_graphlets_ego(graph = graph_1)
+props_2 <- count_graphlets_ego(graph = graph_2)
+props_goldstd_1 <- count_graphlets_ego(graph = goldstd_1)
+props_goldstd_2 <- count_graphlets_ego(graph = goldstd_2)
+
+# Netdis Geometric-Poisson.
+netdis_one_to_one(
+  graphlet_counts_1 = props_1,
+  graphlet_counts_2 = props_2,
+  ref_graph = NULL
+)
+
+# Netdis Zero Expectation.
+netdis_one_to_one(
+  graphlet_counts_1 = props_1,
+  graphlet_counts_2 = props_2,
+  ref_graph = 0
+)
+
+# Netdis using gold-standard network
+netdis_one_to_one(
+  graphlet_counts_1 = props_1,
+  graphlet_counts_2 = props_2,
+  graphlet_counts_ref = props_goldstd_1
+)
+netdis_one_to_one(
+  graphlet_counts_1 = props_1,
+  graphlet_counts_2 = props_2,
+  graphlet_counts_ref = props_goldstd_2
+)
 }

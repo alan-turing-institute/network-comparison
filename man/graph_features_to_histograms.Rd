@@ -8,14 +8,16 @@ each feature.}
 graph_features_to_histograms(features_matrix)
 }
 \arguments{
-\item{features_matrix}{A matrix whose rows represent nodes and whose columns represent different node level features. This means that entry ij provides the value of feature j for node i.}
+\item{features_matrix}{A matrix whose rows represent nodes and whose columns
+represent different node level features. This means that entry ij provides
+the value of feature j for node i.}
 }
 \value{
-Feature histograms: List of "discrete histograms" for each
-feature
+Feature histograms: List of "discrete histograms" for each feature
 }
 \description{
 Converts a matrix of node level features (e.g. for example counts
 of multiple graphlets or orbits at each node) to
-a set of histogram like objects (observed frequency distribution of each feature/column)
+a set of histogram like objects (observed frequency distribution of each
+feature/column)
 }
