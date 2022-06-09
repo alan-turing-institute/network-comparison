@@ -230,7 +230,7 @@ double get_double_segment_constrained(
   double seg2Loc1, double seg2Loc2, double seg2Loc3,
   double seg2Val1, double seg2Val2);
 
-double NetEmdSmoothV2(NumericVector loc1, NumericVector val1, double binWidth1,
+double netemd_smooth(NumericVector loc1, NumericVector val1, double binWidth1,
                       NumericVector loc2, NumericVector val2, double binWidth2);
 
 #endif // FASTSMOOTHV2_H

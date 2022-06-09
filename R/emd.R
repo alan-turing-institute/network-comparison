@@ -80,28 +80,26 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     min_emd <- soln$objective
     min_offset <- soln$minimum
     return(list(min_emd = min_emd, min_offset = min_offset))
-  }
-  else #if ((dhist1$smoothing_window_width==1) && (dhist2$smoothing_window_width==1))
+  } else
   {
     val1 <- cumsum(dhist1$masses)
     val2 <- cumsum(dhist2$masses)
-    val1 <- val1/val1[length(val1)]
-    val2 <- val2/val2[length(val2)]
-    loc1=dhist1$locations
-    loc2=dhist2$locations
-    binWidth1=dhist1$smoothing_window_width
-    binWidth2=dhist2$smoothing_window_width
-    count=0
+    val1 <- val1 / val1[length(val1)]
+    val2 <- val2 / val2[length(val2)]
+    loc1 <- dhist1$locations
+    loc2 <- dhist2$locations
+    bin_width_1 <- dhist1$smoothing_window_width
+    bin_width_2 <- dhist2$smoothing_window_width
     # Offset the histograms to make the alignments work
-    loc1Mod <- loc1 - binWidth1/2 
-    loc2Mod <- loc2 - binWidth2/2 
+    loc1_mod <- loc1 - bin_width_1 / 2
+    loc2_mod <- loc2 - bin_width_2 / 2
     # Determine minimum and maximum offset of range in which histograms overlap
     # (based on sliding histogram 1)
-    min_offset <- min(loc2Mod) - max(loc1Mod) - max(binWidth1,binWidth2)
-    max_offset <- max(loc2Mod) - min(loc1Mod) + max(binWidth1,binWidth2)
+    min_offset <- min(loc2_mod) - max(loc1_mod) - max(bin_width_1, bin_width_2)
+    max_offset <- max(loc2_mod) - min(loc1_mod) + max(bin_width_1, bin_width_2)
     # Set lower and upper range for optimise algorithm to be somewhat wider than
     # range defined by the minimum and maximum offset. This guards against a
-    # couple of issues that arise if the optimise range is exactly min_offset 
+    # couple of issues that arise if the optimise range is exactly min_offset
     # to max_offset
     # 1) If lower and upper are equal, the optimise method will throw and error
     # 2) It seems that optimise is not guaranteed to explore its lower and upper
@@ -112,18 +110,26 @@ min_emd_optimise_fast <- function(dhist1, dhist2) {
     max_offset <- max_offset + buffer
     # Define a single parameter function to minimise emd as a function of offset
     emd_offset <- function(offset) {
-      temp1<- NetEmdSmoothV2(loc1Mod+offset,val1,binWidth1,loc2Mod,val2,binWidth2)
+      temp1 <- netemd_smooth(
+        loc1_mod + offset,
+        val1,
+        bin_width_1,
+        loc2_mod,
+        val2,
+        bin_width_2
+      )
       temp1
     }
     # Get solution from optimiser
-    soln <- stats::optimise(emd_offset, lower = min_offset, upper = max_offset, 
-                            tol = .Machine$double.eps*1000)
+    soln <- stats::optimise(emd_offset,
+      lower = min_offset, upper = max_offset,
+      tol = .Machine$double.eps * 1000
+    )
     # Return mnimum EMD and associated offset
     min_emd <- soln$objective
     min_offset <- soln$minimum
     return(list(min_emd = min_emd, min_offset = min_offset))
   }
-
 }
 
 

@@ -137,7 +137,7 @@ double get_double_segment_constrained(
 //'
 //' @export
 // [[Rcpp::export]]
-double NetEmdSmoothV2(NumericVector loc1, NumericVector val1, double binWidth1,
+double netemd_smooth(NumericVector loc1, NumericVector val1, double binWidth1,
                       NumericVector loc2, NumericVector val2, double binWidth2)
 {
   OverlappingSegments segs(loc1, loc2, binWidth1, binWidth2);
