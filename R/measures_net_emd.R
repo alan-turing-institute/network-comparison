@@ -50,7 +50,7 @@
 #' alone, hence the default value is 0.
 #' @return NetEMD measure for the two sets of discrete histograms (or graphs).
 #' If (\code{return_details = FALSE}) then a list with the following named
-#' elements is returned \code{net_emd}: the NetEMD for the set of histogram
+#' elements is returned \code{netemd}: the NetEMD for the set of histogram
 #' pairs (or graphs), \code{min_emds}: the minimal EMD for each pair of
 #' histograms, \code{min_offsets}: the associated offsets giving the minimal EMD
 #' for each pair of histograms
@@ -205,14 +205,14 @@ netemd_one_to_one <- function(graph_1 = NULL,
     # The NetEMD is the arithmetic mean of the minimum EMDs for each pair of
     # histograms
     arithmetic_mean <- sum(min_emds) / length(min_emds)
-    net_emd <- arithmetic_mean
+    netemd <- arithmetic_mean
     # Return just the NetEMD or a list including the NetEMD plus the details of
     # the minumum EMD and associated offsets for the individual histograms
     # Note that the offsets represent shifts after the histograms have been
     # scaled to unit variance
     if (return_details) {
       return(list(
-        net_emd = net_emd,
+        netemd = netemd,
         min_emds = min_emds,
         min_offsets = min_offsets,
         min_offsets_std = min_offsets_std
@@ -222,7 +222,7 @@ netemd_one_to_one <- function(graph_1 = NULL,
     }
   } else {
     # Wrap each member of a single pair of histograms is a list and recursively
-    # call this net_emd function. This ensures they are treated the same.
+    # call this netemd function. This ensures they are treated the same.
     return(netemd_one_to_one(
       dhists_1 = list(dhists_1), dhists_2 = list(dhists_2),
       method = method,
@@ -271,7 +271,7 @@ netemd_one_to_one <- function(graph_1 = NULL,
 #' @return NetEMD measures between all pairs of graphs for which features
 #' were provided. Format of returned data depends on the \code{return_details}
 #' parameter. If set to FALSE, a list is returned with the following named
-#' elements:\code{net_emd}: a vector of NetEMDs for each pair of graphs,
+#' elements:\code{netemd}: a vector of NetEMDs for each pair of graphs,
 #' \code{comp_spec}: a comparison specification table containing the graph names
 #' and indices within the input GDD list for each pair of graphs compared.
 #' If \code{return_details} is set to FALSE, the list also contains the
@@ -385,7 +385,7 @@ netemd_many_to_many <- function(graphs = NULL,
     )
   )
   if (return_details) {
-    net_emds <- purrr::simplify(purrr::map(out, ~ .$net_emd))
+    netemds <- purrr::simplify(purrr::map(out, ~ .$netemd))
     min_emds <- matrix(
       purrr::simplify(purrr::map(out, ~ .$min_emds)),
       ncol = num_features,
@@ -411,15 +411,15 @@ netemd_many_to_many <- function(graphs = NULL,
       purrr::map(1:num_features, ~ paste("MinOffsetsStd_O", . - 1, sep = ""))
     )
     ret <- list(
-      netemds = net_emds,
+      netemds = netemds,
       comp_spec = comp_spec,
       min_emds = min_emds,
       min_offsets = min_offsets,
       min_offsets_std = min_offsets_std
     )
   } else {
-    net_emds <- out
-    ret <- list(netemds = net_emds, comp_spec = comp_spec)
+    netemds <- out
+    ret <- list(netemds = netemds, comp_spec = comp_spec)
   }
   return(ret)
 }
@@ -450,7 +450,7 @@ netemd_many_to_many <- function(graphs = NULL,
 #' \code{smoothing_window_width} that is appropriate for the discrete domain
 #' (e.g.for the integer domain a width of 1 is the natural choice)
 #' @return A list with the following named elements
-#' \code{net_emd}: the NetEMD for the set of histogram pairs,
+#' \code{netemd}: the NetEMD for the set of histogram pairs,
 #' \code{min_offsets}: the associated offsets giving the minimal EMD for each
 #' pair of histograms and \code{min_offset_std}: Offset used in the standardised
 #' histograms.

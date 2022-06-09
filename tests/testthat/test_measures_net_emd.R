@@ -1,5 +1,5 @@
 
-self_net_emd <- function(histogram, shift, method) {
+self_netemd <- function(histogram, shift, method) {
   netemd_one_to_one(
     dhists_1 = histogram,
     dhists_2 = shift_dhist(histogram, shift),
@@ -12,30 +12,30 @@ locations <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
 masses <- c(0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0)
 histogram <- dhist(locations = locations, masses = masses)
 
-expect_equal(self_net_emd(histogram, shift = 1, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 1, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.5, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.5, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.1, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.1, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.05, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.05, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.01, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0.01, "exhaustive"), expected)
-expect_equal(self_net_emd(histogram, shift = 0, "optimise"), expected)
-expect_equal(self_net_emd(histogram, shift = 0, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 1, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 1, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0.5, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0.5, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0.1, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0.1, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0.05, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0.05, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0.01, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0.01, "exhaustive"), expected)
+expect_equal(self_netemd(histogram, shift = 0, "optimise"), expected)
+expect_equal(self_netemd(histogram, shift = 0, "exhaustive"), expected)
 
 expect_self_netemd_correct <- function(histogram, shift, method,
                                        return_details = FALSE) {
-  self_net_emd <- netemd_one_to_one(
+  self_netemd <- netemd_one_to_one(
     dhists_1 = histogram, dhists_2 = shift_dhist(histogram, shift),
     method = method, return_details = return_details
   )
   expected <- list(
-    net_emd = 0, min_emds = 0, min_offsets = shift,
+    netemd = 0, min_emds = 0, min_offsets = shift,
     min_offsets_std = 0
   )
-  expect_equal(self_net_emd, expected) # nolint: object_usage_linter.
+  expect_equal(self_netemd, expected) # nolint: object_usage_linter.
 }
 
 locations <- c(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
@@ -92,7 +92,7 @@ expect_self_netemd_correct(histogram,
 
 test_that(
   paste(
-    "net_emd returns 0 when comparing any normal histogram against itself",
+    "netemd returns 0 when comparing any normal histogram against itself",
     "(no offset)"
   ),
   {
@@ -131,7 +131,7 @@ test_that(
   }
 )
 
-test_that("net_emd returns 0 when comparing any normal histogram randomly offset
+test_that("netemd returns 0 when comparing any normal histogram randomly offset
           against itself", {
   num_hists <- 2
   num_bins <- 101
@@ -189,7 +189,7 @@ test_that("net_emd returns 0 when comparing any normal histogram randomly offset
   })
 })
 
-test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
+test_that("netemd returns min_emd = 0 and min_offset = 0 when comparing any
           normal histogram randomly offset against itself", {
   num_hists <- 2
   num_bins <- 101
@@ -213,7 +213,7 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
 
   expect_self_netemd_correct <-
     function(histogram, shift, method, return_details = FALSE) {
-      self_net_emd <- netemd_one_to_one(
+      self_netemd <- netemd_one_to_one(
         dhists_1 = histogram,
         dhists_2 = shift_dhist(histogram, shift),
         method = method,
@@ -223,10 +223,10 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
       mass <- histogram$masses
       var <- sum(loc * loc * mass) / sum(mass) - (sum(loc * mass) / sum(mass))^2
       expected <- list(
-        net_emd = 0, min_emds = 0, min_offsets = shift,
+        netemd = 0, min_emds = 0, min_offsets = shift,
         min_offsets_std = 0
       )
-      expect_equal(self_net_emd, expected)
+      expect_equal(self_netemd, expected)
     }
 
   purrr::walk2(rand_dhists, offset_lists, function(dhist, offsets) {
@@ -248,7 +248,7 @@ test_that("net_emd returns min_emd = 0 and min_offset = 0 when comparing any
 
 test_that(
   paste(
-    "net_emd returns analytically derived non-zero solutions for",
+    "netemd returns analytically derived non-zero solutions for",
     "distributions where the analytical solution is known"
   ),
   {
@@ -298,7 +298,7 @@ test_that(
 )
 
 context("Measures NetEMD: Virus PPI (EMD)")
-# EMD and NET_EMD: Virus PPI datasets
+# EMD and netemd: Virus PPI datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of
           virus PPI graphs to themselves", {
   # Load viurs PPI network data in ORCA-compatible edge list format
@@ -317,7 +317,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
 })
 
 context("Measures NetEMD: Virus PPI (NetEMD)")
-test_that("net_emd return 0 when comparing graphlet orbit degree distributions
+test_that("netemd return 0 when comparing graphlet orbit degree distributions
           of virus PPI graphs to themselves", {
   # Load virus PPI network data in ORCA-compatible edge list format
   data_indexes <- 1:length(virusppi)
@@ -345,7 +345,7 @@ test_that("net_emd return 0 when comparing graphlet orbit degree distributions
 })
 
 context("Measures NetEMD: Random graphs (EMD)")
-# EMD and NET_EMD: Random graph datasets
+# EMD and netemd: Random graph datasets
 test_that("emd return 0 when comparing graphlet orbit degree distributions of
           random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
@@ -368,7 +368,7 @@ test_that("emd return 0 when comparing graphlet orbit degree distributions of
 })
 
 context("Measures NetEMD: Random graphs (NetEMD)")
-test_that("net_emd return 0 when comparing graphlet orbit degree distributions
+test_that("netemd return 0 when comparing graphlet orbit degree distributions
           of random graphs to themselves", {
   # Load random graph data in ORCA-compatible edge list format
   random_graphs <- read_simple_graphs(

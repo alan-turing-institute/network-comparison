@@ -38,7 +38,7 @@ netemd_speed_test <- function() {
 }
 
 #' @export
-net_emd_speed_test_smooth <- function() {
+netemd_speed_test_smooth <- function() {
   ## load the data
   source_dir <- system.file(file.path("extdata", "random"), package = "netdist")
   print(source_dir)
@@ -65,7 +65,7 @@ net_emd_speed_test_smooth <- function() {
       gdd1 <- gdd(g1)
       gdd2 <- gdd(g2)
       netemd_start <- Sys.time()
-      net_emd(gdd1, gdd2, smoothing_window_width = 1)
+      netemd(gdd1, gdd2, smoothing_window_width = 1)
       endTime <- Sys.time()
       gdd_build_time <- append(
         gdd_build_time,
